@@ -1,0 +1,27 @@
+<a href="{{ wishlist_link }}" class="us-mobile-top-btn us-mobile-top-btn-wishlist d-lg-none h-100">
+    <span class="us-mobile-top-btn-item">
+		<img src="catalog/view/theme/oct_ultrastore/img/sprite.svg#include--wishlist-mobile" alt="" width="29" height="29" />
+		<span class="mobile-header-index oct-wishlist-quantity">{{ total_wishlist }}</span>
+	</span>
+</a>
+<a href="{{ compare_link }}" class="us-mobile-top-btn us-mobile-top-btn-compare d-lg-none h-100">
+    <span class="us-mobile-top-btn-item">
+		<img src="catalog/view/theme/oct_ultrastore/img/sprite.svg#include--compare-mobile" alt="" width="34" height="34" />
+		<span class="mobile-header-index oct-compare-quantity">{{ total_compare }}</span>
+	</span>
+</a>
+{% if oct_popup_cart_status is defined and oct_popup_cart_status %}
+<div onclick="octPopupCart()" id="us_cart_mobile" class="us-mobile-top-btn us-mobile-top-btn-cart d-lg-none h-100">
+    <span class="us-mobile-top-btn-item">
+        <img src="catalog/view/theme/oct_ultrastore/img/sprite.svg#include--cart-mobile" alt="" width="34" height="34" />
+        <span id="mobile_cart_index" class="mobile-header-index">{{ total_products }}</span>
+    </span>
+</div>
+{% else %}
+<a href="{{ cart_link }}" id="us_cart_mobile" class="us-mobile-top-btn us-mobile-top-btn-cart d-lg-none h-100">
+    <span class="us-mobile-top-btn-item">
+        <img src="catalog/view/theme/oct_ultrastore/img/sprite.svg#include--cart-mobile" alt="" width="34" height="34" />
+        <span id="mobile_cart_index" class="mobile-header-index">{{ total_products }}</span>
+    </span>
+</a>
+{% endif %}

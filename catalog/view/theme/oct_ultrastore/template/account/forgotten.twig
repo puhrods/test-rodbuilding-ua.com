@@ -1,0 +1,44 @@
+{{ header }}
+<div id="account-forgotten" class="container">
+	{{ oct_breadcrumbs }}
+	<div class="row">
+		<div class="col-lg-12">
+			<h1 class="us-main-shop-title">{{ heading_title }}</h1>
+		</div>
+	</div>
+	<div class="content-top-box">{{ content_top }}</div>
+	{% if error_warning %}
+	<script>
+	usNotify('warning', '{{ error_warning }}');
+	</script>
+	{% endif %}
+	<div class="row">{{ column_left }}
+	    {% if column_left and column_right %}
+	    {% set class = 'col-sm-6' %}
+	    {% elseif column_left or column_right %}
+	    {% set class = 'col-sm-9' %}
+	    {% else %}
+	    {% set class = 'col-sm-12' %}
+	    {% endif %}
+	    <div id="content" class="{{ class }}">
+		    <div class="us-content">
+		      <div class="us-content-text us-content-register-text">{{ text_email }}</div>
+		      <form action="{{ action }}" method="post" enctype="multipart/form-data" class="form-horizontal">
+		        <fieldset>
+		          <div class="form-group">
+		            <label for="input-email"><span class="required">*</span>{{ entry_email }}</label>
+		            <input type="text" name="email" value="{{ email }}" placeholder="{{ entry_email }}" id="input-email" class="form-control" />
+		          </div>
+		        </fieldset>
+		        <div class="btn-group d-flex justify-content-between">
+		          <a href="{{ back }}" class="us-module-btn">{{ button_back }}</a>
+		          <input type="submit" value="{{ button_continue }}" class="us-module-btn us-module-btn-green" />
+		        </div>
+		      </form>
+		    </div>
+	    </div>
+	    {{ column_right }}
+	</div>
+	{{ content_bottom }}
+</div>
+{{ footer }}

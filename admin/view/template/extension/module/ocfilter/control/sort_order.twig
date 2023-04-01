@@ -1,0 +1,33 @@
+<div class="input-group ocf-sort-order" data-toggle="buttons">
+  <div class="input-group-btn">
+    {% if sort_order == 'begin' %}
+    <label class="btn btn-default">
+      <input type="radio" name="{{ name }}" value="begin" checked /> {{ text_begin }}
+    </label>
+    {% else %}
+    <label class="btn btn-default">
+      <input type="radio" name="{{ name }}" value="begin" /> {{ text_begin }}
+    </label>          
+    {% endif %}
+  </div>
+  <div class="input-group-prepend ocf-relative">
+    {% if sort_order != 'begin' and sort_order != 'after' %}
+    <input type="number" name="{{ name }}" value="{{ sort_order }}" class="form-control" />
+    {% else %}
+    <input type="number" name="{{ name }}" value="" class="form-control" disabled />
+    {% endif %} 
+    <div class="ocf-input-placeholder"></div>
+  </div>    
+  <div class="input-group-btn">
+    {% if sort_order == 'after' %}
+    <label class="btn btn-default">
+      <input type="radio" name="{{ name }}" value="after" checked /> {{ text_after }}
+    </label>
+    {% else %}
+    <label class="btn btn-default">
+      <input type="radio" name="{{ name }}" value="after" /> {{ text_after }}
+    </label>
+    {% endif %}
+  </div>
+</div>  
+<p class="help-block">{{ help_sort_order }}</p>

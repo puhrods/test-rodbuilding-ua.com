@@ -1,0 +1,803 @@
+
+
+{{ header }} 
+
+<script type="text/javascript" src="view/javascript/jquery/ui_sortable/jquery-ui.js"></script>
+<script>
+/*** Handle jQuery plugin naming conflict between jQuery UI and Bootstrap
+ *   see https://stackoverflow.com/questions/13731400/jqueryui-tooltips-are-competing-with-twitter-bootstrap
+ * ***/
+$.widget.bridge('uibutton', $.ui.button);
+$.widget.bridge('uitooltip', $.ui.tooltip);
+</script>
+<link rel="stylesheet" type="text/css" href="view/javascript/jquery/ui_sortable/jquery-ui.theme.min.css" />
+<!-- need to add bootstrap after jquery-ui-->
+<script type="text/javascript" src="view/javascript/bootstrap/js/bootstrap.min.js"></script>
+
+{{ column_left }} 
+
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+				<button id="button-add" data-toggle="tooltip" title="{{ button_add }}" class="btn btn-primary"><i class="fa fa-plus"></i> <span class="total-not-indexed">{{ total_not_indexed }}</span></button>
+				<button data-toggle="tooltip" title="{{ button_delete }}" class="btn btn-danger" onclick="confirm('{{ text_confirm }}') ? location='{{ delete }}' : false"><i class="fa fa-trash"></i> <span class="total-indexed">{{ total_indexed }}</span></button>
+        <button type="submit" form="form-search-engine" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+        <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
+      <h1>{{ heading_title }}</h1>
+      <ul class="breadcrumb">
+				{% for breadcrumb in breadcrumbs %} 
+	        <li><a href="{{ breadcrumb['href'] }}">{{ breadcrumb['text'] }}</a></li>
+				{% endfor %} 
+      </ul>
+    </div>
+  </div>	
+  <div class="container-fluid">
+		{% if (error_warning) %} 
+	    <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ error_warning }} 
+	      <button type="button" class="close" data-dismiss="alert">&times;</button>
+	    </div>
+		{% endif %} 
+		{% if (success) %} 
+    <div class="alert alert-success"><i class="fa fa-check-circle"></i> {{ success }} 
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    {% endif %}		
+		
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_edit }}</h3>
+      </div>
+      <div class="panel-body">
+        <div class="form-group form-group-progress hide">
+          <label class="col-sm-2 control-label">{{ entry_progress }}</label>
+          <div class="col-sm-9">
+            <div class="progress">
+              <div id="progress-bar" class="progress-bar progress-bar-striped" style="width: 0%;"></div>
+            </div>
+            <div id="progress-text"></div>
+          </div>
+			    <div class="col-sm-1">
+            <button id="button-stop" data-toggle="tooltip" title="{{ button_stop_hide }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button>
+			    </div>
+        </div>				
+        <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-search-engine" class="form-horizontal">
+          <ul class="nav nav-tabs">            
+            <li class="active"><a href="#tab-general" data-toggle="tab">{{ tab_general }}</a></li>
+            <li><a href="#tab-field" data-toggle="tab">{{ tab_field }}</a></li>
+						<li><a href="#tab-add-fields" data-toggle="tab">{{ tab_add_fields }}</a></li>
+            <li><a href="#tab-categories" data-toggle="tab">{{ tab_categories }}</a></li>
+            <li><a href="#tab-manufacturers" data-toggle="tab">{{ tab_manufacturers }}</a></li>
+            <li><a href="#tab-parts-of-speech" data-toggle="tab">{{ tab_parts_of_speech }}</a></li>
+						<li><a href="#tab-synonyms" data-toggle="tab">{{ tab_synonyms }}</a></li>
+						<li><a href="#tab-exclude-words" data-toggle="tab">{{ tab_exclude_words }}</a></li>
+            <li><a href="#tab-replace-words" data-toggle="tab">{{ tab_replace_words }}</a></li>
+            <li><a href="#tab-support" data-toggle="tab">{{ tab_support }}</a></li>
+          </ul>
+          <div class="tab-content">
+
+            <div id="tab-general" class="tab-pane active">
+                
+              <div class="form-group">
+                <label class="col-sm-2 control-label" for="key">{{ entry_status }}</label>                    
+                <div class="col-sm-10">
+                  <select name="module_search_engine_status" class="form-control">
+                  {% if (status) %} 
+                    <option value="1" selected="selected">{{ text_enabled }}</option>
+                    <option value="0">{{ text_disabled }}</option>
+                  {% else %} 
+                    <option value="1">{{ text_enabled }}</option>
+                    <option value="0" selected="selected">{{ text_disabled }}</option>
+                  {% endif %} 
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+								<label class="col-sm-2 control-label">{{ entry_search_logic }}</label>                    
+                <div class="col-sm-10">
+                  <select name="module_search_engine_options[logic]" class="form-control">
+	                  <option value="OR"   {{ options['logic'] is defined and options['logic'] == 'OR' ? 'selected="selected"' : "" }}>{{ text_logic_or }}</option>
+	                  <option value="AND"  {{ options['logic'] is defined and options['logic'] == 'AND' ? 'selected="selected"' : "" }}>{{ text_logic_and }}</option>																														
+                  </select>									
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="col-sm-2 control-label">{{ entry_multistore }}</label>                    
+                <div class="col-sm-10">
+                  <select name="module_search_engine_options[multistore]" class="form-control">
+                    <option value="0"   {{ options['multistore'] is defined and options['multistore'] == '0' ? 'selected="selected"' : "" }}>{{ text_disabled }}</option>
+                    <option value="1"   {{ options['multistore'] is defined and options['multistore'] == '1' ? 'selected="selected"' : "" }}>{{ text_enabled }}</option>
+                  </select>									
+                </div>
+              </div>
+							
+              <div class="form-group">
+                <label class="col-sm-2 control-label">{{ entry_date_available }}</label>                    
+                <div class="col-sm-10">
+                  <select name="module_search_engine_options[date_available]" class="form-control">
+                    <option value="0"   {{ options['date_available'] is defined and options['date_available'] == '0' ? 'selected="selected"' : "" }}>{{ text_disabled }}</option>
+                    <option value="1"   {{ options['date_available'] is defined and options['date_available'] == '1' ? 'selected="selected"' : "" }}>{{ text_enabled }}</option>
+                  </select>									
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="col-sm-2 control-label"><span data-toggle="tooltip" title="{{ help_search_whole_word }}">{{ entry_search_whole_word }}</span></label>                    
+                <div class="col-sm-10">
+                  <select name="module_search_engine_options[whole_word]" class="form-control">
+                    <option value="0"   {{ options['whole_word'] is defined and options['whole_word'] == '0' ? 'selected="selected"' : "" }}>{{ text_disabled }}</option>
+                    <option value="1"   {{ options['whole_word'] is defined and options['whole_word'] == '1' ? 'selected="selected"' : "" }}>{{ text_enabled }}</option>
+                  </select>									
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="col-sm-2 control-label"><span data-toggle="tooltip" title="{{ help_transliteration }}">{{ entry_transliteration }}</span></label>                    
+                <div class="col-sm-10">
+                  <select name="module_search_engine_options[transliteration]" class="form-control">
+                    <option value="0"   {{ options['transliteration'] is defined and options['transliteration'] == '0' ? 'selected="selected"' : "" }}>{{ text_disabled }}</option>
+                    <option value="1"   {{ options['transliteration'] is defined and options['transliteration'] == '1' ? 'selected="selected"' : "" }}>{{ text_enabled }}</option>
+                  </select>									
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="col-sm-2 control-label"><span data-toggle="tooltip" title="{{ help_fix_keyboard_layout }}">{{ entry_fix_keyboard_layout }}</span></label>                    
+                <div class="col-sm-10">
+                  <select name="module_search_engine_options[fix_keyboard_layout]" class="form-control">
+                    <option value="0"   {{ options['fix_keyboard_layout'] is defined and options['fix_keyboard_layout'] == '0' ? 'selected="selected"' : "" }}>{{ text_disabled }}</option>
+                    <option value="1"   {{ options['fix_keyboard_layout'] is defined and options['fix_keyboard_layout'] == '1' ? 'selected="selected"' : "" }}>{{ text_enabled }}</option>
+                  </select>									
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="col-sm-2 control-label"><span data-toggle="tooltip" title="{{ help_inexact_search }}">{{ entry_inexact_search }}</span></label>                    
+                <div class="col-sm-10">
+                  <select name="module_search_engine_options[inexact_search]" class="form-control">
+                    <option value="0"   {{ options['inexact_search'] is defined and options['inexact_search'] == '0' ? 'selected="selected"' : "" }}>{{ text_disabled }}</option>
+                    <option value="1"   {{ options['inexact_search'] is defined and options['inexact_search'] == '1' ? 'selected="selected"' : "" }}>{{ text_enabled }}</option>
+                  </select>									
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="col-sm-2 control-label"><span data-toggle="tooltip" title="{{ help_search_type_order }}">{{ entry_search_type_order }}</span></label>                    
+                <div class="col-sm-3">
+          
+                  <table id="search-order" class="table table-striped table-bordered table-hover sorted_table">
+                    <thead>
+                      <tr>
+                        <td class="text-left">{{ entry_search_type }}</td>
+                        <td class="text-left">{{ entry_search_type_sort }}</td>
+                      </tr>
+                      <tr>
+                        <td class="text-left">{{ entry_base_search }}</td>
+                        <td class="text-left"></td>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for type_name,type_options in options['types_order'] %} 
+                      <tr>
+                        <td class="text-left">{{ attribute(_context, 'entry_' ~ type_name) is defined ? attribute(_context, 'entry_' ~ type_name) : type_name }}</td>
+                        <td class="text-left">
+                          <input type="text" name="module_search_engine_options[types_order][{{ type_name }}][sort]" value="{{ type_options['sort'] is defined ? type_options['sort'] : 0 }}" class="form-control">
+                        </td>
+                      </tr>
+                      {% endfor %} 
+                    </tbody>
+                  </table>      
+                </div>
+              </div>      
+
+              <div class="form-group">
+                <label class="col-sm-2 control-label"><span data-toggle="tooltip" title="{{ help_sort_order_stock }}">{{ entry_sort_order_stock }}</span></label>                    
+                <div class="col-sm-10">
+                  <select name="module_search_engine_options[sort_order_stock]" class="form-control">
+                    <option value="0"   {{ options['sort_order_stock'] is defined and options['sort_order_stock'] == '0' ? 'selected="selected"' : "" }}>{{ text_disabled }}</option>
+                    <option value="end"   {{ options['sort_order_stock'] is defined and options['sort_order_stock'] == 'end' ? 'selected="selected"' : "" }}>{{ text_stock_end }}</option>
+                    <option value="remove"   {{ options['sort_order_stock'] is defined and options['sort_order_stock'] == 'remove' ? 'selected="selected"' : "" }}>{{ text_stock_remove }}</option>
+                  </select>									
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="col-sm-2 control-label">{{ entry_cache_results }}</label>                    
+                <div class="col-sm-10">
+                  <select name="module_search_engine_options[cache_results]" class="form-control">
+                    <option value="0"   {{ options['cache_results'] is defined and options['cache_results'] == '0' ? 'selected="selected"' : "" }}>{{ text_disabled }}</option>
+                    <option value="1"   {{ options['cache_results'] is defined and options['cache_results'] == '1' ? 'selected="selected"' : "" }}>{{ text_enabled }}</option>
+                  </select>																		
+                </div>
+              </div>
+
+							{{ help_tab_general }} 
+            </div>
+
+            <div id="tab-field" class="tab-pane">
+							
+              <table id="fields"  class="table table-striped table-bordered table-hover">
+                <thead>
+                  <tr>
+                    <td>{{ entry_fields_name }}</td>
+										<td>{{ entry_search }}</td>
+                    <td>{{ entry_parts_of_speech_filter }}</td>
+										<td>{{ entry_contains }}</td>
+										<td>{{ entry_min_word_length }}</td>
+                    <td>{{ entry_relevance_start }}</td>
+                    <td>{{ entry_relevance_end }}</td>
+                  </tr>
+                </thead>
+
+                <tbody >
+
+									{% for field in fields %} 
+
+	                  <tr>
+
+	                    <td>
+												{{ attribute(_context, 'field_' ~ field) is defined ? attribute(_context, 'field_' ~ field) : field }}
+	                    </td>
+
+											<td>
+	                      <select name="module_search_engine_options[fields][{{ field }}][search]" class="form-control">
+	                        <option value="0" {{ options['fields'][field]['search'] is defined and options['fields'][field]['search'] == '0' ? 'selected="selected"' : "" }}>{{ text_disabled }}</option>												
+	                        <option value="1"  {{ options['fields'][field]['search'] is defined and options['fields'][field]['search'] == '1' ? 'selected="selected"' : "" }}>{{ text_enabled }}</option>
+	                      </select>												
+											</td>
+											
+											<td>
+ 	                      <input type="checkbox" name="module_search_engine_options[fields][{{ field }}][parts_of_speech]" value="1" {{ options['fields'][field]['parts_of_speech'] is defined and options['fields'][field]['parts_of_speech'] ? "checked=checked" : "" }}  class="form-control"/>
+	                    </td>
+											
+											<td>
+ 	                      <input type="checkbox" name="module_search_engine_options[fields][{{ field }}][contains]" value="1" {{ options['fields'][field]['contains'] is defined and options['fields'][field]['contains'] ? "checked=checked" : "" }}  class="form-control"/>
+	                    </td>
+											
+											<td>
+	                      <input type="text" name="module_search_engine_options[fields][{{ field }}][min_word_length]" value="{{ options['fields'][field]['min_word_length'] is defined ? options['fields'][field]['min_word_length'] : 3 }}" class="form-control"/>
+	                    </td>
+											
+											<td>
+	                      <input type="text" name="module_search_engine_options[fields][{{ field }}][relevance][start]" value="{{ options['fields'][field]['relevance']['start'] is defined ? options['fields'][field]['relevance']['start'] : 0 }}" class="form-control"/>
+	                    </td>
+											
+	                    <td>
+	                      <input type="text" name="module_search_engine_options[fields][{{ field }}][relevance][end]" value="{{ options['fields'][field]['relevance']['end'] is defined ? options['fields'][field]['relevance']['end'] : 0 }}" class="form-control"/>
+	                    </td>              
+
+	                  </tr>
+
+									{% endfor %} 
+
+                </tbody>  
+
+              </table>
+							{{ help_tab_field }} 
+            </div>
+
+            <div id="tab-add-fields" class="tab-pane">
+              <div class="table-responsive">
+                <table class="table table-striped table-bordered table-hover">
+                  <thead>
+                    <tr>
+                      <td class="text-left required">{{ entry_field }}</td>
+											<td class="text-left">{{ entry_join }}</td>
+											<td class="text-left">{{ entry_where }}</td>
+                      <td class="text-left"></td>
+                    </tr>
+                  </thead>
+                  <tbody>
+										{% set fields_row = 0 %} 
+										{% if (options['new_fields'] is not empty) %} 
+											{% for field in options['new_fields'] %} 
+												<tr id="fields-row{{ fields_row }}">
+													
+													<td class="text-left">
+														<input type="text" name="module_search_engine_options[new_fields][{{ fields_row }}][field]" value="{{ field['field'] }}" class="form-control"/>
+														{% if (error_new_fields[field['field']] is defined) %} 
+															<div class="text-danger">{{ error_new_fields[field['field']] }}</div>
+														{% endif %} 
+													</td>
+													
+													<td class="text-left"><input type="text" name="module_search_engine_options[new_fields][{{ fields_row }}][join]" value="{{ field['join'] }}" class="form-control"/></td>
+													
+													<td class="text-left"><input type="text" name="module_search_engine_options[new_fields][{{ fields_row }}][where]" value="{{ field['where'] }}" class="form-control"/></td>
+													
+													<td class="text-left"><button type="button" onclick="$('#fields-row{{ fields_row }}').remove()" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>
+												</tr>
+												{% set fields_row = fields_row + 1 %} 
+											{% endfor %} 
+										{% endif %} 
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <td colspan="3"></td>
+                      <td class="text-left"><button type="button" onclick="addField()" data-toggle="tooltip" title="{{ button_add }}" class="btn btn-primary"><i class="fa fa-plus-circle"></i></button></td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+
+							{{ help_tab_add_fields }} 
+            </div>
+
+            <div id="tab-categories" class="tab-pane">
+              <div class="table-responsive">
+                  <table id="category" class="table table-striped table-bordered table-hover">
+                    <thead>
+                      <tr>
+                        <td class="text-left">{{ entry_category }}</td>
+                        <td class="text-left">{{ entry_coefficient }}</td>
+                        <td></td>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% set category_row = 0 %} 
+                      {% for category in options['categories'] %} 
+                      <tr id="category-row{{ category_row }}">
+                        <td class="text-left" style="width: 40%;">
+                          <input type="text" name="module_search_engine_options[categories][{{ category_row }}][name]" value="{{ category['name'] }}" placeholder="{{ entry_category }}" class="form-control" />
+                          <input type="hidden" name="module_search_engine_options[categories][{{ category_row }}][category_id]" value="{{ category['category_id'] }}" />
+                        </td>
+                        <td class="text-left">
+                        <input type="text" name="module_search_engine_options[categories][{{ category_row }}][coefficient]" value="{{ category['coefficient'] }}" placeholder="{{ entry_coefficient }}" class="form-control" />
+                        </td>
+                        <td class="text-left"><button type="button" onclick="$('#category-row{{ category_row }}').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>
+                      </tr>
+                      {% set category_row = category_row + 1 %} 
+                      {% endfor %} 
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <td colspan="2"></td>
+                        <td class="text-left"><button type="button" onclick="addCategory();" data-toggle="tooltip" title="{{ button_category_add }}" class="btn btn-primary"><i class="fa fa-plus-circle"></i></button></td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>     
+                
+                {{ help_tab_categories }}              
+            </div>  
+
+            <div id="tab-manufacturers" class="tab-pane">
+              <div class="table-responsive">
+                <table id="manufacturer" class="table table-striped table-bordered table-hover">
+                  <thead>
+                    <tr>
+                      <td class="text-left">{{ entry_manufacturer }}</td>
+                      <td class="text-left">{{ entry_coefficient }}</td>
+                      <td></td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% set manufacturer_row = 0 %} 
+                    {% for manufacturer in options['manufacturers'] %} 
+                    <tr id="manufacturer-row{{ manufacturer_row }}">
+                      <td class="text-left" style="width: 40%;">
+                        <input type="text" name="module_search_engine_options[manufacturers][{{ manufacturer_row }}][name]" value="{{ manufacturer['name'] }}" placeholder="{{ entry_manufacturer }}" class="form-control" />
+                        <input type="hidden" name="module_search_engine_options[manufacturers][{{ manufacturer_row }}][manufacturer_id]" value="{{ manufacturer['manufacturer_id'] }}" />
+                      </td>
+                      <td class="text-left">
+                      <input type="text" name="module_search_engine_options[manufacturers][{{ manufacturer_row }}][coefficient]" value="{{ manufacturer['coefficient'] }}" placeholder="{{ entry_coefficient }}" class="form-control" />
+                      </td>
+                      <td class="text-left"><button type="button" onclick="$('#manufacturer-row{{ manufacturer_row }}').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>
+                    </tr>
+                    {% set manufacturer_row = manufacturer_row + 1 %} 
+                    {% endfor %} 
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <td colspan="2"></td>
+                      <td class="text-left"><button type="button" onclick="addManufacturer();" data-toggle="tooltip" title="{{ button_manufacturer_add }}" class="btn btn-primary"><i class="fa fa-plus-circle"></i></button></td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>     
+              
+              {{ help_tab_categories }} 
+
+            </div>
+
+            <div id="tab-parts-of-speech" class="tab-pane">
+              <div class="table-responsive">
+                <table id="parts-of-speech" class="table table-striped table-bordered table-hover">
+                  <thead>
+                    <tr>
+                      <td class="text-left">{{ entry_part_of_speech }}</td>
+                      <td class="text-left">{{ entry_coefficient }}</td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for part_of_speech in parts_of_speech %} 
+                    <tr>
+                      <td class="text-left" style="width: 40%;">
+                        {{ attribute(_context, 'text_' ~ part_of_speech) is defined ? attribute(_context, 'text_' ~ part_of_speech) : part_of_speech }}
+                      </td>
+                      <td class="text-left">
+                        <input type="text" name="module_search_engine_options[parts_of_speech][{{ part_of_speech }}]" value="{{ options['parts_of_speech'][part_of_speech] is defined ? options['parts_of_speech'][part_of_speech] : 0 }}" placeholder="{{ entry_coefficient }}" class="form-control" />
+                      </td>
+                    </tr>
+                    {% endfor %}     
+                  </tbody>
+                </table>
+              </div>  
+
+              {{ help_tab_parts_of_speech }} 
+
+            </div>
+
+            <div id="tab-synonyms" class="tab-pane">
+
+              <ul id="synonyms-languages" class="nav nav-tabs">
+								{% for language in languages %} 
+	                <li><a href="#synonyms-language{{ language['language_id'] }}" data-toggle="tab"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language['name'] }}" /> {{ language['name'] }}</a></li>
+								{% endfor %} 
+              </ul>
+
+              <div class="tab-content">                            
+								{% for language in languages %} 
+	                <div id="synonyms-language{{ language['language_id'] }}" class="tab-pane">
+
+	                  <div class="form-group">
+	                    <label class="col-sm-2 control-label" for="synonyms{{ language['language_id'] }}">
+	                      <span data-toggle="tooltip" title="" data-original-title="{{ help_tab_synonyms }}">{{ entry_synonyms }}</span>
+	                    </label>                    
+	                    <div class="col-sm-10">
+	                      <textarea name="module_search_engine_options[synonyms][{{ language['language_id'] }}]" rows="5" id="synonyms{{ language['language_id'] }}" class="form-control">{{ options['synonyms'][language['language_id']] is defined ? options['synonyms'][language['language_id']] : '' }}</textarea>
+	                    </div>
+	                  </div>
+
+	                </div>
+								{% endfor %} 
+              </div>
+
+            </div>
+
+            <div id="tab-exclude-words" class="tab-pane">
+
+              <ul id="exclude-words-languages" class="nav nav-tabs">
+								{% for language in languages %} 
+	                <li><a href="#exclude-words-language{{ language['language_id'] }}" data-toggle="tab"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language['name'] }}" /> {{ language['name'] }}</a></li>
+								{% endfor %} 
+              </ul>
+
+              <div class="tab-content">                            
+								{% for language in languages %} 
+	                <div id="exclude-words-language{{ language['language_id'] }}" class="tab-pane">
+
+	                  <div class="form-group">
+	                    <label class="col-sm-2 control-label" for="exclude-words{{ language['language_id'] }}">
+	                      <span data-toggle="tooltip" title="" data-original-title="{{ help_tab_exclude_words }}">{{ entry_exclude_words }}</span>
+	                    </label>                    
+	                    <div class="col-sm-10">
+	                      <textarea name="module_search_engine_options[exclude_words][{{ language['language_id'] }}]" rows="5" id="exclude-words{{ language['language_id'] }}" class="form-control">{{ options['exclude_words'][language['language_id']] is defined ? options['exclude_words'][language['language_id']] : '' }}</textarea>
+	                    </div>
+	                  </div>
+
+	                </div>
+								{% endfor %} 
+              </div>
+
+            </div>
+
+            <div id="tab-replace-words" class="tab-pane">
+
+              <ul id="replace-words-languages" class="nav nav-tabs">
+								{% for language in languages %} 
+	                <li><a href="#replace-words-language{{ language['language_id'] }}" data-toggle="tab"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language['name'] }}" /> {{ language['name'] }}</a></li>
+								{% endfor %} 
+              </ul>
+
+              <div class="tab-content">                            
+								{% for language in languages %} 
+	                <div id="replace-words-language{{ language['language_id'] }}" class="tab-pane">
+
+	                  <div class="form-group">
+	                    <label class="col-sm-2 control-label" for="replace-words{{ language['language_id'] }}">
+	                      <span data-toggle="tooltip" title="" data-original-title="{{ help_tab_replace_words }}">{{ entry_replace_words }}</span>
+	                    </label>                    
+	                    <div class="col-sm-10">
+	                      <textarea name="module_search_engine_options[replace_words][{{ language['language_id'] }}]" rows="5" id="replace-words{{ language['language_id'] }}" class="form-control">{{ options['replace_words'][language['language_id']] is defined ? options['replace_words'][language['language_id']] : '' }}</textarea>
+	                    </div>
+	                  </div>
+
+	                </div>
+								{% endfor %} 
+              </div>
+
+            </div>
+
+            <div id="tab-support" class="tab-pane">
+							{{ help_support }} 
+            </div>
+
+					</div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div id="copyright">author sv2109</div>
+
+</div>
+
+<script type="text/javascript"><!--
+	$('#tab-replace-words .nav-tabs a:first').tab('show');
+	$('#tab-exclude-words .nav-tabs a:first').tab('show');
+  $('#tab-synonyms .nav-tabs a:first').tab('show');
+	//--></script>	
+<script type="text/javascript"><!--
+var fields_row = {{ fields_row }};
+
+function addField() {
+	fields_row++;
+
+	html  = '';
+	html += '<tr id="fields-row' + fields_row + '">';
+	html += '  <td class="text-left">';
+	html += '    <input type="text" name="module_search_engine_options[new_fields][' + fields_row + '][field]" value="" class="form-control"/>';
+	html += '  </td>';
+	html += '  <td class="text-left">';
+	html += '    <input type="text" name="module_search_engine_options[new_fields][' + fields_row + '][join]" value="" class="form-control"/>';
+	html += '  </td>';
+	html += '  <td class="text-left">';
+	html += '    <input type="text" name="module_search_engine_options[new_fields][' + fields_row + '][where]" value="" class="form-control"/>';
+	html += '  </td>';
+	html += '  <td class="left">';
+	html += '    <a onclick="$(\'#fields-row' + fields_row + '\').remove()" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></a>';
+	html += '  </td>';
+	html += '</tr>';
+
+	$('#tab-add-fields table tbody').append(html);
+}
+//--></script>
+<script type="text/javascript"><!--
+
+var stopped = 0;
+	
+$('#button-stop').on('click', function() {
+  if (!stopped) {
+	  stop();
+	} else {
+	  $('.form-group-progress').addClass('hide');
+	}
+});
+
+function stop() {
+  
+  stopped = 1;
+	
+	$('#button-add').prop('disabled', false);
+	$('#button-add').tooltip('hide');
+	
+	$.get('index.php?route=extension/module/search_engine/stop&user_token={{ user_token }}');	
+	
+	$.get('index.php?route=extension/module/search_engine/getTotals&user_token={{ user_token }}', function( data ) {
+	  $('.total-indexed').html(data.total_indexed);
+		$('.total-not-indexed').html(data.total_not_indexed);
+  }, "json" );
+}
+
+$('#button-add').on('click', function() {
+	
+	$('#button-add').tooltip('hide');
+	$('#button-add').prop('disabled', true);
+	
+	$('.form-group-progress').removeClass('hide');
+	
+	// Reset everything
+	stopped = 0;
+	$('.alert').remove();
+	$('#progress-bar').css('width', '0%');
+	$('#progress-bar').removeClass('progress-bar-danger progress-bar-success');
+	$('#progress-text').html('');
+
+  process();
+});
+
+function process() {
+
+		$.ajax({
+			url: 'index.php?route=extension/module/search_engine/add&user_token={{ user_token }}',
+			type: 'post',
+			dataType: 'json',
+			success: function(json) {
+
+				if (json['error']) {
+					$('#progress-bar').addClass('progress-bar-danger');
+					$('#progress-text').html('<div class="text-danger">' + json['error'] + '</div>');
+					stop();
+				}
+
+				if (json['success']) {
+					$('#progress-bar').addClass('progress-bar-success');
+					$('#progress-text').html('<span class="text-success">' + json['success'] + '</span>');
+					stop();
+				}
+				
+				if (json['progress']) {
+					$('#progress-bar').css('width', json['progress'] + '%');
+				}
+
+				if (json['text']) {
+					$('#progress-text').html('<span class="text-info">' + json['text'] + '</span>');
+				}				
+				
+				if (!json['error'] && !json['success'] && !stopped) {
+					process();
+				}
+			},
+			error: function(xhr, ajaxOptions, thrownError) {
+				alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+			}
+		});
+	
+}
+
+//--></script>
+
+<script type="text/javascript"><!--
+  var category_row = {{ category_row }};
+
+  function addCategory() {
+    html  = '<tr id="category-row' + category_row + '">';
+    html += '  <td class="text-left" style="width: 40%;"><input type="text" name="module_search_engine_options[categories][' + category_row + '][name]" value="" placeholder="{{ entry_category }}" class="form-control" /><input type="hidden" name="module_search_engine_options[categories][' + category_row + '][category_id]" value="" /></td>';
+    html += '  <td class="text-left">';
+    html += '    <input type="text" name="module_search_engine_options[categories][' + category_row + '][coefficient]" value="" placeholder="{{ entry_coefficient }}" class="form-control" />';
+    html += '  </td>';
+    html += '  <td class="text-left"><button type="button" onclick="$(\'#category-row' + category_row + '\').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>';
+      html += '</tr>';
+
+    $('#category tbody').append(html);
+
+    categoryautocomplete(category_row);
+
+    category_row++;
+  }
+
+  function categoryautocomplete(category_row) {
+    $('input[name=\'module_search_engine_options[categories][' + category_row + '][name]\']').autocomplete({
+      'source': function(request, response) {
+        $.ajax({
+          url: 'index.php?route=catalog/category/autocomplete&user_token={{ user_token }}&filter_name=' +  encodeURIComponent(request),
+          dataType: 'json',
+          success: function(json) {
+            response($.map(json, function(item) {
+              return {
+                label: item.name,
+                value: item.category_id
+              }
+            }));
+          }
+        });
+      },
+      'select': function(item) {
+        $('input[name=\'module_search_engine_options[categories][' + category_row + '][name]\']').val(item['label']);
+        $('input[name=\'module_search_engine_options[categories][' + category_row + '][category_id]\']').val(item['value']);
+      }
+    });
+  }
+
+  $('#category tbody tr').each(function(index, element) {
+    categoryautocomplete(index);
+  });
+//--></script>
+
+<script type="text/javascript"><!--
+  var manufacturer_row = {{ manufacturer_row }};
+
+  function addManufacturer() {
+    html  = '<tr id="manufacturer-row' + manufacturer_row + '">';
+    html += '  <td class="text-left" style="width: 40%;"><input type="text" name="module_search_engine_options[manufacturers][' + manufacturer_row + '][name]" value="" placeholder="{{ entry_manufacturer }}" class="form-control" /><input type="hidden" name="module_search_engine_options[manufacturers][' + manufacturer_row + '][manufacturer_id]" value="" /></td>';
+    html += '  <td class="text-left">';
+    html += '    <input type="text" name="module_search_engine_options[manufacturers][' + manufacturer_row + '][coefficient]" value="" placeholder="{{ entry_coefficient }}" class="form-control" />';
+    html += '  </td>';
+    html += '  <td class="text-left"><button type="button" onclick="$(\'#manufacturer-row' + manufacturer_row + '\').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>';
+      html += '</tr>';
+
+    $('#manufacturer tbody').append(html);
+
+    manufacturerautocomplete(manufacturer_row);
+
+    manufacturer_row++;
+  }
+
+  function manufacturerautocomplete(manufacturer_row) {
+    $('input[name=\'module_search_engine_options[manufacturers][' + manufacturer_row + '][name]\']').autocomplete({
+      'source': function(request, response) {
+        $.ajax({
+          url: 'index.php?route=catalog/manufacturer/autocomplete&user_token={{ user_token }}&filter_name=' +  encodeURIComponent(request),
+          dataType: 'json',
+          success: function(json) {
+            response($.map(json, function(item) {
+              return {
+                label: item.name,
+                value: item.manufacturer_id
+              }
+            }));
+          }
+        });
+      },
+      'select': function(item) {
+        $('input[name=\'module_search_engine_options[manufacturers][' + manufacturer_row + '][name]\']').val(item['label']);
+        $('input[name=\'module_search_engine_options[manufacturers][' + manufacturer_row + '][manufacturer_id]\']').val(item['value']);
+      }
+    });
+  }
+
+  $('#manufacturer tbody tr').each(function(index, element) {
+    manufacturerautocomplete(index);
+  });
+//--></script>
+
+<style type="text/css">
+  .sorted_table tbody tr {
+    cursor: move;
+  }
+</style>
+          
+<script type="text/javascript"><!--                        
+  $(document).ready(function () {                        
+    // Sortable rows
+    $('.sorted_table tbody').sortable({
+      cursor: 'move',
+      update: function (event, ui) {
+        ui.item.parent().find('tr').each(function (i, row) {
+          $(row).find('input[name*="[sort]"]').val(i);
+        });
+      }
+    });
+  });  
+//--></script>
+
+<style>
+select option {
+  background-color: #fff;
+}
+select.on, option.on, input.on {
+  background-color: #ecf3e6 !important;
+}
+select.off, option.off, input.off {
+  background-color: #fcefe6 !important;
+}
+</style>
+<script type="text/javascript"><!--                        
+  function style_select(select) {
+    $(select).removeClass('on off');
+    var selected_value = $(select).val()    
+    var selectedClass = selected_value == 0 ? 'off' : selected_value == 1 ? 'on' : '';
+    selectedClass && $(select).addClass(selectedClass)
+
+    $(select).find('option').each(function(){
+      var optionClass = $(this).val() == 0 ? 'off' : $(this).val() == 1 ? 'on' : '';
+      optionClass && $(this).addClass(optionClass)
+    })
+  }
+  function style_checkbox(checkbox) {
+    $(checkbox).removeClass('on off');
+    var checked = $(checkbox).is(":checked")
+    var selectedClass = checked ? 'on' : 'off';
+    selectedClass && $(checkbox).addClass(selectedClass)  
+  }
+
+  $(document).ready(function () {                        
+    $('select').each(function(){
+      style_select(this);
+    })
+    $('select').change(function(){
+      style_select(this);
+    })
+    $('input[type="checkbox"]').each(function(){
+      style_checkbox(this);
+    })
+    $('input[type="checkbox"]').change(function(){
+      style_checkbox(this);
+    })
+  });  
+//--></script>
+
+
+{{ footer }}

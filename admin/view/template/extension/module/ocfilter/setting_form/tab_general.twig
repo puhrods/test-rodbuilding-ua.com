@@ -1,0 +1,158 @@
+<div class="form-group">
+  <label class="col-sm-3 control-label">{{ entry_license }}</label>
+  <div class="col-sm-5">
+    <input type="text" name="license" value="{{ license }}" class="form-control" />
+    {% if error_license %}
+    <p class="text-danger">{{ error_license }}</p>
+    {% endif %}    
+    <p class="help-block">{{ help_license }}</p>
+  </div>
+</div>
+
+<div class="form-group">
+  <label class="col-sm-3 control-label">{{ entry_status }}</label> 
+  <div class="col-sm-9">
+    {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: status, name: 'status', text_yes: text_enabled, text_no: text_disabled }) }}
+    
+    <p class="help-block">{{ help_status }}</p>
+  </div>
+</div>
+
+<div class="form-group form-group-popover">
+  <label class="col-sm-3 control-label">{{ entry_category_visibility }}</label>
+  <div class="col-sm-9">
+    <div class="btn-group-vertical" data-toggle="buttons">
+      {% if category_visibility == 'default' %}
+      <label class="btn btn-default active" data-content="{{ help_category_visibility_default }}">
+        <input type="radio" name="category_visibility" value="default" checked="checked" /> {{ text_category_visibility_default }}
+      </label>
+      {% else %}
+      <label class="btn btn-default" data-content="{{ help_category_visibility_default }}">
+        <input type="radio" name="category_visibility" value="default" /> {{ text_category_visibility_default }}
+      </label>
+      {% endif %}
+      {% if category_visibility == 'parent' %}
+      <label class="btn btn-default active" data-content="{{ help_category_visibility_parent }}">
+        <input type="radio" name="category_visibility" value="parent" checked="checked" /> {{ text_category_visibility_parent }}
+      </label>
+      {% else %}
+      <label class="btn btn-default" data-content="{{ help_category_visibility_parent }}">
+        <input type="radio" name="category_visibility" value="parent" /> {{ text_category_visibility_parent }}
+      </label>
+      {% endif %}
+      {% if category_visibility == 'last_level' %}
+      <label class="btn btn-default active" data-content="{{ help_category_visibility_last_level }}" new-feature>
+        <input type="radio" name="category_visibility" value="last_level" checked="checked" /> {{ text_category_visibility_last_level }}
+      </label>
+      {% else %}
+      <label class="btn btn-default" data-content="{{ help_category_visibility_last_level }}" new-feature>
+        <input type="radio" name="category_visibility" value="last_level" /> {{ text_category_visibility_last_level }}
+      </label>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="form-group">
+  <label class="col-sm-3 control-label" new-feature>{{ entry_hide_categories }}</label>
+  <div class="col-sm-9">    
+    {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: hide_categories, name: 'hide_categories' }) }}
+  </div>
+</div>
+
+<div class="form-group">
+  <label class="col-sm-3 control-label" new-feature>{{ entry_only_instock }}</label>
+  <div class="col-sm-9">
+    {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: only_instock, name: 'only_instock' }) }}
+
+    <p class="help-block">{{ help_only_instock }}</p>
+  </div>
+</div>
+
+<div class="form-group">
+  <label class="col-sm-3 control-label">{{ entry_search_button }}</label>
+  <div class="col-sm-9">    
+    {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: search_button, name: 'search_button' }) }}
+    
+    <p class="help-block">{{ help_search_button }}</p>
+  </div>
+</div>
+
+<div class="form-group">
+  <label class="col-sm-3 control-label" new-feature>{{ entry_cache }}</label>
+  <div class="col-sm-9">
+    <div class="btn-group" data-toggle="buttons">
+      {% if cache %}
+      <label class="btn btn-default active" data-trigger="onclick" onclick="$('#cache-store').collapse('show')">
+        <input type="radio" name="cache" value="1" checked="checked" /> {{ text_enabled }}
+      </label>
+      <label class="btn btn-default" onclick="$('#cache-store').collapse('hide')">
+        <input type="radio" name="cache" value="0" /> {{ text_disabled }}
+      </label>
+      {% else %}
+      <label class="btn btn-default" onclick="$('#cache-store').collapse('show')">
+        <input type="radio" name="cache" value="1" /> {{ text_enabled }}
+      </label>
+      <label class="btn btn-default active" data-trigger="onclick" onclick="$('#cache-store').collapse('hide')">
+        <input type="radio" name="cache" value="0" checked="checked" /> {{ text_disabled }}
+      </label>
+      {% endif %}
+    </div>
+    <p class="help-block">{{ help_cache }}</p>
+  </div>
+</div>
+
+<div class="collapse" id="cache-store">
+  <div class="form-group">
+    <label class="col-sm-3 control-label" for="input-cache-store">{{ entry_cache_store }}</label>
+    <div class="col-sm-4 col-md-3 col-lg-2">
+      <select name="cache_store" id="input-cache-store" class="form-control">
+        {% if cache_store == 'db' %}
+        <option value="db" selected="selected">{{ text_cache_db }}</option>
+        {% else %}
+        <option value="db">{{ text_cache_db }}</option>
+        {% endif %}
+        {% if cache_store == 'system' %}
+        <option value="system" selected="selected">{{ text_cache_system }}</option>
+        {% else %}
+        <option value="system">{{ text_cache_system }}</option>
+        {% endif %}       
+      </select>
+    </div>
+  </div>
+</div>
+
+<div class="form-group">
+  <label class="col-sm-3 control-label beta-feature">{{ entry_debug }}</label>
+  <div class="col-sm-9">
+    {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: debug, name: 'debug' }) }}
+    
+    <p class="help-block">{{ help_debug }}</p>
+  </div>
+</div>
+
+<h3 class="jumbotron">{{ nav_general_compatibility }}</h3>
+
+<div class="row">
+  <div class="col-sm-offset-3 col-sm-9">
+    <h4>Hyper Multi Product Models</h4>
+  </div>
+</div>
+
+<div class="form-group {{ use_hpmodel ? '' : 'disabled' }}">
+  <label class="col-sm-3 control-label" new-feature>{{ entry_module_hpm_group_products }}</label>
+  <div class="col-sm-9">    
+    {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: module_hpm_group_products, name: 'module_hpm_group_products' }) }}
+    
+    <p class="help-block">{{ help_module_hpm_group_products }}</p>
+  </div>
+</div>
+
+<div class="form-group {{ use_hpmodel ? '' : 'disabled' }}">
+  <label class="col-sm-3 control-label" new-feature>{{ entry_module_hpm_group_counter }}</label>
+  <div class="col-sm-9">
+    {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: module_hpm_group_counter, name: 'module_hpm_group_counter' }) }}
+    
+    <p class="help-block">{{ help_module_hpm_group_counter }}</p>
+  </div>
+</div>

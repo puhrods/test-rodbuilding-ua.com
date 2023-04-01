@@ -1,0 +1,84 @@
+{% if position == 'column_left' or position == 'column_right' %}
+<div  class="us-module-column-box">
+	<div class="panel-heading">{{ heading_title }}</div>
+	<div id="us-column-reviews-{{ module }}" class="d-flex us-module-column-box-content">
+		{% for review in reviews %}
+		<div class="us-module-column-item us-item">
+			<div class="us-reviews-block h-100 d-flex flex-column">
+				<div class="us-reviews-block-top d-flex align-items-center">
+					<div class="us-reviews-block-top-icon">
+						<img src="catalog/view/theme/oct_ultrastore/img/sprite.svg#include--user-icon" alt="{{ review.author }}" width="50" height="50" />
+					</div>
+					<div class="us-reviews-block-top-info">
+						<div class="us-reviews-block-top-info-author">{{ review.author }}</div>
+						<div class="us-reviews-block-top-info-date">{{ review.date }}</div>
+					</div>
+				</div>
+				<a href="{{ review.href }}" class="us-reviews-block-photo">
+					<img src="{{ review.thumb }}"{% if oct_lazyload %} data-srcset="{{ review.thumb }} 100w" srcset="{{ oct_lazy_image }} 100w" sizes="100vw"{% endif %} class="us-reviews-block-photo-img{% if oct_lazyload %} oct-lazy{% endif %}" alt="{{ review.name }}" width="{{ review.width }}" height="{{ review.height }}" />
+				</a>
+				<div class="us-reviews-block-rating us-module-rating-stars">
+					{% if review.rating %}
+					{% for i in 1..5 %}
+					{% if review.rating < i %}
+					<span class="us-module-rating-star"></span>
+					{% else %}
+					<span class="us-module-rating-star us-module-rating-star-is"></span>
+					{% endif %}
+					{% endfor %}
+					{% endif %}
+				</div>
+				<a href="{{ review.href }}" class="us-reviews-block-title" title="{{ review.name }}">{{ review.name }}</a>
+				<div class="us-reviews-block-text">{{ review.text }}</div>
+			</div>
+		</div>
+		{% endfor %}
+	</div>
+	<button type="button" id="us-reviews-{{ module }}-button-prev" class="us-column-module-btn us-column-module-prev"><i class="fas fa-chevron-left"></i></button>
+	<button type="button" id="us-reviews-{{ module }}-button-next" class="us-column-module-btn us-column-module-next"><i class="fas fa-chevron-right"></i></button>
+	<script>
+		octShowColumnProducts("us-reviews-{{ module }}-button-prev", "us-reviews-{{ module }}-button-next", "us-column-reviews-{{ module }}");
+	</script>
+</div>
+{% else %}
+<div class="row row-padding-top">
+	<div class="col-lg-12">
+		<div class="us-main-shop-title">
+			{{ heading_title }}
+		</div>
+	</div>
+</div>
+<div id="us-product-reviews_{{ module }}" class="row us-product-reviews-row">
+	{% for review in reviews %}
+	<div class="col-sm-12 col-md-6 col-lg-4 col-xl-3 col-margin-bottom us-item">
+		<div class="us-reviews-block h-100 d-flex flex-column">
+			<div class="us-reviews-block-top d-flex align-items-center">
+				<div class="us-reviews-block-top-icon">
+					<img src="catalog/view/theme/oct_ultrastore/img/sprite.svg#include--user-icon" alt="{{ review.author }}" width="50" height="50" />
+				</div>
+				<div class="us-reviews-block-top-info">
+					<div class="us-reviews-block-top-info-author">{{ review.author }}</div>
+					<div class="us-reviews-block-top-info-date">{{ review.date }}</div>
+				</div>
+			</div>
+			<a href="{{ review.href }}" class="us-reviews-block-photo">
+				<img src="{{ review.thumb }}"{% if oct_lazyload %} data-srcset="{{ review.thumb }} 100w" srcset="{{ oct_lazy_image }} 100w" sizes="100vw"{% endif %} class="us-reviews-block-photo-img{% if oct_lazyload %} oct-lazy{% endif %}" alt="{{ review.name }}" width="{{ review.width }}" height="{{ review.height }}" />
+			</a>
+			<div class="us-reviews-block-rating us-module-rating-stars">
+				{% if review.rating %}
+				{% for i in 1..5 %}
+				{% if review.rating < i %}
+				<span class="us-module-rating-star"></span>
+				{% else %}
+				<span class="us-module-rating-star us-module-rating-star-is"></span>
+				{% endif %}
+				{% endfor %}
+				{% endif %}
+			</div>
+			<a href="{{ review.href }}" class="us-reviews-block-title" title="{{ review.name }}">{{ review.name }}</a>
+			<div class="us-reviews-block-text">{{ review.text }}</div>
+		</div>
+	</div>
+	{% endfor %}
+</div>
+{% endif %}

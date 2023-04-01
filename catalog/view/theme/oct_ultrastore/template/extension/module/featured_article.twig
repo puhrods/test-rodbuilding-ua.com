@@ -1,0 +1,44 @@
+{% if articles %}
+<div class="row row-padding-top">
+	<div class="col-lg-12">
+		<div class="us-main-shop-title">{{ heading_title }}</div>
+	</div>
+</div>
+<div class="row">
+	 {% for article in articles %}
+	<div class="ocs-article-box col-sm-12 col-md-6 col-lg-4 col-xl-3">
+	    <div class="us-module-item ocs-article-item d-flex flex-column">
+		    <div class="us-module-img">
+				<a href="{{ article.href }}">
+				<img src="{{ article.thumb }}" alt="{{ article.name }}" title="{{ article.name }}" class="img-responsive" />
+				</a>
+			</div>
+			<div class="us-module-caption d-flex flex-column">
+				<div class="us-module-title flex-grow-1">
+					<a href="{{ article.href }}">{{ article.name }}</a>
+				</div>
+				{% if article.rating %}
+				<div class="us-module-rating d-flex align-items-center justify-content-center">
+					<div class="us-module-rating-stars d-flex align-items-center">
+						{% for i in 1..5 %}
+						{% if product.rating < i %}
+						<span class="us-module-rating-star"></span>
+						{% else %}
+						<span class="us-module-rating-star us-module-rating-star-is"></span>
+						{% endif %}
+						{% endfor %}
+					</div>
+				</div>
+		        {% endif %}
+		        <div class="us-product-list-description">{{ article.description }}</div>
+		        <div class="button-group d-flex align-items-center justify-content-around">
+			        <button class="us-module-btn us-module-btn-green" type="button" onclick="location.href = ('{{ article.href }}');"><i class="fas fa-share"></i> <span class="hidden-xs hidden-sm hidden-md">{{ button_more }}</span></button>
+			        <button class="us-module-btn" type="button" data-toggle="tooltip" title="{{ article.date_added }}" "><i class="far fa-clock"></i></button>
+			        <button class="us-module-btn" type="button" data-toggle="tooltip" title="{{ text_views }} {{ article.viewed }}" "><i class="far fa-eye"></i></button>
+			    </div>
+		    </div>
+		</div>
+	</div>
+	{% endfor %}
+</div>
+{% endif %}

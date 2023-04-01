@@ -1,0 +1,407 @@
+<form action="{{ add_batch }}" method="post" enctype="multipart/form-data" id="form-add">
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="form-group">
+        <label class="control-label">{{ entry_status }}</label>
+        <div>
+          {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: add_status, name: 'add_status', text_yes: text_enabled, text_no: text_disabled }) }}
+        </div>        
+      </div>                 
+
+      <div class="form-group required">
+        <label class="control-label" for="input-add-category">{{ entry_category }}</label>
+        <div>
+          <div class="input-group">
+            <input type="text" name="add_category_name" value="" placeholder="{{ add_category_name ? add_category_name : entry_category }}" id="input-add-category" class="form-control" />
+            <input type="hidden" name="add_category_id" value="{{ add_category_id }}" />                
+            <div class="input-group-addon"><i class="fa fa-bars"></i></div>
+          </div>   
+          {% if error_add_category %}
+          <div class="text-danger">{{ error_add_category }}</div>
+          {% endif %}              
+        </div>
+      </div>
+      
+      <div class="form-group required">
+        <label class="control-label" for="input-add-filter">{{ entry_filter }}</label>
+        <div>
+          <input type="text" name="add_filter_name" value="" placeholder="{{ entry_filter }}" list="filter-datalist" id="input-add-filter" class="form-control" autocomplete="off" {{ add_category_id ? '' : 'readonly' }} />
+          <div class="well well-sm bg-white m-0 p-0">
+            <div class="container-fluid">
+              <div class="form-horizontal" id="add-filter-list">
+                <div class="text-center text-muted p-4">{{ text_select_categpry }}</div>
+              </div>
+            </div>                          
+          </div> 
+          {% if error_add_filter %}
+          <div class="text-danger">{{ error_add_filter }}</div>
+          {% endif %}            
+        </div>
+      </div>                  
+      
+      <div class="form-group row">
+        <div class="col-sm-6">
+          <label class="control-label">{{ entry_display_module }}</label>
+          <div>
+            {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: add_module, name: 'add_module' }) }}
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <label class="control-label">{{ entry_display_category }}</label>
+          <div>            
+            {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: add_category, name: 'add_category' }) }}
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <div class="col-sm-6">
+          <label class="control-label">{{ entry_display_product }}</label>
+          <div>            
+            {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: add_product, name: 'add_product' }) }}
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <label class="control-label">{{ entry_display_sitemap }}</label>
+          <div>            
+            {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: add_sitemap, name: 'add_sitemap' }) }}
+          </div>
+        </div>
+      </div>  
+
+      <div class="form-group pb-0">
+        <label class="control-label text-primary cursor-pointer" data-toggle="collapse" data-target="#collapse-add-store-layout" aria-expanded="false"><u>{{ entry_store }}, {{ entry_layout }}</u> <i class="fa fa-angle-down"></i></label>
+        {% if add_page_layout|last %}
+        {% set class = 'collapse in' %}
+        {% else %}
+        {% set class = 'collapse' %}
+        {% endif %}
+        <div class="{{ class }}" id="collapse-add-store-layout">
+          <div class="well well-sm bg-white m-0" style="max-height: 150px; overflow: auto;">
+            <table class="table m-0">
+              <thead>
+                <tr>
+                  <td class="text-left">{{ entry_store }}</td>
+                  <td class="text-left">{{ entry_layout }}</td>
+                </tr>
+              </thead>
+              <tbody>                
+                {% for store in stores %}
+                <tr>
+                  <td class="text-left">
+                    {% if add_page_store[store.store_id] is defined %}
+                    <label><input type="checkbox" name="add_page_store[]" value="{{ store.store_id }}" checked="checked" /> {{ store.name }}</label>
+                    {% else %}
+                    <label><input type="checkbox" name="add_page_store[]" value="{{ store.store_id }}" /> {{ store.name }}</label>
+                    {% endif %}                    
+                  </td>
+                  <td class="text-left">
+                    <select name="add_page_layout[{{ store.store_id }}]" class="form-control">
+                      <option value=""></option>
+                      {% for layout in layouts %}
+                      {% if add_page_layout[store.store_id] is defined and add_page_layout[store.store_id] == layout.layout_id %}
+                      <option value="{{ layout.layout_id }}" selected="selected">{{ layout.name }}</option>
+                      {% else %}
+                      <option value="{{ layout.layout_id }}">{{ layout.name }}</option>
+                      {% endif %}
+                      {% endfor %}
+                    </select>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>                        
+          </div>
+        </div>
+      </div><!-- /.form-group -->              
+    </div>
+    <div class="col-sm-6">
+      <div class="bg-white p-4 mt-4">          
+        {% if multilang_keyword %}
+        <label class="control-label" data-toggle="popover" data-placement="top" data-content="{{ help_add_keyword }}">{{ entry_keyword }} <i class="fa fa-question-circle"></i></label>
+
+        {% for store in stores %}
+        <div class="form-group">
+          <label class="control-label">{{ store.name }}</label>
+          {% for language in languages %}
+          <div class="input-group">
+            <div class="input-group-addon"><img src="{{ language.image }}" title="{{ language.name }}" /></div>
+            <input type="text" name="add_keyword[{{ store.store_id }}][{{ language.language_id }}]" value="{{ add_keyword[store.store_id][language.language_id] ? add_keyword[store.store_id][language.language_id] : '' }}" placeholder="{{ entry_keyword }}" class="form-control" />
+          </div>              
+          {% if error_add_keyword[store.store_id][language.language_id] %}
+          <div class="text-danger">{{ error_add_keyword[store.store_id][language.language_id] }}</div>
+          {% endif %} 
+          {% endfor %}
+        </div> 
+        {% endfor %}
+        
+        {% else %}
+        
+        <div class="form-group">
+          <label class="control-label" for="input-add-keyword" data-toggle="popover" data-placement="top" data-content="{{ help_add_keyword }}">{{ entry_keyword }} <i class="fa fa-question-circle"></i></label>
+          <div class="">
+            <input type="text" name="add_keyword" value="{{ add_keyword }}" placeholder="{{ entry_keyword }}" id="input-add-keyword" class="form-control" />
+            {% if error_add_keyword %}
+            <div class="text-danger">{{ error_add_keyword }}</div>
+            {% endif %}                                 
+          </div>
+        </div>  
+        
+        {% endif %}
+          
+        <ul class="nav nav-tabs" id="add-language">
+          {% for language in languages %}
+          <li><a href="#tab-add-language-{{ language.language_id }}" data-toggle="tab"><img src="{{ language.image }}" title="{{ language.name }}" /> {{ language.name }}</a></li>
+          {% endfor %}
+        </ul>
+        <div class="tab-content">                      
+          {% for language in languages %}
+          <div class="tab-pane" id="tab-add-language-{{ language.language_id }}">
+            <div class="form-group">
+              <label class="control-label" for="input-add-name-{{ language.language_id }}" data-toggle="popover" data-placement="top" data-content="{{ help_name }}">{{ entry_name }} <i class="fa fa-question-circle"></i></label>
+              <input type="text" name="add_page_description[{{ language.language_id }}][name]" value="{{ add_page_description[language.language_id] ? add_page_description[language.language_id].name : '' }}" placeholder="{{ entry_name }}" id="input-add-name-{{ language.language_id }}" class="form-control" />
+              {% if error_name[language.language_id] %}
+              <div class="text-danger">{{ error_name[language.language_id] }}</div>
+              {% endif %}                            
+            </div>
+            <div class="form-group required">
+              <label class="control-label" for="input-add-heading-title-{{ language.language_id }}" data-toggle="popover" data-placement="top" data-content="{{ help_heading_title }}">{{ entry_heading_title }} <i class="fa fa-question-circle"></i></label>
+              <input type="text" name="add_page_description[{{ language.language_id }}][heading_title]" value="{{ add_page_description[language.language_id] ? add_page_description[language.language_id].heading_title : '' }}" placeholder="{{ entry_heading_title }}" id="input-add-heading-title-{{ language.language_id }}" class="form-control" />
+              {% if error_heading_title[language.language_id] %}
+              <div class="text-danger">{{ error_heading_title[language.language_id] }}</div>
+              {% endif %}                               
+            </div>
+            <div class="form-group required">
+              <label class="control-label" for="input-add-meta-title-{{ language.language_id }}" data-toggle="popover" data-placement="top" data-content="{{ help_meta_title }}">{{ entry_meta_title }} <i class="fa fa-question-circle"></i></label>
+              <input type="text" name="add_page_description[{{ language.language_id }}][meta_title]" value="{{ add_page_description[language.language_id] ? add_page_description[language.language_id].meta_title : '' }}" placeholder="{{ entry_meta_title }}" id="input-add-meta-title-{{ language.language_id }}" class="form-control" />                          
+              {% if error_meta_title[language.language_id] %}
+              <div class="text-danger">{{ error_meta_title[language.language_id] }}</div>
+              {% endif %}                               
+            </div>
+            <div class="form-group">
+              <label class="control-label text-primary cursor-pointer" data-toggle="collapse" data-target="#collapse-add-description-top-{{ language.language_id }}" aria-expanded="false"><u>{{ entry_description_top }}</u> <i class="fa fa-angle-down"></i></label>
+              {% if add_page_description[language.language_id].description_top %}
+              {% set class = 'collapse in' %}
+              {% else %}
+              {% set class = 'collapse' %}
+              {% endif %}              
+              <div class="{{ class }}" id="collapse-add-description-top-{{ language.language_id }}">
+                <textarea name="add_page_description[{{ language.language_id }}][description_top]" placeholder="{{ entry_description_top }}" id="input-add-description-top-{{ language.language_id }}" class="form-control">{{ add_page_description[language.language_id] ? add_page_description[language.language_id].description_top : '' }}</textarea>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="control-label text-primary cursor-pointer" data-toggle="collapse" data-target="#collapse-add-description-bottom-{{ language.language_id }}" aria-expanded="false"><u>{{ entry_description_bottom }}</u> <i class="fa fa-angle-down"></i></label>
+              {% if add_page_description[language.language_id].description_bottom %}
+              {% set class = 'collapse in' %}
+              {% else %}
+              {% set class = 'collapse' %}
+              {% endif %}              
+              <div class="{{ class }}" id="collapse-add-description-bottom-{{ language.language_id }}">
+                <textarea name="add_page_description[{{ language.language_id }}][description_bottom]" placeholder="{{ entry_description_bottom }}" id="input-add-description-bottom-{{ language.language_id }}" class="form-control">{{ add_page_description[language.language_id] ? add_page_description[language.language_id].description_bottom : '' }}</textarea>
+              </div>
+            </div>                  
+            <div class="form-group">
+              <label class="control-label text-primary cursor-pointer" for="input-add-meta-description-{{ language.language_id }}" data-toggle="collapse" data-target="#collapse-add-meta-description-{{ language.language_id }}" aria-expanded="false"><u>{{ entry_meta_description }}</u> <i class="fa fa-angle-down"></i></label>
+              {% if add_page_description[language.language_id].meta_description %}
+              {% set class = 'collapse in' %}
+              {% else %}
+              {% set class = 'collapse' %}
+              {% endif %}              
+              <div class="{{ class }}" id="collapse-add-meta-description-{{ language.language_id }}">
+                <textarea name="add_page_description[{{ language.language_id }}][meta_description]" rows="2" placeholder="{{ entry_meta_description }}" id="input-add-meta-description-{{ language.language_id }}" class="form-control">{{ add_page_description[language.language_id] ? add_page_description[language.language_id].meta_description : '' }}</textarea>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="control-label text-primary cursor-pointer" for="input-add-meta-keyword-{{ language.language_id }}" data-toggle="collapse" data-target="#collapse-add-meta-keyword-{{ language.language_id }}" aria-expanded="false"><u>{{ entry_meta_keyword }}</u> <i class="fa fa-angle-down"></i></label>
+              {% if add_page_description[language.language_id].meta_keyword %}
+              {% set class = 'collapse in' %}
+              {% else %}
+              {% set class = 'collapse' %}
+              {% endif %}              
+              <div class="{{ class }}" id="collapse-add-meta-keyword-{{ language.language_id }}">
+                <textarea name="add_page_description[{{ language.language_id }}][meta_keyword]" rows="2" placeholder="{{ entry_meta_keyword }}" id="input-add-meta-keyword-{{ language.language_id }}" class="form-control">{{ add_page_description[language.language_id] ? add_page_description[language.language_id].meta_keyword : '' }}</textarea>
+              </div>
+            </div>                  
+          </div>             
+          {% endfor %}  
+      
+          <div class="form-group pb-0">
+            <label class="control-label">{{ text_mask_vars }}</label>
+            <div>
+              <ul class="list-unstyled mb-0" id="page-mask-vars-list">
+                <li class="text-muted">{{ text_info_mask_filter_select }}</li>
+              </ul>                       
+            </div>
+          </div>                        
+        </div><!-- /.tab-content -->                    
+      </div>
+    </div>                  
+  </div><!-- /.row -->  
+  <hr />
+  <div class="row">
+    <div class="col-sm-offset-6 col-sm-6">
+      <button type="submit" class="btn btn-primary" data-loading-text="{{ text_loading }}" onclick="$(this).button('loading');">{{ button_add_pages }}</button>
+    </div>                
+  </div>  
+</form>
+
+<script>
+ocfDOMReady(function() {
+$(function() {  
+  function initForm() {
+    $('#add-language a:first').tab('show');
+    
+    var editorOptions = ocfilter.getSummernoteOptions();
+    
+    $('textarea[name*="[description_"]').each(function() {
+      editorOptions.placeholder = $(this).attr('placeholder');
+      editorOptions.height = 140;
+      
+      $(this).summernote(editorOptions);
+    });
+
+    $('input[name="add_category_name"]').autocomplete({
+      'source': function(request, response) {
+        var $this = $(this);
+        
+        $this.parent().find('.input-group-addon').find('i').attr('class', 'fa fa-refresh fa-spin');
+        
+        $.ajax({
+          url: ocfilter.link('catalog/category/autocomplete', { 'filter_name': request }),
+          dataType: 'json',
+          success: function(json) {                 
+            response($.map(json, function(item) {
+              return {
+                label: item.name,
+                value: item.category_id
+              }
+            }));
+            
+            $this.parent().find('.input-group-addon').find('i').attr('class', 'fa fa-bars');
+          }
+        });
+      },
+      'select': function(item) {
+        $(this).val('').attr('placeholder', item.label);
+        
+        $('input[name="add_category_id"]').val(item.value).trigger('change');
+      }
+    });  
+         
+    // Filter values relation form container
+    $('body').append('<div style="display: none; position: absolute; top: -99999px; left: -99999px;" id="filter-relation-content"></div>');                 
+      
+    var buildMaskOptions = {
+      container: '#page-mask-vars-list',
+      relationContainer: '#add-filter-list',
+      textDefault: '{{ text_info_mask_filter }}'
+    };     
+     
+    // Get filters relation form     
+    var relationFormOptions = {
+      page_id: 0,
+      category_id: 0,    
+      ignore_slide: true,
+      allow_group: true,
+      container: '#filter-relation-content',
+      eventContainer: '#add-filter-list',
+      selected: JSON.parse('{{ add_ocfilter_filter|json_encode() }}'),
+      
+      onLoad: function() {        
+        $('#filter-datalist').remove();        
+        
+        var html = '<datalist id="filter-datalist">';
+        
+        $('#filter-relation-content .form-group').each(function() {
+          html += '<option value="' + $(this).find('.control-label').text() + '" data-key="' + $(this).attr('data-ocfilter-filter-key') +'">';
+        });
+        
+        html += '</datalist>';
+               
+        $('body').append(html);
+        
+        $('#add-filter-list').html('<div class="text-center text-muted p-4 text-select-filter">{{ text_select_filter|e('js') }}</div>');
+        
+        $('input[name="add_filter_name"]').prop('readonly', false);
+        
+        // Add selected
+        $('#filter-relation-content .ocf-form-group-selected').each(function() {
+          addFilter($(this).attr('data-ocfilter-filter-key'));
+        });
+        
+        ocfilter.buldMaskVarsList(buildMaskOptions);
+      },
+      
+      onSelect: function() {
+        ocfilter.buldMaskVarsList(buildMaskOptions);
+      }
+    };
+      
+    function addFilter(filter_key) {
+      var filterSelector = '[data-ocfilter-filter-key="' + filter_key + '"]', $filterNewItem;
+        
+      $('#add-filter-list').find('.text-select-filter').remove();
+      
+      $('#add-filter-list').find(filterSelector).remove();
+    
+      $('#add-filter-list').prepend($(filterSelector).get(0).outerHTML);
+      
+      $filterNewItem = $('#add-filter-list').find(filterSelector);
+      
+      if ($filterNewItem.hasClass('ocf-form-group-slider')) {
+        $filterNewItem.find('input[name^="ocfilter_filter"][value="0"]').closest('[class^="col-"]').remove();
+        $filterNewItem.find('.input-group').replaceWith('<p class="form-control-static">{{ text_slider_not_available|e('js') }}</p>');
+      }
+      
+      $filterNewItem.find('.control-label').prepend('<i class="fa fa-times-circle text-danger cursor-pointer pull-left mt-02 remove-relation-filter"></i>');     
+
+      $('#filter-datalist').find('option[data-key="' + filter_key + '"]').remove();         
+    }      
+      
+    $('input[name="add_category_id"]').on('change', function() {         
+      ocfilter.getRelationForm($.extend({}, relationFormOptions, { category_id: this.value }));
+    }).filter(':not([value=""])').trigger('change');
+    
+    // Filters Selectbox
+    $('input[name="add_filter_name"]').on('input', function(e) {
+      var keyword = $.trim($(this).val());
+
+      if (!e.originalEvent.inputType) {
+        $(this).val('');
+      }    
+
+      var $option = $('#filter-datalist').find('option').filter(function() {
+        return this.value.toLowerCase() === keyword.toLowerCase();
+      });
+
+      if ($option.length) {
+        addFilter($option.attr('data-key'));       
+
+        ocfilter.buldMaskVarsList(buildMaskOptions);        
+      }
+    });
+    
+    $('#add-filter-list').on('change', 'input[name^="ocfilter_filter"]', function() {
+      ocfilter.buldMaskVarsList(buildMaskOptions);
+    }).on('click', '.remove-relation-filter', function() {
+      var $formGroup = $(this).parents('.form-group:first');
+      
+      $('#filter-datalist').prepend('<option value="' + $.trim($formGroup.find('.control-label').text()) + '" data-key="' + $formGroup.attr('data-ocfilter-filter-key') + '">');
+      
+      $formGroup.remove();
+      
+      if ($('#add-filter-list').find('[data-ocfilter-filter-key]').length < 1) {
+        $('#add-filter-list').html('<div class="text-center text-muted p-4 text-select-filter">{{ text_select_filter|e('js') }}</div>');
+      }
+      
+      ocfilter.buldMaskVarsList(buildMaskOptions);
+    });    
+  }
+
+  if ($('#collapse-add').hasClass('in')) {
+    initForm();
+  } else {
+    $('#collapse-add').one('show.bs.collapse', initForm);
+  } 
+});
+}); // DOM Ready
+</script> 

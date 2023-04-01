@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+	<code>oct_feedback</code>
+	<name>Octemplates - Feedback</name>
+	<version>1.0.0</version>
+	<author>Octemplates</author>
+	<link>https://octemplates.net/</link>
+	<file path="catalog/controller/common/footer.php">
+    	<operation error="skip">
+			<search><![CDATA[$this->load->language('common/footer');]]></search>
+			<add position="after"><![CDATA[
+			if ($this->config->get('theme_oct_ultrastore_feedback_status')) {
+				$data['oct_feedback_data'] = $this->config->get('theme_oct_ultrastore_feedback_data');
+				$data['oct_popup_call_phone_status'] = $this->config->get('oct_popup_call_phone_status');
+			}
+			]]></add>
+    	</operation>
+	</file>
+</modification>

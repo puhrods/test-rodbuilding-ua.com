@@ -1,0 +1,103 @@
+
+<style>
+h1
+{    
+	font-family: "Trebuchet MS","Arial";
+	color: #0099FF;
+    font-size: 24px;
+	padding-left: 5px;
+}
+
+p
+{
+	font-family: "Trebuchet MS","Arial";
+	color: #999999;
+	padding-left: 5px;
+}
+
+td
+{
+	font-family: "Trebuchet MS","Arial";
+	color: #000;
+	padding: 5px;
+}
+
+input[type=submit]
+{
+	  background-color: #F0F0F0; 
+    background-repeat: repeat-x;
+    border: 1px solid #C4C4C4;
+    color: #838383;
+    font-family: "Arial";
+    font-size: 18px;
+    font-weight: bold;
+    padding: 5px;
+}
+
+input[type=text]
+{
+	border: 1px #ccc solid;
+	width: 160px;
+}
+
+
+input[type=submit]:hover
+{
+	background-color: #F4FAFD; 
+    border: 1px solid #D3ECFD;
+    color: #2E9CD8;
+}
+
+.err
+{
+	color: red;
+	font-family: "Trebuchet MS","Arial";
+	font-weight: bold;
+	padding-left: 5px;
+}
+
+</style>
+<h1>{{ confirmform_header }}</h1>
+<p>{{ confirmform_message }}</p>
+<form action="{{ action }}" method="POST" id="socnetauth2_frame_confirmation"
+ onsubmit="return socnetauthFrameConfirmation();">
+{% for key,val in data %}
+	<input type="hidden" name="data[{{ key }}]" value='{{ val }}'>
+{% endfor %}
+
+<table>
+<tr>
+	<td>{{ confirmform_entry_code }}*</td>
+	<td><input type="text" name="code" value="">{% if error_code %}<span class="err">{{ error_code }}</span>{% endif %}</td>
+</tr>
+<tr>
+	<td width=80></td>
+	{% if is_noiframe %} 
+		<td><input type="button" onclick="socnetauthFrameConfirmation();" value="{{ confirmform_button }}"></td>
+	{% else %}
+		<td><input type="submit" value="{{ confirmform_button }}"></td>
+	{% endif %}
+</tr>
+</table>
+
+
+</form>
+
+<script>
+function socnetauthFrameConfirmation()
+{
+	var r = Math.random();
+	$.ajax({
+        url: $('#socnetauth2_frame_confirmation').attr("action")+'&r='+r,
+        type: 'post',
+        data: $('#socnetauth2_frame_confirmation input[type=\'text\'], #socnetauth2_frame_confirmation input[type=\'date\'], #socnetauth2_frame_confirmation input[type=\'datetime-local\'], #socnetauth2_frame_confirmation input[type=\'time\'], #socnetauth2_frame_confirmation input[type=\'password\'], #socnetauth2_frame_confirmation input[type=\'hidden\'], #socnetauth2_frame_confirmation input[type=\'checkbox\']:checked, #socnetauth2_frame_confirmation input[type=\'radio\']:checked, #socnetauth2_frame_confirmation textarea, #socnetauth2_frame_confirmation select'),
+		dataType: 'html',
+        success: function(html) {
+			$('#socnetauth2_body').html(html);
+		},
+        error: function(xhr, ajaxOptions, thrownError) {
+            alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+        }
+    });
+}
+</script>

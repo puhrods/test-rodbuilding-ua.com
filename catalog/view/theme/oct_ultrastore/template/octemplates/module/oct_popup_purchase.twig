@@ -1,0 +1,523 @@
+<div class="modal show" id="us-one-click-modal" tabindex="-1" role="dialog" aria-labelledby="us-one-click" style="display: block;">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+	    <div class="modal-content">
+	        <div class="modal-header">
+	            <h5 class="modal-title" id="us-one-click">{{ heading_title }}</h5>
+	            <button type="button" class="us-close" data-dismiss="modal" aria-label="Close">
+	            	<span aria-hidden="true" class="us-modal-close-icon us-modal-close-left"></span>
+	                <span aria-hidden="true" class="us-modal-close-icon us-modal-close-right"></span>
+	            </button>
+	        </div>
+	        <div id="one-click-main-block" class="modal-body us-modal-body-one-click">
+	        	<form action="javascript:;" id="oct_purchase_form" method="post" class="d-flex">
+		            <div class="us-modal-body-one-click-left text-center">
+						{% if images is defined and images|length > 1 %}
+						<div class="additional-wrapper">
+							<div id="popup_purchase_images">
+								{% for image in images %}
+									<div>
+										<img src="{{ image.thumb }}" alt="{{ heading_title }}" class="us-modal-body-img d-block mx-auto">
+									</div>
+								{% endfor %}
+							</div>
+							<script>
+								$(document).ready(function() {
+									$('#popup_purchase_images').slick({
+										autoplay: true,
+										dots: false,
+										arrows: false,
+										infinite: true,
+										autoplaySpeed: 3000,
+										slidesToShow: 1
+									});
+								});
+							</script>
+						</div>
+						{% else %}
+							{% if thumb is defined %}
+								<img src="{{ thumb }}" class="us-modal-body-img d-block mx-auto" alt="{{ heading_title_product }}">
+							{% endif %}
+						{% endif %}
+		            	<div class="product_title">
+							{{ product_name }}
+						</div>
+						{% if oct_popup_purchase_data.quantity is defined %}
+						<div class="us-product-quantity d-flex align-items-center justify-content-center">
+							<div class="control-label control-label-quantity">
+								{{ entry_quantity }}
+							</div>
+							<div class="btn-group" role="group" aria-label="us-product-quantity">
+								<button type="button" class="us-product-quantity-btn" onclick="updatePurchaseValue(true, false, false);">-</button>
+								<input type="text" id="popup-input-quantity" class="form-control" name="quantity" value="{{ minimum }}" aria-label="Quantity" />
+								<button type="button" class="us-product-quantity-btn" onclick="updatePurchaseValue(false, true, false);">+</button>
+								<input type="hidden" id="min_quantity" value="{{ minimum }}" name="min_quantity">
+								<input type="hidden" id="max-purchase-quantity" value="{{ max_quantity }}" name="max_quantity">
+							</div>
+						</div>
+						{% else %}
+						<input type="hidden" id="popup-input-quantity" name="quantity" value="{{ minimum }}" aria-label="Quantity" />
+						{% endif %}
+						{% if price %}
+						<div class="us-price-block d-flex align-items-center justify-content-center">
+							<div class="control-label control-label-price">
+								{{ entry_price }}
+							</div>
+							<div class="us-module-price d-flex align-items-end">
+								{% if special %}
+								<div class="us-module-price-old">
+									{{ price }}
+								</div>
+								<div class="us-module-price-new">
+									{{ special }}
+								</div>
+								{% else %}
+								<div class="us-module-price-actual">
+									{{ price }}
+								</div>
+								{% endif %}
+							</div>
+						</div>
+						{% endif %}
+						{% if options %}
+			            <div class="options popup-purchase-options">
+							<div class="us-product-option" id="us-purchase-options-box">
+								<div class="us-product-option-title">{{ text_option }}</div>
+								{% for option in options %}
+								{% if option.type == 'select' %}
+								<div class="form-group">
+									<label class="control-label" for="input-option{{ option.product_option_id }}">{% if option.required %}<span class="required">*</span> {% endif %}{{ option.name }}</label>
+									<select name="option[{{ option.product_option_id }}]" id="input-option{{ option.product_option_id }}" class="us-acc-select">
+										<option value="">{{ text_select }}</option>
+										{% for option_value in option.product_option_value %}
+										<option value="{{ option_value.product_option_value_id }}">{{ option_value.name }}
+											{% if option_value.price %}
+											({{ option_value.price_prefix }}{{ option_value.price }})
+											{% endif %}
+										</option>
+										{% endfor %}
+									</select>
+								</div>
+								{% endif %}
+								{% if option.type == 'radio' %}
+								<div class="form-group">
+									<label class="control-label">{% if option.required %}<span class="required">*</span> {% endif %}{{ option.name }}</label>
+									<div id="input-option{{ option.product_option_id }}" class="options-box d-xl-flex align-items-center justify-content-center">
+										{% for option_value in option.product_option_value %}
+										<div class="radio">
+											<label data-toggle="tooltip" data-trigger="hover" class="optid {{ option.product_option_id }} not-selected{% if option_value.image %} radio-img{% endif %}" title="{{ option_value.name }} {% if option_value.price %}{{ option_value.price_prefix }}{{ option_value.price }}{% endif %}">
+											<input type="radio" name="option[{{ option.product_option_id }}]" value="{{ option_value.product_option_value_id }}" class="d-none" />
+											{% if option_value.image %}
+											<img src="{{ option_value.image }}" alt="{{ option_value.name }} {% if option_value.price %} {{ option_value.price_prefix }} {{ option_value.price }} {% endif %}"  />
+											{% else %}
+											{{ option_value.name }}
+											{% endif %}
+											</label>
+											<script>
+												$( document ).ready(function() {
+													$('label.optid.{{ option.product_option_id }}').click(function(){
+														$('label.optid.{{ option.product_option_id }}').removeClass('selected').addClass('not-selected');
+														$(this).removeClass('not-selected').addClass('selected');
+													});
+												});
+											</script>
+										</div>
+										{% endfor %}
+									</div>
+								</div>
+								{% endif %}
+								{% if option.type == 'checkbox' %}
+								<div class="us-form-checkbox-group">
+									<div class="control-label">{% if option.required %}<span class="required">*</span> {% endif %}{{ option.name }}</div>
+									<div id="input-option{{ option.product_option_id }}">
+										{% for option_value in option.product_option_value %}
+										<div class="checkbox">
+											<input type="checkbox" id="popup-option[{{ option.product_option_id }}][{{ option_value.product_option_value_id }}]" name="option[{{ option.product_option_id }}][]" value="{{ option_value.product_option_value_id }}" class="us-form-checkbox-input" />
+											<label for="popup-option[{{ option.product_option_id }}][{{ option_value.product_option_value_id }}]" class="d-flex align-items-center">{% if option_value.image %} <img src="{{ option_value.image }}" alt="{{ option_value.name }} {% if option_value.price %} {{ option_value.price_prefix }} {{ option_value.price }} {% endif %}" class="img-thumbnail" /> {% endif %}
+											<span>{{ option_value.name }}
+											{% if option_value.price %}
+											({{ option_value.price_prefix }}{{ option_value.price }})
+											{% endif %}</span></label>
+										</div>
+										{% endfor %}
+									</div>
+								</div>
+								{% endif %}
+								{% if option.type == 'text' %}
+								<div class="form-group">
+									<label class="control-label" for="input-option{{ option.product_option_id }}">{% if option.required %}<span class="required">*</span> {% endif %}{{ option.name }}</label>
+									<input type="text" name="option[{{ option.product_option_id }}]" value="{{ option.value }}" placeholder="{{ option.name }}" id="input-option{{ option.product_option_id }}" class="form-control" />
+								</div>
+								{% endif %}
+								{% if option.type == 'textarea' %}
+								<div class="form-group">
+									<label class="control-label" for="input-option{{ option.product_option_id }}">{% if option.required %}<span class="required">*</span> {% endif %}{{ option.name }}</label>
+									<textarea name="option[{{ option.product_option_id }}]" rows="5" placeholder="{{ option.name }}" id="input-option{{ option.product_option_id }}" class="form-control">{{ option.value }}</textarea>
+								</div>
+								{% endif %}
+								{% if option.type == 'file' %}
+								<div class="form-group">
+									<label class="control-label">{% if option.required %}<span class="required">*</span> {% endif %}{{ option.name }}</label>
+									<button type="button" id="popup-button-upload{{ option.product_option_id }}" data-loading-text="{{ text_loading }}" class="us-module-btn"><i class="fa fa-upload"></i> {{ button_upload }}</button>
+									<input type="hidden" name="option[{{ option.product_option_id }}]" value="" id="input-option{{ option.product_option_id }}" />
+								</div>
+								{% endif %}
+								{% if option.type == 'date' %}
+								<div class="form-group">
+									<label class="control-label" for="input-option{{ option.product_option_id }}">{% if option.required %}<span class="required">*</span> {% endif %}{{ option.name }}</label>
+									<div class="input-group date">
+										<input type="text" name="option[{{ option.product_option_id }}]" value="{{ option.value }}" data-date-format="YYYY-MM-DD" id="input-option{{ option.product_option_id }}" class="form-control" />
+										<span class="input-group-btn">
+										<button class="us-module-btn" type="button"><i class="fa fa-calendar"></i></button>
+										</span>
+									</div>
+								</div>
+								{% endif %}
+								{% if option.type == 'datetime' %}
+								<div class="form-group">
+									<label class="control-label" for="input-option{{ option.product_option_id }}">{% if option.required %}<span class="required">*</span> {% endif %}{{ option.name }}</label>
+									<div class="input-group datetime">
+										<input type="text" name="option[{{ option.product_option_id }}]" value="{{ option.value }}" data-date-format="YYYY-MM-DD HH:mm" id="input-option{{ option.product_option_id }}" class="form-control" />
+										<span class="input-group-btn">
+										<button type="button" class="us-module-btn"><i class="fa fa-calendar"></i></button>
+										</span>
+									</div>
+								</div>
+								{% endif %}
+								{% if option.type == 'time' %}
+								<div class="form-group">
+									<label class="control-label" for="input-option{{ option.product_option_id }}">{% if option.required %}<span class="required">*</span> {% endif %}{{ option.name }}</label>
+									<div class="input-group time">
+										<input type="text" name="option[{{ option.product_option_id }}]" value="{{ option.value }}" data-date-format="HH:mm" id="input-option{{ option.product_option_id }}" class="form-control" />
+										<span class="input-group-btn">
+										<button type="button" class="us-module-btn"><i class="fa fa-calendar"></i></button>
+										</span>
+									</div>
+								</div>
+								{% endif %}
+								{% endfor %}
+							</div>
+			            </div>
+			            {% endif %}
+		            </div>
+		            <div class="us-modal-body-one-click-right">
+		        		{% if oct_popup_purchase_data.firstname %}
+						<div class="form-group-20">
+							<input type="text" name="name" value="{{ user_name }}" class="form-control" id="user_name" placeholder="{{ enter_firstname }}">
+						</div>
+						{% endif %}
+						{% if oct_popup_purchase_data.telephone %}
+						<div class="form-group-20">
+							<input type="tel" name="telephone" value="{{ user_telephone }}" class="form-control" id="user_telephone" placeholder="{{ enter_telephone }}">
+						</div>
+						{% endif %}
+						{% if oct_popup_purchase_data.email %}
+						<div class="form-group-20">
+							<input type="email" name="email" value="{{ user_email }}" class="form-control" id="user_email" placeholder="{{ enter_email }}">
+						</div>
+						{% endif %}
+						{% if oct_popup_purchase_data.comment %}
+						<div class="form-group-20">
+							<textarea name="comment" class="form-control" id="user_comment" placeholder="{{ enter_comment }}"></textarea>
+						</div>
+						{% endif %}
+						<input type="hidden" name="product_id" value="{{ product_id }}" />
+						{% if text_agree %}
+						<div class="us-form-checkbox-group us-form-checkbox-group-20">
+							<input type="checkbox" id="scales-2" class="us-form-checkbox-input" name="agree">
+							<label for="scales-2" class="d-flex"><span>{{ text_agree }}</span></label>
+						</div>
+						{% endif %}
+						{% if price %}
+						{{ captcha }}
+						{% if error_stock_check is not defined %}
+						<div class="btn-group" role="group" aria-label="us-cont-btn">
+							<button id="button_checkout" type="submit" class="us-module-btn us-module-btn-green">{{ button_checkout }}</button>
+						</div>
+						{% else %}
+						<div class="btn-group" role="group" aria-label="us-cont-btn">
+							<span class="error-stock-check">{{ error_stock_check }}</span>
+						</div>
+						{% endif %}
+						{% endif %}
+			        </div>
+				</form>
+	        </div>
+	    </div>
+	</div>
+</div>
+<link rel="stylesheet" type="text/css" href="catalog/view/theme/oct_ultrastore/js/slick/slick.min.css">
+<script src="catalog/view/theme/oct_ultrastore/js/slick/slick.min.js" charset="utf-8"></script>
+<link href="catalog/view/javascript/jquery/datetimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen" />
+<script src="catalog/view/javascript/jquery/datetimepicker/moment/moment.min.js"></script>
+<script src="catalog/view/javascript/jquery/datetimepicker/moment/moment-with-locales.min.js"></script>
+<script src="catalog/view/theme/oct_ultrastore/js/bootstrap-datetimepicker.min.js"></script>
+{% if oct_popup_purchase_data.mask is defined and oct_popup_purchase_data.mask is not empty %}
+<script src="catalog/view/theme/oct_ultrastore/js/jquery.inputmask.bundle.min.js"></script>
+<script>
+usInputMask('#user_telephone','{{ oct_popup_purchase_data.mask }}');
+</script>
+{% endif %}
+<script>
+$('#us-one-click-modal .date').datetimepicker({
+        language: '{{ datepicker }}',
+        pickTime: false,
+        icons: {
+            time: 'fa fa-clock',
+            date: 'fa fa-calendar-alt',
+            up: 'fa fa-arrow-up',
+            down: 'fa fa-arrow-down',
+            previous: 'fa fa-chevron-left',
+            next: 'fa fa-chevron-right',
+            today: 'fa fa-calendar-check',
+            clear: 'fa fa-trash-alt',
+            close: 'fa fa-times'
+        }
+    });
+
+    $('#us-one-click-modal .datetime').datetimepicker({
+        language: '{{ datepicker }}',
+        pickDate: true,
+        pickTime: true,
+        icons: {
+            time: 'fa fa-clock',
+            date: 'fa fa-calendar-alt',
+            up: 'fa fa-arrow-up',
+            down: 'fa fa-arrow-down',
+            previous: 'fa fa-chevron-left',
+            next: 'fa fa-chevron-right',
+            today: 'fa fa-calendar-check',
+            clear: 'fa fa-trash-alt',
+            close: 'fa fa-times'
+        }
+    });
+
+    $('#us-one-click-modal .time').datetimepicker({
+        language: '{{ datepicker }}',
+        pickDate: false,
+        icons: {
+            time: 'fa fa-clock',
+            date: 'fa fa-calendar-alt',
+            up: 'fa fa-arrow-up',
+            down: 'fa fa-arrow-down',
+            previous: 'fa fa-chevron-left',
+            next: 'fa fa-chevron-right',
+            today: 'fa fa-calendar-check',
+            clear: 'fa fa-trash-alt',
+            close: 'fa fa-times'
+        }
+    });
+
+$("#user_name, #user_telephone, #user_email, #user_comment, #scales-2").on("change paste keyup", function() {
+	$(this).removeClass('error_style');
+});
+
+{% if error_stock_check is not defined %}
+$('#button_checkout').on('click', function() {
+	masked('body', false);
+	masked('body', true);
+	$.ajax({
+        type: 'post',
+        dataType: 'json',
+        cache: false,
+        url: 'index.php?route=octemplates/module/oct_popup_purchase/makeOrder',
+        data: $('#oct_purchase_form').serialize(),
+		beforeSend: function() {
+        	$('#button_checkout').attr('disabled', 'disabled');
+		},
+        complete: function() {
+			$('#button_checkout').removeAttr('disabled');
+        },
+        success: function(json) {
+	        masked('body', false);
+	        if (json['error']) {
+				$('#us-one-click-modal .text-danger').remove();
+				let errorOption = '';
+
+				$.each(json['error']['options'], function(i, val) {
+					if (val) {
+						var element = $('#oct_purchase_form #input-option' + i.replace('_', '-'));
+
+						if (element.parent().hasClass('input-group')) {
+							element.parent().after('<div class="text-danger">' + val + '</div>');
+						} else {
+							element.after('<div class="text-danger">' + val + '</div>');
+						}
+
+						errorOption += '<div class="alert-text-item">' + val + '</div>';
+					}
+				});
+
+				delete json['error']['options'];
+
+				$.each(json['error'], function(i, val) {
+					if (val) {
+						$('#us-one-click-modal [name="' + i + '"]').addClass('error_style');
+						errorOption += '<div class="alert-text-item">' + val + '</div>';
+					}
+				});
+
+				usNotify('danger', errorOption);
+			} else {
+				if (json['success']) {
+					{% if oct_analytics_google_ecommerce is defined and oct_analytics_google_ecommerce is not empty %}
+		            if (typeof gtag != 'undefined' && json['ecommerce']) {
+		                gtag('event', 'purchase', json['ecommerce']);
+		            }
+		            {% endif %}
+
+		            {% if oct_analytics_yandex_ecommerce is defined and oct_analytics_yandex_ecommerce is not empty and oct_analytics_yandex_container is defined and oct_analytics_yandex_container is not empty %}
+		            window.{{ oct_analytics_yandex_container }} = window.{{ oct_analytics_yandex_container }} || [];
+		            if(typeof {{ oct_analytics_yandex_container }} != 'undefined' && json['ecommerce']) {
+		                {{ oct_analytics_yandex_container }}.push({
+		                    "ecommerce": {
+		                        "purchase": {
+		                            "actionField": {
+		                                "id" : json['ecommerce']['transaction_id']
+		                            },
+		                            "products": json['ecommerce']['items']
+		                        }
+		                    }
+		                });
+		            }
+		            {% endif %}
+					$('.us-module-btn').attr( "disabled", "disabled" );
+					$("#one-click-main-block").html(json['success']).removeClass('us-modal-body-one-click');
+				}
+			}
+        }
+    });
+});
+{% endif %}
+
+$('#popup-input-quantity').on('input',function(e){
+	updatePurchaseValue(false, false, true);
+});
+
+function updatePurchaseValue(minus, plus, manual) {
+	let min = parseInt($('#popup-input-quantity').val());
+	let currentMinimum = parseInt($('#min_quantity').val());
+	let max = parseInt($('#max-purchase-quantity').val());
+
+	if(max === 0) return;
+
+	if (minus && min > 1) {
+
+		if (min <= currentMinimum) {
+			$('#popup-input-quantity').val(currentMinimum);
+			updatePurchasePrice();
+			return;
+		} else if (min > max) {
+			$('#popup-input-quantity').val(max);
+			updatePurchasePrice();
+			return;
+		}
+
+		$('#popup-input-quantity').val(~~$('#popup-input-quantity').val()-1);
+	}
+
+	if (plus) {
+
+		if(max && min > max-1) {
+			$('#popup-input-quantity').val(max);
+			updatePurchasePrice();
+			return;
+		} else if (min < currentMinimum) {
+			$('#popup-input-quantity').val(currentMinimum);
+			updatePurchasePrice();
+			return;
+		}
+
+		$('#popup-input-quantity').val(~~$('#popup-input-quantity').val()+1);
+	}
+
+	if (manual) {
+
+		if (min <= currentMinimum) {
+			$('#popup-input-quantity').val(currentMinimum);
+			updatePurchasePrice();
+			return;
+		} else if (min > max) {
+			$('#popup-input-quantity').val(max);
+			updatePurchasePrice();
+			return;
+		}
+
+	}
+
+	updatePurchasePrice();
+}
+
+$("#us-purchase-options-box input, #us-purchase-options-box select ").on('change', function() {
+	updatePurchasePrice();
+});
+
+function updatePurchasePrice() {
+	$.ajax({
+		type: 'post',
+		url:  'index.php?route=product/product/updatePrices',
+		data: $('#us-one-click-modal input[type=\'text\'], #us-one-click-modal input[type=\'hidden\'], #us-one-click-modal input[type=\'radio\']:checked, #us-one-click-modal input[type=\'checkbox\']:checked, #us-one-click-modal select'),
+		dataType: 'json',
+		cache: false,
+		success: function(json) {
+			{% if special %}
+			$('#us-one-click-modal .us-module-price-old').html(json['price']);
+			$('#us-one-click-modal .us-module-price-new').html(json['special']);
+			{% else %}
+			$('#us-one-click-modal .us-module-price-actual').html(json['price']);
+			{% endif %}
+		}
+	});
+}
+
+$('button[id^=\'popup-button-upload\']').on('click', function() {
+	var node = this;
+
+	$('#form-upload').remove();
+
+	$('body').prepend('<form enctype="multipart/form-data" id="form-upload" style="display: none;"><input type="file" name="file" /></form>');
+
+	$('#form-upload input[name=\'file\']').trigger('click');
+
+	if (typeof timer != 'undefined') {
+    	clearInterval(timer);
+	}
+
+	timer = setInterval(function() {
+		if ($('#form-upload input[name=\'file\']').val() != '') {
+			clearInterval(timer);
+
+			$.ajax({
+				url: 'index.php?route=tool/upload',
+				type: 'post',
+				dataType: 'json',
+				data: new FormData($('#form-upload')[0]),
+				cache: false,
+				contentType: false,
+				processData: false,
+				beforeSend: function() {
+					$(node).button('loading');
+				},
+				complete: function() {
+					$(node).button('reset');
+				},
+				success: function(json) {
+					$('.text-danger').remove();
+
+					if (json['error']) {
+						$(node).parent().find('input').after('<div class="text-danger">' + json['error'] + '</div>');
+					}
+
+					if (json['success']) {
+						alert(json['success']);
+
+						$(node).parent().find('input').val(json['code']);
+					}
+				},
+				error: function(xhr, ajaxOptions, thrownError) {
+					alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+				}
+			});
+		}
+	}, 500);
+});
+</script>

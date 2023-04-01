@@ -1,0 +1,60 @@
+{% if banners %}
+<div class="row row-padding-top">
+	<div class="col-lg-12">
+		<div id="us-carousel-brands-{{ module }}" class="us-carousel-brands-box">
+	    {% for banner in banners %}
+			<div class="us-carousel-brands-item">
+				{% if banner.link %}
+			      	<a href="{{ banner.link }}">
+						<img src="{{ banner.image }}"{% if oct_lazyload %} data-srcset="{{ banner.image }} 100w" srcset="{{ oct_lazy_image }} 100w" sizes="100vw"{% endif %} class="img-fluid{% if oct_lazyload %} oct-lazy{% endif %}" alt="{{ banner.title }}" width="{{ banner.width }}" height="{{ banner.height }}" />
+					</a>
+				{% else %}
+		      		<img src="{{ banner.image }}"{% if oct_lazyload %} data-srcset="{{ banner.image }} 100w" srcset="{{ oct_lazy_image }} 100w" sizes="100vw"{% endif %} class="img-fluid{% if oct_lazyload %} oct-lazy{% endif %}" alt="{{ banner.title }}" width="{{ banner.width }}" height="{{ banner.height }}" />
+				{% endif %}
+		  </div>
+		{% endfor %}
+	  	</div>
+	</div>
+</div>
+<script>
+$( document ).ready(function() {
+	$('#us-carousel-brands-{{ module }}').slick({
+		infinite: false,
+		slidesToShow: 6,
+		slidesToScroll: 1,
+	    autoplay: true,
+		dots: false,
+		arrows: false,
+		responsive: [
+	    {
+	      breakpoint: 1600,
+	      settings: {
+	        slidesToShow: 6,
+			slidesToScroll: 1
+	      }
+	    },
+	    {
+	      breakpoint: 1200,
+	      settings: {
+	        slidesToShow: 4,
+			slidesToScroll: 4
+	      }
+	    },
+	    {
+	      breakpoint: 992,
+	      settings: {
+	        slidesToShow: 2,
+			slidesToScroll: 2
+	      }
+	    },
+	    {
+	      breakpoint: 320,
+	      settings: {
+	        slidesToShow: 2
+	      }
+	    }
+	  ]
+	});
+});
+</script>
+{% endif %}

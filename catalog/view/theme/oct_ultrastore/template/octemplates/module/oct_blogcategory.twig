@@ -1,0 +1,29 @@
+<div class="us-blog-category-small">
+	<ul class="us-column-list list-unstyled">
+		{% for blog_category in blog_categories %}
+		<li class="us-column-item">
+			<a href="{{ blog_category.href }}" class="us-column-link">{{ blog_category.name }}</a>
+			{% if blog_category.children %}
+			<ul class="us-blog-subcategories list-unstyled">
+				{% for child in blog_category.children %}
+				<li class="us-column-item d-flex align-item-center">
+					- <a href="{{ child.href }}" class="us-column-link">{{ child.name }}</a>
+				</li>
+				{% endfor %}
+			</ul>
+			{% endif %}
+		</li>
+		{% endfor %}
+	</ul>
+	{% if search_block %}
+	<div class="us-blog-search">
+		<div class="us-blog-search-title">
+			{{ search_title }}
+		</div>
+		<div id="blog_search" class="input-group blog-input-group">
+			<input type="text" name="blog_search" value="" placeholder="{{ search_placeholder }}" class="us-blog-search-input w-100">
+			<button type="button"  id="oct-blog-search-button" class="us-blog-search-btn" aria-label="Search"><i class="fa fa-search"></i></button>
+		</div>
+	</div>
+	{% endif %}
+</div>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+    <name>Simple Custom Data Admin OrderPro</name>
+	<code>Simple Custom Data Admin OrderPro</code>
+    <version>3.7.8</version>
+    <author>shchs@ya.ru</author>
+    <link></link>
+
+    <file path="admin/controller/sale/orderpro.php">
+        <operation>
+            <search><![CDATA[
+                $store_info = $this->model_setting_setting->getSetting('config', $order_info['store_id']);
+            ]]></search>
+            <add position="after" index="1"><![CDATA[
+                $this->load->model('extension/module/simplecustom');
+
+                $customInfo = $this->model_extension_module_simplecustom->getCustomFields('order', $order_info['order_id'], $order_info['language_code']);
+            ]]></add>
+        </operation>
+        <operation>
+            <search><![CDATA[
+                $shipping_address = str_replace(
+            ]]></search>
+            <add position="before" index="1"><![CDATA[
+                $find[] = '{company_id}';
+                $find[] = '{tax_id}';
+                $replace['company_id'] = isset($order_info['shipping_company_id']) ? $order_info['shipping_company_id'] : '';
+                $replace['tax_id'] = isset($order_info['shipping_tax_id']) ? $order_info['shipping_tax_id'] : '';
+
+                foreach($customInfo as $id => $value) {
+                    if (strpos($id, 'shipping_') === 0) {
+                        $id = str_replace('shipping_', '', $id);
+                        $find[] = '{'.$id.'}';
+                        $replace[$id] = $value;
+                    } elseif (strpos($id, 'payment_') === false) {
+                        $find[] = '{'.$id.'}';
+                        $replace[$id] = $value;
+                    }
+                }
+            ]]></add>
+        </operation>
+        <operation>
+            <search><![CDATA[
+                $payment_address = str_replace(
+            ]]></search>
+            <add position="before" index="1"><![CDATA[
+                $find[] = '{company_id}';
+                $find[] = '{tax_id}';
+                $replace['company_id'] = isset($order_info['payment_company_id']) ? $order_info['payment_company_id'] : '';
+                $replace['tax_id'] = isset($order_info['payment_tax_id']) ? $order_info['payment_tax_id'] : '';
+
+                foreach($customInfo as $id => $value) {
+                    if (strpos($id, 'payment_') === 0) {
+                        $id = str_replace('payment_', '', $id);
+                        $find[] = '{'.$id.'}';
+                        $replace[$id] = $value;
+                    } elseif (strpos($id, 'shipping_') === false) {
+                        $find[] = '{'.$id.'}';
+                        $replace[$id] = $value;
+                    }
+                }
+            ]]></add>
+        </operation>
+    </file>
+
+</modification>
+

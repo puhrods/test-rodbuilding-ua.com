@@ -1,0 +1,72 @@
+<div id="merge_modal" class="modal fade">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header merge-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h4 class="modal-title">{{ text_merge_order }}</h4>
+			</div>
+	
+			<div class="modal-body merge-body">
+				<form id="merge_form">
+					<div class="form-group">
+						<label for="merge_mode">{{ entry_merge_mode }}</label>
+						<select name="merge_mode" id="merge_mode" class="form-control">
+							<option value="1" selected="selected">{{ text_merge_addnew }}</option>
+							<option value="2">{{ text_merge_inold }}</option>
+						</select>
+					</div>
+	
+					<div class="form-group main-merge">
+						<label for="main_order">{{ entry_main_order }}</label>
+						<a tabindex="0" class="btn-popover" role="button" data-toggle="popover" data-placement="top" title="" data-content="{{ help_main_order }}"><i class="fa fa-question-circle" aria-hidden="true"></i></a>
+						<select name="main_order" id="main_order" class="form-control">
+							{% set i = 1 %}
+							{% for order_id in orders %}
+							{% if i == 1 %}
+							<option value="{{ order_id }}" selected="selected">{{ order_id }}</option>
+							{% else %}
+							<option value="{{ order_id }}">{{ order_id }}</option>
+							{% endif %}
+							{% set i = i + 1 %}
+							{% endfor %}
+						</select>
+						{% for order_id in orders %}
+						<input type="hidden" name="orders[]" value="{{ order_id }}" />
+						{% endfor %}
+					</div>
+	
+					<div class="form-group">
+						<label for="old_order">{{ entry_old_order }}</label>
+						<select name="old_order" id="old_order" class="form-control">
+							<option value="0" selected="selected">{{ text_old_nothing }}</option>
+							<option value="1">{{ text_old_status }}</option>
+							<option value="2">{{ text_old_delete }}</option>
+						</select>
+					</div>
+	
+					<div class="form-group old-status" style="display:none;">
+						<label for="old_status_id">{{ entry_order_status }}</label>
+						<select name="old_status_id" id="old_status_id" class="form-control">
+							{% set i = 1 %}
+							{% for order_status in order_statuses %}
+							{% if i == 1 %}
+							<option value="{{ order_status['order_status_id'] }}" selected="selected">{{ order_status['name'] }}</option>
+							{% else %}
+							<option value="{{ order_status['order_status_id'] }}">{{ order_status['name'] }}</option>
+							{% endif %}
+							{% set i = i + 1 %}
+							{% endfor %}
+						</select>
+					</div>
+				</form>
+			</div>
+	
+			<div class="modal-footer" style="text-align:center;">
+				<a class="btn btn-success" onclick="merge_order();">{{ button_merge }}</a>
+			</div>
+		</div>
+	</div>
+<script type="text/javascript"><!--
+$('.btn-popover').popover({	trigger: "hover"});
+//--></script>
+</div>

@@ -1,0 +1,270 @@
+{{ header }}
+<div id="product-search" class="container">
+	{{ oct_breadcrumbs }}
+	<div class="row">
+		<div class="col-lg-12">
+			<h1 class="us-main-shop-title">{{ heading_title }}</h1>
+		</div>
+	</div>
+	<div class="content-top-box">{{ content_top }}</div>
+	<div class="us-category-content">
+		<div class="row">
+			{{ column_left }}
+			{% if column_left and column_right %}
+			{% set class = 'col-sm-6 is-cols' %}
+			{% elseif column_left or column_right %}
+			{% set class = 'col-sm-9' %}
+			{% else %}
+			{% set class = 'col-sm-12 no-col' %}
+			{% endif %}
+			<div id="content" class="{{ class }}">
+				<label class="control-label" for="input-search">{{ entry_search }}</label>
+				<div class="row">
+					<div class="col-sm-7">
+						<input type="text" name="search" value="{{ search }}" placeholder="{{ text_keyword }}" id="input-search" class="form-control" />
+					</div>
+					<div class="col-sm-5">
+						<select name="category_id" class="us-acc-select">
+							<option value="0">{{ text_category }}</option>
+							{% for category_1 in categories %}
+							{% if category_1.category_id == category_id %}
+							<option value="{{ category_1.category_id }}" selected="selected">{{ category_1.name }}</option>
+							{% else %}
+							<option value="{{ category_1.category_id }}">{{ category_1.name }}</option>
+							{% endif %}
+							{% for category_2 in category_1.children %}
+							{% if category_2.category_id == category_id %}
+							<option value="{{ category_2.category_id }}" selected="selected">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ category_2.name }}</option>
+							{% else %}
+							<option value="{{ category_2.category_id }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ category_2.name }}</option>
+							{% endif %}
+							{% for category_3 in category_2.children %}
+							{% if category_3.category_id == category_id %}
+							<option value="{{ category_3.category_id }}" selected="selected">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ category_3.name }}</option>
+							{% else %}
+							<option value="{{ category_3.category_id }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ category_3.name }}</option>
+							{% endif %}
+							{% endfor %}
+							{% endfor %}
+							{% endfor %}
+						</select>
+					</div>
+				</div>
+				<div class="row us-search-block">
+					<div class="col-12">
+						<div class="us-form-checkbox-group">
+							{% if sub_category %}
+							<input type="checkbox" id="sub-category" class="us-form-checkbox-input" name="sub_category" value="1" checked="checked" />
+							{% else %}
+							<input type="checkbox" id="sub-category" class="us-form-checkbox-input" name="sub_category" value="1" />
+							{% endif %}
+							<label class="d-flex align-items-center" for="sub-category"><span> {{ text_sub_category }}</span></label>
+						</div>
+						<div class="us-form-checkbox-group">
+							{% if description %}
+							<input type="checkbox" id="description" class="us-form-checkbox-input" name="description" value="1" id="description" checked="checked" />
+							{% else %}
+							<input type="checkbox" id="description" class="us-form-checkbox-input" name="description" value="1" id="description" />
+							{% endif %}
+							<label class="d-flex align-items-center" for="description"><span>{{ entry_description }}</span></label>
+						</div>
+						<input type="button" value="{{ button_search }}" id="button-search" class="us-module-btn us-module-btn-green" />
+					</div>
+				</div>
+				<div class="us-content-title us-content-search-title">{{ text_search }}</div>
+				{% if products %}
+				{% if oct_ultrastore_data.category_view_sort_oder is defined and (oct_ultrastore_data.category_view_sort_oder or oct_ultrastore_data.category_view_sort_oder == 'on') %}
+				<div class="us-category-sort-block d-flex justify-content-between">
+					<div class="sort-limit">
+						<select id="input-sort" class="sort-select" onchange="location = this.value;">
+							{% for sorts in sorts %}
+								{% if sorts.value == '%s-%s'|format(sort, order) %}
+									<option value="{{ sorts.href }}" selected="selected">{{ sorts.text }}</option>
+								{% else %}
+									<option value="{{ sorts.href }}">{{ sorts.text }}</option>
+								{% endif %}
+							{% endfor %}
+						</select>
+						<select id="input-limit" class="limit-select" onchange="location = this.value;">
+							{% for limits in limits %}
+								{% if limits.value == limit %}
+									<option value="{{ limits.href }}" selected="selected">{{ limits.text }}</option>
+								{% else %}
+									<option value="{{ limits.href }}">{{ limits.text }}</option>
+								{% endif %}
+							{% endfor %}
+						</select>
+					</div>
+					<div class="us-category-appearance btn-group">
+						<button type="button" id="list-view" class="us-category-appearance-btn" data-toggle="tooltip" data-placement="top" title="{{ button_list }}"><i class="fa fa-th-list"></i></button>
+						<button type="button" id="grid-view" class="us-category-appearance-btn" data-toggle="tooltip" data-placement="top" title="{{ button_grid }}"><i class="fa fa-th"></i></button>
+					</div>
+				</div>
+				{% endif %}
+				<div class="row us-category-products">
+					{% for product in products %}
+					<div class="product-layout product-grid col-sm-4"{% if oct_ultrastore_data.category_show_more is defined and oct_ultrastore_data.category_show_more %} data-pid="{{ product.product_id }}"{% endif %}>
+						<div class="us-module-item d-flex flex-column{% if not product.can_buy and product.oct_grayscale %} us-no-stock{% endif %}">
+							{% if product.oct_stickers is not empty%}
+							<div class="us-module-stickers">
+								{% if oct_sticker_you_save and product.you_save %}
+									<div class="us-module-stickers-sticker us-module-stickers-sticker-discount">{{ product.you_save }}</div>
+								{% endif %}
+								{% for key, oct_sticker in product.oct_stickers %}
+									{% if oct_sticker is not empty %}
+									<div class="us-module-stickers-sticker us-module-stickers-sticker-{{ key }}">
+										{{ oct_sticker }}
+									</div>
+									{% endif %}
+								{% endfor %}
+							</div>
+							{% endif %}
+							<ul class="us-module-buttons-list">
+								<li class="us-module-buttons-item">
+									<button type="button" onclick="wishlist.add('{{ product.product_id }}');" title="{{ button_wishlist }}" class="us-module-buttons-link us-module-buttons-wishlist"><i class="far fa-heart"></i></button>
+								</li>
+								<li class="us-module-buttons-item">
+									<button type="button" title="{{ button_compare }}" onclick="compare.add('{{ product.product_id }}');" class="us-module-buttons-link us-module-buttons-compare"><i class="fas fa-sliders-h"></i></button>
+								</li>
+								{% if oct_popup_view_status %}
+								<li class="us-module-buttons-item">
+									<button type="button" class="us-module-buttons-link us-module-buttons-quickview" title="{{ button_oct_popup_view }}" onclick="octPopUpView('{{ product.product_id }}')"><i class="far fa-eye"></i></button>
+								</li>
+								{% endif %}
+							</ul>
+							<div class="us-module-img">
+								<a href="{{ product.href }}"><img src="{{ product.thumb }}"{% if oct_lazyload %} data-srcset="{{ product.thumb }} 100w" srcset="{{ oct_lazy_image }} 100w" sizes="100vw" class="oct-lazy"{% endif %} alt="{{ product.name }}" title="{{ product.name }}" width="{{ product.width }}" height="{{ product.height }}" /></a>
+							</div>
+							<div class="us-module-caption d-flex flex-column">
+								<div class="us-module-title">
+									<a href="{{ product.href }}">{{ product.name }}</a>
+								</div>
+								{% if product.oct_model is not empty %}
+								<div class="us-module-model">{{ oct_view_model_cat }}{{ product.oct_model }}</div>
+								{% endif %}
+								{% if product.rating is not same as(false) %}
+								<div class="us-module-rating d-flex align-items-center justify-content-center">
+									<div class="us-module-rating-stars d-flex align-items-center">
+										{% for i in 1..5 %}
+										{% if product.rating < i %}
+										<span class="us-module-rating-star"></span>
+										{% else %}
+										<span class="us-module-rating-star us-module-rating-star-is"></span>
+										{% endif %}
+										{% endfor %}
+									</div>
+									<div class="us-module-reviews"><i class="fas fa-comment"><span>{{ product.reviews }}</span></i></div>
+								</div>
+								{% endif %}
+								{% if (product.description and product.description|length > 3) %}
+									<div class="us-product-list-description">{{ product.description }}</div>
+								{% endif %}
+								{% if product.oct_atributes %}
+						        <div class="us-category-attr-cont">
+								{% for attribute in product.oct_atributes %}
+									<span class="us-category-attr-item">
+										<span>{{ attribute.name }}:</span> <span>{{ attribute.text }}</span>
+									</span>
+								{% endfor %}
+								</div>
+								{% endif %}
+								{% if product.price %}
+								<div class="us-module-price">
+									{% if not product.special %}
+									<span class="us-module-price-actual">{{ product.price }}</span>
+									{% else %}
+									<span class="us-module-price-old">{{ product.price }}</span><span class="us-module-price-new">{{ product.special }}</span>
+									{% endif %}
+									{% if product.tax %}
+									<div class="price-tax">{{ text_tax }} {{ product.tax }}</div>
+									{% endif %}
+								</div>
+								{% endif %}
+								{% if oct_ultrastore_data.category_view_quantity is defined and oct_ultrastore_data.category_view_quantity and product.can_buy is not empty %}
+									<div class="us-product-category-quantity mt-auto">
+										<div class="btn-group us-product-quantity" role="group">
+											<button type="button" class="us-product-quantity-btn us-minus">-</button>
+											<input type="text" class="form-control" name="quantity" value="{{ product.minimum }}" aria-label="Quantity" />
+											<button type="button" class="us-product-quantity-btn us-plus">+</button>
+											<input type="hidden" name="product_id" value="{{ product.product_id }}" />
+											<input class="min-qty" type="hidden" value="{{ product.minimum }}" name="min_quantity">
+										</div>
+										<button class="us-module-cart-btn button-cart us-cat-button-cart">{{ button_cart }}</button>
+									</div>
+								{% else %}
+									<a href="{% if product.can_buy is not empty %}javascript:void(0);{% else %}{{ product.href }}{% endif %}"{% if product.can_buy is not empty %} onclick="cart.add('{{ product.product_id }}');"{% endif %} class="us-module-cart-btn button-cart">{{ (product.stock and not product.can_buy) ? product.stock : button_cart }}</a>
+								{% endif %}
+							</div>
+						</div>
+					</div>
+					{% endfor %}
+				</div>
+				{% if oct_ultrastore_data.category_show_more is defined and oct_ultrastore_data.category_show_more %}
+				<div class="d-flex justify-content-center oct-load-more">
+					<button class="us-module-btn oct-load-more-button text-center d-none" onClick="octLoadMore({% if oct_lazyload is defined and oct_lazyload %}1{% endif %});"><i class="fas fa-long-arrow-alt-down"></i>{{ oct_show_more_btn }}</button>
+				</div>
+				{% endif %}
+				{{ pagination }}
+				{% if oct_ultrastore_data.category_show_more is defined and oct_ultrastore_data.category_show_more %}
+				<script src="catalog/view/theme/oct_ultrastore/js/oct-show-more.js"></script>
+				<script>
+					octCheckPagination();
+				</script>
+				{% endif %}
+				{% else %}
+				<p>{{ text_empty }}</p>
+				{% endif %}
+			</div>
+			{{ column_right }}
+		</div>
+	</div>
+	{{ content_bottom }}
+</div>
+<script>
+$('#button-search').bind('click', function() {
+	url = 'index.php?route=product/search';
+
+	var search = $('#content input[name=\'search\']').prop('value');
+
+	if (search) {
+		url += '&search=' + encodeURIComponent(search);
+	}
+
+	var category_id = $('#content select[name=\'category_id\']').prop('value');
+
+	if (category_id > 0) {
+		url += '&category_id=' + encodeURIComponent(category_id);
+	}
+
+	var sub_category = $('#content input[name=\'sub_category\']:checked').prop('value');
+
+	if (sub_category) {
+		url += '&sub_category=true';
+	}
+
+	var filter_description = $('#content input[name=\'description\']:checked').prop('value');
+
+	if (filter_description) {
+		url += '&description=true';
+	}
+
+	location = url;
+});
+
+$('#content input[name=\'search\']').bind('keydown', function(e) {
+	if (e.keyCode == 13) {
+		$('#button-search').trigger('click');
+	}
+});
+
+$('select[name=\'category_id\']').on('change', function() {
+	if (this.value == '0') {
+		$('input[name=\'sub_category\']').prop('disabled', true);
+	} else {
+		$('input[name=\'sub_category\']').prop('disabled', false);
+	}
+});
+
+$('select[name=\'category_id\']').trigger('change');
+</script>
+{{ footer }}

@@ -1,0 +1,291 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        <button type="submit" form="form-module" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+        <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
+      <h1>{{ heading_title }}</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+        <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="container-fluid">
+    {% if error_warning %}
+    <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    {% endif %}
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_edit }}</h3>
+      </div>
+      <div class="panel-body">
+        <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-module" class="form-horizontal">
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-deletedays">{{ entry_del_time }}</label>
+            <div class="col-sm-10">
+              <input type="text" name="module_speakerlaap_deletedays" value="{{ module_speakerlaap_deletedays }}" id="input-deletedays" class="form-control" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-deletedays">{{ entry_choise }}</label>
+            <div class="col-sm-10">
+              <div class="col-sm-4">
+                <ul class="list-group spp">
+                  <li class="list-group-item">
+                    <label style="font-size:15px;">
+                      <input type="hidden" name="module_speakerlaap_savecat" value="0"/>
+                      <input type="checkbox" name="module_speakerlaap_savecat" value="1" {{ module_speakerlaap_savecat ? 'checked' : constant('null') }} class="switch"/>
+                      {{ entry_save_cat }}
+                    </label>
+                  </li>
+                  <li class="list-group-item">
+                    <label style="font-size:15px;">
+                      <input type="hidden" name="module_speakerlaap_saveprod" value="0"/>
+                      <input type="checkbox" name="module_speakerlaap_saveprod" value="1" {{ module_speakerlaap_saveprod ? 'checked' : constant('null') }} class="switch"/>
+                      {{ entry_save_prod }}
+                    </label>
+                  </li>
+                  <li class="list-group-item">
+                    <label style="font-size:15px;">
+                      <input type="hidden" name="module_speakerlaap_saverecur" value="0"/>
+                      <input type="checkbox" name="module_speakerlaap_saverecur" value="1" {{ module_speakerlaap_saverecur ? 'checked' : constant('null') }} class="switch"/>
+                      {{ entry_save_recur }}
+                    </label>
+                  </li>
+                  <li class="list-group-item">
+                    <label style="font-size:15px;">
+                      <input type="hidden" name="module_speakerlaap_savefilter" value="0"/>
+                      <input type="checkbox" name="module_speakerlaap_savefilter" value="1" {{ module_speakerlaap_savefilter ? 'checked' : constant('null') }} class="switch"/>
+                      {{ entry_save_filter }}
+                    </label>
+                  </li>
+                  <li class="list-group-item">
+                    <label style="font-size:15px;">
+                      <input type="hidden" name="module_speakerlaap_saveattr" value="0"/>
+                      <input type="checkbox" name="module_speakerlaap_saveattr" value="1" {{ module_speakerlaap_saveattr ? 'checked' : constant('null') }} class="switch"/>
+                      {{ entry_save_attr }}
+                    </label>
+                  </li>
+                  <li class="list-group-item">
+                    <label style="font-size:15px;">
+                      <input type="hidden" name="module_speakerlaap_saveattr_g" value="0"/>
+                      <input type="checkbox" name="module_speakerlaap_saveattr_g" value="1" {{ module_speakerlaap_saveattr_g ? 'checked' : constant('null') }} class="switch"/>
+                      {{ entry_save_attr_g }}
+                    </label>
+                  </li>
+                  <li class="list-group-item">
+                    <label style="font-size:15px;">
+                      <input type="hidden" name="module_speakerlaap_saveoption" value="0"/>
+                      <input type="checkbox" name="module_speakerlaap_saveoption" value="1" {{ module_speakerlaap_saveoption ? 'checked' : constant('null') }} class="switch"/>
+                      {{ entry_save_option }}
+                    </label>
+                  </li>
+                  <li class="list-group-item">
+                    <label style="font-size:15px;">
+                      <input type="hidden" name="module_speakerlaap_savemanuf" value="0"/>
+                      <input type="checkbox" name="module_speakerlaap_savemanuf" value="1" {{ module_speakerlaap_savemanuf ? 'checked' : constant('null') }} class="switch"/>
+                      {{ entry_save_manuf }}
+                    </label>
+                  </li>
+                  <li class="list-group-item">
+                    <label style="font-size:15px;">
+                      <input type="hidden" name="module_speakerlaap_savedownload" value="0"/>
+                      <input type="checkbox" name="module_speakerlaap_savedownload" value="1" {{ module_speakerlaap_savedownload ? 'checked' : constant('null') }} class="switch"/>
+                      {{ entry_save_download }}
+                    </label>
+                  </li>
+                  <li class="list-group-item">
+                    <label style="font-size:15px;">
+                      <input type="hidden" name="module_speakerlaap_savereview" value="0"/>
+                      <input type="checkbox" name="module_speakerlaap_savereview" value="1" {{ module_speakerlaap_savereview ? 'checked' : constant('null') }} class="switch"/>
+                      {{ entry_save_review }}
+                    </label>
+                  </li>
+                </ul>
+              </div>
+              <div class="col-sm-4">
+                <ul class="list-group spp">
+                  <li class="list-group-item">
+                    <label style="font-size:15px;">
+                      <input type="hidden" name="module_speakerlaap_saveinfo" value="0"/>
+                      <input type="checkbox" name="module_speakerlaap_saveinfo" value="1" {{ module_speakerlaap_saveinfo ? 'checked' : constant('null') }} class="switch"/>
+                      {{ entry_save_info }}
+                    </label>
+                  </li>
+                  <li class="list-group-item">
+                    <label style="font-size:15px;">
+                      <input type="hidden" name="module_speakerlaap_saveb_article" value="0"/>
+                      <input type="checkbox" name="module_speakerlaap_saveb_article" value="1" {{ module_speakerlaap_saveb_article ? 'checked' : constant('null') }} class="switch"/>
+                      {{ entry_save_b_article }}
+                    </label>
+                  </li>
+                  <li class="list-group-item">
+                    <label style="font-size:15px;">
+                      <input type="hidden" name="module_speakerlaap_saveb_cat" value="0"/>
+                      <input type="checkbox" name="module_speakerlaap_saveb_cat" value="1" {{ module_speakerlaap_saveb_cat ? 'checked' : constant('null') }} class="switch"/>
+                      {{ entry_save_b_cat }}
+                    </label>
+                  </li>
+                  <li class="list-group-item">
+                    <label style="font-size:15px;">
+                      <input type="hidden" name="module_speakerlaap_saveb_review" value="0"/>
+                      <input type="checkbox" name="module_speakerlaap_saveb_review" value="1" {{ module_speakerlaap_saveb_review ? 'checked' : constant('null') }} class="switch"/>
+                      {{ entry_save_b_review }}
+                    </label>
+                  </li>
+                  <li class="list-group-item">
+                    <label style="font-size:15px;">
+                      <input type="hidden" name="module_speakerlaap_savelayout" value="0"/>
+                      <input type="checkbox" name="module_speakerlaap_savelayout" value="1" {{ module_speakerlaap_savelayout ? 'checked' : constant('null') }} class="switch"/>
+                      {{ entry_save_layout }}
+                    </label>
+                  </li>
+                  <li class="list-group-item">
+                    <label style="font-size:15px;">
+                      <input type="hidden" name="module_speakerlaap_savebanner" value="0"/>
+                      <input type="checkbox" name="module_speakerlaap_savebanner" value="1" {{ module_speakerlaap_savebanner ? 'checked' : constant('null') }} class="switch"/>
+                      {{ entry_save_banner }}
+                    </label>
+                  </li>
+                  <li class="list-group-item">
+                    <label style="font-size:15px;">
+                      <input type="hidden" name="module_speakerlaap_saveseo_url" value="0"/>
+                      <input type="checkbox" name="module_speakerlaap_saveseo_url" value="1" {{ module_speakerlaap_saveseo_url ? 'checked' : constant('null') }} class="switch"/>
+                      {{ entry_save_seo_url }}
+                    </label>
+                  </li>
+                  <li class="list-group-item">
+                    <label style="font-size:15px;">
+                      <input type="hidden" name="module_speakerlaap_savereturn" value="0"/>
+                      <input type="checkbox" name="module_speakerlaap_savereturn" value="1" {{ module_speakerlaap_savereturn ? 'checked' : constant('null') }} class="switch"/>
+                      {{ entry_save_return }}
+                    </label>
+                  </li>
+                  <li class="list-group-item">
+                    <label style="font-size:15px;">
+                      <input type="hidden" name="module_speakerlaap_savevoucher" value="0"/>
+                      <input type="checkbox" name="module_speakerlaap_savevoucher" value="1" {{ module_speakerlaap_savevoucher ? 'checked' : constant('null') }} class="switch"/>
+                      {{ entry_save_voucher }}
+                    </label>
+                  </li>
+                  <li class="list-group-item">
+                    <label style="font-size:15px;">
+                      <input type="hidden" name="module_speakerlaap_savevoucher_theme" value="0"/>
+                      <input type="checkbox" name="module_speakerlaap_savevoucher_theme" value="1" {{ module_speakerlaap_savevoucher_theme ? 'checked' : constant('null') }} class="switch"/>
+                      {{ entry_save_voucher_theme }}
+                    </label>
+                  </li>
+                </ul>
+              </div>
+              <div class="col-sm-4">
+                <ul class="list-group spp">
+                  <li class="list-group-item">
+                    <label style="font-size:15px;">
+                      <input type="hidden" name="module_speakerlaap_savecustomer" value="0"/>
+                      <input type="checkbox" name="module_speakerlaap_savecustomer" value="1" {{ module_speakerlaap_savecustomer ? 'checked' : constant('null') }} class="switch"/>
+                      {{ entry_save_customer }}
+                    </label>
+                  </li>
+                  <li class="list-group-item">
+                    <label style="font-size:15px;">
+                      <input type="hidden" name="module_speakerlaap_savecustomer_group" value="0"/>
+                      <input type="checkbox" name="module_speakerlaap_savecustomer_group" value="1" {{ module_speakerlaap_savecustomer_group ? 'checked' : constant('null') }} class="switch"/>
+                      {{ entry_save_customer_group }}
+                    </label>
+                  </li>
+                  <li class="list-group-item">
+                    <label style="font-size:15px;">
+                      <input type="hidden" name="module_speakerlaap_savecustom_field" value="0"/>
+                      <input type="checkbox" name="module_speakerlaap_savecustom_field" value="1" {{ module_speakerlaap_savecustom_field ? 'checked' : constant('null') }} class="switch"/>
+                      {{ entry_save_custom_field }}
+                    </label>
+                  </li>
+                  <li class="list-group-item">
+                    <label style="font-size:15px;">
+                      <input type="hidden" name="module_speakerlaap_savemarketing" value="0"/>
+                      <input type="checkbox" name="module_speakerlaap_savemarketing" value="1" {{ module_speakerlaap_savemarketing ? 'checked' : constant('null') }} class="switch"/>
+                      {{ entry_save_marketing }}
+                    </label>
+                  </li>
+                  <li class="list-group-item">
+                    <label style="font-size:15px;">
+                      <input type="hidden" name="module_speakerlaap_savecoupon" value="0"/>
+                      <input type="checkbox" name="module_speakerlaap_savecoupon" value="1" {{ module_speakerlaap_savecoupon ? 'checked' : constant('null') }} class="switch"/>
+                      {{ entry_save_coupon }}
+                    </label>
+                  </li>
+                  <li class="list-group-item">
+                    <label style="font-size:15px;">
+                      <input type="hidden" name="module_speakerlaap_saves_store" value="0"/>
+                      <input type="checkbox" name="module_speakerlaap_saves_store" value="1" {{ module_speakerlaap_saves_store ? 'checked' : constant('null') }} class="switch"/>
+                      {{ entry_save_s_store }}
+                    </label>
+                  </li>
+                  <li class="list-group-item">
+                    <label style="font-size:15px;">
+                      <input type="hidden" name="module_speakerlaap_saves_user" value="0"/>
+                      <input type="checkbox" name="module_speakerlaap_saves_user" value="1" {{ module_speakerlaap_saves_user ? 'checked' : constant('null') }} class="switch"/>
+                      {{ entry_save_s_user }}
+                    </label>
+                  </li>
+                  <li class="list-group-item">
+                    <label style="font-size:15px;">
+                      <input type="hidden" name="module_speakerlaap_saves_user_group" value="0"/>
+                      <input type="checkbox" name="module_speakerlaap_saves_user_group" value="1" {{ module_speakerlaap_saves_user_group ? 'checked' : constant('null') }} class="switch"/>
+                      {{ entry_save_s_user_group }}
+                    </label>
+                  </li>
+                  <li class="list-group-item">
+                    <label style="font-size:15px;">
+                      <input type="hidden" name="module_speakerlaap_saves_api" value="0"/>
+                      <input type="checkbox" name="module_speakerlaap_saves_api" value="1" {{ module_speakerlaap_saves_api ? 'checked' : constant('null') }} class="switch"/>
+                      {{ entry_save_s_api }}
+                    </label>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-status">{{ entry_status }}</label>
+            <div class="col-sm-10">
+              <select name="module_speakerlaap_status" id="input-status" class="form-control">
+                {% if module_speakerlaap_status %}
+                <option value="1" selected="selected">{{ text_enabled }}</option>
+                <option value="0">{{ text_disabled }}</option>
+                {% else %}
+                <option value="1">{{ text_enabled }}</option>
+                <option value="0" selected="selected">{{ text_disabled }}</option>
+                {% endif %}
+              </select>
+            </div>
+          </div>
+        </form>
+
+
+        <style>
+          .list-group.spp .list-group-item {padding: 5px;}
+          input[type="checkbox"].switch {margin-right:10px;font-size:inherit;-webkit-appearance:none;-moz-appearance:none;appearance:none;top:4px;width:40px;height:21px;background:#ddd;border-radius:5px;position:relative;cursor:pointer;outline:none;-webkit-transition:all .2s ease-in-out;transition:all .2s ease-in-out;}
+          input[type="checkbox"].switch:checked {background:#58c933;}
+          input[type="checkbox"].switch:after {position:absolute;content:"";width:18px;height:18px;border-radius:50%;background:#fff;-webkit-box-shadow:0 0 .25em rgba(0, 0, 0, .3);box-shadow:0 0 .25em rgba(0, 0, 0, .3);-webkit-transform:scale(.7);transform:scale(.7);left:0;-webkit-transition:all .2s ease-in-out;transition:all .2s ease-in-out;}
+          input[type="checkbox"].switch:checked:after {left:calc(100% - 20px);top:0;content:"";}
+        </style>
+
+        <script>
+          $('input[type="checkbox"]').each(function(index, value) {
+            var that = $(this);
+
+            $(that).addClass('switch');
+          });
+        </script>
+
+      </div>
+    </div>
+  </div>
+</div>
+{{ footer }}

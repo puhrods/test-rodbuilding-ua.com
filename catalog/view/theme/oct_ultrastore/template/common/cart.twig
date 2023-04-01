@@ -1,0 +1,18 @@
+<div id="cart" class="col-lg-2 us-cart-box d-flex align-items-center justify-content-end">
+	{% if oct_popup_cart_status is defined and oct_popup_cart_status %}
+	<button type="button" class="us-cart-img" onclick="octPopupCart()">
+	{% else %}
+	<button type="button" class="us-cart-img" onclick="location = '{{ cart }}';">
+	{% endif %}
+		<img src="catalog/view/theme/oct_ultrastore/img/sprite.svg#include--cart-icon" alt="cart-icon" width="42" height="36">
+		<span class="header-cart-index">{{ total_products }}</span>
+	</button>
+	<div class="us-cart-content">
+		<p class="us-cart-text">
+			{{ total_amount }}
+		</p>
+		<a href="{{ checkout }}" class="us-cart-link">
+			{{ oct_text_checkout }}
+		</a>
+	</div>
+</div>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+	<code>oct_ultrastore_noindex_OCStore</code>
+	<name>Octemplates - Noindex For OCStore</name>
+	<version>1.0.0</version>
+	<author>Octemplates</author>
+	<link>http://octemplates.net/</link>
+	<file path="catalog/view/theme/oct_ultrastore/template/common/header.twig">
+		<operation error="skip">
+			<search><![CDATA[<base href="{{ base }}" />]]></search>
+			<add position="before"><![CDATA[
+			{% if robots %}
+			<meta name="robots" content="{{ robots }}" />
+			{% endif %}
+			]]></add>
+    	</operation>
+	</file>
+</modification>

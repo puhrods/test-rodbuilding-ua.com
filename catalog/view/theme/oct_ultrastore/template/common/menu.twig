@@ -1,0 +1,105 @@
+{% if categories %}
+	{% if deff is defined and deff %}
+	<div id="oct-menu-box" class="col-lg-3">
+	<div  id="oct-ultra-menu-header" class="oct-ultra-menu d-flex align-items-center justify-content-center">
+		<span><i class="fas fa-bars"></i> {{ text_category }}</span>
+	</div>
+	<nav id="oct-menu-dropdown-menu">
+		<ul id="oct-menu-ul" class="oct-menu-ul oct-menu-parent-ul list-unstyled">
+	{% endif %}
+	{% for category in categories %}
+		{% if category.children or category.oct_pages is not empty %}
+			<li class="oct-menu-li">
+				<div class="d-flex align-items-center justify-content-between">
+					<a href="{{ category.href }}" class="oct-menu-a{% if category.oct_image %} d-flex align-items-center{% endif %}">{% if category.oct_image %}<img class="oct-menu-cat-icon" src="{{ category.oct_image }}" alt="{{ category.name }}" width="{{ category.image_width }}" height="{{ category.image_height }}" />{% endif %}<span class="oct-menu-item-name">{{ category.name }}</span></a>{% if category.children or category.oct_pages is not empty %}<span class="oct-menu-toggle"><i class="fas fa-chevron-right"></i></span>{% endif %}
+				</div>
+				<div class="oct-menu-child-ul">
+					<div class="oct-menu-back"><i class="fas fa-long-arrow-alt-left"></i> {{ category.name }}</div>
+					<ul class="oct-menu-ul list-unstyled">
+						{% for child in category.children %}
+						<li class="oct-menu-li">
+							<div class="d-flex align-items-center justify-content-between">
+								<a href="{{ child.href }}"><span class="oct-menu-item-name">{{ child.name }}</span></a>{% if child.children or child.oct_pages is not empty %}<span class="oct-menu-toggle"><i class="fas fa-chevron-right"></i></span>{% endif %}
+							</div>
+							{% if child.children or child.oct_pages is not empty %}
+							<div class="oct-menu-child-ul">
+								<div class="oct-menu-back"><i class="fas fa-long-arrow-alt-left"></i> {{ child.name }}</div>
+								<ul class="oct-menu-ul list-unstyled">
+									{% for ch in child.children %}
+									<li class="oct-menu-li">
+									{% if ch.children or ch.oct_pages is not empty %}
+									<div class="d-flex align-items-center justify-content-between">
+									{% endif %}
+									<a href="{{ ch.href }}"><span class="oct-menu-item-name">{{ ch.name }}</span></a>
+									{% if ch.children or ch.oct_pages is not empty %}
+									<span class="oct-menu-toggle"><i class="fas fa-chevron-right"></i></span>
+									</div>
+									<div class="oct-menu-child-ul">
+										<div class="oct-menu-back"><i class="fas fa-long-arrow-alt-left"></i> {{ child.name }}</div>
+										<ul class="oct-menu-ul list-unstyled">
+											{% for child in ch.children %}
+											<li class="oct-menu-li">
+												<a href="{{ child.href }}"><span class="oct-menu-item-name">{{ child.name }}</span></a>
+											</li>
+											{% endfor %}
+											{% for oct_page in ch.oct_pages %}
+											{% if oct_page.page_links is not empty %}
+											<li class="group-title">
+												<strong>{{ oct_page.page_group[language_id] }}</strong>
+												{% for link in oct_page.page_links %}
+												<a href="{{ link[language_id].link }}" title="{{ link[language_id].title }}">{{ link[language_id].title }}</a>
+												{% endfor %}
+											</li>
+											{% endif %}
+											{% endfor %}
+										</ul>
+									</div>
+									{% endif %}
+									</li>
+									{% endfor %}
+									{% if child.oct_pages is not empty %}
+										{% for oct_page in child.oct_pages %}
+											{% if oct_page.page_links is not empty %}
+											<li class="group-title">
+												<strong>{{ oct_page.page_group[language_id] }}</strong>
+												{% for link in oct_page.page_links %}
+												<a href="{{ link[language_id].link }}" title="{{ link[language_id].title }}">{{ link[language_id].title }}</a>
+												{% endfor %}
+											</li>
+											{% endif %}
+										{% endfor %}
+									{% endif %}
+								</ul>
+							</div>
+							{% endif %}
+						</li>
+						{% endfor %}
+						{% if category.oct_pages is not empty %}
+							{% for oct_page in category.oct_pages %}
+								{% if oct_page.page_links is not empty %}
+								<li class="group-title">
+									<strong>{{ oct_page.page_group[language_id] }}</strong>
+									{% for link in oct_page.page_links %}
+									<a href="{{ link[language_id].link }}" title="{{ link[language_id].title }}">{{ link[language_id].title }}</a>
+									{% endfor %}
+								</li>
+								{% endif %}
+							{% endfor %}
+						{% endif %}
+					</ul>
+				</div>
+			</li>
+		{% else %}
+			<li class="oct-menu-li"><a href="{{ category.href }}" class="oct-menu-a{% if category.oct_image %} d-flex align-items-center{% endif %}">{% if category.oct_image %}<img class="oct-menu-cat-icon" src="{{ category.oct_image }}" alt="{{ category.name }}" />{% endif %}<span class="oct-menu-item-name">{{ category.name }}</span></a></li>
+		{% endif %}
+	{% endfor %}
+	{% if oct_all_categories is defined and oct_all_categories and deff is not defined %}
+		<li class="oct-menu-li"><a href="{{ oct_all_categories }}" class="oct-menu-a"><span class="oct-menu-item-name">{{ entry_oct_all_categories }}</span></a></li>
+	{% endif %}
+	{% if deff is defined and deff %}
+			</ul>
+		</nav>
+	</div>
+	</div>
+	{% endif %}
+{% endif %}

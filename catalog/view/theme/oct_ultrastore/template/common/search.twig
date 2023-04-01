@@ -1,0 +1,73 @@
+<form id="search" class="input-group header-input-group">
+	<input type="text" id="input_search" name="search" value="{{ search }}" placeholder="{{ text_search }}" class="input-lg h-100 header-input" />
+	<button type="button"  id="oct-search-button" class="btn btn-search header-btn-search h-100" aria-label="Search"><i class="fa fa-search"></i></button>
+	<div id="us_livesearch_close" onclick="clearLiveSearch();" class="d-lg-none"><i class="fas fa-times"></i></div>
+	<div id="us_livesearch"></div>
+</form>
+
+{% if oct_live_search_status %}
+<script>
+function clearLiveSearch() {
+	$('#us_livesearch_close').removeClass('visible');
+	$('#us_livesearch').removeClass('expanded');
+	$('#us_livesearch').html('');
+	$('#input_search').val('');
+}
+
+$(document).ready(function() {
+	let timer, delay = {{ delay_setting }};
+
+	$('#input_search').keyup(function(event) {
+
+	    switch(event.keyCode) {
+			case 37:
+			case 39:
+			case 38:
+			case 40:
+				return;
+			case 27:
+				clearLiveSearch();
+				$('#us_overlay').removeClass('active');
+				return;
+		}
+
+	    clearTimeout(timer);
+
+	    timer = setTimeout(function() {
+	        let value = $('header #search input[name=\'search\']').val();
+
+			if (value.length >= {{ count_symbol }}) {
+				let key = encodeURIComponent(value);
+				octsearch.search(key, 'desktop');
+			} else if (value.length === 0) {
+				clearLiveSearch();
+			}
+
+	    }, delay );
+	});
+});
+
+let octsearch = {
+	'search': function(key, type) {
+		$.ajax({
+			url: 'index.php?route=octemplates/module/oct_live_search',
+			type: 'post',
+			data: 'key=' + key,
+			dataType: 'html',
+			cache: false,
+			success: function(data) {
+				$('#us_livesearch').html(data).addClass('expanded');
+
+				if(data = data.match(/livesearch/g)) {
+					$('#us_livesearch_close').addClass('visible');
+					$('#us_overlay').addClass('active');
+				} else {
+					$('#us_livesearch_close').removeClass('visible');
+					$('#us_overlay').removeClass('active');
+				}
+			}
+		});
+	}
+}
+</script>
+{% endif %}

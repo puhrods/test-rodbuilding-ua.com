@@ -1,0 +1,320 @@
+{% if is_noiframe %}{% else %}
+<script type="text/javascript" src="catalog/view/javascript/jquery/socnetauth2-jquery.js"></script>
+{% endif %}
+
+<script type="text/javascript" src="catalog/view/javascript/jquery/socnetauth2-jquery-mask.js?1"></script>
+
+<style>
+h1
+{    
+	font-family: "Trebuchet MS","Arial";
+	color: #0099FF;
+    font-size: 24px;
+	padding-left: 5px;
+}
+
+p
+{
+	font-family: "Trebuchet MS","Arial";
+	color: #999999;
+	padding-left: 5px;
+}
+
+td
+{
+	font-family: "Trebuchet MS","Arial";
+	color: #000;
+	padding: 5px;
+}
+
+input[type=submit]
+{
+	  background-color: #F0F0F0;
+    /* background-image: url("/img/widget/button_bg.gif"); */
+    background-repeat: repeat-x;
+    border: 1px solid #C4C4C4;
+    color: #838383;
+    font-family: "Arial";
+    font-size: 18px;
+    font-weight: bold;
+    padding: 5px;
+}
+
+input[type=text]
+{
+	border: 1px #ccc solid;
+	width: 160px;
+}
+
+
+input[type=submit]:hover
+{
+	background-color: #F4FAFD; 
+    border: 1px solid #D3ECFD;
+    color: #2E9CD8;
+}
+
+.err
+{
+	color: red;
+	font-family: "Trebuchet MS","Arial";
+	font-weight: bold;
+	padding-left: 5px;
+	font-size: 12px;
+}
+
+.agree {
+	padding-left: 0px;
+	padding-bottom: 5px;
+}
+</style>
+<div id="socnetauth2_body_inner">
+<h1>{{ header }}</h1>
+<p>{{ header_notice }}</p>
+<form action="{{ action }}" method="POST" onsubmit="return confirmSocnetauthForm();"
+id="socnetauth2_frame">
+<table>
+{% if is_username %}
+<tr>
+	<td>{{ entry_username }}{% if username_required %}*{% endif %}</td>
+	<td><input type="text" name="username" value="{{ username }}">{% if error_username %}<span class="err">{{ error_username }}</span>{% endif %}</td>
+</tr>
+{% endif %}
+{% if is_firstname %}
+<tr>
+	<td>{{ entry_firstname }}{% if firstname_required %}*{% endif %}</td>
+	<td><input type="text" name="firstname" value="{{ firstname }}">{% if error_firstname %}<span class="err">{{ error_firstname }}</span>{% endif %}</td>
+</tr>
+{% endif %}
+
+{% if is_lastname %}
+<tr>
+	<td width=80>{{ entry_lastname }}{% if lastname_required %}*{% endif %}</td>
+	<td><input type="text" name="lastname" value="{{ lastname }}">{% if error_lastname %}<span class="err">{{ error_lastname }}</span>{% endif %}</td>
+</tr>
+{% endif %}
+
+{% if is_email %}
+<tr>
+	<td width=80>{{ entry_email }}{% if email_required %}*{% endif %}</td>
+	<td><input type="text" name="email" value="{{ email }}">{% if error_email %}<span class="err">{{ error_email }}</span>{% endif %}</td>
+</tr>
+{% endif %}
+
+{% if is_telephone %}
+<tr>
+	<td width=80>{{ entry_telephone }}{% if telephone_required %}*{% endif %}</td>
+	<td><input type="text" name="telephone" value="{{ telephone }}">{% if error_telephone %}<span class="err">{{ error_telephone }}</span>{% endif %}</td>
+</tr>
+{% endif %}
+
+{% if is_company %}
+<tr>
+	<td width=80>{{ entry_company }}{% if company_required %}*{% endif %}</td>
+	<td><input type="text" name="company" value="{{ company }}">
+	{% if error_company %}<span class="err">{{ error_company }}</span>{% endif %}</td>
+</tr>
+{% endif %}
+
+{% if is_postcode %}
+<tr>
+	<td width=80>{{ entry_postcode }}{% if postcode_required %}*{% endif %}</td>
+	<td><input type="text" name="postcode" value="{{ postcode }}">
+	{% if error_postcode %}<span class="err">{{ error_postcode }}</span>{% endif %}</td>
+</tr>
+{% endif %}
+
+{% if is_country %}
+<tr>
+	<td width=80>{{ entry_country }}{% if country_required %}*{% endif %}</td>
+	<td><select name="country">
+			  {% for item in countries %}
+			  {% if item['country_id'] == country %}
+              <option value="{{ item['country_id'] }}" selected="selected">{{ item['name'] }}</option>
+              {% else %}
+              <option value="{{ item['country_id'] }}">{{ item['name'] }}</option>
+              {% endif %}
+              {% endfor %}
+            </select>
+	{% if error_country %}<span class="err">{{ error_country }}</span>{% endif %}</td>
+</tr>
+{% endif %}
+
+{% if is_zone %}
+<tr>
+	<td width=80>{{ entry_zone }}{% if zone_required %}*{% endif %}
+		{% if not is_country %}
+		<div style="display: none;">
+		<select name="country">
+              {% for item in countries %}
+			  {% if item['country_id'] == country %}
+              <option value="{{ item['country_id'] }}" selected="selected">{{ item['name'] }}</option>
+              {% else %}
+              <option value="{{ item['country_id'] }}">{{ item['name'] }}</option>
+              {% endif %}
+              {% endfor %}
+        </select></div>
+		{% endif %}
+	
+	</td>
+	<td><select name="zone">
+            </select>
+	{% if error_zone %}<span class="err">{{ error_zone }}</span>{% endif %}</td>
+</tr>
+{% endif %}
+
+{% if is_city %}
+<tr>
+	<td width=80>{{ entry_city }}{% if city_required %}*{% endif %}</td>
+	<td><input type="text" name="city" value="{{ city }}">
+	{% if error_city %}<span class="err">{{ error_city }}</span>{% endif %}</td>
+</tr>
+{% endif %}
+
+{% if is_address_1 %}
+<tr>
+	<td width=80>{{ entry_address_1 }}{% if address_1_required %}*{% endif %}</td>
+	<td><input type="text" name="address_1" value="{{ address_1 }}">
+	{% if error_address_1 %}<span class="err">{{ error_address_1 }}</span>{% endif %}</td>
+</tr>
+{% endif %}
+
+{% if is_group and groups %}
+<tr>
+	<td width=80>{{ entry_group }}{% if group_required %}*{% endif %}</td>
+	<td><select name="group">
+    {% for groupp in groups %}
+	<option value="{{ groupp['customer_group_id'] }}"
+	{% if groupp['customer_group_id'] == group %} selected {% endif %}
+	>{{ groupp['name'] }}</option>
+	{% endfor %}
+	</select></td>
+</tr>
+{% endif %}
+
+{% if count_agrees and inf %} 
+<tr> 
+	<td width=80></td>
+	<td >{{ entry_agree }}
+	
+	{% if is_agree %}
+	<div class="agree"><input type="checkbox" name="agree" value="1"
+	checked
+	><a href="{{ inf['href'] }}" target=_blank>{{ inf['title'] }}</a></div>
+	{% if error_agree %}<div class="err">{{ error_agree }}</div>{% endif %}
+	{% endif %}
+	{% if is_agree2  %}
+	<div class="agree"><input type="checkbox" name="agree2" value="1"
+	checked
+	><a href="{{ inf2['href'] }}" target=_blank>{{ inf2['title'] }}</a></div>
+	{% if error_agree2 %}<div class="err">{{ error_agree2 }}</div>{% endif %}
+	{% endif %}
+	{% if is_agree3  %}
+	<div class="agree"><input type="checkbox" name="agree3" value="1"
+	checked
+	><a href="{{ inf3['href'] }}" target=_blank>{{ inf3['title'] }}</a></div>
+	{% if error_agree3 %}<div class="err">{{ error_agree3 }}</div>{% endif %}
+	{% endif %}
+	
+	
+	</td>
+</tr>
+{% endif %}
+ 
+{% if is_newsletter %} 
+<tr>
+	<td width=80></td>
+	<td>
+		<input type="checkbox" name="newsletter" value="1"
+			checked
+		>{{ entry_newsletter }} 
+	</td>
+</tr>
+{% endif %}
+
+
+<tr>
+	<td width=80></td>
+	{% if is_noiframe %} 
+		<td><input type="button" onclick="confirmSocnetauthForm();" value="{{ text_submit }}"></td>
+	{% else %}
+		<td><input type="submit" value="{{ text_submit }}"></td>
+	{% endif %}
+</tr>
+</table>
+
+{% if is_zone %}
+<script type="text/javascript"><!--
+$('select[name=\'country\']').bind('change', function() {
+	$.ajax({
+		url: 'index.php?route=extension/module/socnetauth2/country&country_id=' + this.value,
+		dataType: 'json',
+		beforeSend: function() {
+			$('select[name=\'country\']').after('<span class="wait">&nbsp;<img src="catalog/view/theme/default/image/loading.gif" alt="" /></span>');
+		},		
+		complete: function() {
+			$('.wait').remove();
+		},			
+		success: function(json) {
+			if (json['postcode_required'] == '1') {
+				$('#postcode-required').show();
+			} else {
+				$('#postcode-required').hide();
+			}
+			
+			html = '<option value="">{{ text_select }}</option>';
+			
+			if (json['zone'] != '') {
+				for (i = 0; i < json['zone'].length; i++) {
+        			html += '<option value="' + json['zone'][i]['zone_id'] + '"';
+	    			
+					if (json['zone'][i]['zone_id'] == '{{ zone }}') {
+	      				html += ' selected="selected"';
+	    			}
+	
+	    			html += '>' + json['zone'][i]['name'] + '</option>';
+				}
+			} else {
+				html += '<option value="0" selected="selected">{{ text_none }}</option>';
+			}
+			
+			$('select[name=\'zone\']').html(html);
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+});
+
+$('select[name=\'country\']').trigger('change');
+
+//--></script> 
+{% endif %}
+</form>
+</div>
+{% if is_telephone and telephone_mask %}
+<script> 
+  $('input[name="telephone"]').inputmask('{{ telephone_mask }}');
+</script> 
+{% endif %}
+
+<script>
+function confirmSocnetauthForm()
+{
+	
+	var r = Math.random();
+	$.ajax({
+        url: $('#socnetauth2_frame').attr("action")+'&r='+r,
+        type: 'post',
+        data: $('#socnetauth2_frame input[type=\'text\'], #socnetauth2_frame input[type=\'date\'], #socnetauth2_frame input[type=\'datetime-local\'], #socnetauth2_frame input[type=\'time\'], #socnetauth2_frame input[type=\'password\'], #socnetauth2_frame input[type=\'hidden\'], #socnetauth2_frame input[type=\'checkbox\']:checked, #socnetauth2_frame input[type=\'radio\']:checked, #socnetauth2_frame textarea, #socnetauth2_frame select'),
+		dataType: 'html',
+        success: function(html) {
+			$('#socnetauth2_body_inner').html(html);
+		},
+        error: function(xhr, ajaxOptions, thrownError) {
+            alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+        }
+    });
+	return false;
+}
+</script>

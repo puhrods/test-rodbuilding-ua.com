@@ -1,0 +1,226 @@
+{{ header }}{{ column_left }}
+<div id="content" class="ocf-page">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+				<a href="{{ add }}" data-toggle="tooltip" title="{{ button_add_filter }}" class="btn btn-primary"><i class="fa fa-plus"></i></a>
+        <button type="button" data-toggle="popover" data-trigger="click" data-placement="bottom" data-html="true" data-content="{{ text_confirm_delete_filter }}" class="btn btn-danger"><i class="fa fa-trash-o"></i></button>
+      </div>
+      <h1>{{ heading_title }}</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+        <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="container-fluid">
+    {% if error_warning %}
+    <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    {% endif %}
+    {% if success %}
+    <div class="alert alert-success"><i class="fa fa-check-circle"></i> {{ success }}
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    {% endif %}
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <ul class="list-inline pull-right">
+          <li><a href="https://ocfilter.com/documentation/4.8/#nav-filter-list" target="_blank"><i class="fa fa-fw fa-info-circle"></i> {{ text_documentation }}</a></li>
+          <li><a href="https://ocfilter.com/faq/4.8/" target="_blank"><i class="fa fa-fw fa-question-circle"></i> {{ text_faq }}</a></li>
+        </ul>
+        <h3 class="panel-title"><i class="fa fa-list"></i> {{ text_list }}</h3>
+      </div>       
+      <div class="panel-body">
+        <div class="row">
+          <div class="col-lg-3 col-lg-push-9">            
+            {{ include('extension/module/ocfilter/filter_list/form_list_filter.twig') }}
+          </div>        
+          <div class="col-lg-9 col-lg-pull-3"> 
+            <form action="{{ delete }}" method="post" enctype="multipart/form-data" id="form-list">
+              <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                  <thead>
+                    <tr class="active">
+                      <td style="width: 1px;" class="text-center">
+                        <input type="checkbox" onclick="$('input[name=\'selected[]\']').prop('checked', this.checked);" />
+                      </td>
+                      <td class="{{ sort == 'ofd.name' ? 'info' : '' }}" style="min-width: 250px;">                        
+                        <a href="{{ sort_name }}">{{ column_name }} <i class="fa fa-sort-{{ order == 'DESC' ? 'asc' : 'desc' }}"></i></a>
+                        {% if sort == 'ofd.name' %}
+                        <a href="{{ reset_sort }}" class="text-danger pull-right"><i class="fa fa-times-circle"></i></a>                     
+                        {% endif %}                           
+                      </td>                     
+                      <td class="text-right{{ sort == 'total_values' ? ' info' : '' }}" colspan="2">                        
+                        <a href="{{ sort_total_values }}">{{ column_values }} <i class="fa fa-sort-{{ order == 'DESC' ? 'asc' : 'desc' }}"></i></a>                        
+                        {% if sort == 'total_values' %}
+                        <a href="{{ reset_sort }}" class="text-danger"><i class="fa fa-times-circle"></i></a>                
+                        {% endif %}                        
+                      </td>
+                      <td class="{{ sort == 'numeric' ? 'info' : '' }}">
+                        {{ column_type }} 
+                        <div class="pull-right">
+                          <a href="{{ sort_numeric }}">{{ column_numeric }} <i class="fa fa-sort-{{ order == 'DESC' ? 'asc' : 'desc' }}"></i></a>
+                          {% if sort == 'numeric' %}
+                          <a href="{{ reset_sort }}" class="text-danger"><i class="fa fa-times-circle"></i></a>
+                          {% endif %}
+                        </div> 
+                      </td>
+                      <td class="text-right text-nowrap{{ sort == 'of.sort_order' ? ' info' : '' }}">
+                        <a href="{{ sort_order }}">{{ column_sort_order }} <i class="fa fa-sort-{{ order == 'DESC' ? 'asc' : 'desc' }}"></i></a>
+                        {% if sort == 'of.sort_order' %}
+                        <a href="{{ reset_sort }}" class="text-danger"><i class="fa fa-times-circle"></i></a>
+                        {% endif %}                          
+                      </td>
+                      <td>{{ column_status }}</td>
+                      <td style="width: 1px;"></td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for filter in filters %}
+                    {% if filter.status %}
+                    {% set class = '' %}
+                    {% else %}
+                    {% set class = 'active' %}
+                    {% endif %}
+                    <tr class="{{ class }}">
+                      {% if filter.source == 'attribute' %}
+                      {% set class = 'warning' %}
+                      {% elseif filter.source == 'filter' %}
+                      {% set class = 'success' %}
+                      {% elseif filter.source == 'option' %}
+                      {% set class = 'info' %}            
+                      {% else %}
+                      {% set class = 'bg-white' %}
+                      {% endif %}
+                    
+                      <td class="text-center {{ class }}">
+                        {% if filter.selected %}
+                        <input type="checkbox" name="selected[]" value="{{ filter.filter_key }}" checked="checked" />
+                        {% else %}
+                        <input type="checkbox" name="selected[]" value="{{ filter.filter_key }}" />
+                        {% endif %}
+                      </td>
+                      <td>
+                        <input type="text" name="name" value="{{ filter.name }}" class="form-control ocf-edit" for="{{ filter.filter_key }}" />
+                      </td>
+                      <td class="text-right">
+                        {% for value in filter.values %}
+                        <span class="label label-ocf-value">{{ value }}</span>
+                        {% endfor %}                   
+                      </td>
+                      <td class="text-right">
+                        {% if filter.total_values > 0 %}
+                        {% if (filter.total_values - 5) > 0 %}
+                        <span class="text-nowrap">+ <b>{{ filter.total_values - 5 }}</b></span>
+                        {% else %}
+                        <b>{{ filter.total_values }}</b>
+                        {% endif %}
+                        {% else %}
+                        <span class="text-muted">0</span>
+                        {% endif %}
+                      </td>
+                      <td>
+                        <select class="form-control input-sm ocf-edit" name="type" for="{{ filter.filter_key }}">
+                          {% if filter.type == 'checkbox' %}
+                          <option value="checkbox" selected="selected">{{ text_checkbox }}</option>
+                          {% else %}
+                          <option value="checkbox">{{ text_checkbox }}</option>
+                          {% endif %}
+                          {% if filter.type == 'radio' %}
+                          <option value="radio" selected="selected">{{ text_radio }}</option>
+                          {% else %}
+                          <option value="radio">{{ text_radio }}</option>
+                          {% endif %}
+                          {% if filter.type == 'slide' %}
+                          <option value="slide" selected="selected">{{ text_slide }}</option>
+                          {% else %}
+                          <option value="slide">{{ text_slide }}</option>
+                          {% endif %}
+                          {% if filter.type == 'slide_dual' %}
+                          <option value="slide_dual" selected="selected">{{ text_slide_dual }}</option>
+                          {% else %}
+                          <option value="slide_dual">{{ text_slide_dual }}</option>
+                          {% endif %}                             
+                        </select>
+                      </td>
+                      <td class="text-right">
+                        <input type="number" name="sort_order" value="{{ filter.sort_order }}" class="form-control ocf-edit" for="{{ filter.filter_key }}" style="text-align: right; max-width: 80px;" />
+                      </td>
+                      <td>
+                        <div class="btn-group" data-toggle="buttons">
+                          {% if filter.status %}
+                          <label class="btn btn-sm btn-default btn-info active">
+                            <input type="checkbox" name="status" value="1" class="ocf-edit" for="{{ filter.filter_key }}" checked="checked" /> <i class="fa fa-lg fa-check-square fa-square-o"></i>
+                          </label>
+                          {% else %}
+                          <label class="btn btn-sm btn-default">
+                            <input type="checkbox" name="status" value="1" class="ocf-edit" for="{{ filter.filter_key }}" /> <i class="fa fa-lg fa-square-o"></i>
+                          </label>
+                          {% endif %}
+                        </div>
+                      </td>
+                      <td class="text-right">
+                        <a href="{{ filter.edit }}" data-toggle="tooltip" title="{{ button_edit }}" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i></a>
+                      </td>
+                    </tr>
+                    {% endfor %} 
+                  </tbody>
+                  <tfoot>
+                    <tr class="active">
+                      <td></td>
+                      <td colspan="7">
+                        {% if filters %}
+                        <div class="">
+                          <ul class="list-inline mb-0">
+                            <li><span class="label bg-white border" style="padding: 0 5px;">&nbsp;</span> {{ text_source_default }}</li>
+                            <li><span class="label label-warning" style="padding: 0 5px;">&nbsp;</span> {{ text_source_attribute }}</li>
+                            <li><span class="label label-success" style="padding: 0 5px;">&nbsp;</span> {{ text_source_filter }}</li>
+                            <li><span class="label label-info" style="padding: 0 5px;">&nbsp;</span> {{ text_source_option }}</li>
+                          </ul>
+                        </div>   
+                        {% else %}
+                        <div class="text-center">{{ text_no_results }}</div>
+                        {% endif %}                            
+                      </td>
+                    </tr>
+                  </tfoot>                   
+                </table>
+              </div>
+            </form>
+            <div class="row">
+              <div class="col-sm-6 text-left">{{ pagination }}</div>
+              <div class="col-sm-6 text-right">{{ results }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<script>
+$(function() {
+  $('#form-list .ocf-edit').on('change', function() {
+    var $this = $(this), field = encodeURIComponent($this.attr('name')), value = ($this.attr('type') == 'checkbox' ? (this.checked + 0) : this.value);
+
+    $this.addClass('ocf-loading');
+
+    $.post(ocfilter.link('extension/module/ocfilter/filter/editImmediately', 'filter_key=' + $this.attr('for')), { field: field, value: value }, function(json) {
+      if (json.status === true) {
+        $this.removeClass('ocf-loading').css('border-color', '#2390b0');
+
+        if ($this.attr('type') == 'checkbox') {
+          $this.parent().toggleClass('btn-info', $this.prop('checked')).find('.fa').toggleClass('fa-check-square', $this.prop('checked'));
+
+          field == 'status' && $this.closest('tr').toggleClass('active', !$this.prop('checked'));
+        }
+      } else {
+        $this.removeClass('ocf-loading').css('border-color', '#f24545');
+      }
+    }, 'json');
+  });  
+});  
+</script>  
+</div>
+{{ footer }}

@@ -1,0 +1,58 @@
+{{ header }}
+<div id="affiliate-login" class="container">
+	{{ oct_breadcrumbs }}
+	<div class="row">
+		<div class="col-lg-12">
+			<h1 class="us-main-shop-title">{{ heading_title }}</h1>
+		</div>
+	</div>
+	<div class="content-top-box">{{ content_top }}</div>
+	{% if success %}
+	<script>
+	usNotify('success', '{{ success }}');
+	</script>
+	{% endif %}
+	{% if error_warning %}
+	<script>
+	usNotify('warning', '{{ error_warning }}');
+	</script>
+	{% endif %}
+	<div id="content" class="row">
+	    <div class="col-12">
+		    <div class="us-content d-flex">
+		        <div class="us-acc-info-left d-flex flex-column justify-content-between">
+		          <div class="us-acc-info-left-desc">
+		            <div class="us-acc-info-text">{{ text_description }}</div>
+		            <div class="us-acc-info-text">{{ text_register_account }}</div>
+		          </div>
+	            <div class="btn-group mt-4">
+	            	<a href="{{ register }}" class="us-module-btn us-module-btn-green">{{ button_continue }}</a>
+	            </div>
+	        </div>
+	        <div class="us-content-border"></div>	
+		    <div class="us-acc-info-right">
+		            <div class="us-content-title">{{ text_returning_affiliate }}</div>
+		            <form action="{{ action }}" method="post" enctype="multipart/form-data">
+		              <div class="form-group">
+		                <label class="control-label" for="input-email">{{ entry_email }}</label>
+		                <input type="text" name="email" value="{{ email }}" placeholder="{{ entry_email }}" id="input-email" class="form-control" />
+		              </div>
+		              <div class="form-group">
+		                <label class="control-label" for="input-password">{{ entry_password }}</label>
+		                <input type="password" name="password" value="{{ password }}" placeholder="{{ entry_password }}" id="input-password" class="form-control" />
+		              </div>
+		              <div class="btn-group d-flex justify-content-between align-items-center" role="group" aria-label="us-acc-btn">
+						<input type="submit" value="{{ button_login }}" class="us-module-btn us-module-btn-green" />
+		                <a href="{{ forgotten }}" class="us-acc-info-link">{{ text_forgotten }}</a>
+		              </div>
+		              {% if redirect %}
+		              <input type="hidden" name="redirect" value="{{ redirect }}" />
+		              {% endif %}
+		            </form>
+		    </div>
+	    </div>
+	</div>
+	</div>
+	{{ content_bottom }}
+</div>
+{{ footer }}

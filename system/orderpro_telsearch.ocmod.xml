@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+  <name>OrderPro TelSearch for 3.7.8</name>
+  <code>OrderPro TelSearch</code>
+  <version>1.0</version>
+  <author><font color="#00CC00"><b>shchs@ya.ru</b></font></author>
+  <link></link>
+  
+  <file path="admin/controller/sale/orderpro.php">
+	<operation>
+      <search><![CDATA[$filter_email = $this->request->get['filter_name'];]]></search>
+      <add position="after"><![CDATA[
+			$filter_phone = $this->request->get['filter_name'];
+			
+			$this->load->model('sale/orderprotel');
+	  ]]></add>
+    </operation>
+	<operation>
+      <search><![CDATA['filter_email' => $filter_email,]]></search>
+      <add position="after"><![CDATA[
+			'filter_phone' => $filter_phone,
+	  ]]></add>
+    </operation>
+	<operation>
+      <search><![CDATA[$this->model_sale_orderpro->getCustomers($filter_data);]]></search>
+      <add position="replace"><![CDATA[$this->model_sale_orderprotel->getTelCustomers($filter_data);]]></add>
+    </operation>
+  </file>
+  
+  <file path="admin/view/template/sale/orderpro/order_form.twig">
+	<operation>
+      <search><![CDATA[category: item['customer_group'],]]></search>
+      <add position="replace" offset="1"><![CDATA[
+					category: item['customer_group'],
+					label: item['name'] + ' ('+ item['telephone'] +')',]]></add>
+    </operation>
+  </file>
+  
+</modification>

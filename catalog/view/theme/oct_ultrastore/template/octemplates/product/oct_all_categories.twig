@@ -1,0 +1,53 @@
+{{ header }}
+<div id="information-information" class="container flex-container">
+	{{ oct_breadcrumbs }}
+	<div class="row">
+		<div class="col-lg-12">
+			<h1 class="us-main-shop-title">{{ text_oct_all_categories }}</h1>
+		</div>
+	</div>
+	<div class="content-top-box">{{ content_top }}</div>
+	<div class="row">{{ column_left }}
+	    {% if column_left and column_right %}
+	    {% set class = 'col-sm-6' %}
+	    {% elseif column_left or column_right %}
+	    {% set class = 'col-sm-9' %}
+	    {% else %}
+	    {% set class = 'col-sm-12' %}
+	    {% endif %}
+	    <div id="content" class="{{ class }}">
+		    <div class="us-content">
+	    		{% if categories is not empty %}
+	    			<div class="us-all-categories">
+		    		{% for category in categories %}
+					{% if category.children %}
+						<div class="us-all-categories-category-parent">
+							<div class="us-all-categories-category-parent-title"><a href="{{ category.href }}">{{ category.name }}</a>{% if category.count_products %} <span class="us-all-categories-category-count">{{ category.count_products }}</span>{% endif %}</div>
+							<div class="row us-all-categories-category-children">
+								{% for child in category.children %}
+								<div class="us-all-categories-category-child col-lg-3">
+									<div class="us-all-categories-category-child-title"><a href="{{ child.href }}">{{ child.name }}{% if child.count_products %} ({{ child.count_products }}){% endif %}</a></div>
+									{% if child.children %}
+									<ul class="list-unstyled">
+										{% for ch in child.children %}
+										<li><a class="us-all-categories-category-child-third" href="{{ ch.href }}">{{ ch.name }}{% if ch.count_products %} ({{ ch.count_products }}){% endif %}</a></li>
+										{% endfor %}
+									</ul>
+									{% endif %}
+								</div>
+								{% endfor %}
+							</div>
+						</div>
+					{% else %}
+						<div class="us-all-categories-category-parent"><a class="us-all-categories-category-parent-title" href="{{ category.href }}">{{ category.name }}</a></div>
+					{% endif %}
+					{% endfor %}
+		    		</div>
+	    		{% endif %}
+		    </div>
+	    </div>
+	    {{ column_right }}
+    </div>
+    {{ content_bottom }}
+</div>
+{{ footer }}

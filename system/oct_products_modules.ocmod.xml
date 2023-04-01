@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+	<code>oct_products_modules</code>
+	<name>Octemplates - Products Modules</name>
+	<version>1.0.0</version>
+	<author>Octemplates</author>
+	<link>http://octemplates.net/</link>
+	<file path="admin/controller/extension/module/{bestseller,featured,latest,special}.php">
+		<operation error="skip">
+			<search><![CDATA[$data['limit'] = 5;]]></search>
+			<add position="replace"><![CDATA[
+			$data['limit'] = '10/6/6';
+			]]></add>
+    	</operation>
+	</file>
+	<file path="admin/view/template/extension/module/{bestseller,featured,latest,special}.twig">
+		<operation error="skip">
+			<search><![CDATA[<input type="text" name="limit" value="{{ limit }}" placeholder="{{ entry_limit }}" id="input-limit" class="form-control" />]]></search>
+			<add position="replace"><![CDATA[
+			<input type="text" name="limit" value="{{ limit }}" placeholder="{{ help_recomend_limit }}" id="input-limit" class="form-control" />
+			<span style="font-size:11px;color:#ccc;">{{ help_recomend_limit }}</span>
+			]]></add>
+    	</operation>
+	</file>
+	<file path="catalog/controller/extension/module/{bestseller,latest,featured,special,oct_product_modules,oct_products_from_category,oct_product_views,oct_blogarticle,oct_product_review}.php|catalog/controller/product/{category,product}.php|catalog/controller/octemplates/blog/oct_blogarticle.php">
+		<operation error="skip">
+			<search><![CDATA[public function index(]]></search>
+			<add position="after"><![CDATA[
+			if ($this->registry->has('oct_mobiledetect')) {
+		        if ($this->oct_mobiledetect->isMobile() && !$this->oct_mobiledetect->isTablet()) {
+		            $data['oct_isMobile'] = $this->oct_mobiledetect->isMobile();
+		        }
+
+		        if ($this->oct_mobiledetect->isTablet()) {
+		            $data['oct_isTablet'] = $this->oct_mobiledetect->isTablet();
+		        }
+		    }
+			]]></add>
+    	</operation>
+	</file>
+	<file path="catalog/controller/extension/module/{bestseller,latest,featured,special}.php">
+		<operation error="skip">
+			<search><![CDATA[public function index($setting) {]]></search>
+			<add position="after"><![CDATA[
+			static $module = 0;
+			]]></add>
+    	</operation>
+		<operation error="skip">
+			<search><![CDATA[$data['products'] = array();]]></search>
+			<add position="before"><![CDATA[
+			$limit = (isset($setting['limit']) && !empty($setting['limit'])) ? explode('/', $setting['limit']) : explode('/', '10/6/6');
+
+			if (count($limit) == 1) {
+	            $limit = explode('/', '10/6/6');
+	        }
+
+	        if (isset($data['oct_isMobile'])) {
+	            $setting['limit'] = (isset($limit[2]) && !empty($limit[2])) ? trim($limit[2]) : trim($setting['limit']);
+	        } elseif (isset($data['oct_isTablet'])) {
+	            $setting['limit'] = (isset($limit[1]) && !empty($limit[1])) ? trim($limit[1]) : trim($setting['limit']);
+	        } else {
+	            $setting['limit'] = (isset($limit[0]) && !empty($limit[0])) ? trim($limit[0]) : trim($setting['limit']);
+	        }
+			]]></add>
+    	</operation>
+		<operation error="skip">
+			<search><![CDATA[return $this->load->view(]]></search>
+			<add position="before"><![CDATA[
+            $data['module_name'] = mb_strtolower(str_replace('ControllerExtensionModule', '', get_class($this)));
+			$data['module'] = $module++;
+
+			return $this->load->view('octemplates/module/oct_products_modules', $data);
+			]]></add>
+		</operation>
+	</file>
+	<file path="catalog/controller/extension/module/{featured,oct_product_views,bestseller,latest,special,oct_products_from_category}.php|catalog/controller/octemplates/blog/oct_blogarticle.php">
+		<operation error="skip">
+			<search><![CDATA[$rating,]]></search>
+			<add position="after"><![CDATA[
+			'reviews'	  => isset($product_info['reviews']) ? $product_info['reviews'] : $result['reviews'],
+			]]></add>
+    	</operation>
+	</file>
+	<file path="catalog/controller/extension/module/featured.php">
+		<operation error="skip">
+			<search><![CDATA[$rating,]]></search>
+			<add position="after"><![CDATA[
+			'minimum'     => $product_info['minimum'] > 0 ? $product_info['minimum'] : 1,
+			]]></add>
+    	</operation>
+	</file>
+	<file path="catalog/controller/extension/module/{bestseller,latest,special}.php">
+		<operation error="skip">
+			<search><![CDATA[$rating,]]></search>
+			<add position="after"><![CDATA[
+			'minimum'     => $result['minimum'] > 0 ? $result['minimum'] : 1,
+			]]></add>
+    	</operation>
+	</file>
+	<file path="catalog/controller/product/product.php">
+		<operation error="skip">
+			<search><![CDATA[$data['tags'] = array();]]></search>
+			<add position="before"><![CDATA[
+            $data['oct_products'] = $this->load->controller('octemplates/module/oct_products_modules', $data);
+			]]></add>
+		</operation>
+	</file>
+	<file path="catalog/controller/octemplates/blog/oct_blogarticle.php">
+		<operation error="skip">
+			<search><![CDATA[$data['tags'] = [];]]></search>
+			<add position="before"><![CDATA[
+            $data['oct_products'] = $this->load->controller('octemplates/module/oct_products_modules', $data);
+			]]></add>
+		</operation>
+	</file>
+</modification>

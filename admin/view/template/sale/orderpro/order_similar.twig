@@ -1,0 +1,52 @@
+<div id="similar_modal" class="modal fade">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header similar-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h4 class="modal-title">{{ text_similar_order }}</h4>
+			</div>
+	
+			<div class="modal-body similar-body">
+				<div class="table-responsive">
+					<table class="table table-bordered table-hover">
+						<thead>
+							<tr>
+								<td class="text-center">{{ column_order_id }}</td>
+								<td class="text-center">{{ column_customer }}</td>
+								<td class="text-center">{{ column_status }}</td>
+								<td class="text-center">{{ column_total }}</td>
+								<td class="text-center">{{ column_date_added }}</td>
+								<td class="text-center">{{ column_date_modified }}</td>
+								<td class="text-center">{{ column_action }}</td>
+							</tr>
+						</thead>
+						<tbody>
+						{% if orders %}
+							{% for order in orders %}
+							<tr>
+								<td class="text-center">{{ order['order_id'] }}</td>
+								<td class="text-left">{{ order['customer'] }}</td>
+								<td class="text-left">{{ order['status'] }}</td>
+								<td class="text-right" nowrap>{{ order['total'] }}</td>
+								<td class="text-center" nowrap>{{ order['date_added'] }}</td>
+								<td class="text-center" nowrap>{{ order['date_modified'] }}</td>
+								<td class="text-right">
+									<a href="{{ order['view'] }}" target="_blank" data-toggle="tooltip" title="{{ button_view }}" class="btn btn-info btn-sm"><i class="fa fa-eye"></i></a>
+									<a href="{{ order['edit'] }}" target="_blank" data-toggle="tooltip" title="{{ button_edit }}" class="btn btn-primary btn-sm"><i class="fa fa-pencil"></i></a>
+								</td>
+							</tr>
+							{% endfor %}
+						{% else %}
+							<tr>
+								<td class="text-center" colspan="7">{{ text_no_results }}</td>
+							</tr>
+						{% endif %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+	
+			<div class="modal-footer" style="text-align:center;"></div>
+		</div>
+	</div>
+</div>

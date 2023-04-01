@@ -1,0 +1,191 @@
+{{ header }}
+<div class="content-wrapper" id="content-omanager">
+
+<section class="content-header">
+  <h1>{{ heading_title }}</h1>
+  <ol class="breadcrumb">
+	{% for breadcrumb in breadcrumbs %}
+		{{ breadcrumb }}
+	{% endfor %}
+  </ol>
+</section>
+
+<section class="content">
+<form action="{{ action }}" method="post" enctype="multipart/form-data" id="form" class="form-horizontal">
+  <div class="box">
+
+	<div class="box-header with-border">
+		<div class="row">
+		  <div class="col-sm-10 box-tools pull-left">
+			<div class="col-sm-5">
+			  <div class="form-group valid-block">
+				<span class="input-group">
+					<div class="input-group-addon" data-toggle="tooltip" title="{{ text_code }}">{{ text_tpl_code }}</div>
+					<div class="input-group-addon" data-toggle="tooltip" title="{{ entry_template_name }}"><i class="fa fa-text-width"></i></div>
+					<input type="text" id="input-name" name="template[name]" value="{{ template['name'] is defined ? template['name'] : text_new_template }}" class="field-input mustbe form-control" />
+				</span>
+			  </div>
+			</div>
+			<div class="col-sm-7">
+			  <div class="form-group">
+				<span class="input-group">
+					<div class="input-group-addon" data-toggle="tooltip" title="{{ entry_template_description }}"><i class="fa fa-info"></i></div>
+					<textarea name="template[description]" rows="1" class="form-control">{{ template['description'] is defined ? template['description'] : '' }}</textarea>
+				</span>
+			  </div>
+			</div>
+		  </div>
+		  <div class="col-sm-2 box-tools pull-right text-right">
+			<a id="button_save" class="btn btn-primary"><i class="fa fa-save"></i>&nbsp;&nbsp;{{ button_save }}</a>
+			<a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a>
+		  </div>
+		</div>
+	</div>
+
+	<div class="box-body">
+	  <div class="row">
+		<div class="col-sm-12">
+		  <div class="callout callout-default">
+			<p><a class="btn btn-info btn-xs" style="text-decoration: none;" href="http://brest001.ru/ompro_doc/ompro_tpl_option.html"  target="_blank" data-toggle="tooltip" title="{{ text_doc_link }}" ><i class="fa fa-question-circle"></i>&nbsp;&nbsp; {{ text_help }}</a>&nbsp;&nbsp; {{ text_option_value_info }}</p>
+		  </div>
+		</div>
+	  </div>
+	  <div class="panel panel-default">
+		<table id="option-value" class="table table-bordered table-hover">
+			<thead>
+				<tr class="active">
+				  <th class="text-left" style="width: 80px;">{{ entry_option_value }}</th>
+				  <th class="text-left">{{ entry_option_name }}</th>
+				  <th class="text-left">{{ entry_sort_order }}</th>
+				  <th style="width: 50px;"></th>
+				</tr>
+			</thead>
+			<tbody class="">
+			  {% set option_value_row = 0 %}
+			  {% if (template['option_value'] is not empty) %}
+			  {% for option_value in template['option_value'] %}
+			  <tr id="option-value-row{{ option_value_row }}">
+				<td class="text-center">{{ option_value['option_value_id'] }}</td>
+				<td class="text-left">
+				  <input type="hidden" name="template[option_value][{{ option_value_row }}][option_value_id]" value="{{ option_value['option_value_id'] }}" />
+				  {% for language in languages %}
+				  <div class="input-group valid-block">
+					<span class="input-group-addon">
+					  {% if (ocversion >= 220) %}
+						<img src="language/{{ language['code'] }}/{{ language['code'] }}.png"/>
+					  {% else %}
+						<img src="view/image/flags/{{ language['image'] }}"/>
+					  {% endif %}
+					</span>
+					<input type="text" name="template[option_value][{{ option_value_row }}][option_value_description][{{ language['language_id'] }}][name]" value="{{ option_value['option_value_description'][language['language_id']] is defined ? option_value['option_value_description'][language['language_id']]['name'] : '' }}" placeholder="значение" class="field-input mustbe form-control" />
+				  </div>
+				  {% endfor %}
+				</td>
+				<td class="text-right">
+					<div class="input-group valid-block fullwidth">
+						<input type="text" name="template[option_value][{{ option_value_row }}][sort_order]" value="{{ option_value['sort_order'] }}" class="field-input digit form-control" />
+					</div>
+				</td>
+				<td class="text-left">
+					<button type="button" onclick="deleteOptionValue('option-value-row{{ option_value_row }}');" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button>
+				</td>
+			  </tr>
+			  {% set option_value_row = option_value_row + 1 %}
+			  {% endfor %}
+			  {% endif %}
+			</tbody>
+			<tfoot>
+			  <tr>
+				<td colspan="3"></td>
+				<td class="text-left"><button type="button" onclick="addOptionValue();" data-toggle="tooltip" title="{{ button_option_value_add }}" class="btn btn-primary"><i class="fa fa-plus-circle"></i></button></td>
+			  </tr>
+			</tfoot>
+		</table>
+	  </div>
+
+	</div>
+  </div>
+</form>
+</section>
+
+<script type="text/javascript"><!--
+
+function deleteOptionValue(option_value_row, op_new = false) {
+	if (!op_new && !confirm('{{ confirm_option_value_delete }}')) { return false; }
+	$('#'+option_value_row).remove();
+	tooltipRefresh();
+}
+
+var option_value_row = {{ option_value_row }};
+
+function addOptionValue() {
+	html  = '<tr id="option-value-row' + option_value_row + '">';
+	html += '  <td class="text-center"></td>';
+	html += '  <td class="text-left"><input type="hidden" name="template[option_value][' + option_value_row + '][option_value_id]" value="0" />';
+	{% for language in languages %}
+	html += '    <div class="input-group">';
+	html += '      <span class="input-group-addon"><img src="language/{{ language['code'] }}/{{ language['code'] }}.png" title="{{ language['name'] }}" /></span><input type="text" name="template[option_value][' + option_value_row + '][option_value_description][{{ language['language_id'] }}][name]" value="" placeholder="Название" class="form-control" />';
+	html += '    </div>';
+	{% endfor %}
+	html += '  </td>';
+	html += '  <td class="text-right"><input type="text" name="template[option_value][' + option_value_row + '][sort_order]" value="" placeholder="{{ entry_sort_order }}" class="form-control" /></td>';
+	html += '  <td></td>';
+	html += '  <td class="text-left"><button type="button" onclick="deleteOptionValue(\'option-value-row' + option_value_row + '\', 1);" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>';
+
+	html += '</tr>';
+
+	$('#option-value tbody').append(html);
+
+	$(function () { window.validation.init({ container: '#form' });});
+	tooltipRefresh();
+
+	option_value_row++;
+}
+
+--></script>
+
+<script type="text/javascript"><!--
+
+var has_permission = '{{ has_permission }}';
+
+$('#button_save').bind('click', function() {
+	if (!has_permission) {
+		toastr.warning('{{ error_permission }}', '{{ text_alert_warning }}');
+		return false;
+	} else if (!window.validation.isValid({ container: '#form' })) {
+		toastr.error('{{ text_error_form }}', '{{ text_alert_error }}');
+		return false;
+	} else {
+		var url = '{{ action }}';
+		url = url.replace(/&amp;/g, "&");
+		$('#form').attr('action', url).submit();
+	}
+});
+
+$(document).delegate('#form, #form input, #form sellect, #form textarea', 'change', function() {
+	if ($('#button_save').hasClass('btn-primary')) {
+		$('#button_save').removeClass('btn-primary').addClass('btn-danger');
+	}
+});
+
+$(document).ready(function(){
+	var error = '{{ error_warning }}';
+	var success = '{{ success }}';
+	if (error) {
+		modalAlert('modal-danger', '{{ text_alert_error }}', '<p>'+error+'</p>', '');
+	}
+	if (success) {
+		toastr.success(success, '{{ text_alert_success }}');
+	}
+
+	tooltipRefresh();
+	$(function () { window.validation.init({ container: '#form' });});
+
+	$('.nav-tabs').each(function(){
+		$(this).find('a:first').tab('show');
+	});
+});
+//--></script>
+
+</div>
+{{ footer }}

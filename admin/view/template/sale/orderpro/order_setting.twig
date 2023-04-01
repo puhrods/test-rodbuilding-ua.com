@@ -1,0 +1,802 @@
+{{ header }}{{ column_left }}
+<div id="content" class="setting-content">
+	<div class="page-header">
+		<div class="container-fluid">
+		  <div class="pull-right">
+			<div class="buttons">
+				<a onclick="$('#setting_form').submit();" class="btn btn-success btn-sm">{{ button_save }}</a>
+				<a href="{{ cancel }}" class="btn btn-danger btn-sm">{{ button_cancel }}</a>
+			</div>
+		  </div>
+		  <h1>{{ heading_title }}</h1>
+		  <ul class="breadcrumb">
+			{% for breadcrumb in breadcrumbs %}
+			<li><a href="{{ breadcrumb['href'] }}">{{ breadcrumb['text'] }}</a></li>
+			{% endfor %}
+		  </ul>
+		</div>
+	</div>
+	<div id="notifications"></div>
+	<div class="container-fluid setting-form">
+	{% if error_license %}
+		<div class="alert alert-danger"><i class="fa fa-check-circle"></i> {{ error_license }}</div>
+	{% endif %}
+	{% if bom_files %}
+		<div class="alert alert-warning">
+			<div><i class="fa fa-check-circle"></i> {{ error_bom }}</div>
+			{% for bom_file in bom_files %}
+				<div class="text-danger">{{ bom_file }}</div>
+			{% endfor %}
+		</div>
+	{% endif %}
+	<div class="panel panel-default">
+	
+	<div class="panel-heading">
+		<h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_heading }}</h3><span class="version"><a href="https://opencart-group.ru/orderpro_v2" target="_blank">{{ orderpro_version }}</a></span>
+	</div>
+	
+	<div class="panel-body">
+		<form action="{{ action }}" method="post" id="setting_form" enctype="multipart/form-data">
+		<div class="nwell">
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="well form-inline">
+						<div class="form-group">
+							<label class="big-label">{{ entry_license }}</label>
+							<input type="text" class="form-control input-license" name="orderpro_license" value="{{ orderpro_license }}" />
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	
+		<div class="nwell">
+			<div class="row">
+				<div class="col-xs-12 setting-order">
+					<div class="well">
+						<h4>{{ column_setting_order }}</h4>
+						<div class="row">
+							<div class="col-lg-12 col-md-6 col-xs-12">
+								<div class="row">
+									<div class="col-lg-6 col-xs-12">
+										<div class="form-group">
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_show_pid" value="1" {% if orderpro_show_pid %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon full-addon">{{ entry_show_pid }}</div>
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_show_image" value="1" {% if orderpro_show_image %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon full-addon">{{ entry_show_image }}</div>
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_show_model" value="1" {% if orderpro_show_model %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon full-addon">{{ entry_show_model }}</div>
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_show_sku" value="1" {% if orderpro_show_sku %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon full-addon">{{ entry_show_sku }}</div>
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_show_upc" value="1" {% if orderpro_show_upc %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon full-addon">{{ entry_show_upc }}</div>
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_show_ean" value="1" {% if orderpro_show_ean %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon full-addon">{{ entry_show_ean }}</div>
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_show_jan" value="1" {% if orderpro_show_jan %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon full-addon">{{ entry_show_jan }}</div>
+											</div>
+										</div>
+									</div>
+									<div class="col-lg-6 col-xs-12">
+										<div class="form-group">
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_show_isbn" value="1" {% if orderpro_show_isbn %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon full-addon">{{ entry_show_isbn }}</div>
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_show_mpn" value="1" {% if orderpro_show_mpn %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon full-addon">{{ entry_show_mpn }}</div>
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_show_location" value="1" {% if orderpro_show_location %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon full-addon">{{ entry_show_location }}</div>
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_show_weight" value="1" {% if orderpro_show_weight %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon full-addon">{{ entry_show_weight }}</div>
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_show_realqty" value="1" {% if orderpro_show_realqty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon full-addon">{{ entry_show_realqty }}</div>
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_show_nowprice" value="1" {% if orderpro_show_nowprice %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon full-addon">{{ entry_show_nowprice }}</div>
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_show_discount" value="1" {% if orderpro_show_discount %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon full-addon">{{ entry_show_discount }}</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-lg-12 visible-lg"><hr></div>
+							<div class="col-lg-12 col-md-6 col-xs-12">
+								<div class="row">
+									<div class="col-lg-6 col-xs-12">
+										<div class="form-group">
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_invoice_type" value="1" {% if orderpro_invoice_type %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon full-addon">{{ entry_invoice_type }}</div>
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_show_affiliate" value="1" {% if orderpro_show_affiliate %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon full-addon">{{ entry_show_affiliate }}</div>
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_auto_addreward" value="1" {% if orderpro_auto_addreward %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon full-addon">{{ entry_auto_addreward }}</div>
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_merge_orders" value="1" {% if orderpro_merge_orders %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon full-addon">{{ entry_merge_orders }}</div>
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_clone_orders" value="1" {% if orderpro_clone_orders %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon full-addon">{{ entry_clone_orders }}</div>
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_autocomplete_type" value="1" {% if orderpro_autocomplete_type %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon full-addon">{{ entry_autocomplete_type }}</div>
+											</div>
+										</div>
+									</div>
+									<div class="col-lg-6 col-xs-12">
+										<div class="form-group">
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_neworder_notify" value="1" {% if orderpro_neworder_notify %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon full-addon">{{ entry_neworder_notify }}</div>
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_neworder_notify_admin" value="1" {% if orderpro_neworder_notify_admin %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon full-addon">{{ entry_neworder_notify_admin }}</div>
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_notabs_mode" value="1" {% if orderpro_notabs_mode %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon full-addon">{{ entry_tabs_mode }}</div>
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_show_similar" value="1" {% if orderpro_show_similar %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon full-addon">{{ entry_show_similar }}</div>
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon full-addon">{{ entry_decimal_place }}</div>
+												<input type="text" name="orderpro_decimal_place" class="form-control small-control" value="{{ orderpro_decimal_place }}" placeholder="2" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon">{{ entry_return_page }}</div>
+												<input type="text" name="orderpro_return_page" class="form-control" value="{{ orderpro_return_page }}" placeholder="sale/order" />
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+	
+				<div class="col-lg-6 col-xs-12 setting-invoice">
+					<div class="well">
+						<h4>{{ column_setting_invoice }}</h4>
+						<div class="row">
+							<div class="col-lg-12 col-md-6 col-xs-12">
+								<div class="form-group">
+									<div class="input-group">
+										<div class="input-group-addon"><input type="checkbox" name="orderpro_invoice_pid" value="1" {% if orderpro_invoice_pid %}checked="checked" {% endif %}/></div>
+										<div class="input-group-addon full-addon">{{ entry_show_pid }}</div>
+									</div>
+									<div class="input-group">
+										<div class="input-group-addon"><input type="checkbox" name="orderpro_invoice_image" value="1" {% if orderpro_invoice_image %}checked="checked" {% endif %}/></div>
+										<div class="input-group-addon full-addon">{{ entry_show_image }}</div>
+									</div>
+									<div class="input-group">
+										<div class="input-group-addon"><input type="checkbox" name="orderpro_invoice_model" value="1" {% if orderpro_invoice_model %}checked="checked" {% endif %}/></div>
+										<div class="input-group-addon full-addon">{{ entry_show_model }}</div>
+									</div>
+									<div class="input-group">
+										<div class="input-group-addon"><input type="checkbox" name="orderpro_invoice_sku" value="1" {% if orderpro_invoice_sku %}checked="checked" {% endif %}/></div>
+										<div class="input-group-addon full-addon">{{ entry_show_sku }}</div>
+									</div>
+									<div class="input-group">
+										<div class="input-group-addon"><input type="checkbox" name="orderpro_invoice_upc" value="1" {% if orderpro_invoice_upc %}checked="checked" {% endif %}/></div>
+										<div class="input-group-addon full-addon">{{ entry_show_upc }}</div>
+									</div>
+									<div class="input-group">
+										<div class="input-group-addon"><input type="checkbox" name="orderpro_invoice_ean" value="1" {% if orderpro_invoice_ean %}checked="checked" {% endif %}/></div>
+										<div class="input-group-addon full-addon">{{ entry_show_ean }}</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-lg-12 col-md-6 col-xs-12">
+								<div class="form-group">
+									<div class="input-group">
+										<div class="input-group-addon"><input type="checkbox" name="orderpro_invoice_jan" value="1" {% if orderpro_invoice_jan %}checked="checked" {% endif %}/></div>
+										<div class="input-group-addon full-addon">{{ entry_show_jan }}</div>
+									</div>
+									<div class="input-group">
+										<div class="input-group-addon"><input type="checkbox" name="orderpro_invoice_isbn" value="1" {% if orderpro_invoice_isbn %}checked="checked" {% endif %}/></div>
+										<div class="input-group-addon full-addon">{{ entry_show_isbn }}</div>
+									</div>
+									<div class="input-group">
+										<div class="input-group-addon"><input type="checkbox" name="orderpro_invoice_mpn" value="1" {% if orderpro_invoice_mpn %}checked="checked" {% endif %}/></div>
+										<div class="input-group-addon full-addon">{{ entry_show_mpn }}</div>
+									</div>
+									<div class="input-group">
+										<div class="input-group-addon"><input type="checkbox" name="orderpro_invoice_location" value="1" {% if orderpro_invoice_location %}checked="checked" {% endif %}/></div>
+										<div class="input-group-addon full-addon">{{ entry_show_location }}</div>
+									</div>
+									<div class="input-group">
+										<div class="input-group-addon"><input type="checkbox" name="orderpro_invoice_weight" value="1" {% if orderpro_invoice_weight %}checked="checked" {% endif %}/></div>
+										<div class="input-group-addon full-addon">{{ entry_show_weight }}</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+	
+				<div class="col-lg-6 col-xs-12 setting-mail">
+					<div class="well">
+						<h4>{{ column_setting_mail }}</h4>
+						<div class="row">
+							<div class="col-lg-12 col-md-6 col-xs-12">
+								<div class="form-group">
+									<div class="input-group">
+										<div class="input-group-addon"><input type="checkbox" name="orderpro_neworder_pid" value="1" {% if orderpro_neworder_pid %}checked="checked" {% endif %}/></div>
+										<div class="input-group-addon full-addon">{{ entry_show_pid }}</div>
+									</div>
+									<div class="input-group">
+										<div class="input-group-addon"><input type="checkbox" name="orderpro_neworder_image" value="1" {% if orderpro_neworder_image %}checked="checked" {% endif %}/></div>
+										<div class="input-group-addon full-addon">{{ entry_show_image }}</div>
+									</div>
+									<div class="input-group">
+										<div class="input-group-addon"><input type="checkbox" name="orderpro_neworder_model" value="1" {% if orderpro_neworder_model %}checked="checked" {% endif %}/></div>
+										<div class="input-group-addon full-addon">{{ entry_show_model }}</div>
+									</div>
+									<div class="input-group">
+										<div class="input-group-addon"><input type="checkbox" name="orderpro_neworder_sku" value="1" {% if orderpro_neworder_sku %}checked="checked" {% endif %}/></div>
+										<div class="input-group-addon full-addon">{{ entry_show_sku }}</div>
+									</div>
+									<div class="input-group">
+										<div class="input-group-addon"><input type="checkbox" name="orderpro_neworder_upc" value="1" {% if orderpro_neworder_upc %}checked="checked" {% endif %}/></div>
+										<div class="input-group-addon full-addon">{{ entry_show_upc }}</div>
+									</div>
+									<div class="input-group">
+										<div class="input-group-addon"><input type="checkbox" name="orderpro_neworder_ean" value="1" {% if orderpro_neworder_ean %}checked="checked" {% endif %}/></div>
+										<div class="input-group-addon full-addon">{{ entry_show_ean }}</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-lg-12 col-md-6 col-xs-12">
+								<div class="form-group">
+									<div class="input-group">
+										<div class="input-group-addon"><input type="checkbox" name="orderpro_neworder_jan" value="1" {% if orderpro_neworder_jan %}checked="checked" {% endif %}/></div>
+										<div class="input-group-addon full-addon">{{ entry_show_jan }}</div>
+									</div>
+									<div class="input-group">
+										<div class="input-group-addon"><input type="checkbox" name="orderpro_neworder_isbn" value="1" {% if orderpro_neworder_isbn %}checked="checked" {% endif %}/></div>
+										<div class="input-group-addon full-addon">{{ entry_show_isbn }}</div>
+									</div>
+									<div class="input-group">
+										<div class="input-group-addon"><input type="checkbox" name="orderpro_neworder_mpn" value="1" {% if orderpro_neworder_mpn %}checked="checked" {% endif %}/></div>
+										<div class="input-group-addon full-addon">{{ entry_show_mpn }}</div>
+									</div>
+									<div class="input-group">
+										<div class="input-group-addon"><input type="checkbox" name="orderpro_neworder_location" value="1" {% if orderpro_neworder_location %}checked="checked" {% endif %}/></div>
+										<div class="input-group-addon full-addon">{{ entry_show_location }}</div>
+									</div>
+									<div class="input-group">
+										<div class="input-group-addon"><input type="checkbox" name="orderpro_neworder_weight" value="1" {% if orderpro_neworder_weight %}checked="checked" {% endif %}/></div>
+										<div class="input-group-addon full-addon">{{ entry_show_weight }}</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+	
+				<div class="col-xs-12 setting-export">
+					<div class="well">
+						<h4>{{ column_setting_export }}</h4>
+						<div class="row">
+							<div class="col-md-12 col-sm-12">
+								<div class="row">
+									<div class="col-md-6 col-xs-12">
+										<div class="form-group">
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export_orders" value="1" {% if orderpro_export_orders %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon full-addon">{{ entry_export_orders }}</div>
+											</div>
+											
+										</div>
+									</div>
+									<div class="col-md-6 col-xs-12">
+										<div class="form-group">
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export_orders_one" value="1" {% if orderpro_export_orders_one %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon full-addon">{{ entry_export_orders_one }}</div>
+											</div>
+											
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-xs-12"><hr></div>
+						</div>
+						<div class="row">
+							<div class="col-md-12 col-sm-12">
+								<div class="row">
+									<div class="col-md-6 col-xs-12">
+										<div class="form-group">
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[order_id][status]" value="1" {% if orderpro_export['order_id']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_order_id }}</div>
+												<input type="text" name="orderpro_export[order_id][name]" class="form-control has-sort" placeholder="{{ text_name_placeholder }}" value="{{ (orderpro_export['order_id']['name'] is not empty) ? orderpro_export['order_id']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[order_id][sort_order]" class="form-control sort-control" placeholder="{{ text_sort_placeholder }}" value="{{ (orderpro_export['order_id']['sort_order'] is not empty) ? orderpro_export['order_id']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[invoice_no][status]" value="1" {% if orderpro_export['invoice_no']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_invoice_no }}</div>
+												<input type="text" name="orderpro_export[invoice_no][name]" class="form-control has-sort" value="{{ (orderpro_export['invoice_no']['name'] is not empty) ? orderpro_export['invoice_no']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[invoice_no][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['invoice_no']['sort_order'] is not empty) ? orderpro_export['invoice_no']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[store_id][status]" value="1" {% if orderpro_export['store_id']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_store_id }}</div>
+												<input type="text" name="orderpro_export[store_id][name]" class="form-control has-sort" value="{{ (orderpro_export['store_id']['name'] is not empty) ? orderpro_export['store_id']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[store_id][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['store_id']['sort_order'] is not empty) ? orderpro_export['store_id']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[store_name][status]" value="1" {% if orderpro_export['store_name']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_store_name }}</div>
+												<input type="text" name="orderpro_export[store_name][name]" class="form-control has-sort" value="{{ (orderpro_export['store_name']['name'] is not empty) ? orderpro_export['store_name']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[store_name][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['store_name']['sort_order'] is not empty) ? orderpro_export['store_name']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[store_url][status]" value="1" {% if orderpro_export['store_url']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_store_url }}</div>
+												<input type="text" name="orderpro_export[store_url][name]" class="form-control has-sort" value="{{ (orderpro_export['store_url']['name'] is not empty) ? orderpro_export['store_url']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[store_url][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['store_url']['sort_order'] is not empty) ? orderpro_export['store_url']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[customer_id][status]" value="1" {% if orderpro_export['customer_id']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_customer_id }}</div>
+												<input type="text" name="orderpro_export[customer_id][name]" class="form-control has-sort" value="{{ (orderpro_export['customer_id']['name'] is not empty) ? orderpro_export['customer_id']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[customer_id][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['customer_id']['sort_order'] is not empty) ? orderpro_export['customer_id']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[customer_group][status]" value="1" {% if orderpro_export['customer_group']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_customer_group }}</div>
+												<input type="text" name="orderpro_export[customer_group][name]" class="form-control has-sort" value="{{ (orderpro_export['customer_group']['name'] is not empty) ? orderpro_export['customer_group']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[customer_group][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['customer_group']['sort_order'] is not empty) ? orderpro_export['customer_group']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[firstname][status]" value="1" {% if orderpro_export['firstname']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_firstname }}</div>
+												<input type="text" name="orderpro_export[firstname][name]" class="form-control has-sort" value="{{ (orderpro_export['firstname']['name'] is not empty) ? orderpro_export['firstname']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[firstname][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['firstname']['sort_order'] is not empty) ? orderpro_export['firstname']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[lastname][status]" value="1" {% if orderpro_export['lastname']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_lastname }}</div>
+												<input type="text" name="orderpro_export[lastname][name]" class="form-control has-sort" value="{{ (orderpro_export['lastname']['name'] is not empty) ? orderpro_export['lastname']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[lastname][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['lastname']['sort_order'] is not empty) ? orderpro_export['lastname']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[customer][status]" value="1" {% if orderpro_export['customer']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_customer }}</div>
+												<input type="text" name="orderpro_export[customer][name]" class="form-control has-sort" value="{{ (orderpro_export['customer']['name'] is not empty) ? orderpro_export['customer']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[customer][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['customer']['sort_order'] is not empty) ? orderpro_export['customer']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[email][status]" value="1" {% if orderpro_export['email']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_email }}</div>
+												<input type="text" name="orderpro_export[email][name]" class="form-control has-sort" value="{{ (orderpro_export['email']['name'] is not empty) ? orderpro_export['email']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[email][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['email']['sort_order'] is not empty) ? orderpro_export['email']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[telephone][status]" value="1" {% if orderpro_export['telephone']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_telephone }}</div>
+												<input type="text" name="orderpro_export[telephone][name]" class="form-control has-sort" value="{{ (orderpro_export['telephone']['name'] is not empty) ? orderpro_export['telephone']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[telephone][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['telephone']['sort_order'] is not empty) ? orderpro_export['telephone']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[fax][status]" value="1" {% if orderpro_export['fax']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_fax }}</div>
+												<input type="text" name="orderpro_export[fax][name]" class="form-control has-sort" value="{{ (orderpro_export['fax']['name'] is not empty) ? orderpro_export['fax']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[fax][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['fax']['sort_order'] is not empty) ? orderpro_export['fax']['sort_order'] : '' }}" />
+											</div>
+										</div>
+									</div>
+									<div class="col-md-6 col-xs-12">
+										<div class="form-group">
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[comment][status]" value="1" {% if orderpro_export['comment']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_comment }}</div>
+												<input type="text" name="orderpro_export[comment][name]" class="form-control has-sort" placeholder="{{ text_name_placeholder }}" value="{{ (orderpro_export['comment']['name'] is not empty) ? orderpro_export['comment']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[comment][sort_order]" class="form-control sort-control" placeholder="{{ text_sort_placeholder }}" value="{{ (orderpro_export['comment']['sort_order'] is not empty) ? orderpro_export['comment']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[total][status]" value="1" {% if orderpro_export['total']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_total }}</div>
+												<input type="text" name="orderpro_export[total][name]" class="form-control has-sort" value="{{ (orderpro_export['total']['name'] is not empty) ? orderpro_export['total']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[total][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['total']['sort_order'] is not empty) ? orderpro_export['total']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[order_status][status]" value="1" {% if orderpro_export['order_status']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_order_status }}</div>
+												<input type="text" name="orderpro_export[order_status][name]" class="form-control has-sort" value="{{ (orderpro_export['order_status']['name'] is not empty) ? orderpro_export['order_status']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[order_status][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['order_status']['sort_order'] is not empty) ? orderpro_export['order_status']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[affiliate_id][status]" value="1" {% if orderpro_export['affiliate_id']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_affiliate_id }}</div>
+												<input type="text" name="orderpro_export[affiliate_id][name]" class="form-control has-sort" value="{{ (orderpro_export['affiliate_id']['name'] is not empty) ? orderpro_export['affiliate_id']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[affiliate_id][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['affiliate_id']['sort_order'] is not empty) ? orderpro_export['affiliate_id']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[affiliate][status]" value="1" {% if orderpro_export['affiliate']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_affiliate }}</div>
+												<input type="text" name="orderpro_export[affiliate][name]" class="form-control has-sort" value="{{ (orderpro_export['affiliate']['name'] is not empty) ? orderpro_export['affiliate']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[affiliate][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['affiliate']['sort_order'] is not empty) ? orderpro_export['affiliate']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[commission][status]" value="1" {% if orderpro_export['commission']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_commission }}</div>
+												<input type="text" name="orderpro_export[commission][name]" class="form-control has-sort" value="{{ (orderpro_export['commission']['name'] is not empty) ? orderpro_export['commission']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[commission][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['commission']['sort_order'] is not empty) ? orderpro_export['commission']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[marketing_id][status]" value="1" {% if orderpro_export['marketing_id']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_marketing_id }}</div>
+												<input type="text" name="orderpro_export[marketing_id][name]" class="form-control has-sort" value="{{ (orderpro_export['marketing_id']['name'] is not empty) ? orderpro_export['marketing_id']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[marketing_id][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['marketing_id']['sort_order'] is not empty) ? orderpro_export['marketing_id']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[tracking][status]" value="1" {% if orderpro_export['tracking']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_tracking }}</div>
+												<input type="text" name="orderpro_export[tracking][name]" class="form-control has-sort" value="{{ (orderpro_export['tracking']['name'] is not empty) ? orderpro_export['tracking']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[tracking][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['tracking']['sort_order'] is not empty) ? orderpro_export['tracking']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[language][status]" value="1" {% if orderpro_export['language']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_language }}</div>
+												<input type="text" name="orderpro_export[language][name]" class="form-control has-sort" value="{{ (orderpro_export['language']['name'] is not empty) ? orderpro_export['language']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[language][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['language']['sort_order'] is not empty) ? orderpro_export['language']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[currency_code][status]" value="1" {% if orderpro_export['currency_code']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_currency_code }}</div>
+												<input type="text" name="orderpro_export[currency_code][name]" class="form-control has-sort" value="{{ (orderpro_export['currency_code']['name'] is not empty) ? orderpro_export['currency_code']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[currency_code][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['currency_code']['sort_order'] is not empty) ? orderpro_export['currency_code']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[currency_value][status]" value="1" {% if orderpro_export['currency_value']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_currency_value }}</div>
+												<input type="text" name="orderpro_export[currency_value][name]" class="form-control has-sort" value="{{ (orderpro_export['currency_value']['name'] is not empty) ? orderpro_export['currency_value']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[currency_value][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['currency_value']['sort_order'] is not empty) ? orderpro_export['currency_value']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[date_added][status]" value="1" {% if orderpro_export['date_added']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_date_added }}</div>
+												<input type="text" name="orderpro_export[date_added][name]" class="form-control has-sort" value="{{ (orderpro_export['date_added']['name'] is not empty) ? orderpro_export['date_added']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[date_added][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['date_added']['sort_order'] is not empty) ? orderpro_export['date_added']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[date_modified][status]" value="1" {% if orderpro_export['date_modified']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_date_modified }}</div>
+												<input type="text" name="orderpro_export[date_modified][name]" class="form-control has-sort" value="{{ (orderpro_export['date_modified']['name'] is not empty) ? orderpro_export['date_modified']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[date_modified][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['date_modified']['sort_order'] is not empty) ? orderpro_export['date_modified']['sort_order'] : '' }}" />
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-xs-12"><hr></div>
+							<div class="col-md-6 col-sm-12">
+								<div class="row">
+									<div class="col-xs-12">
+										<div class="form-group">
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[payment_firstname][status]" value="1" {% if orderpro_export['payment_firstname']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_payment_firstname }}</div>
+												<input type="text" name="orderpro_export[payment_firstname][name]" class="form-control has-sort" value="{{ (orderpro_export['payment_firstname']['name'] is not empty) ? orderpro_export['payment_firstname']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[payment_firstname][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['payment_firstname']['sort_order'] is not empty) ? orderpro_export['payment_firstname']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[payment_lastname][status]" value="1" {% if orderpro_export['payment_lastname']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_payment_lastname }}</div>
+												<input type="text" name="orderpro_export[payment_lastname][name]" class="form-control has-sort" value="{{ (orderpro_export['payment_lastname']['name'] is not empty) ? orderpro_export['payment_lastname']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[payment_lastname][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['payment_lastname']['sort_order'] is not empty) ? orderpro_export['payment_lastname']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[payment_customer][status]" value="1" {% if orderpro_export['payment_customer']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_payment_customer }}</div>
+												<input type="text" name="orderpro_export[payment_customer][name]" class="form-control has-sort" value="{{ (orderpro_export['payment_customer']['name'] is not empty) ? orderpro_export['payment_customer']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[payment_customer][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['payment_customer']['sort_order'] is not empty) ? orderpro_export['payment_customer']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[payment_company][status]" value="1" {% if orderpro_export['payment_company']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_payment_company }}</div>
+												<input type="text" name="orderpro_export[payment_company][name]" class="form-control has-sort" value="{{ (orderpro_export['payment_company']['name'] is not empty) ? orderpro_export['payment_company']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[payment_company][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['payment_company']['sort_order'] is not empty) ? orderpro_export['payment_company']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[payment_country][status]" value="1" {% if orderpro_export['payment_country']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_payment_country }}</div>
+												<input type="text" name="orderpro_export[payment_country][name]" class="form-control has-sort" value="{{ (orderpro_export['payment_country']['name'] is not empty) ? orderpro_export['payment_country']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[payment_country][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['payment_country']['sort_order'] is not empty) ? orderpro_export['payment_country']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[payment_zone][status]" value="1" {% if orderpro_export['payment_zone']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_payment_zone }}</div>
+												<input type="text" name="orderpro_export[payment_zone][name]" class="form-control has-sort" value="{{ (orderpro_export['payment_zone']['name'] is not empty) ? orderpro_export['payment_zone']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[payment_zone][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['payment_zone']['sort_order'] is not empty) ? orderpro_export['payment_zone']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[payment_city][status]" value="1" {% if orderpro_export['payment_city']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_payment_city }}</div>
+												<input type="text" name="orderpro_export[payment_city][name]" class="form-control has-sort" value="{{ (orderpro_export['payment_city']['name'] is not empty) ? orderpro_export['payment_city']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[payment_city][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['payment_city']['sort_order'] is not empty) ? orderpro_export['payment_city']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[payment_address_1][status]" value="1" {% if orderpro_export['payment_address_1']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_payment_address_1 }}</div>
+												<input type="text" name="orderpro_export[payment_address_1][name]" class="form-control has-sort" value="{{ (orderpro_export['payment_address_1']['name'] is not empty) ? orderpro_export['payment_address_1']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[payment_address_1][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['payment_address_1']['sort_order'] is not empty) ? orderpro_export['payment_address_1']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[payment_address_2][status]" value="1" {% if orderpro_export['payment_address_2']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_payment_address_2 }}</div>
+												<input type="text" name="orderpro_export[payment_address_2][name]" class="form-control has-sort" value="{{ (orderpro_export['payment_address_2']['name'] is not empty) ? orderpro_export['payment_address_2']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[payment_address_2][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['payment_address_2']['sort_order'] is not empty) ? orderpro_export['payment_address_2']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[payment_postcode][status]" value="1" {% if orderpro_export['payment_postcode']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_payment_postcode }}</div>
+												<input type="text" name="orderpro_export[payment_postcode][name]" class="form-control has-sort" value="{{ (orderpro_export['payment_postcode']['name'] is not empty) ? orderpro_export['payment_postcode']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[payment_postcode][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['payment_postcode']['sort_order'] is not empty) ? orderpro_export['payment_postcode']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[payment_method][status]" value="1" {% if orderpro_export['payment_method']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_payment_method }}</div>
+												<input type="text" name="orderpro_export[payment_method][name]" class="form-control has-sort" value="{{ (orderpro_export['payment_method']['name'] is not empty) ? orderpro_export['payment_method']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[payment_method][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['payment_method']['sort_order'] is not empty) ? orderpro_export['payment_method']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[payment_code][status]" value="1" {% if orderpro_export['payment_code']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_payment_code }}</div>
+												<input type="text" name="orderpro_export[payment_code][name]" class="form-control has-sort" value="{{ (orderpro_export['payment_code']['name'] is not empty) ? orderpro_export['payment_code']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[payment_code][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['payment_code']['sort_order'] is not empty) ? orderpro_export['payment_code']['sort_order'] : '' }}" />
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-xs-12 hidden-md hidden-lg"><hr></div>
+							<div class="col-md-6 col-sm-12">
+								<div class="row">
+									<div class="col-xs-12">
+										<div class="form-group">
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[shipping_firstname][status]" value="1" {% if orderpro_export['shipping_firstname']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_shipping_firstname }}</div>
+												<input type="text" name="orderpro_export[shipping_firstname][name]" class="form-control has-sort" value="{{ (orderpro_export['shipping_firstname']['name'] is not empty) ? orderpro_export['shipping_firstname']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[shipping_firstname][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['shipping_firstname']['sort_order'] is not empty) ? orderpro_export['shipping_firstname']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[shipping_lastname][status]" value="1" {% if orderpro_export['shipping_lastname']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_shipping_lastname }}</div>
+												<input type="text" name="orderpro_export[shipping_lastname][name]" class="form-control has-sort" value="{{ (orderpro_export['shipping_lastname']['name'] is not empty) ? orderpro_export['shipping_lastname']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[shipping_lastname][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['shipping_lastname']['sort_order'] is not empty) ? orderpro_export['shipping_lastname']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[shipping_customer][status]" value="1" {% if orderpro_export['shipping_customer']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_shipping_customer }}</div>
+												<input type="text" name="orderpro_export[shipping_customer][name]" class="form-control has-sort" value="{{ (orderpro_export['shipping_customer']['name'] is not empty) ? orderpro_export['shipping_customer']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[shipping_customer][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['shipping_customer']['sort_order'] is not empty) ? orderpro_export['shipping_customer']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[shipping_company][status]" value="1" {% if orderpro_export['shipping_company']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_shipping_company }}</div>
+												<input type="text" name="orderpro_export[shipping_company][name]" class="form-control has-sort" value="{{ (orderpro_export['shipping_company']['name'] is not empty) ? orderpro_export['shipping_company']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[shipping_company][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['shipping_company']['sort_order'] is not empty) ? orderpro_export['shipping_company']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[shipping_country][status]" value="1" {% if orderpro_export['shipping_country']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_shipping_country }}</div>
+												<input type="text" name="orderpro_export[shipping_country][name]" class="form-control has-sort" value="{{ (orderpro_export['shipping_country']['name'] is not empty) ? orderpro_export['shipping_country']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[shipping_country][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['shipping_country']['sort_order'] is not empty) ? orderpro_export['shipping_country']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[shipping_zone][status]" value="1" {% if orderpro_export['shipping_zone']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_shipping_zone }}</div>
+												<input type="text" name="orderpro_export[shipping_zone][name]" class="form-control has-sort" value="{{ (orderpro_export['shipping_zone']['name'] is not empty) ? orderpro_export['shipping_zone']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[shipping_zone][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['shipping_zone']['sort_order'] is not empty) ? orderpro_export['shipping_zone']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[shipping_city][status]" value="1" {% if orderpro_export['shipping_city']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_shipping_city }}</div>
+												<input type="text" name="orderpro_export[shipping_city][name]" class="form-control has-sort" value="{{ (orderpro_export['shipping_city']['name'] is not empty) ? orderpro_export['shipping_city']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[shipping_city][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['shipping_city']['sort_order'] is not empty) ? orderpro_export['shipping_city']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[shipping_address_1][status]" value="1" {% if orderpro_export['shipping_address_1']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_shipping_address_1 }}</div>
+												<input type="text" name="orderpro_export[shipping_address_1][name]" class="form-control has-sort" value="{{ (orderpro_export['shipping_address_1']['name'] is not empty) ? orderpro_export['shipping_address_1']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[shipping_address_1][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['shipping_address_1']['sort_order'] is not empty) ? orderpro_export['shipping_address_1']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[shipping_address_2][status]" value="1" {% if orderpro_export['shipping_address_2']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_shipping_address_2 }}</div>
+												<input type="text" name="orderpro_export[shipping_address_2][name]" class="form-control has-sort" value="{{ (orderpro_export['shipping_address_2']['name'] is not empty) ? orderpro_export['shipping_address_2']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[shipping_address_2][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['shipping_address_2']['sort_order'] is not empty) ? orderpro_export['shipping_address_2']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[shipping_postcode][status]" value="1" {% if orderpro_export['shipping_postcode']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_shipping_postcode }}</div>
+												<input type="text" name="orderpro_export[shipping_postcode][name]" class="form-control has-sort" value="{{ (orderpro_export['shipping_postcode']['name'] is not empty) ? orderpro_export['shipping_postcode']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[shipping_postcode][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['shipping_postcode']['sort_order'] is not empty) ? orderpro_export['shipping_postcode']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[shipping_method][status]" value="1" {% if orderpro_export['shipping_method']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_shipping_method }}</div>
+												<input type="text" name="orderpro_export[shipping_method][name]" class="form-control has-sort" value="{{ (orderpro_export['shipping_method']['name'] is not empty) ? orderpro_export['shipping_method']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[shipping_method][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['shipping_method']['sort_order'] is not empty) ? orderpro_export['shipping_method']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[shipping_code][status]" value="1" {% if orderpro_export['shipping_code']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_shipping_code }}</div>
+												<input type="text" name="orderpro_export[shipping_code][name]" class="form-control has-sort" value="{{ (orderpro_export['shipping_code']['name'] is not empty) ? orderpro_export['shipping_code']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[shipping_code][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['shipping_code']['sort_order'] is not empty) ? orderpro_export['shipping_code']['sort_order'] : '' }}" />
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-xs-12"><hr></div>
+							<div class="col-md-12 col-sm-12">
+								<div class="row">
+									<div class="col-md-6 col-xs-12">
+										<div class="form-group">
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[products][product_id][status]" value="1" {% if orderpro_export['products']['product_id']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_product_id }}</div>
+												<input type="text" name="orderpro_export[products][product_id][name]" class="form-control has-sort" value="{{ (orderpro_export['products']['product_id']['name'] is not empty) ? orderpro_export['products']['product_id']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[products][product_id][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['products']['product_id']['sort_order'] is not empty) ? orderpro_export['products']['product_id']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[products][name][status]" value="1" {% if orderpro_export['products']['name']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_product_name }}</div>
+												<input type="text" name="orderpro_export[products][name][name]" class="form-control has-sort" value="{{ (orderpro_export['products']['name']['name'] is not empty) ? orderpro_export['products']['name']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[products][name][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['products']['name']['sort_order'] is not empty) ? orderpro_export['products']['name']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[products][model][status]" value="1" {% if orderpro_export['products']['model']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_product_model }}</div>
+												<input type="text" name="orderpro_export[products][model][name]" class="form-control has-sort" value="{{ (orderpro_export['products']['model']['name'] is not empty) ? orderpro_export['products']['model']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[products][model][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['products']['model']['sort_order'] is not empty) ? orderpro_export['products']['model']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[products][sku][status]" value="1" {% if orderpro_export['products']['sku']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_product_sku }}</div>
+												<input type="text" name="orderpro_export[products][sku][name]" class="form-control has-sort" value="{{ (orderpro_export['products']['sku']['name'] is not empty) ? orderpro_export['products']['sku']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[products][sku][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['products']['sku']['sort_order'] is not empty) ? orderpro_export['products']['sku']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[products][ean][status]" value="1" {% if orderpro_export['products']['ean']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_product_ean }}</div>
+												<input type="text" name="orderpro_export[products][ean][name]" class="form-control has-sort" value="{{ (orderpro_export['products']['ean']['name'] is not empty) ? orderpro_export['products']['ean']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[products][ean][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['products']['ean']['sort_order'] is not empty) ? orderpro_export['products']['ean']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[products][upc][status]" value="1" {% if orderpro_export['products']['upc']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_product_upc }}</div>
+												<input type="text" name="orderpro_export[products][upc][name]" class="form-control has-sort" value="{{ (orderpro_export['products']['upc']['name'] is not empty) ? orderpro_export['products']['upc']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[products][upc][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['products']['upc']['sort_order'] is not empty) ? orderpro_export['products']['upc']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[products][isbn][status]" value="1" {% if orderpro_export['products']['isbn']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_product_isbn }}</div>
+												<input type="text" name="orderpro_export[products][isbn][name]" class="form-control has-sort" value="{{ (orderpro_export['products']['isbn']['name'] is not empty) ? orderpro_export['products']['isbn']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[products][isbn][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['products']['isbn']['sort_order'] is not empty) ? orderpro_export['products']['isbn']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[products][mpn][status]" value="1" {% if orderpro_export['products']['mpn']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_product_mpn }}</div>
+												<input type="text" name="orderpro_export[products][mpn][name]" class="form-control has-sort" value="{{ (orderpro_export['products']['mpn']['name'] is not empty) ? orderpro_export['products']['mpn']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[products][mpn][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['products']['mpn']['sort_order'] is not empty) ? orderpro_export['products']['mpn']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[products][jan][status]" value="1" {% if orderpro_export['products']['jan']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_product_jan }}</div>
+												<input type="text" name="orderpro_export[products][jan][name]" class="form-control has-sort" value="{{ (orderpro_export['products']['jan']['name'] is not empty) ? orderpro_export['products']['jan']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[products][jan][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['products']['jan']['sort_order'] is not empty) ? orderpro_export['products']['jan']['sort_order'] : '' }}" />
+											</div>
+										</div>
+									</div>
+									<div class="col-md-6 col-xs-12">
+										<div class="form-group">
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[products][location][status]" value="1" {% if orderpro_export['products']['location']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_product_location }}</div>
+												<input type="text" name="orderpro_export[products][location][name]" class="form-control has-sort" value="{{ (orderpro_export['products']['location']['name'] is not empty) ? orderpro_export['products']['location']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[products][location][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['products']['location']['sort_order'] is not empty) ? orderpro_export['products']['location']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[products][weight][status]" value="1" {% if orderpro_export['products']['weight']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_product_weight }}</div>
+												<input type="text" name="orderpro_export[products][weight][name]" class="form-control has-sort" value="{{ (orderpro_export['products']['weight']['name'] is not empty) ? orderpro_export['products']['weight']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[products][weight][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['products']['weight']['sort_order'] is not empty) ? orderpro_export['products']['weight']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[products][options][status]" value="1" {% if orderpro_export['products']['options']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_product_options }}</div>
+												<input type="text" name="orderpro_export[products][options][name]" class="form-control has-sort" value="{{ (orderpro_export['products']['options']['name'] is not empty) ? orderpro_export['products']['options']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[products][options][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['products']['options']['sort_order'] is not empty) ? orderpro_export['products']['options']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[products][quantity][status]" value="1" {% if orderpro_export['products']['quantity']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_product_quantity }}</div>
+												<input type="text" name="orderpro_export[products][quantity][name]" class="form-control has-sort" value="{{ (orderpro_export['products']['quantity']['name'] is not empty) ? orderpro_export['products']['quantity']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[products][quantity][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['products']['quantity']['sort_order'] is not empty) ? orderpro_export['products']['quantity']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[products][price][status]" value="1" {% if orderpro_export['products']['price']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_product_price }}</div>
+												<input type="text" name="orderpro_export[products][price][name]" class="form-control has-sort" value="{{ (orderpro_export['products']['price']['name'] is not empty) ? orderpro_export['products']['price']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[products][price][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['products']['price']['sort_order'] is not empty) ? orderpro_export['products']['price']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[products][total][status]" value="1" {% if orderpro_export['products']['total']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_product_total }}</div>
+												<input type="text" name="orderpro_export[products][total][name]" class="form-control has-sort" value="{{ (orderpro_export['products']['total']['name'] is not empty) ? orderpro_export['products']['total']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[products][total][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['products']['total']['sort_order'] is not empty) ? orderpro_export['products']['total']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[products][tax][status]" value="1" {% if orderpro_export['products']['tax']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_product_tax }}</div>
+												<input type="text" name="orderpro_export[products][tax][name]" class="form-control has-sort" value="{{ (orderpro_export['products']['tax']['name'] is not empty) ? orderpro_export['products']['tax']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[products][tax][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['products']['tax']['sort_order'] is not empty) ? orderpro_export['products']['tax']['sort_order'] : '' }}" />
+											</div>
+											<div class="input-group">
+												<div class="input-group-addon"><input type="checkbox" name="orderpro_export[products][reward][status]" value="1" {% if orderpro_export['products']['reward']['status'] is not empty %}checked="checked" {% endif %}/></div>
+												<div class="input-group-addon">{{ entry_export_product_reward }}</div>
+												<input type="text" name="orderpro_export[products][reward][name]" class="form-control has-sort" value="{{ (orderpro_export['products']['reward']['name'] is not empty) ? orderpro_export['products']['reward']['name'] : '' }}" />
+												<input type="text" name="orderpro_export[products][reward][sort_order]" class="form-control sort-control" value="{{ (orderpro_export['products']['reward']['sort_order'] is not empty) ? orderpro_export['products']['reward']['sort_order'] : '' }}" />
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		</form>
+	</div>
+	
+	</div>
+	</div>
+<script type="text/javascript"><!--
+$('.setting-order .span-popover').popover({
+	trigger: "hover",
+	placement: "top"
+});
+//--></script>
+</div>{{ footer }}

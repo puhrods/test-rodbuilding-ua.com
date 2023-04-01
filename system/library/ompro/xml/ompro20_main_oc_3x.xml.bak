@@ -1,0 +1,354 @@
+<modification>
+    <name><![CDATA[<font color="#069">Order Manager PRO</font>]]> main oc_3x</name>
+	<code>ompro20_main_oc_3x</code>
+	<version>2.0.6</version>
+	<author>Konstantin Kornelyuk</author>
+	<link>https://opencartforum.com/user/28448-brest001/?tab=idm</link>
+
+	<!-- OMPro btn in header -->
+	<file path="admin/controller/common/header.php">
+		<operation error="skip">
+			<search><![CDATA[$data['profile']]]></search>
+			<add position="after"><![CDATA[
+			$data['ompro'] = $this->url->link('sale/ompro/orders', 'user_token=' . $this->session->data['user_token'], true);
+			if (!$this->user->hasPermission('modify', 'sale/ompro')) {
+				$data['ompro_setting'] = '';
+			} else {
+				$data['ompro_setting'] = $this->url->link('sale/ompro/admin', 'user_token=' . $this->session->data['user_token'], true);
+			}
+			]]></add>
+		</operation>
+	</file>
+
+	<file path="admin/view/template/common/header.twig">
+		<operation error="skip">
+			<search><![CDATA[<ul class="nav navbar-nav navbar-right">]]></search>
+			<add position="after"><![CDATA[
+	  <li style="padding: 13px 10px 11px 10px;">
+		<div class="btn-group">
+			<a href="{{ ompro }}" class="btn btn-default"><i class="fa fa-shopping-cart fa-lg" style="color: #3c8dbc;"></i>&nbsp;&nbsp;Order Manager PRO</a>
+			{% if (ompro_setting) %}
+			<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+				<span class="caret"></span>
+			</button>
+			<ul class="dropdown-menu dropdown-menu-right" role="menu">
+				<h6 class="dropdown-header">Order Manager PRO</h6>
+				<li><a href="{{ ompro_setting }}"><i class="fa fa-cog"></i>&nbsp;&nbsp;  Settings</a></li>
+			</ul>
+			{% endif %}
+		</div>
+	  </li>
+		]]></add>
+		</operation>
+	</file>
+
+	
+	<!-- Field cost to purchase - library, catalog-->
+
+	<!-- OC 2.2.x  - 3.0.3.x -->
+	<file path="system/library/cart/cart.php">
+		<operation error="skip">
+			<search><![CDATA[($price + $option_price),]]></search>
+			<add position="before"><![CDATA[					'cost'      => isset($product_query->row['cost']) ? $product_query->row['cost'] : 0,]]></add>
+		</operation>
+	</file>
+
+	<!-- OC 2.1.x  - 3.0.3.x -->
+	<file path="catalog/controller/api/order.php">
+		<operation error="skip">
+			<search><![CDATA[$product['subtract'],]]></search>
+			<add position="after"><![CDATA[						'cost'      => isset($product['cost']) ? $product['cost'] : 0,]]></add>
+		</operation>
+	</file>
+
+	<file path="catalog/controller/checkout/confirm.php">
+		<operation error="skip">
+			<search><![CDATA[$order_data['products'][] = array(]]></search>
+			<add position="after"><![CDATA[					'cost'      => isset($product['cost']) ? $product['cost'] : 0,]]></add>
+		</operation>
+	</file>
+
+	<file path="catalog/model/checkout/order.php">
+		<operation error="skip">
+			<search><![CDATA[quantity = '" . (int)$product['quantity'] . "',]]></search>
+			<add position="replace"><![CDATA[quantity = '" . (int)$product['quantity'] . "', purchase = '" . (float)$product['cost'] . "', ]]></add>
+		</operation>
+	</file>
+
+	<!-- for Simple 4.9.x - 4.11.x && OC 2.1.x - 3.0.3.x -->
+	<file path="catalog/controller/checkout/simplecheckout.php">
+		<operation error="skip">
+			<search><![CDATA[$product['subtract'],]]></search>
+			<add position="after"><![CDATA[					'cost'      => isset($product['cost']) ? $product['cost'] : 0,]]></add>
+		</operation>
+	</file>
+
+
+	<!-- notification & history -->
+
+	<file path="catalog/model/checkout/order.php">
+		<operation error="skip">
+			<search><![CDATA[public function addOrder(]]></search>
+			<add position="after"><![CDATA[
+		// ompro ->
+		if (isset($this->session->data['api_id'])) {
+			$this->session->data['add_order_from_admin'] = true;
+		}
+		// -> ompro
+			]]></add>
+		</operation>
+		<operation error="skip">
+			<search><![CDATA[public function addOrderHistory(]]></search>
+			<add position="after"><![CDATA[
+		// OMPro ->
+		if (!is_object($this->ompro)) {
+			$this->load->library('ompro/ompro');
+		}
+
+		$mail_target = $sms_target = $tlgrm_target = $attachments = array();
+		$user_id = $notify_sms = $notify_tlgrm = 0;  $file_name = '';
+
+		if (isset($this->session->data['ompro_data'])) {
+			foreach ($this->session->data['ompro_data'] as $k => $v) { ${$k} = $v; }
+		}
+		// <- OMPro
+			]]></add>
+		</operation>
+
+		<operation error="skip">
+			<search><![CDATA[if ($order_info) {]]></search>
+			<add position="after"><![CDATA[
+			// OMPro ->
+			$this->session->data['ompro_old_order_status_id'] = $order_info['order_status_id'];
+			$language_id = $this->config->get('config_language_id');
+			$order_language_id = isset($order_info['language_id']) && $order_info['language_id'] ? $order_info['language_id'] : $this->config->get('config_language_id');
+
+			// for update status replaceVars
+			if ($comment && isset($this->request->post['ompro_history']) && $order_info['order_status_id'] && $order_status_id) {
+				$all_orders_data = $this->ompro->getOrdersDataAll(array($order_id), $to_edit = false, $expert_link = false);
+				if (isset($all_orders_data['orders'][$order_id]['order_info']['order_status'])) {
+					$all_orders_data['orders'][$order_id]['order_info']['order_status'] = $this->ompro->getOrderStatusName($order_status_id, $order_language_id);
+				}
+
+				$comment = $this->ompro->replaceVarsOrderData($comment, $order_id, $all_orders_data, $template_info = array(), $order_language_id);
+				$attach = $this->ompro->attachToMail($all_orders_data, $comment);
+				$comment = $attach['message'];
+				$attachments = array_merge($attachments, $attach['attachments']);
+			}
+
+			$payment_status_id = $this->ompro->getOrderFieldValue($order_id, 'payment_status_id');
+			$shipping_status_id = $this->ompro->getOrderFieldValue($order_id, 'shipping_status_id');
+			// <- OMPro
+			]]></add>
+		</operation>
+
+		<operation error="skip">
+			<search><![CDATA[if ($order_info['affiliate_id'] && $this->config->get('config_affiliate_auto')) {]]></search>
+			<add position="replace"><![CDATA[// OMPro ->
+				if ($order_info['affiliate_id'] && $this->config->get('config_affiliate_auto') && ($sms_target['transaction'] || $mail_target['transaction'] || $tlgrm_target['transaction'])) {
+
+					$all_orders_data = $this->ompro->getOrdersDataAll(array($order_id), $to_edit = false, $expert_link = false);
+					$affiliate_info = $this->ompro->getAffiliate($order_info['affiliate_id']);
+
+					if ($affiliate_info) {
+						$this->load->language('api/ompro');
+						$description = $this->language->get('text_order_id') . ' #' . $order_id;
+
+						if (!$this->ompro->getTotalTransactionsByOrderId($order_id)) {
+							$transaction_id = $this->ompro->addComission($order_info['affiliate_id'], $description, $order_info['commission'], $order_id);
+
+							if ($transaction_id) {
+								if ($mail_target['transaction']) {
+									$comment2 = nl2br($comment);
+									$template_info = $this->ompro->getTemplateTemplate('mail', $mail_target['transaction']);
+									$recipients = array();
+									$recipients[] = array(
+										'recipient_name' => '', 'email' => $affiliate_info['email']
+									);
+
+									$this->ompro->sendMail($order_id, $template_info, $language_id, $recipients, $all_orders_data, $comment2, $attachments);
+								}
+
+								if ($sms_target['transaction']) {
+									$template_info = $this->ompro->getTemplateTemplate('sms', $sms_target['transaction']);
+									$to = $affiliate_info['telephone'];
+									$copies = array();
+									$this->ompro->sendSms($order_id, $template_info, $language_id, $to, $copies, $all_orders_data);
+								}
+
+								if ($tlgrm_target['transaction']) {
+									$template_info = $this->ompro->getTemplateTemplate('tlgrm', $tlgrm_target['transaction']);
+									$chat_ids = array();
+									if (isset($affiliate_info['telegram_id']) && $affiliate_info['telegram_id']) {
+										$chat_ids[] = $affiliate_info['telegram_id'];
+										$this->ompro->sendToTelegram($order_id, $template_info,  $chat_ids, $all_orders_data, $comment2);
+									}
+								}
+							}
+						}
+					}
+				} elseif ($order_info['affiliate_id'] && $this->config->get('config_affiliate_auto')) { // <- OMPro
+			]]></add>
+		</operation>
+
+		<operation error="skip">
+			<search><![CDATA[$this->db->query("INSERT INTO " . DB_PREFIX . "order_history]]></search>
+			<add position="before"><![CDATA[/*]]></add>
+		</operation>
+
+		<operation error="skip">
+			<search><![CDATA[$this->db->query("INSERT INTO " . DB_PREFIX . "order_history]]></search>
+			<add position="after"><![CDATA[
+*/
+			// OMPro ->
+			$this->db->query("INSERT INTO " . DB_PREFIX . "order_history SET order_id = '" . (int)$order_id . "', user_id = '" . (int)$user_id . "', order_status_id = '" . (int)$order_status_id . "', payment_status_id = '" . (int)$payment_status_id . "', shipping_status_id = '" . (int)$shipping_status_id . "', notify = '" . (int)$notify . "', notify_sms = '" . (int)$notify_sms . "', notify_tlgrm = '" . (int)$notify_tlgrm . "', comment = '" . $this->db->escape($comment) . "', file_name = '" . $this->db->escape($file_name) . "', log = '', date_added = NOW()");
+			// <- OMPro
+			]]></add>
+		</operation>
+
+	</file>
+
+	<file path="catalog/controller/mail/order.php">
+		<operation error="skip">
+			<search><![CDATA[public function add(]]></search>
+			<add position="after"><![CDATA[
+		// OMPro ->
+		if (isset($this->session->data['ompro_data']) && $this->session->data['ompro_data']['mail_target']['new_order_customer']) {
+			return;
+		}
+
+		if (isset($this->session->data['api_id']) && !isset($this->session->data['add_order_from_admin'])) {
+			return;
+		}
+		// <- OMPro
+			]]></add>
+		</operation>
+		<operation error="skip">
+			<search><![CDATA[public function edit(]]></search>
+			<add position="after"><![CDATA[
+		// OMPro ->
+		if (isset($this->session->data['ompro_data']) && $this->session->data['ompro_data']['mail_target']['history']) {
+			return;
+		}
+		// <- OMPro
+			]]></add>
+		</operation>
+		<operation error="skip">
+			<search><![CDATA[public function alert(]]></search>
+			<add position="after"><![CDATA[
+		// OMPro ->
+		if (isset($this->session->data['ompro_data']) && $this->session->data['ompro_data']['mail_target']  && $this->session->data['ompro_data']['mail_target']['new_order_admin']) {
+			return;
+		}
+
+		if (isset($this->session->data['api_id']) && !isset($this->session->data['add_order_from_admin'])) {
+			return;
+		}
+		// <- OMPro
+			]]></add>
+		</operation>
+	</file>
+
+	<!-- user: telephone, telegram_id -->
+
+	<file path="admin/controller/user/user.php">
+
+		<operation error="skip">
+			<search><![CDATA[if (isset($this->error['username'])) {]]></search>
+			<add position="before"><![CDATA[
+		if (isset($this->error['telephone'])) {
+			$data['error_telephone'] = $this->error['telephone'];
+		} else {
+			$data['error_telephone'] = '';
+		}
+			]]></add>
+		</operation>
+
+		<operation error="skip">
+			<search><![CDATA[if (isset($this->request->post['image'])) {]]></search>
+			<add position="before"><![CDATA[
+		if (isset($this->request->post['telephone'])) {
+			$data['telephone'] = $this->request->post['telephone'];
+		} elseif (!empty($user_info)) {
+			$data['telephone'] = $user_info['telephone'];
+		} else {
+			$data['telephone'] = '';
+		}
+
+		if (isset($this->request->post['telegram_id'])) {
+			$data['telegram_id'] = $this->request->post['telegram_id'];
+		} elseif (!empty($user_info)) {
+			$data['telegram_id'] = $user_info['telegram_id'];
+		} else {
+			$data['telegram_id'] = '';
+		}
+			]]></add>
+		</operation>
+
+		<operation error="skip">
+			<search><![CDATA[if ((utf8_strlen($this->request->post['username'])]]></search>
+			<add position="before"><![CDATA[
+		if ((utf8_strlen($this->request->post['telephone']) < 3) || (utf8_strlen($this->request->post['telephone']) > 32)) {
+			$this->error['telephone'] = $this->language->get('error_telephone');
+		}
+			]]></add>
+		</operation>
+	</file>
+
+	<file path="admin/model/user/user.php">
+		<operation error="skip">
+			<search><![CDATA[email = '" . $this->db->escape($data['email']) . "',]]></search>
+			<add position="replace"><![CDATA[email = '" . $this->db->escape($data['email']) . "', telephone = '" . $this->db->escape($data['telephone']) . "', telegram_id = '" . $this->db->escape($data['telegram_id']) . "',]]></add>
+		</operation>
+	</file>
+
+	<file path="admin/language/{en-gb,english}user/user.php">
+		<operation error="skip">
+			<search><![CDATA[?php]]></search>
+			<add position="after"><![CDATA[
+$_['entry_telephone'] = 'Telephone';
+$_['entry_telephone_help'] = 'In international format, numbers only 7926xxxxxxx';
+$_['error_telephone'] = 'Telephone must be between 3 and 32 characters!';
+$_['entry_telegram_id'] = 'Telegram ID';
+$_['entry_telegram_id_help'] = '<a href="https://readd.org/telegram-user-id-chto-eto-zachem-eto-kak-uznat/" target="_blank">How get Telegram user ID</a>';
+			]]></add>
+		</operation>
+	</file>
+
+	<file path="admin/language/{ru-ru,russian}/user/user.php">
+		<operation error="skip">
+			<search><![CDATA[?php]]></search>
+			<add position="after"><![CDATA[
+$_['entry_telephone'] = 'Телефон';
+$_['entry_telephone_help'] = 'В международном формате, только цифры 7926xxxxxxx';
+$_['error_telephone'] = 'Телефон должен быть от 3 до 32 символов!';
+$_['entry_telegram_id'] = 'Telegram ID';
+$_['entry_telegram_id_help'] = '<a href="https://readd.org/telegram-user-id-chto-eto-zachem-eto-kak-uznat/" target="_blank">Как узнать Telegram ID</a>';
+			]]></add>
+		</operation>
+	</file>
+
+	<file path="admin/view/template/user/user_form.twig">
+		<operation error="skip">
+			<search><![CDATA[<label class="col-sm-2 control-label" for="input-image">{{ entry_image }}</label>]]></search>
+			<add position="before" offset="1"><![CDATA[
+         <div class="form-group required">
+            <label class="col-sm-2 control-label" for="input-telephone"><span data-toggle="tooltip" title="{{ entry_telephone_help }}">{{ entry_telephone }}</span></label>
+            <div class="col-sm-10">
+              <input type="text" name="telephone" value="{{ telephone }}" placeholder="{{ entry_telephone }}" id="input-telephone" class="form-control" />
+              {% if (error_telephone) %}
+              <div class="text-danger">{{ error_telephone }}</div>
+              {% endif %}
+            </div>
+          </div>
+         <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-telegram_id">{{ entry_telegram_id }}<br>{{ entry_telegram_id_help }}</label>
+            <div class="col-sm-10">
+              <input type="text" name="telegram_id" value="{{ telegram_id }}" placeholder="{{ entry_telegram_id }}" id="input-telegram_id" class="form-control" />
+            </div>
+          </div>
+			]]></add>
+		</operation>
+	</file>
+
+</modification>

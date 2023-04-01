@@ -1,0 +1,57 @@
+<style>
+h1
+{    
+	font-family: "Trebuchet MS","Arial";
+	color: #0099FF;
+    font-size: 24px;
+	padding-left: 5px;
+}
+
+p
+{
+	font-family: "Trebuchet MS","Arial";
+	color: #999999;
+	padding-left: 5px;
+}
+</style>
+<h1>{{ header }}</h1>
+<p>{{ success }}</p>
+<script>
+
+
+function setCookie(name, value, options = {}) {
+
+  options = {
+    path: '/',
+    // add other defaults here if necessary
+    ...options
+  };
+
+  if (options.expires instanceof Date) {
+    options.expires = options.expires.toUTCString();
+  }
+
+  let updatedCookie = encodeURIComponent(name) + "=" + encodeURIComponent(value);
+
+  for (let optionKey in options) {
+    updatedCookie += "; " + optionKey;
+    let optionValue = options[optionKey];
+    if (optionValue !== true) {
+      updatedCookie += "=" + optionValue;
+    }
+  }
+
+  document.cookie = updatedCookie;
+} 
+		setCookie('socnetauth2_confirmdata_show', '0'); 
+		
+
+setTimeout(function(){ 
+
+		{% if redirect_url %} 
+			parent.location.href = '{{ redirect_url }}';
+		{% else %}
+			parent.location.reload();
+		{% endif %}
+	}, {{ timeout }});
+</script>

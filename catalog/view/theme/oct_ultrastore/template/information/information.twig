@@ -1,0 +1,85 @@
+{{ header }}
+<div id="information-information" class="container flex-container">
+	{{ oct_breadcrumbs }}
+	<div class="content-top-box">{{ content_top }}</div>
+	<main>
+		<div class="row">
+			<div class="col-lg-12">
+				<h1 class="us-main-shop-title">{{ heading_title }}</h1>
+			</div>
+		</div>
+		<div class="row">{{ column_left }}
+	    {% if column_left and column_right %}
+	    {% set class = 'col-sm-6' %}
+	    {% elseif column_left or column_right %}
+	    {% set class = 'col-sm-9' %}
+	    {% else %}
+	    {% set class = 'col-sm-12' %}
+	    {% endif %}
+	    <div id="content" class="{{ class }}">
+		    <div class="us-content us-content-inform">
+		      {{ description }}
+		    </div>
+	    </div>
+	    {{ column_right }}
+    </div>
+	</main>
+    {{ content_bottom }}
+</div>
+{% if oct_is_youtube is defined and oct_is_youtube %}
+<script>
+function findVideos() {
+	let videos = document.querySelectorAll('.us-video');
+
+	for (let i = 0; videos.length > i; i++) {
+		setupVideo(videos[i]);
+	}
+}
+
+function setupVideo(video) {
+	let link = video.querySelector('.us-video__link');
+	let media = video.querySelector('.us-video__media');
+	let button = video.querySelector('.us-video__button');
+	let id = parseMediaURL(media);
+
+	video.addEventListener('click', () => {
+		let iframe = createIframe(id);
+
+		link.remove();
+		button.remove();
+		video.appendChild(iframe);
+	});
+
+	link.removeAttribute('href');
+	video.classList.add('us-video--enabled');
+}
+
+function parseMediaURL(media) {
+	let regexp = /https:\/\/i\.ytimg\.com\/vi\/([a-zA-Z0-9_-]+)\/maxresdefault\.jpg/i;
+	let url = media.src;
+	let match = url.match(regexp);
+
+	return match[1];
+}
+
+function createIframe(id) {
+	let iframe = document.createElement('iframe');
+
+	iframe.setAttribute('allowfullscreen', '');
+	iframe.setAttribute('allow', 'autoplay');
+	iframe.setAttribute('src', generateURL(id));
+	iframe.classList.add('us-video__media');
+
+	return iframe;
+}
+
+function generateURL(id) {
+	let query = '?rel=0&showinfo=0&autoplay=1';
+
+	return 'https://www.youtube.com/embed/' + id + query;
+}
+
+findVideos();
+</script>
+{% endif %}
+{{ footer }}

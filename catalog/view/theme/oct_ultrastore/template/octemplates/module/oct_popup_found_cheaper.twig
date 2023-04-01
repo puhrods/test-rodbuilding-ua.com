@@ -1,0 +1,143 @@
+<div class="modal show" id="us-cheaper-modal" tabindex="-1" role="dialog" aria-labelledby="us-cheaper">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+	    <div class="modal-content">
+	        <div class="modal-header">
+	            <h5 class="modal-title" id="us-cheaper">{{ heading_title }}</h5>
+	            <button type="button" class="us-close" data-dismiss="modal" aria-label="Close">
+	            	<span aria-hidden="true" class="us-modal-close-icon us-modal-close-left"></span>
+	                <span aria-hidden="true" class="us-modal-close-icon us-modal-close-right"></span>
+	            </button>
+	        </div>
+	        <div class="modal-body us-modal-body-one-click d-flex">
+	            <div class="us-modal-body-one-click-left text-center">
+							<div class="pb-4">{{ enter_text }}</div>
+					{% if images is defined and images|length > 1 %}
+					<div class="additional-wrapper">
+						<div id="popup_found_cheaper_images">
+							{% for image in images %}
+							<div>
+								<img src="{{ image.popup }}" alt="{{ heading_title }}" class="us-modal-body-img d-block mx-auto">
+							</div>
+							{% endfor %}
+						</div>
+						<script>
+							$(document).ready(function() {
+								$('#popup_found_cheaper_images').slick({
+									autoplay: true,
+									dots: false,
+									arrows: false,
+									infinite: true,
+									autoplaySpeed: 3000,
+									slidesToShow: 1
+								});
+							});
+						</script>
+					</div>
+					{% else %}
+					{% if thumb is defined %}
+		            <img src="{{ thumb }}" class="us-modal-body-img d-block mx-auto" alt="{{ heading_title_product }}">
+					{% endif %}
+					{% endif %}
+					<div class="product_title">{{ heading_title_product }}</div>
+					<div class="us-price-block d-flex align-items-center justify-content-center">
+						<div class="control-label control-label-price">
+							{{ text_price }}
+						</div>
+						<div class="us-module-price d-flex align-items-end">
+						{% if not special %}
+						<div class="us-module-price-actual">{{ price }}</div>
+						{% else %}
+						<div class="us-module-price-old">{{ price }}</div>
+						<div class="us-module-price-new">{{ special }}</div>
+						{% endif %}
+						</div>
+					</div>
+	            </div>
+	            <div class="us-modal-body-one-click-right">
+		        	<form method="post" enctype="multipart/form-data" id="found-cheaper-form">
+						{% if oct_popup_found_cheaper_data.name %}
+						<div class="form-group-20">
+							<input type="text" name="name" value="{{ name }}" class="form-control" id="InputName" placeholder="{{ enter_name }}">
+						</div>
+						{% endif %}
+						{% if oct_popup_found_cheaper_data.telephone %}
+						<div class="form-group-20">
+							<input type="tel" name="telephone" value="{{ telephone }}" class="form-control" id="InputPhone" placeholder="{{ enter_telephone }}">
+						</div>
+						{% endif %}
+						{% if oct_popup_found_cheaper_data.email is defined and oct_popup_found_cheaper_data.email %}
+						<div class="form-group-20">
+							<input type="tel" name="email" value="{{ email }}" class="form-control" id="InputEmail" placeholder="{{ enter_email }}">
+						</div>
+						{% endif %}
+						{% if oct_popup_found_cheaper_data.link %}
+						<div class="form-group-20">
+							<input type="text" name="link" value="{{ link }}" class="form-control" id="InputLink" placeholder="{{ enter_link }}">
+						</div>
+						{% endif %}
+						{% if oct_popup_found_cheaper_data.comment %}
+						<div class="form-group-20">
+							<textarea name="comment" class="form-control" id="InputComment" placeholder="{{ enter_comment }}">{{ comment }}</textarea>
+						</div>
+						{% endif %}
+						{% if text_terms %}
+						<div class="us-form-checkbox-group us-form-checkbox-group-20">
+							<input type="checkbox" id="scales-2" class="us-form-checkbox-input" name="agree">
+							<label for="scales-2" class="d-flex align-items-center"><span>{{ text_terms }}</span></label>
+						</div>
+						{% endif %}
+						<div class="btn-group" role="group" aria-label="us-cont-btn">
+							<button type="submit" class="us-module-btn us-module-btn-green">{{ button_send }}</button>
+						</div>
+						<input type="hidden" name="pid" value="{{ href }}">
+						<input type="hidden" name="mid" value="{{ model }}">
+					</form>
+		        </div>
+		    </div>
+	    </div>
+	</div>
+<script>
+$("#InputName, #InputPhone, #InputEmail, #InputLink, #InputComment, #scales-2").on("change paste keyup", function() {
+	$(this).removeClass('error_style');
+});
+
+$('#found-cheaper-form').on('submit', function (event) {
+	event.preventDefault();
+	masked('body', true);
+	$.ajax({
+		type: 'post',
+		url: 'index.php?route=octemplates/module/oct_popup_found_cheaper/send',
+		dataType: 'json',
+		data: $('#found-cheaper-form').serialize(),
+		cache: false,
+		success: function (json) {
+			if (json['error']) {
+				$('#us-cheaper-modal .text-danger').remove();
+				let errorOption = '';
+
+				$.each(json['error'], function (i, val) {
+					$('#us-cheaper-modal [name="' + i + '"]').addClass('error_style');
+					errorOption += '<div class="alert-text-item">' + val + '</div>';
+				});
+
+				usNotify('danger', errorOption);
+			} else {
+				if (json['output']) {
+					$('.us-module-btn').attr("disabled", "disabled");
+					$('#us-cheaper-modal .modal-body').html(json['output']).removeClass('us-modal-body-one-click');
+				}
+			}
+			masked('body', false);
+		}
+	});
+});
+</script>
+<link rel="stylesheet" type="text/css" href="catalog/view/theme/oct_ultrastore/js/slick/slick.min.css">
+<script src="catalog/view/theme/oct_ultrastore/js/slick/slick.min.js" charset="utf-8"></script>
+{% if oct_popup_found_cheaper_data.mask is defined and oct_popup_found_cheaper_data.mask is not empty %}
+<script src="catalog/view/theme/oct_ultrastore/js/jquery.inputmask.bundle.min.js"></script>
+<script>
+usInputMask('#InputPhone','{{ oct_popup_found_cheaper_data.mask }}');
+</script>
+{% endif %}
+</div>

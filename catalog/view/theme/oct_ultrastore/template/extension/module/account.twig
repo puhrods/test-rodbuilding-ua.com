@@ -1,0 +1,41 @@
+<ul class="us-account-list list-unstyled">
+    {% if logged %}
+        <li class="us-account-item"><a class="us-account-link d-flex align-items-center" href="{{ account }}"><i class="fas fa-info-circle"></i><span>{{ text_account }}</span></a></li>
+        <li class="us-account-item"><a class="us-account-link d-flex align-items-center" href="{{ edit }}"><i class="fas fa-edit"></i><span>{{ text_edit }}</span></a></li>
+        <li class="us-account-item"><a class="us-account-link d-flex align-items-center" href="{{ password }}"><i class="fas fa-cogs"></i><span>{{ text_password }}</span></a></li>
+        <li class="us-account-item"><a class="us-account-link d-flex align-items-center" href="{{ address }}"><i class="fas fa-map-marker-alt"></i><span>{{ text_address }}</span></a></li>
+        <li class="us-account-item"><a class="us-account-link d-flex align-items-center" href="{{ wishlist }}"><i class="fas fa-heart"></i><span>{{ text_wishlist }}</span></a></li>
+        <li class="us-account-item"><a class="us-account-link d-flex align-items-center" href="{{ order }}"><i class="fas fa-file-alt"></i><span>{{ text_order }}</span></a></li>
+        {% if download_view is not empty %}
+        <li class="us-account-item"><a class="us-account-link d-flex align-items-center" href="{{ download }}"><i class="fas fa-download"></i><span>{{ text_download }}</span></a></li>
+        {% endif %}
+        {% if recurring_view is not empty %}
+        <li class="us-account-item"><a class="us-account-link d-flex align-items-center" href="{{ recurring }}"><i class="fas fa-money-bill-alt"></i><span>{{ text_recurring }}</span></a></li>
+        {% endif %}
+        {% if reward_view is not empty %}
+        <li class="us-account-item"><a class="us-account-link d-flex align-items-center" href="{{ reward }}"><i class="fas fa-star"></i><span>{{ text_reward }}</span></a></li>
+        {% endif %}
+        {% if return_view is not empty %}
+        <li class="us-account-item"><a class="us-account-link d-flex align-items-center" href="{{ return }}"><i class="fas fa-reply"></i><span>{{ text_return }}</span></a></li>
+        {% endif %}
+        {% if transaction_view is not empty %}
+        <li class="us-account-item"><a class="us-account-link d-flex align-items-center" href="{{ transaction }}"><i class="fas fa-dollar-sign"></i><span>{{ text_transaction }}</span></a></li>
+        {% endif %}
+        {% if newsletter_view is not empty %}
+        <li class="us-account-item"><a class="us-account-link d-flex align-items-center" href="{{ newsletter }}"><i class="fas fa-envelope"></i><span>{{ text_newsletter }}</span></a></li>
+        {% endif %}
+        {% if affiliate_view is not empty %}
+            {% if not tracking %}
+                <li class="us-account-item"><a class="us-account-link d-flex align-items-center" href="{{ affiliate }}"><i class="fas fa-address-card"></i><span>{{ text_oct_affiliate }}</span></a></li>
+            {% else %}
+                <li class="us-account-item"><a class="us-account-link d-flex align-items-center" href="{{ affiliate }}"><i class="fas fa-address-card"></i><span>{{ text_oct_affiliate }}</span></a></li>
+                <li class="us-account-item"><a class="us-account-link d-flex align-items-center" href="{{ tracking }}"><i class="fas fa-code"></i><span>{{ text_oct_tracking }}</span></a></li>
+            {% endif %}
+        {% endif %}
+        <li class="us-account-item"><a class="us-account-link d-flex align-items-center" href="{{ logout }}"><i class="fas fa-power-off"></i><span>{{ text_logout }}</span></a></li>
+    {% else %}
+        <li class="us-account-item"><a class="us-account-link d-flex align-items-center" href="{{ login }}"><i class="fas fa-sign-in-alt"></i><span>{{ text_login }}</span></a></li>
+        <li class="us-account-item"><a class="us-account-link d-flex align-items-center" href="{{ register }}"><i class="fas fa-user-plus"></i><span>{{ text_register }}</span></a></li>
+        <li class="us-account-item"><a class="us-account-link d-flex align-items-center" href="{{ forgotten }}"><i class="far fa-question-circle"></i><span>{{ text_forgotten }}</span></a></li>
+    {% endif %}
+</ul>

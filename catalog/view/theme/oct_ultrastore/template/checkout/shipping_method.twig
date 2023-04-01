@@ -1,0 +1,35 @@
+{% if error_warning %}
+<script>
+usNotify('warning', '{{ error_warning }}');
+</script>
+{% endif %}
+{% if shipping_methods %}
+<div class="us-acc-info-text">{{ text_shipping_method }}</div>
+{% for shipping_method in shipping_methods %}
+<div class="us-acc-info-text"><strong>{{ shipping_method.title }}</strong></div>
+{% if not shipping_method.error %}
+<div class="us-form-check-group-acc">
+	{% for quote in shipping_method.quote %}
+	<div class="form-check">
+		{% if quote.code == code or not code %}
+	    {% set code = quote.code %}
+	    <input type="radio" id="shipping_method{{ quote.code }}" name="shipping_method" value="{{ quote.code }}" checked="checked" class="form-check-input" />
+	    {% else %}
+	    <input type="radio" id="shipping_method{{ quote.code }}" name="shipping_method" value="{{ quote.code }}" class="form-check-input" />
+	    {% endif %}
+	    <label for="shipping_method{{ quote.code }}" class="radio-inline">{{ quote.title }} - {{ quote.text }}</label>
+	</div>
+	{% endfor %}
+</div>
+{% else %}
+<div class="alert alert-danger alert-dismissible">{{ shipping_method.error }}</div>
+{% endif %}
+{% endfor %}
+{% endif %}
+<div class="us-acc-info-text"><strong>{{ text_comments }}</strong></div>
+<p>
+  <textarea name="comment" rows="8" class="form-control">{{ comment }}</textarea>
+</p>
+<div class="buttons my-4">
+    <input type="button" value="{{ button_continue }}" id="button-shipping-method" data-loading-text="{{ text_loading }}" class="us-module-btn us-module-btn-green" />
+</div>

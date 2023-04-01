@@ -1,0 +1,333 @@
+<div role="tabs">
+  <div class="row">
+    <div class="col-md-3">
+      <div class="jumbotron" style="padding: 15px;">
+        <ul class="nav nav-pills nav-stacked" role="tablist">
+          <li class="active"><a href="#tab-special-price" data-toggle="tab"><i class="fa fa-fw fa-usd"></i> {{ tab_price }}</a></li>
+          <li><a href="#tab-special-manufacturer" data-toggle="tab"><i class="fa fa-fw fa-industry"></i> {{ tab_manufacturer }}</a></li>
+          <li new-feature><a href="#tab-special-discount" data-toggle="tab"><i class="fa fa-fw fa-certificate"></i> {{ tab_discount }}</a></li>
+          <li new-feature><a href="#tab-special-newest" data-toggle="tab"><i class="fa fa-fw fa-flash"></i> {{ tab_newest }}</a></li>
+          <li new-feature><a href="#tab-special-dimension" data-toggle="tab"><i class="fa fa-fw fa-arrows-alt"></i> {{ tab_dimension }}</a></li>
+          <li><a href="#tab-special-stock" data-toggle="tab"><i class="fa fa-fw fa-cubes"></i> {{ tab_stock }}</a></li>        
+        </ul>
+      </div>
+    </div>
+    <div class="col-md-9">
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="tab-special-price">
+          <div class="form-group">
+            <label class="col-sm-3 control-label">{{ entry_special_price }}</label>
+            <div class="col-sm-9">
+              {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: special_price, name: 'special_price', text_yes: text_enabled, text_no: text_disabled }) }}
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label class="col-sm-3 control-label" new-feature for="input-price-sort-order">{{ entry_sort_order }}</label>
+            <div class="col-sm-6">
+              {{ include('extension/module/ocfilter/control/sort_order.twig', { sort_order: special_price_sort_order, name: 'special_price_sort_order' }) }}
+            </div>
+          </div>          
+          
+          <div class="form-group">
+            <label class="col-sm-3 control-label" new-feature>{{ entry_special_price_logarithmic }}</label>
+            <div class="col-sm-9">
+              {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: special_price_logarithmic, name: 'special_price_logarithmic', text_yes: text_enabled, text_no: text_disabled }) }}                           
+            </div>
+          </div>          
+          
+          <div class="form-group">
+            <label class="col-sm-3 control-label" new-feature>{{ entry_consider_tax }}</label>
+            <div class="col-sm-9">
+              {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: special_price_consider_tax, name: 'special_price_consider_tax' }) }}
+
+              <p class="help-block">{{ help_consider_tax }}</p>
+            </div>
+          </div>
+
+          <h3 class="jumbotron">{{ nav_price_source }}</h3>
+
+          <div class="form-group">
+            <label class="col-sm-3 control-label">{{ entry_special_price_consider_regular_price }}</label>
+            <div class="col-sm-9">
+              {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: special_price_consider_regular_price, name: 'special_price_consider_regular_price' }) }}
+
+              <p class="help-block">{{ help_special_price_consider_regular_price }}</p>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-sm-3 control-label">{{ entry_special_price_consider_discount }}</label>
+            <div class="col-sm-9">
+              {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: special_price_consider_discount, name: 'special_price_consider_discount' }) }}
+
+              <p class="help-block">{{ help_special_price_consider_discount }}</p>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-sm-3 control-label">{{ entry_special_price_consider_special }}</label>
+            <div class="col-sm-9">
+              {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: special_price_consider_special, name: 'special_price_consider_special' }) }}
+
+              <p class="help-block">{{ help_special_price_consider_special }}</p>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-sm-3 control-label">{{ entry_special_price_consider_option }}</label>
+            <div class="col-sm-9">
+              {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: special_price_consider_option, name: 'special_price_consider_option' }) }}
+
+              <p class="help-block">{{ help_special_price_consider_option }}</p>
+            </div>
+          </div>          
+        </div><!-- /.price -->
+        
+        <div role="tabpanel" class="tab-pane" id="tab-special-manufacturer">
+          <div class="form-group">
+            <label class="col-sm-3 control-label">{{ entry_special_manufacturer }}</label>
+            <div class="col-sm-9">
+              {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: special_manufacturer, name: 'special_manufacturer', text_yes: text_enabled, text_no: text_disabled }) }}
+              <p class="help-block">{{ help_special_manufacturer }}</p>      
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label class="col-sm-3 control-label" new-feature for="input-manufacturer-sort-order">{{ entry_sort_order }}</label>
+            <div class="col-sm-6">
+              {{ include('extension/module/ocfilter/control/sort_order.twig', { sort_order: special_manufacturer_sort_order, name: 'special_manufacturer_sort_order' }) }}
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label class="col-sm-3 control-label" for="input-manufacturer-type">{{ entry_type }}</label>
+            <div class="col-sm-3">
+              <select name="special_manufacturer_type" id="input-manufacturer-type" class="form-control">
+                {% for type in types %}
+                {% if type == special_manufacturer_type %}
+                <option value="{{ type }}" selected="selected">{{ type|capitalize }}</option>
+                {% else %}
+                <option value="{{ type }}">{{ type|capitalize }}</option>
+                {% endif %}
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-sm-3 control-label" new-feature>{{ entry_special_manufacturer_dropdown }}</label>
+            <div class="col-sm-5">
+              {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: special_manufacturer_dropdown, name: 'special_manufacturer_dropdown', text_yes: text_enabled, text_no: text_disabled }) }}
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label class="col-sm-3 control-label" new-feature>{{ entry_special_manufacturer_image }}</label>
+            <div class="col-sm-5">
+              {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: special_manufacturer_image, name: 'special_manufacturer_image' }) }}
+            </div>
+          </div>
+        </div><!-- /.manufacturer -->
+        
+        <div role="tabpanel" class="tab-pane" id="tab-special-discount">
+          <div class="form-group">
+            <label class="col-sm-3 control-label">{{ entry_special_discount }}</label>
+            <div class="col-sm-9">
+              {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: special_discount, name: 'special_discount', text_yes: text_enabled, text_no: text_disabled }) }}
+              <p class="help-block">{{ help_special_discount }}</p>      
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-sm-3 control-label" for="input-discount-sort-order">{{ entry_sort_order }}</label>
+            <div class="col-sm-6">
+              {{ include('extension/module/ocfilter/control/sort_order.twig', { sort_order: special_discount_sort_order, name: 'special_discount_sort_order' }) }}
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">{{ entry_special_discount_consider_special }}</label>
+            <div class="col-sm-5">
+              {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: special_discount_consider_special, name: 'special_discount_consider_special' }) }}
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">{{ entry_special_discount_consider_discount }}</label>
+            <div class="col-sm-5">
+              {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: special_discount_consider_discount, name: 'special_discount_consider_discount' }) }}
+            </div>
+          </div>
+        </div><!-- /.discount -->   
+
+        <div role="tabpanel" class="tab-pane" id="tab-special-newest">
+          <div class="form-group">
+            <label class="col-sm-3 control-label">{{ entry_special_newest }}</label>
+            <div class="col-sm-9">
+              {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: special_newest, name: 'special_newest', text_yes: text_enabled, text_no: text_disabled }) }}
+              
+              <p class="help-block">{{ help_special_newest }}</p>      
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-sm-3 control-label" for="input-newest-sort-order">{{ entry_sort_order }}</label>
+            <div class="col-sm-6">
+              {{ include('extension/module/ocfilter/control/sort_order.twig', { sort_order: special_newest_sort_order, name: 'special_newest_sort_order' }) }}
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label class="col-sm-3 control-label">{{ entry_special_newest_interval }}</label>
+            <div class="col-sm-3">
+              <div class="input-group">
+                <input type="number" min="1" name="special_newest_interval" value="{{ special_newest_interval }}" class="form-control" />
+                <div class="input-group-btn">
+                  <select name="special_newest_period" class="btn btn-default" data-selected="{{ special_newest_period }}">
+                    <option value="hour">{{ text_special_newest_interval_hour }}</option>
+                    <option value="day">{{ text_special_newest_interval_day }}</option>
+                    <option value="week">{{ text_special_newest_interval_week }}</option>
+                    <option value="month">{{ text_special_newest_interval_month }}</option>
+                  </select>
+                </div>
+              </div>                          
+            </div>
+            <div class="col-sm-offset-3 col-sm-9">
+              <p class="help-block">{{ help_special_newest_interval }}</p>
+            </div>
+          </div>
+        </div><!-- /.newest -->           
+        
+        <div role="tabpanel" class="tab-pane" id="tab-special-dimension">
+          <div class="row v-border">
+            <div class="col-sm-6">
+              <div class="form-group-vertical">
+                <label>{{ entry_special_weight }}</label>
+                <div>
+                  {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: special_weight, name: 'special_weight', text_yes: text_enabled, text_no: text_disabled }) }}
+                </div>
+              </div>
+              <div class="form-group-vertical">
+                <label>{{ entry_sort_order }}</label>
+                <div>
+                  {{ include('extension/module/ocfilter/control/sort_order.twig', { sort_order: special_weight_sort_order, name: 'special_weight_sort_order' }) }}
+                </div>
+              </div>              
+            </div>
+            <div class="col-sm-6">
+              <div class="form-group-vertical">
+                <label>{{ entry_special_length }}</label>
+                <div>
+                  {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: special_length, name: 'special_length', text_yes: text_enabled, text_no: text_disabled }) }}
+                </div>
+              </div>
+              <div class="form-group-vertical">
+                <label>{{ entry_sort_order }}</label>
+                <div>
+                  {{ include('extension/module/ocfilter/control/sort_order.twig', { sort_order: special_length_sort_order, name: 'special_length_sort_order' }) }}
+                </div>
+              </div> 
+            </div>
+          </div>
+          <hr />
+          <div class="row v-border">
+            <div class="col-sm-6">
+              <div class="form-group-vertical">
+                <label>{{ entry_special_width }}</label>
+                <div>
+                  {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: special_width, name: 'special_width', text_yes: text_enabled, text_no: text_disabled }) }}
+                </div>
+              </div>
+              <div class="form-group-vertical">
+                <label>{{ entry_sort_order }}</label>
+                <div>
+                  {{ include('extension/module/ocfilter/control/sort_order.twig', { sort_order: special_width_sort_order, name: 'special_width_sort_order' }) }}
+                </div>
+              </div> 
+            </div>
+            <div class="col-sm-6">
+              <div class="form-group-vertical">
+                <label>{{ entry_special_height }}</label>
+                <div>
+                  {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: special_height, name: 'special_height', text_yes: text_enabled, text_no: text_disabled }) }}
+                </div>
+              </div>
+              <div class="form-group-vertical">
+                <label>{{ entry_sort_order }}</label>
+                <div>
+                  {{ include('extension/module/ocfilter/control/sort_order.twig', { sort_order: special_height_sort_order, name: 'special_height_sort_order' }) }}                
+                </div>
+              </div> 
+            </div>            
+          </div>
+        </div><!-- /.dimension -->           
+        
+        <div role="tabpanel" class="tab-pane" id="tab-special-stock">
+          <div class="form-group">
+            <label class="col-sm-3 control-label">{{ entry_special_stock }}</label>
+            <div class="col-sm-9">
+              {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: special_stock, name: 'special_stock', text_yes: text_enabled, text_no: text_disabled }) }}
+
+              <p class="help-block">{{ help_special_stock }}</p>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-sm-3 control-label">{{ entry_special_stock_method }}</label>
+            <div class="col-sm-9">
+              <div class="btn-group" data-toggle="buttons">
+                {% if special_stock_method == 'quantity' %}
+                <label class="btn btn-default active" data-trigger="onclick" onclick="$('.collapse-group-1').collapse('hide').filter('#stock-status-quantity').collapse('show')">
+                  <input type="radio" name="special_stock_method" value="quantity" checked="checked" /> {{ text_special_stock_method_by_quantity }}
+                </label>
+                <label class="btn btn-default" onclick="$('.collapse-group-1').collapse('hide').filter('#stock-status-id').collapse('show')">
+                  <input type="radio" name="special_stock_method" value="stock_status_id" /> {{ text_special_stock_method_by_status_id }}
+                </label>
+                {% else %}
+                <label class="btn btn-default" onclick="$('.collapse-group-1').collapse('hide').filter('#stock-status-quantity').collapse('show')">
+                  <input type="radio" name="special_stock_method" value="quantity" /> {{ text_special_stock_method_by_quantity }}
+                </label>
+                <label class="btn btn-default active" data-trigger="onclick" onclick="$('.collapse-group-1').collapse('hide').filter('#stock-status-id').collapse('show')">
+                  <input type="radio" name="special_stock_method" value="stock_status_id" checked="checked" /> {{ text_special_stock_method_by_status_id }}
+                </label>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label class="col-sm-3 control-label" for="input-stock-status-sort-order">{{ entry_sort_order }}</label>
+            <div class="col-sm-6">
+              {{ include('extension/module/ocfilter/control/sort_order.twig', { sort_order: special_stock_sort_order, name: 'special_stock_sort_order' }) }}
+            </div>
+          </div>          
+
+          <div class="collapse collapse-group-1" id="stock-status-id">
+            <div class="form-group">
+              <label class="col-sm-3 control-label" for="input-stocks-tatus-type">{{ entry_type }}</label>
+              <div class="col-sm-3">
+                <select name="special_stock_type" id="input-stocks-tatus-type" class="form-control">                  
+                  {% for type in types %}
+                  {% if type == special_stock_type %}
+                  <option value="{{ type }}" selected="selected">{{ type|capitalize }}</option>
+                  {% else %}
+                  <option value="{{ type }}">{{ type|capitalize }}</option>
+                  {% endif %}
+                  {% endfor %}                  
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="collapse collapse-group-1" id="stock-status-quantity">
+            <div class="form-group">
+              <label class="col-sm-3 control-label">{{ entry_special_stock_out_value }}</label>
+              <div class="col-sm-9">
+                {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: special_stock_out_value, name: 'special_stock_out_value' }) }}
+              </div>
+            </div>
+          </div>        
+        </div><!-- /.stock -->   
+      </div>
+    </div>
+  </div>
+</div>

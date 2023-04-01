@@ -1,0 +1,23 @@
+{% if categories %}
+<ul class="us-categories-box list-unstyled us-module-column-box">
+	{% for category in categories %}
+<li class="us-categories-item{% if category.category_id == category_id %} active{% endif %}"><span class="d-flex justify-content-between"><a href="{{ category.href }}">{{ category.name }}</a>{% if category.children %}<span class="us-categories-toggle"><i class="fas fa-chevron-down"></i></span>{% endif %}</span>
+		{% if category.children %}
+		<ul class="us-categories-children us-categories-2 list-unstyled">
+		{% for child in category.children %}
+	<li class="us-categories-item{% if child.category_id == child_id %} active{% endif %}"><span class="d-flex justify-content-between"><a href="{{ child.href }}">{{ child.name }}</a>{% if child.children %}<span class="us-categories-toggle"><i class="fas fa-chevron-down"></i></span>{% endif %}</span>
+			{% if child.children %}
+			<ul class="us-categories-children us-categories-3 list-unstyled">
+	        	{% for ch in child.children %}
+	            	<li class="us-categories-item{% if ch.category_id == ch_id %} active{% endif %}"><a href="{{ ch.href }}">{{ ch.name }}</a></li>
+				{% endfor %}
+			</ul>
+	        {% endif %}
+	        </li>
+		{% endfor %}
+		</ul>
+		{% endif %}
+		</li>
+	{% endfor %}
+</ul>
+{% endif %}

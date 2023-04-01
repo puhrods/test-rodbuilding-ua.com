@@ -1,0 +1,69 @@
+<div class="form-group">
+  <label class="col-sm-3 control-label">{{ entry_display_module }}</label>
+  <div class="col-sm-9">
+    {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: module, name: 'module' }) }}
+  </div>
+</div>  
+<div class="form-group">
+  <label class="col-sm-3 control-label">{{ entry_display_category }}</label>
+  <div class="col-sm-9">
+    {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: category, name: 'category' }) }}
+  </div>
+</div>  
+<div class="form-group">
+  <label class="col-sm-3 control-label">{{ entry_display_product }}</label>
+  <div class="col-sm-9">
+    {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: product, name: 'product' }) }}
+  </div>
+</div>  
+<div class="form-group">
+  <label class="col-sm-3 control-label">{{ entry_display_sitemap }}</label>
+  <div class="col-sm-9">
+    {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: sitemap, name: 'sitemap' }) }}
+  </div>
+</div>      
+
+<div class="form-group">
+  <label class="col-sm-3 control-label">{{ entry_store }}, {{ entry_layout }}</label>
+  <div class="col-sm-5">
+    <table class="table m-0">
+      <thead>
+        <tr>
+          <td class="text-left">{{ entry_store }}</td>
+          <td class="text-left">{{ entry_layout }}</td>
+        </tr>
+      </thead>
+      <tbody>
+        {% for store in stores %}
+        <tr>
+          <td class="text-left">
+            {% if page_store[store.store_id] is defined %}
+            <label><input type="checkbox" name="page_store[]" value="{{ store.store_id }}" checked="checked" /> {{ store.name }}</label>
+            {% else %}
+            <label><input type="checkbox" name="page_store[]" value="{{ store.store_id }}" /> {{ store.name }}</label>
+            {% endif %}                    
+          </td>
+          <td class="text-left">
+            <select name="page_layout[{{ store.store_id }}]" class="form-control">
+              <option value=""></option>
+              {% for layout in layouts %}
+              {% if page_layout[store.store_id] is defined and page_layout[store.store_id] == layout.layout_id %}
+              <option value="{{ layout.layout_id }}" selected="selected">{{ layout.name }}</option>
+              {% else %}
+              <option value="{{ layout.layout_id }}">{{ layout.name }}</option>
+              {% endif %}
+              {% endfor %}
+            </select>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>  
+  </div>
+</div>                
+<div class="form-group">
+  <label class="col-sm-3 control-label" for="input-page-link-code">{{ entry_display_code }}</label>
+  <div class="col-sm-9">   
+    <textarea class="form-control" onclick="$(this).select();" rows="1" id="input-page-link-code" placeholder="{{ placeholder_display_code }}" data-code="&lt;a href=&quot;{{ '{{' }} ocfilter.page({{ page_id }}).href {{ '}}' }}&quot;&gt;{{ '{{' }} ocfilter.page({{ page_id }}).name {{ '}}' }}&lt;/a&gt;" readonly></textarea>
+  </div>
+</div> 

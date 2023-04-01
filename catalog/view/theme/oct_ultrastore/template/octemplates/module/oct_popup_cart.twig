@@ -1,0 +1,208 @@
+<div class="modal" id="us-cart-modal" tabindex="-1" role="dialog" aria-labelledby="us-cart-modal" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+	    <div class="modal-content">
+	        <div class="modal-header">
+	            <h5 class="modal-title" id="us-cart-modal">{{ heading_title }}</h5>
+	            <button type="button" class="us-close" data-dismiss="modal" aria-label="Close">
+	            	<span aria-hidden="true" class="us-modal-close-icon us-modal-close-left"></span>
+	                <span aria-hidden="true" class="us-modal-close-icon us-modal-close-right"></span>
+	            </button>
+	        </div>
+	        <div class="modal-body">
+			{% if products or vouchers %}
+	        <div class="us-cart-item us-cart-item-last text-center">
+		        <div class="us-cart-text-modal">
+					{% if error_warning %}
+					<div class="us-cart-text-prompt">{{ error_warning }}</div>
+					{% endif %}
+					{{ text_cart_items }}
+					{% for total in totals %}
+					<div class="total-text">{{ total.title }}: <span class="gold">{{ total.text }}</span></div>
+					{% endfor %}
+					<a href="{{ cart_link }}" class="us-product-link">{{ button_cart }}</a>
+		        </div>
+		    </div>
+			<div class="us-modal-body-cart">
+			{% for product in products %}
+	            <div class="us-cart-item d-flex align-items-center justify-content-between">
+					<div class="us-cart-item-left d-flex align-items-center">
+						{% if product.thumb %}
+							<img src="{{ product.thumb }}" class="us-cart-item-img" alt="{{ product.name }}">
+						{% endif %}
+						<div class="us-cart-item-desc">
+							<div class="mb-3">
+							<a href="{{ product.href }}" class="us-cart-item-link">
+								{{ product.name }}
+							</a>
+							{% if not product.stock %}
+							<span class="required">***</span>
+							{% endif %}
+							{% if product.option %}
+							<ul class="us-product-info-list list-unstyled mt-1">
+							{% for option in product.option %}
+								<li class="us-product-info-item">
+									{{ option.name }}
+									<span class="us-product-info-code">{{ option.value }}</span>
+								</li>
+							{% endfor %}
+							</ul>
+							{% endif %}
+							</div>
+							<div class="us-product-quantity">
+								<div class="btn-group" role="group" aria-label="us-product-quantity">
+									<input name="product_id_q" value="{{ product.product_id }}" type="hidden" />
+									<input name="product_id" value="{{ product.key }}" type="hidden" />
+									<input name="product_stock_{{ product.key }}" id="product_stock_{{ product.key }}" value="{{ product.quantity_product }}" type="hidden" />
+									<button type="button" class="us-product-quantity-btn" onclick="update_manual('#main-quantity-val-{{ product.key }}', 'minus', '{{ product.key }}'); return validate('#main-quantity-val-{{ product.key }}');">-</button>
+									<input type="text" name="quantity" class="form-control" id="main-quantity-val-{{ product.key }}" value="{{ product.quantity }}" onchange="update_manual('#main-quantity-val-{{ product.key }}', 'manual', '{{ product.key }}'); return validate('#main-quantity-val-{{ product.key }}');" keypress="update_manual('#main-quantity-val-{{ product.key }}', '', '{{ product.key }}'); return validate('#main-quantity-val-{{ product.key }}');" aria-label="Quantity"></input>
+									<button type="button" class="us-product-quantity-btn" onclick="update_manual('#main-quantity-val-{{ product.key }}', 'plus', '{{ product.key }}'); return validate('#main-quantity-val-{{ product.key }}');">+</button>
+								</div>
+							</div>
+							<div class="us-cart-price-all">
+								{{ product.total }}
+							</div>
+						</div>
+					</div>
+					<a href="javascript:;" onclick="remove(this, 'remove'); return false;" class="us-cart-del"><i class="fas fa-trash-alt"></i></a>
+					<input name="product_key" value="{{ product.key }}" style="display: none;" hidden />
+                    <input name="product_id_q" value="{{ product.product_id }}" style="display: none;" hidden />
+				</div>
+			{% endfor %}
+			{% for voucher in vouchers %}
+			<div class="d-flex align-items-center us-popup-cart-voucher">
+				<div class="us-cart-text-modal">{{ voucher.description }}</div>
+				<button type="button" class="us-cart-del ml-auto border-0 required p-0" onclick="voucher.remove('{{ voucher.key }}');">
+					<i class="fas fa-trash-alt"></i>
+				</button>
+			</div>
+			{% endfor %}
+			</div>
+	    	<div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between">
+				<button type="button" class="us-module-btn mb-3 mb-sm-0" data-dismiss="modal">{{ button_shopping }}</button>
+				<a href="{{ checkout_link }}" class="us-module-btn us-module-btn-green text-center">{{ button_checkout }}</a>
+			</div>
+			{{ oct_byoneclick }}
+			{% else %}
+		        <div class="us-empty-cart text-center">
+		        	<img src="catalog/view/theme/oct_ultrastore/img/empty-cart.svg">
+			        <div class="us-cart-text-modal">
+						{{ text_empty }}
+			        </div>
+			    </div>
+			{% endif %}
+			</div>
+	    </div>
+	</div>
+<script>
+//popup_cart_one_click
+function showInput() {
+	$('#popup_cart_one_click').fadeOut(1);
+	$('.hidden-input-group').fadeIn(300).css('height', '44px');
+}
+
+// validate input value
+function validate(input) {
+	$(input).val($(input).val().replace(/[^\d,]/g, ''));
+}
+
+// remove product from cart
+function remove(target, status) {
+	product_key  = $(target).next().val(),
+	url = null;
+	if (status == 'remove') {
+		url = 'index.php?route=octemplates/module/oct_popup_cart&remove=' + product_key;
+	}
+	masked('body', true);
+	$.ajax({
+		url: url,
+		type: 'get',
+		dataType: 'html',
+		cache: false,
+		success: function(data) {
+			$.ajax({
+				url: 'index.php?route=octemplates/module/oct_popup_cart/status_cart',
+				type: 'get',
+				dataType: 'json',
+				cache: false,
+				success: function(json) {
+					$(".modal-backdrop").remove();
+					masked('body', false);
+					$(".modal-holder").html(data);
+					$("#us-cart-modal").modal("show");
+					// Need to set timeout otherwise it wont update the total
+					setTimeout(function () {
+						$('#oct-cart-quantity, .header-cart-index, #mobile_cart_index').html(json['total_products']);
+						$('.us-cart-text').html(json['total_amount']);
+					}, 100);
+				}
+			});
+		}
+	});
+}
+
+// update quantity function
+function update_manual(target, change, productID) {
+	let input_val = $(target).val(),
+	quantity  = parseInt(input_val),
+	changeQuantity;
+
+	// check quantity
+	if (quantity <= 0) {
+		quantity = $(target).val(1);
+	} else if (change === 'minus') {
+		changeQuantity = quantity-1;
+	} else if (change === 'plus') {
+		changeQuantity = quantity+1;
+	} else {
+		changeQuantity = quantity;
+	}
+	changeQuantity = (changeQuantity > 0) ? changeQuantity : 1;
+
+	// show loading mask
+	masked('body', true);
+
+	// check minimum
+	let minimum = '{{ product_minimum }}';
+	if(changeQuantity < minimum) changeQuantity = minimum;
+
+	// check stock order
+	let productStock = $('#product_stock_' + productID).val();
+	let productStockCheckout = '{{ product_stock_checkout }}';
+
+	if (productStockCheckout == false) {
+		if (changeQuantity > productStock) {
+			usNotify('danger', '{{ error_stock }}');
+			masked('body', false);
+			if(productStock != 0) quantity = $(target).val(productStock);
+			changeQuantity = productStock;
+		}
+	}
+
+	$.ajax({
+		url: 'index.php?route=octemplates/module/oct_popup_cart&update=' + productID + '&quantity=' + changeQuantity,
+		type: 'get',
+		dataType: 'html',
+		cache: false,
+		success: function(data) {
+		$.ajax({
+			url: 'index.php?route=octemplates/module/oct_popup_cart/status_cart',
+			type: 'get',
+			dataType: 'json',
+			cache: false,
+			success: function(json) {
+				$('.modal-backdrop').remove();
+				$('.modal-holder').html(data);
+				$('#us-cart-modal').modal('show');
+					// Need to set timeout otherwise it wont update the total
+					setTimeout(function () {
+						$('#oct-cart-quantity, .header-cart-index, #mobile_cart_index').html(json['total_products']);
+						$('.us-cart-text').html(json['total_amount']);
+						masked('body', false);
+					}, 100);
+			}
+		});
+		}
+	});
+}
+</script>
+</div>

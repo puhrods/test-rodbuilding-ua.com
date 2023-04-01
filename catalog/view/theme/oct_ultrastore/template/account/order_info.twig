@@ -1,0 +1,155 @@
+{{ header }}
+<div id="account-order" class="container">
+	{{ oct_breadcrumbs }}
+	<div class="row">
+		<div class="col-lg-12">
+			<h1 class="us-main-shop-title">{{ heading_title }}</h1>
+		</div>
+	</div>
+	<div class="content-top-box">{{ content_top }}</div>
+	{% if success %}
+	<script>
+	usNotify('success', '{{ success }}');
+	</script>
+	{% endif %}
+	{% if error_warning %}
+	<script>
+	usNotify('warning', '{{ error_warning }}');
+	</script>
+	{% endif %}
+	<div class="row">{{ column_left }}
+	    {% if column_left and column_right %}
+	    {% set class = 'col-sm-6' %}
+	    {% elseif column_left or column_right %}
+	    {% set class = 'col-sm-9' %}
+	    {% else %}
+	    {% set class = 'col-sm-12' %}
+	    {% endif %}
+	    <div id="content" class="{{ class }}">
+		    <div class="us-content">
+			    <div class="us-acc-info-block">
+					<div class="us-content-title">{{ text_order_detail }}</div>
+					<div class="us-acc-info-list">
+						{% if invoice_no %}
+						<div class="us-acc-info-text">{{ text_invoice_no }}:<span>{{ invoice_no }}</span></div>
+						{% endif %}
+						<div class="us-acc-info-text">{{ text_order_id }}:<span>#{{ order_id }}</span></div>
+						<div class="us-acc-info-text">
+							{{ text_date_added }}:<span>{{ date_added }}</span>
+						</div>
+						<div class="us-acc-info-text">{{ text_payment_method }}:<span>{{ payment_method }}</span></div>
+						{% if shipping_method %}
+						<div class="us-acc-info-text">{{ text_shipping_method }}:<span>{{ shipping_method }}</span></div>
+						{% endif %}
+					</div>
+				</div>
+				<div class="us-acc-info-block us-acc-info-block-last">
+					<div class="us-content-title">{{ text_payment_address }}</div>
+					<div class="us-acc-info-list">
+						<div class="us-acc-info-text">
+							{{ payment_address }}
+						</div>
+					</div>
+					{% if shipping_address %}
+					<div class="us-content-title">{{ text_shipping_address }}</div>
+					<div class="us-acc-info-list">
+						<div class="us-acc-info-text">
+							{{ shipping_address }}
+						</div>
+					</div>
+					{% endif %}
+				</div>
+		      <div class="table-responsive-sm us-table-box">
+		        <table class="table table-hover">
+		          <thead class="thead-dark">
+		            <tr>
+		              <th>{{ column_name }}</th>
+		              <th>{{ column_model }}</th>
+		              <th>{{ column_quantity }}</th>
+		              <th>{{ column_price }}</th>
+		              <th>{{ column_total }}</th>
+		              {% if products %}
+		              <th style="width: 20px;"></th>
+		              {% endif %} </tr>
+		          </thead>
+		          <tbody>
+		          {% for product in products %}
+		          <tr>
+		            <td>{{ product.name }}
+		              {% for option in product.option %} <br />
+		              &nbsp;<small> - {{ option.name }}: {{ option.value }}</small> {% endfor %}</td>
+		            <td>{{ product.model }}</td>
+		            <td>{{ product.quantity }}</td>
+		            <td>{{ product.price }}</td>
+		            <td>{{ product.total }}</td>
+		            <td style="white-space: nowrap;">{% if product.reorder %} <a href="{{ product.reorder }}" data-toggle="tooltip" title="{{ button_reorder }}" class="us-acc-btn us-acc-btn-green"><i class="fa fa-shopping-cart"></i></a> {% endif %} <a href="{{ product.return }}" data-toggle="tooltip" title="{{ button_return }}" class="us-acc-btn us-acc-btn-red"><i class="fa fa-reply"></i></a></td>
+		          </tr>
+		          {% endfor %}
+		          {% for voucher in vouchers %}
+		          <tr>
+		            <td>{{ voucher.description }}</td>
+		            <td></td>
+		            <td>1</td>
+		            <td>{{ voucher.amount }}</td>
+		            <td>{{ voucher.amount }}</td>
+		            {% if products %}
+		            <td></td>
+		            {% endif %} </tr>
+		          {% endfor %}
+		          {% for total in totals %}
+		          <tr>
+		            <td colspan="3"></td>
+		            <td>{{ total.title }}</td>
+		            <td style="min-width:120px;">{{ total.text }}</td>
+		            {% if products %}
+		            <td></td>
+		            {% endif %} </tr>
+		          {% endfor %}
+		            </tbody>
+		        </table>
+		      </div>
+		      {% if comment %}
+		      <div class="us-acc-info-block">
+				<div class="us-content-title">{{ text_comment }}</div>
+				<div class="us-acc-info-text">{{ comment }}</div>
+			  </div>
+		      {% endif %}
+		      {% if histories %}
+		      <div class="us-content-title">{{ text_history }}</div>
+		      <div class="table-responsive-sm us-table-box us-table-box-history">
+			      <table class="table table-hover">
+			        <thead class="thead-dark">
+			          <tr>
+			            <th>{{ column_date_added }}</th>
+			            <th>{{ column_status }}</th>
+			            <th>{{ column_comment }}</th>
+			          </tr>
+			        </thead>
+			        <tbody>
+			        {% if histories %}
+			        {% for history in histories %}
+			        <tr>
+			          <td>{{ history.date_added }}</td>
+			          <td>{{ history.status }}</td>
+			          <td>{{ history.comment }}</td>
+			        </tr>
+			        {% endfor %}
+			        {% else %}
+			        <tr>
+			          <td colspan="3" class="text-center">{{ text_no_results }}</td>
+			        </tr>
+			        {% endif %}
+			          </tbody>
+			      </table>
+		      </div>
+		      {% endif %}
+		      <div class="buttons">
+		        <a href="{{ continue }}" class="us-module-btn us-module-btn-green">{{ button_continue }}</a>
+		      </div>
+		    </div>
+	    </div>
+	    {{ column_right }}
+	</div>
+	{{ content_bottom }}
+</div>
+{{ footer }}

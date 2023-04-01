@@ -1,0 +1,17 @@
+<div class="btn-group" data-toggle="buttons">
+  {% if flag %}
+  <label class="btn btn-default active">
+    <input type="radio" name="{{ name }}" value="1" checked="checked" /> {{ text_yes }}
+  </label>
+  <label class="btn btn-default">
+    <input type="radio" name="{{ name }}" value="0" /> {{ text_no }}
+  </label>
+  {% else %}
+  <label class="btn btn-default">
+    <input type="radio" name="{{ name }}" value="1" /> {{ text_yes }}
+  </label>
+  <label class="btn btn-default active">
+    <input type="radio" name="{{ name }}" value="0" checked="checked" /> {{ text_no }}
+  </label>
+  {% endif %}
+</div>

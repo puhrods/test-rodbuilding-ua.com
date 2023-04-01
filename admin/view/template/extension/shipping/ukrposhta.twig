@@ -1,0 +1,2180 @@
+{{ header }}{{ column_left }}
+<div id="content">
+	<div class="page-header">
+		<div class="container-fluid">
+			<div class="row">
+				<ul class="breadcrumb">
+					{% for breadcrumb in breadcrumbs %}
+						<li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+                    {% endfor %}
+				</ul>
+			</div>
+			<br>
+			<h1><i class="fa fa-truck"></i> {{ heading_title }} v. {{ v }}</h1>
+			<div class="pull-right">
+				<div class="btn-group">
+					<button type="button" onclick="save();" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+					<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						<span class="caret"></span>
+						<span class="sr-only"></span>
+					</button>
+					<ul class="dropdown-menu dropdown-menu-right">
+						<li><a onclick="save('exit');" style="cursor: pointer;"><i class="fa fa-sign-out fa-fw" aria-hidden="true"></i> {{ button_save_and_exit }}</a></li>
+						<li><a onclick="settings('basic');" style="cursor: pointer;"><i class="fa fa-cloud-download fa-fw" aria-hidden="true"></i> {{ button_download_basic_settings }}</a></li>
+						<li><a onclick="settings('import');" style="cursor: pointer;"><i class="fa fa-download fa-fw" aria-hidden="true"></i> {{ button_import_settings }}</a></li>
+						<li><a onclick="settings('export');" style="cursor: pointer;"><i class="fa fa-upload fa-fw" aria-hidden="true"></i> {{ button_export_settings }}</a></li>
+					</ul>
+				</div>
+				<a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-danger" role="button"><i class="fa fa-reply"></i></a>
+			</div>
+		</div>
+	</div>
+ 	<div class="container-fluid">
+ 		{% if success %}
+    	<div class="alert alert-success">
+    		<i class="fa fa-check-circle"></i> {{ success }}
+      		<button type="button" class="close" data-dismiss="alert">&times;</button>
+    	</div>
+    	{% endif %}
+    	{% if error_warning %}
+    	<div class="alert alert-danger">
+    		<i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+      		<button type="button" class="close" data-dismiss="alert">&times;</button>
+    	</div>
+    	{% endif %}
+    	<div class="panel panel-default">
+      		<div class="panel-heading">
+        		<h3 class="panel-title"><i class="fa fa-cog" aria-hidden="true"></i> {{ text_settings }}</h3>
+				<select name="store_id" id="input-store_id" onchange="location.href = 'index.php?route=extension/shipping/ukrposhta&user_token={{ user_token }}&store_id=' + this.value;" class="form-control" style="display: inline; width: auto;">
+					{% for store in stores %}
+						<option value="{{ store.store_id }}"{{ store.store_id == store_id ? ' selected="selected"' }}>{{ store.name }}</option>
+                    {% endfor %}
+				</select>
+      		</div>
+      		<div class="panel-body">
+        		<form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-ukrposhta" class="form-horizontal">
+        			<ul class="nav nav-tabs">
+        				{% if license %}
+			  			<li{{ license ? ' class="active"' }}><a href="#tab-general" data-toggle="tab"><i class="fa fa-cogs"></i> {{ tab_general }}</a></li>
+						<li><a href="#tab-tariffs" data-toggle="tab"><i class="fa fa-calculator"></i> {{ tab_tariffs }}</a></li>
+			  			<li><a href="#tab-database" data-toggle="tab"><i class="fa fa-database"></i> {{ tab_database }}</a></li>
+			  			<li><a href="#tab-sender" data-toggle="tab"><i class="fa fa-user" aria-hidden="true"></i> {{ tab_sender }}</a></li>
+			  			<li><a href="#tab-recipient" data-toggle="tab"><i class="fa fa-users" aria-hidden="true"></i> {{ tab_recipient }}</a></li>
+			  			<li><a href="#tab-departure" data-toggle="tab"><i class="fa fa-cube" aria-hidden="true"></i> {{ tab_departure }}</a></li>
+			  			<li><a href="#tab-payment" data-toggle="tab"><i class="fa fa-money" aria-hidden="true"></i> {{ tab_payment }}</a></li>
+						<li><a href="#tab-consignment_note" data-toggle="tab"><i class="fa fa-file-text-o" aria-hidden="true"></i> {{ tab_consignment_note }}</a></li>
+			  			<li><a href="#tab-cron" data-toggle="tab"><i class="fa fa-tasks"></i> {{ tab_cron }}</a></li>
+		  				{% endif %}
+		  				<li role="presentation" class="dropdown{{ license == false ? ' active' }}">
+		  					<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false" style="cursor: pointer;"><i class="fa fa-life-ring"></i> {{ tab_support }} <span class="caret"></span></a>
+		  					<ul class="dropdown-menu dropdown-menu-right">
+								<li{{ license == false ? ' class="active"' }}><a href="#tab-support" data-toggle="tab">{{ text_contacts }}</a></li>
+    							<li><a href="{{ instruction_href }}" target="_blank">{{ text_instruction }}</a></li>
+								<li><a href="{{ documentation_api_href }}" target="_blank">{{ text_documentation_api }}</a></li>
+							</ul>
+		  				</li>
+					</ul>
+					<div class="tab-content">
+					{% if license %}
+						<div class="tab-pane fade{{ license ? ' in active' }}" id="tab-general">
+							<div class="col-sm-2">
+								<ul class="nav nav-pills nav-stacked">
+									<li class="active"><a href="#tab-global" data-toggle="pill">{{ text_global }}</a></li>
+									<li><a href="#tab-express-w" data-toggle="pill">{{ text_express_w }}</a></li>
+									<li><a href="#tab-express-d" data-toggle="pill">{{ text_express_d }}</a></li>
+						  			<li><a href="#tab-standard-w" data-toggle="pill">{{ text_standard_w }}</a></li>
+						  			<li><a href="#tab-standard-d" data-toggle="pill">{{ text_standard_d }}</a></li>
+								</ul>
+							</div>
+							<div class="col-sm-10">
+								<div class="tab-content">
+									<div class="tab-pane active" id="tab-global">
+										<div class="form-group">
+				      						<label class="col-sm-2 control-label" for="input-status-enabled"><span data-toggle="tooltip" title="{{ help_status }}">{{ entry_status }}</span></label>
+				      						<div class="col-sm-4">
+				      							<div class="radio-switch">
+									                <input type="radio" name="shipping_ukrposhta_status" value="0" id="input-status-disabled"{{ not ukrposhta_status ? ' checked' }}><label class="col-sm-4" for="input-status-enabled">{{ text_disabled }}</label>
+				      								<input type="radio" name="shipping_ukrposhta_status" value="1" id="input-status-enabled"{{ ukrposhta_status ? ' checked' }}><label class="col-sm-4" for="input-status-disabled">{{ text_enabled }}</label>
+				      							</div>
+				      						</div>
+				      						<label class="col-sm-2 control-label" for="input-debugging_mode-enabled"><span data-toggle="tooltip" title="{{ help_debugging_mode }}">{{ entry_debugging_mode }}</span></label>
+				      						<div class="col-sm-4">
+				      							<div class="radio-switch">
+									                <input type="radio" name="shipping_ukrposhta[debugging_mode]" value="0" id="input-debugging_mode-disabled"{{ not ukrposhta['debugging_mode'] ? ' checked' }}><label class="col-sm-4" for="input-debugging_mode-enabled">{{ text_disabled }}</label>
+				      								<input type="radio" name="shipping_ukrposhta[debugging_mode]" value="1" id="input-debugging_mode-enabled"{{ ukrposhta['debugging_mode'] ? ' checked' }}><label class="col-sm-4" for="input-debugging_mode-disabled">{{ text_enabled }}</label>
+				      							</div>
+				      						</div>
+			            				</div>
+			            				<div class="form-group">
+			            					<label class="col-sm-2 control-label" for="input-sort_order"><span data-toggle="tooltip" title="{{ help_sort_order }}">{{ entry_sort_order }}</span></label>
+			            					<div class="col-sm-10">
+			              						<input type="text" name="shipping_ukrposhta_sort_order" value="{{ ukrposhta_sort_order }}" placeholder="{{ entry_sort_order }}" id="input-sort_order" class="form-control" />
+			            					</div>
+			            				</div>
+			            				<div class="form-group required">
+					            			<label class="col-sm-2 control-label" for="input-ecom_bearer"><span data-toggle="tooltip" title="{{ help_ecom_bearer }}">{{ entry_ecom_bearer }}</span></label>
+					            			<div class="col-sm-10">
+					              				<input type="text" name="shipping_ukrposhta[ecom_bearer]" value="{{ ukrposhta['ecom_bearer'] }}" placeholder="{{ entry_ecom_bearer }}" id="input-ecom_bearer" class="form-control" />
+												{% if error_ecom_bearer %}
+												<div class="text-danger">{{ error_ecom_bearer }}</div>
+												{% endif %}
+					            			</div>
+					          			</div>
+										<div class="form-group required">
+											<label class="col-sm-2 control-label" for="input-tracking_bearer"><span data-toggle="tooltip" title="{{ help_tracking_bearer }}">{{ entry_tracking_bearer }}</span></label>
+											<div class="col-sm-10">
+												<input type="text" name="shipping_ukrposhta[tracking_bearer]" value="{{ ukrposhta['tracking_bearer'] }}" placeholder="{{ entry_tracking_bearer }}" id="input-tracking_bearer" class="form-control" />
+												{% if error_tracking_bearer %}
+												<div class="text-danger">{{ error_tracking_bearer }}</div>
+												{% endif %}
+											</div>
+										</div>
+										<div class="form-group required">
+											<label class="col-sm-2 control-label" for="input-user_token"><span data-toggle="tooltip" title="{{ help_user_token }}">{{ entry_user_token }}</span></label>
+											<div class="col-sm-10">
+												<input type="text" name="shipping_ukrposhta[user_token]" value="{{ ukrposhta['user_token'] }}" placeholder="{{ entry_user_token }}" id="input-user_token" class="form-control" />
+												{% if error_user_token %}
+												<div class="text-danger">{{ error_user_token }}</div>
+												{% endif %}
+											</div>
+										</div>
+			            				<div class="form-group">
+					          				<label class="col-sm-2 control-label" for="input-image"><span data-toggle="tooltip" title="{{ help_image }}">{{ entry_image }}</span></label>
+					          				<div class="col-sm-4">
+					          					<a href="" id="thumb-image" data-toggle="image" class="img-thumbnail"><img src="{{ thumb }}" alt="" title="" data-placeholder="{{ placeholder }}" /></a>
+					          					<input type="hidden" name="shipping_ukrposhta[image]" value="{{ ukrposhta['image'] }}" id="input-image" />
+					          				</div>
+					          				<label class="col-sm-2 control-label" for="input-image_output_place"><span data-toggle="tooltip" title="{{ help_image_output_place }}">{{ entry_image_output_place }}</span></label>
+					          				<div class="col-sm-4">
+					          					<select name="shipping_ukrposhta[image_output_place]" id="input-image_output_place" class="form-control">
+					          						<option value="0">{{ text_select }}</option>
+			                						{% for code, name in image_output_places %}
+														<option value="{{ code }}"{{ code == ukrposhta['image_output_place'] ? ' selected="selected"' }}>{{ name }}</option>
+													{% endfor %}
+			              						</select>
+					          				</div>
+					          			</div>
+									</div>
+									<div class="tab-pane fade" id="tab-express-w">
+										<div class="form-group">
+											<label class="col-sm-2 control-label" for="input-express_w_status-enabled"><span data-toggle="tooltip" title="{{ help_method_status }}">{{ entry_method_status }}</span></label>
+											<div class="col-sm-4">
+												<div class="radio-switch">
+													<input type="radio" name="shipping_ukrposhta[shipping_methods][express_w][status]" value="0" id="input-express_w_status-disabled"{{ not ukrposhta['shipping_methods']['express_w']['status'] ? ' checked' }}><label class="col-sm-4" for="input-express_w_status-enabled">{{ text_disabled }}</label>
+													<input type="radio" name="shipping_ukrposhta[shipping_methods][express_w][status]" value="1" id="input-express_w_status-enabled"{{ ukrposhta['shipping_methods']['express_w']['status'] ? ' checked' }}><label class="col-sm-4" for="input-express_w_status-disabled">{{ text_enabled }}</label>
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-2 control-label" for="input-express_w_name"><span data-toggle="tooltip" title="{{ help_name }}">{{ entry_name }}</span></label>
+											<div class="col-sm-10">
+												<ul class="nav nav-tabs" role="tablist">
+												{% for language in languages %}
+													<li{{ language_id == language.language_id ? ' class="active"' }}><a href="#express_w_name_{{ language.language_id }}" aria-controls="express_w_name_{{ language.language_id }}" role="tab" data-toggle="tab"><img src="{{ language_flag[language.language_id] }}" title="{{ language.name }}" /> {{ language.name }}</a></li>
+												{% endfor %}
+												</ul>
+												<div class="tab-content">
+													{% for language in languages %}
+													<div role="tabpanel" class="tab-pane{{ language_id == language.language_id ? ' active' }}" id="express_w_name_{{ language.language_id }}">
+														<input type="text" name="shipping_ukrposhta[shipping_methods][express_w][name][{{ language.language_id }}]" value="{{ ukrposhta['shipping_methods']['express_w']['name'][language.language_id] }}" placeholder="{{ entry_name }}" id="input-express_w_name_{{ language.language_id }}" class="form-control" />
+													</div>
+													{% endfor %}
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-2 control-label" for="input-express_w_geo_zone_id"><span data-toggle="tooltip" title="{{ help_geo_zone }}">{{ entry_geo_zone }}</span></label>
+											<div class="col-sm-10">
+												<select name="shipping_ukrposhta[shipping_methods][express_w][geo_zone_id]" id="input-express_w_geo_zone_id" class="form-control">
+													<option value="0">{{ text_all_zones }}</option>
+													{% for geo_zone in geo_zones %}
+													<option value="{{ geo_zone.geo_zone_id }}"{{ geo_zone.geo_zone_id == ukrposhta['shipping_methods']['express_w']['geo_zone_id'] ? ' selected="selected"' }}>{{ geo_zone.name }}</option>
+                                                    {% endfor %}
+												</select>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-2 control-label" for="input-express_w_tax_class_id"><span data-toggle="tooltip" title="{{ help_tax_class }}">{{ entry_tax_class }}</span></label>
+											<div class="col-sm-10">
+												<select name="shipping_ukrposhta[shipping_methods][express_w][tax_class_id]" id="input-express_w_tax_class_id" class="form-control">
+													<option value="0">{{ text_none }}</option>
+													{% for tax_class in tax_classes %}
+													<option value="{{ tax_class.tax_class_id }}"{{ tax_class.tax_class_id == ukrposhta['shipping_methods']['express_w']['tax_class_id'] ? ' selected="selected"' }}>{{ tax_class.title }}</option>
+													{% endfor %}
+												</select>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-2 control-label" for="input-express_w_minimum_order_amount"><span data-toggle="tooltip" title="{{ help_minimum_order_amount }}">{{ entry_minimum_order_amount }}</span></label>
+											<div class="col-sm-4">
+												<div class="input-group">
+													<input type="text" name="shipping_ukrposhta[shipping_methods][express_w][minimum_order_amount]" value="{{ ukrposhta['shipping_methods']['express_w']['minimum_order_amount'] }}" placeholder="{{ entry_minimum_order_amount }}" id="input-express_w_minimum_order_amount" class="form-control" />
+													<span class="input-group-addon">{{ text_grn }}</span>
+												</div>
+											</div>
+											<label class="col-sm-2 control-label" for="input-express_w_maximum_order_amount"><span data-toggle="tooltip" title="{{ help_maximum_order_amount }}">{{ entry_maximum_order_amount }}</span></label>
+											<div class="col-sm-4">
+												<div class="input-group">
+													<input type="text" name="shipping_ukrposhta[shipping_methods][express_w][maximum_order_amount]" value="{{ ukrposhta['shipping_methods']['express_w']['maximum_order_amount'] }}" placeholder="{{ entry_maximum_order_amount }}" id="input-express_w_maximum_order_amount" class="form-control" />
+													<span class="input-group-addon">{{ text_grn }}</span>
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-2 control-label" for="input-express_w_free_shipping"><span data-toggle="tooltip" title="{{ help_free_shipping }}">{{ entry_free_shipping }}</span></label>
+											<div class="col-sm-4">
+												<div class="input-group">
+													<input type="text" name="shipping_ukrposhta[shipping_methods][express_w][free_shipping]" value="{{ ukrposhta['shipping_methods']['express_w']['free_shipping'] }}" placeholder="{{ entry_free_shipping }}" id="input-express_w_free_shipping" class="form-control" />
+													<span class="input-group-addon">{{ text_grn }}</span>
+												</div>
+											</div>
+											<label class="col-sm-2 control-label" for="input-express_w_free_cost_text"><span data-toggle="tooltip" title="{{ help_free_cost_text }}">{{ entry_free_cost_text }}</span></label>
+											<div class="col-sm-4">
+												<ul class="nav nav-tabs" role="tablist">
+													{% for language in languages %}
+													<li{{ language_id == language.language_id ? ' class="active"' }}><a href="#express_w_free_cost_text_{{ language.language_id }}" aria-controls="express_w_free_cost_text_{{ language.language_id }}" role="tab" data-toggle="tab"><img src="{{ language_flag[language.language_id] }}" title="{{ language.name }}" /> {{ language.name }}</a></li>
+													{% endfor %}
+												</ul>
+												<div class="tab-content">
+												    {% for language in languages %}
+												    <div role="tabpanel" class="tab-pane{{ language_id == language.language_id ? ' active' }}" id="express_w_free_cost_text_{{ language.language_id }}">
+														<input type="text" name="shipping_ukrposhta[shipping_methods][express_w][free_cost_text][{{ language.language_id }}]" value="{{ ukrposhta['shipping_methods']['express_w']['free_cost_text'][language.language_id] }}" placeholder="{{ entry_free_cost_text }}" id="input-express_w_free_cost_text_{{ language.language_id }}" class="form-control" />
+													</div>
+                                                    {% endfor %}
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-2 control-label" for="input-express_w_cost-enabled"><span data-toggle="tooltip" title="{{ help_cost }}">{{ entry_cost }}</span></label>
+											<div class="col-sm-2">
+												<div class="radio-switch">
+													<input type="radio" name="shipping_ukrposhta[shipping_methods][express_w][cost]" value="0" id="input-express_w_cost-disabled"{{ not ukrposhta['shipping_methods']['express_w']['cost'] ? ' checked' }}><label class="col-sm-4" for="input-express_w_cost-enabled">{{ text_no }}</label>
+													<input type="radio" name="shipping_ukrposhta[shipping_methods][express_w][cost]" value="1" id="input-express_w_cost-enabled"{{ ukrposhta['shipping_methods']['express_w']['cost'] ? ' checked' }}><label class="col-sm-4" for="input-express_w_cost-disabled">{{ text_yes }}</label>
+												</div>
+											</div>
+											<label class="col-sm-2 control-label" for="input-express_w_api_calculation-enabled"><span data-toggle="tooltip" title="{{ help_api_calculation }}">{{ entry_api_calculation }}</span></label>
+											<div class="col-sm-2">
+												<div class="radio-switch">
+													<input type="radio" name="shipping_ukrposhta[shipping_methods][express_w][api_calculation]" value="0" id="input-express_w_api_calculation-disabled"{{ not ukrposhta['shipping_methods']['express_w']['api_calculation'] ? ' checked' }}><label class="col-sm-4" for="input-express_w_api_calculation-enabled">{{ text_no }}</label>
+													<input type="radio" name="shipping_ukrposhta[shipping_methods][express_w][api_calculation]" value="1" id="input-express_w_api_calculation-enabled"{{ ukrposhta['shipping_methods']['express_w']['api_calculation'] ? ' checked' }}><label class="col-sm-4" for="input-express_w_api_calculation-disabled">{{ text_yes }}</label>
+												</div>
+											</div>
+											<label class="col-sm-2 control-label" for="input-express_w_tariff_calculation-enabled"><span data-toggle="tooltip" title="{{ help_tariff_calculation }}">{{ entry_tariff_calculation }}</span></label>
+											<div class="col-sm-2">
+												<div class="radio-switch">
+													<input type="radio" name="shipping_ukrposhta[shipping_methods][express_w][tariff_calculation]" value="0" id="input-express_w_tariff_calculation-disabled"{{ not ukrposhta['shipping_methods']['express_w']['tariff_calculation'] ? ' checked' }}><label class="col-sm-4" for="input-express_w_tariff_calculation-enabled">{{ text_no }}</label>
+													<input type="radio" name="shipping_ukrposhta[shipping_methods][express_w][tariff_calculation]" value="1" id="input-express_w_tariff_calculation-enabled"{{ ukrposhta['shipping_methods']['express_w']['tariff_calculation'] ? ' checked' }}><label class="col-sm-4" for="input-express_w_tariff_calculation-disabled">{{ text_yes }}</label>
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-2 control-label" for="input-express_w_delivery_period-enabled"><span data-toggle="tooltip" title="{{ help_delivery_period }}">{{ entry_delivery_period }}</span></label>
+											<div class="col-sm-2">
+												<div class="radio-switch">
+													<input type="radio" name="shipping_ukrposhta[shipping_methods][express_w][delivery_period]" value="0" id="input-express_w_delivery_period-disabled"{{ not ukrposhta['shipping_methods']['express_w']['delivery_period'] ? ' checked' }}><label class="col-sm-4" for="input-express_w_delivery_period-enabled">{{ text_no }}</label>
+													<input type="radio" name="shipping_ukrposhta[shipping_methods][express_w][delivery_period]" value="1" id="input-express_w_delivery_period-enabled"{{ ukrposhta['shipping_methods']['express_w']['delivery_period'] ? ' checked' }}><label class="col-sm-4" for="input-express_w_delivery_period-disabled">{{ text_yes }}</label>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="tab-pane" id="tab-express-d">
+									    <div class="form-group">
+											<label class="col-sm-2 control-label" for="input-express_d_status-enabled"><span data-toggle="tooltip" title="{{ help_method_status }}">{{ entry_method_status }}</span></label>
+											<div class="col-sm-4">
+												<div class="radio-switch">
+													<input type="radio" name="shipping_ukrposhta[shipping_methods][express_d][status]" value="0" id="input-express_d_status-disabled"{{ not ukrposhta['shipping_methods']['express_d']['status'] ? ' checked' }}><label class="col-sm-4" for="input-express_d_status-enabled">{{ text_disabled }}</label>
+													<input type="radio" name="shipping_ukrposhta[shipping_methods][express_d][status]" value="1" id="input-express_d_status-enabled"{{ ukrposhta['shipping_methods']['express_d']['status'] ? ' checked' }}><label class="col-sm-4" for="input-express_d_status-disabled">{{ text_enabled }}</label>
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-2 control-label" for="input-express_d_name"><span data-toggle="tooltip" title="{{ help_name }}">{{ entry_name }}</span></label>
+											<div class="col-sm-10">
+												<ul class="nav nav-tabs" role="tablist">
+												{% for language in languages %}
+													<li{{ language_id == language.language_id ? ' class="active"' }}><a href="#express_d_name_{{ language.language_id }}" aria-controls="express_d_name_{{ language.language_id }}" role="tab" data-toggle="tab"><img src="{{ language_flag[language.language_id] }}" title="{{ language.name }}" /> {{ language.name }}</a></li>
+												{% endfor %}
+												</ul>
+												<div class="tab-content">
+													{% for language in languages %}
+													<div role="tabpanel" class="tab-pane{{ language_id == language.language_id ? ' active' }}" id="express_d_name_{{ language.language_id }}">
+														<input type="text" name="shipping_ukrposhta[shipping_methods][express_d][name][{{ language.language_id }}]" value="{{ ukrposhta['shipping_methods']['express_d']['name'][language.language_id] }}" placeholder="{{ entry_name }}" id="input-express_d_name_{{ language.language_id }}" class="form-control" />
+													</div>
+													{% endfor %}
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-2 control-label" for="input-express_d_geo_zone_id"><span data-toggle="tooltip" title="{{ help_geo_zone }}">{{ entry_geo_zone }}</span></label>
+											<div class="col-sm-10">
+												<select name="shipping_ukrposhta[shipping_methods][express_d][geo_zone_id]" id="input-express_d_geo_zone_id" class="form-control">
+													<option value="0">{{ text_all_zones }}</option>
+													{% for geo_zone in geo_zones %}
+													<option value="{{ geo_zone.geo_zone_id }}"{{ geo_zone.geo_zone_id == ukrposhta['shipping_methods']['express_d']['geo_zone_id'] ? ' selected="selected"' }}>{{ geo_zone.name }}</option>
+                                                    {% endfor %}
+												</select>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-2 control-label" for="input-express_d_tax_class_id"><span data-toggle="tooltip" title="{{ help_tax_class }}">{{ entry_tax_class }}</span></label>
+											<div class="col-sm-10">
+												<select name="shipping_ukrposhta[shipping_methods][express_d][tax_class_id]" id="input-express_d_tax_class_id" class="form-control">
+													<option value="0">{{ text_none }}</option>
+													{% for tax_class in tax_classes %}
+													<option value="{{ tax_class.tax_class_id }}"{{ tax_class.tax_class_id == ukrposhta['shipping_methods']['express_d']['tax_class_id'] ? ' selected="selected"' }}>{{ tax_class.title }}</option>
+													{% endfor %}
+												</select>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-2 control-label" for="input-express_d_minimum_order_amount"><span data-toggle="tooltip" title="{{ help_minimum_order_amount }}">{{ entry_minimum_order_amount }}</span></label>
+											<div class="col-sm-4">
+												<div class="input-group">
+													<input type="text" name="shipping_ukrposhta[shipping_methods][express_d][minimum_order_amount]" value="{{ ukrposhta['shipping_methods']['express_d']['minimum_order_amount'] }}" placeholder="{{ entry_minimum_order_amount }}" id="input-express_d_minimum_order_amount" class="form-control" />
+													<span class="input-group-addon">{{ text_grn }}</span>
+												</div>
+											</div>
+											<label class="col-sm-2 control-label" for="input-express_d_maximum_order_amount"><span data-toggle="tooltip" title="{{ help_maximum_order_amount }}">{{ entry_maximum_order_amount }}</span></label>
+											<div class="col-sm-4">
+												<div class="input-group">
+													<input type="text" name="shipping_ukrposhta[shipping_methods][express_d][maximum_order_amount]" value="{{ ukrposhta['shipping_methods']['express_d']['maximum_order_amount'] }}" placeholder="{{ entry_maximum_order_amount }}" id="input-express_d_maximum_order_amount" class="form-control" />
+													<span class="input-group-addon">{{ text_grn }}</span>
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-2 control-label" for="input-express_d_free_shipping"><span data-toggle="tooltip" title="{{ help_free_shipping }}">{{ entry_free_shipping }}</span></label>
+											<div class="col-sm-4">
+												<div class="input-group">
+													<input type="text" name="shipping_ukrposhta[shipping_methods][express_d][free_shipping]" value="{{ ukrposhta['shipping_methods']['express_d']['free_shipping'] }}" placeholder="{{ entry_free_shipping }}" id="input-express_d_free_shipping" class="form-control" />
+													<span class="input-group-addon">{{ text_grn }}</span>
+												</div>
+											</div>
+											<label class="col-sm-2 control-label" for="input-express_d_free_cost_text"><span data-toggle="tooltip" title="{{ help_free_cost_text }}">{{ entry_free_cost_text }}</span></label>
+											<div class="col-sm-4">
+												<ul class="nav nav-tabs" role="tablist">
+													{% for language in languages %}
+													<li{{ language_id == language.language_id ? ' class="active"' }}><a href="#express_d_free_cost_text_{{ language.language_id }}" aria-controls="express_d_free_cost_text_{{ language.language_id }}" role="tab" data-toggle="tab"><img src="{{ language_flag[language.language_id] }}" title="{{ language.name }}" /> {{ language.name }}</a></li>
+													{% endfor %}
+												</ul>
+												<div class="tab-content">
+												    {% for language in languages %}
+												    <div role="tabpanel" class="tab-pane{{ language_id == language.language_id ? ' active' }}" id="express_d_free_cost_text_{{ language.language_id }}">
+														<input type="text" name="shipping_ukrposhta[shipping_methods][express_d][free_cost_text][{{ language.language_id }}]" value="{{ ukrposhta['shipping_methods']['express_d']['free_cost_text'][language.language_id] }}" placeholder="{{ entry_free_cost_text }}" id="input-express_d_free_cost_text_{{ language.language_id }}" class="form-control" />
+													</div>
+                                                    {% endfor %}
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-2 control-label" for="input-express_d_cost-enabled"><span data-toggle="tooltip" title="{{ help_cost }}">{{ entry_cost }}</span></label>
+											<div class="col-sm-2">
+												<div class="radio-switch">
+													<input type="radio" name="shipping_ukrposhta[shipping_methods][express_d][cost]" value="0" id="input-express_d_cost-disabled"{{ not ukrposhta['shipping_methods']['express_d']['cost'] ? ' checked' }}><label class="col-sm-4" for="input-express_d_cost-enabled">{{ text_no }}</label>
+													<input type="radio" name="shipping_ukrposhta[shipping_methods][express_d][cost]" value="1" id="input-express_d_cost-enabled"{{ ukrposhta['shipping_methods']['express_d']['cost'] ? ' checked' }}><label class="col-sm-4" for="input-express_d_cost-disabled">{{ text_yes }}</label>
+												</div>
+											</div>
+											<label class="col-sm-2 control-label" for="input-express_d_api_calculation-enabled"><span data-toggle="tooltip" title="{{ help_api_calculation }}">{{ entry_api_calculation }}</span></label>
+											<div class="col-sm-2">
+												<div class="radio-switch">
+													<input type="radio" name="shipping_ukrposhta[shipping_methods][express_d][api_calculation]" value="0" id="input-express_d_api_calculation-disabled"{{ not ukrposhta['shipping_methods']['express_d']['api_calculation'] ? ' checked' }}><label class="col-sm-4" for="input-express_d_api_calculation-enabled">{{ text_no }}</label>
+													<input type="radio" name="shipping_ukrposhta[shipping_methods][express_d][api_calculation]" value="1" id="input-express_d_api_calculation-enabled"{{ ukrposhta['shipping_methods']['express_d']['api_calculation'] ? ' checked' }}><label class="col-sm-4" for="input-express_d_api_calculation-disabled">{{ text_yes }}</label>
+												</div>
+											</div>
+											<label class="col-sm-2 control-label" for="input-express_d_tariff_calculation-enabled"><span data-toggle="tooltip" title="{{ help_tariff_calculation }}">{{ entry_tariff_calculation }}</span></label>
+											<div class="col-sm-2">
+												<div class="radio-switch">
+													<input type="radio" name="shipping_ukrposhta[shipping_methods][express_d][tariff_calculation]" value="0" id="input-express_d_tariff_calculation-disabled"{{ not ukrposhta['shipping_methods']['express_d']['tariff_calculation'] ? ' checked' }}><label class="col-sm-4" for="input-express_d_tariff_calculation-enabled">{{ text_no }}</label>
+													<input type="radio" name="shipping_ukrposhta[shipping_methods][express_d][tariff_calculation]" value="1" id="input-express_d_tariff_calculation-enabled"{{ ukrposhta['shipping_methods']['express_d']['tariff_calculation'] ? ' checked' }}><label class="col-sm-4" for="input-express_d_tariff_calculation-disabled">{{ text_yes }}</label>
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-2 control-label" for="input-express_d_delivery_period-enabled"><span data-toggle="tooltip" title="{{ help_delivery_period }}">{{ entry_delivery_period }}</span></label>
+											<div class="col-sm-2">
+												<div class="radio-switch">
+													<input type="radio" name="shipping_ukrposhta[shipping_methods][express_d][delivery_period]" value="0" id="input-express_d_delivery_period-disabled"{{ not ukrposhta['shipping_methods']['express_d']['delivery_period'] ? ' checked' }}><label class="col-sm-4" for="input-express_d_delivery_period-enabled">{{ text_no }}</label>
+													<input type="radio" name="shipping_ukrposhta[shipping_methods][express_d][delivery_period]" value="1" id="input-express_d_delivery_period-enabled"{{ ukrposhta['shipping_methods']['express_d']['delivery_period'] ? ' checked' }}><label class="col-sm-4" for="input-express_d_delivery_period-disabled">{{ text_yes }}</label>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="tab-pane fade" id="tab-standard-w">
+									    <div class="form-group">
+											<label class="col-sm-2 control-label" for="input-standard_w_status-enabled"><span data-toggle="tooltip" title="{{ help_method_status }}">{{ entry_method_status }}</span></label>
+											<div class="col-sm-4">
+												<div class="radio-switch">
+													<input type="radio" name="shipping_ukrposhta[shipping_methods][standard_w][status]" value="0" id="input-standard_w_status-disabled"{{ not ukrposhta['shipping_methods']['standard_w']['status'] ? ' checked' }}><label class="col-sm-4" for="input-standard_w_status-enabled">{{ text_disabled }}</label>
+													<input type="radio" name="shipping_ukrposhta[shipping_methods][standard_w][status]" value="1" id="input-standard_w_status-enabled"{{ ukrposhta['shipping_methods']['standard_w']['status'] ? ' checked' }}><label class="col-sm-4" for="input-standard_w_status-disabled">{{ text_enabled }}</label>
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-2 control-label" for="input-standard_w_name"><span data-toggle="tooltip" title="{{ help_name }}">{{ entry_name }}</span></label>
+											<div class="col-sm-10">
+												<ul class="nav nav-tabs" role="tablist">
+												{% for language in languages %}
+													<li{{ language_id == language.language_id ? ' class="active"' }}><a href="#standard_w_name_{{ language.language_id }}" aria-controls="standard_w_name_{{ language.language_id }}" role="tab" data-toggle="tab"><img src="{{ language_flag[language.language_id] }}" title="{{ language.name }}" /> {{ language.name }}</a></li>
+												{% endfor %}
+												</ul>
+												<div class="tab-content">
+													{% for language in languages %}
+													<div role="tabpanel" class="tab-pane{{ language_id == language.language_id ? ' active' }}" id="standard_w_name_{{ language.language_id }}">
+														<input type="text" name="shipping_ukrposhta[shipping_methods][standard_w][name][{{ language.language_id }}]" value="{{ ukrposhta['shipping_methods']['standard_w']['name'][language.language_id] }}" placeholder="{{ entry_name }}" id="input-standard_w_name_{{ language.language_id }}" class="form-control" />
+													</div>
+													{% endfor %}
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-2 control-label" for="input-standard_w_geo_zone_id"><span data-toggle="tooltip" title="{{ help_geo_zone }}">{{ entry_geo_zone }}</span></label>
+											<div class="col-sm-10">
+												<select name="shipping_ukrposhta[shipping_methods][standard_w][geo_zone_id]" id="input-standard_w_geo_zone_id" class="form-control">
+													<option value="0">{{ text_all_zones }}</option>
+													{% for geo_zone in geo_zones %}
+													<option value="{{ geo_zone.geo_zone_id }}"{{ geo_zone.geo_zone_id == ukrposhta['shipping_methods']['standard_w']['geo_zone_id'] ? ' selected="selected"' }}>{{ geo_zone.name }}</option>
+                                                    {% endfor %}
+												</select>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-2 control-label" for="input-standard_w_tax_class_id"><span data-toggle="tooltip" title="{{ help_tax_class }}">{{ entry_tax_class }}</span></label>
+											<div class="col-sm-10">
+												<select name="shipping_ukrposhta[shipping_methods][standard_w][tax_class_id]" id="input-standard_w_tax_class_id" class="form-control">
+													<option value="0">{{ text_none }}</option>
+													{% for tax_class in tax_classes %}
+													<option value="{{ tax_class.tax_class_id }}"{{ tax_class.tax_class_id == ukrposhta['shipping_methods']['standard_w']['tax_class_id'] ? ' selected="selected"' }}>{{ tax_class.title }}</option>
+													{% endfor %}
+												</select>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-2 control-label" for="input-standard_w_minimum_order_amount"><span data-toggle="tooltip" title="{{ help_minimum_order_amount }}">{{ entry_minimum_order_amount }}</span></label>
+											<div class="col-sm-4">
+												<div class="input-group">
+													<input type="text" name="shipping_ukrposhta[shipping_methods][standard_w][minimum_order_amount]" value="{{ ukrposhta['shipping_methods']['standard_w']['minimum_order_amount'] }}" placeholder="{{ entry_minimum_order_amount }}" id="input-standard_w_minimum_order_amount" class="form-control" />
+													<span class="input-group-addon">{{ text_grn }}</span>
+												</div>
+											</div>
+											<label class="col-sm-2 control-label" for="input-standard_w_maximum_order_amount"><span data-toggle="tooltip" title="{{ help_maximum_order_amount }}">{{ entry_maximum_order_amount }}</span></label>
+											<div class="col-sm-4">
+												<div class="input-group">
+													<input type="text" name="shipping_ukrposhta[shipping_methods][standard_w][maximum_order_amount]" value="{{ ukrposhta['shipping_methods']['standard_w']['maximum_order_amount'] }}" placeholder="{{ entry_maximum_order_amount }}" id="input-standard_w_maximum_order_amount" class="form-control" />
+													<span class="input-group-addon">{{ text_grn }}</span>
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-2 control-label" for="input-standard_w_free_shipping"><span data-toggle="tooltip" title="{{ help_free_shipping }}">{{ entry_free_shipping }}</span></label>
+											<div class="col-sm-4">
+												<div class="input-group">
+													<input type="text" name="shipping_ukrposhta[shipping_methods][standard_w][free_shipping]" value="{{ ukrposhta['shipping_methods']['standard_w']['free_shipping'] }}" placeholder="{{ entry_free_shipping }}" id="input-standard_w_free_shipping" class="form-control" />
+													<span class="input-group-addon">{{ text_grn }}</span>
+												</div>
+											</div>
+											<label class="col-sm-2 control-label" for="input-standard_w_free_cost_text"><span data-toggle="tooltip" title="{{ help_free_cost_text }}">{{ entry_free_cost_text }}</span></label>
+											<div class="col-sm-4">
+												<ul class="nav nav-tabs" role="tablist">
+													{% for language in languages %}
+													<li{{ language_id == language.language_id ? ' class="active"' }}><a href="#standard_w_free_cost_text_{{ language.language_id }}" aria-controls="standard_w_free_cost_text_{{ language.language_id }}" role="tab" data-toggle="tab"><img src="{{ language_flag[language.language_id] }}" title="{{ language.name }}" /> {{ language.name }}</a></li>
+													{% endfor %}
+												</ul>
+												<div class="tab-content">
+												    {% for language in languages %}
+												    <div role="tabpanel" class="tab-pane{{ language_id == language.language_id ? ' active' }}" id="standard_w_free_cost_text_{{ language.language_id }}">
+														<input type="text" name="shipping_ukrposhta[shipping_methods][standard_w][free_cost_text][{{ language.language_id }}]" value="{{ ukrposhta['shipping_methods']['standard_w']['free_cost_text'][language.language_id] }}" placeholder="{{ entry_free_cost_text }}" id="input-standard_w_free_cost_text_{{ language.language_id }}" class="form-control" />
+													</div>
+                                                    {% endfor %}
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-2 control-label" for="input-standard_w_cost-enabled"><span data-toggle="tooltip" title="{{ help_cost }}">{{ entry_cost }}</span></label>
+											<div class="col-sm-2">
+												<div class="radio-switch">
+													<input type="radio" name="shipping_ukrposhta[shipping_methods][standard_w][cost]" value="0" id="input-standard_w_cost-disabled"{{ not ukrposhta['shipping_methods']['standard_w']['cost'] ? ' checked' }}><label class="col-sm-4" for="input-standard_w_cost-enabled">{{ text_no }}</label>
+													<input type="radio" name="shipping_ukrposhta[shipping_methods][standard_w][cost]" value="1" id="input-standard_w_cost-enabled"{{ ukrposhta['shipping_methods']['standard_w']['cost'] ? ' checked' }}><label class="col-sm-4" for="input-standard_w_cost-disabled">{{ text_yes }}</label>
+												</div>
+											</div>
+											<label class="col-sm-2 control-label" for="input-standard_w_api_calculation-enabled"><span data-toggle="tooltip" title="{{ help_api_calculation }}">{{ entry_api_calculation }}</span></label>
+											<div class="col-sm-2">
+												<div class="radio-switch">
+													<input type="radio" name="shipping_ukrposhta[shipping_methods][standard_w][api_calculation]" value="0" id="input-standard_w_api_calculation-disabled"{{ not ukrposhta['shipping_methods']['standard_w']['api_calculation'] ? ' checked' }}><label class="col-sm-4" for="input-standard_w_api_calculation-enabled">{{ text_no }}</label>
+													<input type="radio" name="shipping_ukrposhta[shipping_methods][standard_w][api_calculation]" value="1" id="input-standard_w_api_calculation-enabled"{{ ukrposhta['shipping_methods']['standard_w']['api_calculation'] ? ' checked' }}><label class="col-sm-4" for="input-standard_w_api_calculation-disabled">{{ text_yes }}</label>
+												</div>
+											</div>
+											<label class="col-sm-2 control-label" for="input-standard_w_tariff_calculation-enabled"><span data-toggle="tooltip" title="{{ help_tariff_calculation }}">{{ entry_tariff_calculation }}</span></label>
+											<div class="col-sm-2">
+												<div class="radio-switch">
+													<input type="radio" name="shipping_ukrposhta[shipping_methods][standard_w][tariff_calculation]" value="0" id="input-standard_w_tariff_calculation-disabled"{{ not ukrposhta['shipping_methods']['standard_w']['tariff_calculation'] ? ' checked' }}><label class="col-sm-4" for="input-standard_w_tariff_calculation-enabled">{{ text_no }}</label>
+													<input type="radio" name="shipping_ukrposhta[shipping_methods][standard_w][tariff_calculation]" value="1" id="input-standard_w_tariff_calculation-enabled"{{ ukrposhta['shipping_methods']['standard_w']['tariff_calculation'] ? ' checked' }}><label class="col-sm-4" for="input-standard_w_tariff_calculation-disabled">{{ text_yes }}</label>
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-2 control-label" for="input-standard_w_delivery_period-enabled"><span data-toggle="tooltip" title="{{ help_delivery_period }}">{{ entry_delivery_period }}</span></label>
+											<div class="col-sm-2">
+												<div class="radio-switch">
+													<input type="radio" name="shipping_ukrposhta[shipping_methods][standard_w][delivery_period]" value="0" id="input-standard_w_delivery_period-disabled"{{ not ukrposhta['shipping_methods']['standard_w']['delivery_period'] ? ' checked' }}><label class="col-sm-4" for="input-standard_w_delivery_period-enabled">{{ text_no }}</label>
+													<input type="radio" name="shipping_ukrposhta[shipping_methods][standard_w][delivery_period]" value="1" id="input-standard_w_delivery_period-enabled"{{ ukrposhta['shipping_methods']['standard_w']['delivery_period'] ? ' checked' }}><label class="col-sm-4" for="input-standard_w_delivery_period-disabled">{{ text_yes }}</label>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="tab-pane" id="tab-standard-d">
+									    <div class="form-group">
+											<label class="col-sm-2 control-label" for="input-standard_d_status-enabled"><span data-toggle="tooltip" title="{{ help_method_status }}">{{ entry_method_status }}</span></label>
+											<div class="col-sm-4">
+												<div class="radio-switch">
+													<input type="radio" name="shipping_ukrposhta[shipping_methods][standard_d][status]" value="0" id="input-standard_d_status-disabled"{{ not ukrposhta['shipping_methods']['standard_d']['status'] ? ' checked' }}><label class="col-sm-4" for="input-standard_d_status-enabled">{{ text_disabled }}</label>
+													<input type="radio" name="shipping_ukrposhta[shipping_methods][standard_d][status]" value="1" id="input-standard_d_status-enabled"{{ ukrposhta['shipping_methods']['standard_d']['status'] ? ' checked' }}><label class="col-sm-4" for="input-standard_d_status-disabled">{{ text_enabled }}</label>
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-2 control-label" for="input-standard_d_name"><span data-toggle="tooltip" title="{{ help_name }}">{{ entry_name }}</span></label>
+											<div class="col-sm-10">
+												<ul class="nav nav-tabs" role="tablist">
+												{% for language in languages %}
+													<li{{ language_id == language.language_id ? ' class="active"' }}><a href="#standard_d_name_{{ language.language_id }}" aria-controls="standard_d_name_{{ language.language_id }}" role="tab" data-toggle="tab"><img src="{{ language_flag[language.language_id] }}" title="{{ language.name }}" /> {{ language.name }}</a></li>
+												{% endfor %}
+												</ul>
+												<div class="tab-content">
+													{% for language in languages %}
+													<div role="tabpanel" class="tab-pane{{ language_id == language.language_id ? ' active' }}" id="standard_d_name_{{ language.language_id }}">
+														<input type="text" name="shipping_ukrposhta[shipping_methods][standard_d][name][{{ language.language_id }}]" value="{{ ukrposhta['shipping_methods']['standard_d']['name'][language.language_id] }}" placeholder="{{ entry_name }}" id="input-standard_d_name_{{ language.language_id }}" class="form-control" />
+													</div>
+													{% endfor %}
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-2 control-label" for="input-standard_d_geo_zone_id"><span data-toggle="tooltip" title="{{ help_geo_zone }}">{{ entry_geo_zone }}</span></label>
+											<div class="col-sm-10">
+												<select name="shipping_ukrposhta[shipping_methods][standard_d][geo_zone_id]" id="input-standard_d_geo_zone_id" class="form-control">
+													<option value="0">{{ text_all_zones }}</option>
+													{% for geo_zone in geo_zones %}
+													<option value="{{ geo_zone.geo_zone_id }}"{{ geo_zone.geo_zone_id == ukrposhta['shipping_methods']['standard_d']['geo_zone_id'] ? ' selected="selected"' }}>{{ geo_zone.name }}</option>
+                                                    {% endfor %}
+												</select>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-2 control-label" for="input-standard_d_tax_class_id"><span data-toggle="tooltip" title="{{ help_tax_class }}">{{ entry_tax_class }}</span></label>
+											<div class="col-sm-10">
+												<select name="shipping_ukrposhta[shipping_methods][standard_d][tax_class_id]" id="input-standard_d_tax_class_id" class="form-control">
+													<option value="0">{{ text_none }}</option>
+													{% for tax_class in tax_classes %}
+													<option value="{{ tax_class.tax_class_id }}"{{ tax_class.tax_class_id == ukrposhta['shipping_methods']['standard_d']['tax_class_id'] ? ' selected="selected"' }}>{{ tax_class.title }}</option>
+													{% endfor %}
+												</select>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-2 control-label" for="input-standard_d_minimum_order_amount"><span data-toggle="tooltip" title="{{ help_minimum_order_amount }}">{{ entry_minimum_order_amount }}</span></label>
+											<div class="col-sm-4">
+												<div class="input-group">
+													<input type="text" name="shipping_ukrposhta[shipping_methods][standard_d][minimum_order_amount]" value="{{ ukrposhta['shipping_methods']['standard_d']['minimum_order_amount'] }}" placeholder="{{ entry_minimum_order_amount }}" id="input-standard_d_minimum_order_amount" class="form-control" />
+													<span class="input-group-addon">{{ text_grn }}</span>
+												</div>
+											</div>
+											<label class="col-sm-2 control-label" for="input-standard_d_maximum_order_amount"><span data-toggle="tooltip" title="{{ help_maximum_order_amount }}">{{ entry_maximum_order_amount }}</span></label>
+											<div class="col-sm-4">
+												<div class="input-group">
+													<input type="text" name="shipping_ukrposhta[shipping_methods][standard_d][maximum_order_amount]" value="{{ ukrposhta['shipping_methods']['standard_d']['maximum_order_amount'] }}" placeholder="{{ entry_maximum_order_amount }}" id="input-standard_d_maximum_order_amount" class="form-control" />
+													<span class="input-group-addon">{{ text_grn }}</span>
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-2 control-label" for="input-standard_d_free_shipping"><span data-toggle="tooltip" title="{{ help_free_shipping }}">{{ entry_free_shipping }}</span></label>
+											<div class="col-sm-4">
+												<div class="input-group">
+													<input type="text" name="shipping_ukrposhta[shipping_methods][standard_d][free_shipping]" value="{{ ukrposhta['shipping_methods']['standard_d']['free_shipping'] }}" placeholder="{{ entry_free_shipping }}" id="input-standard_d_free_shipping" class="form-control" />
+													<span class="input-group-addon">{{ text_grn }}</span>
+												</div>
+											</div>
+											<label class="col-sm-2 control-label" for="input-standard_d_free_cost_text"><span data-toggle="tooltip" title="{{ help_free_cost_text }}">{{ entry_free_cost_text }}</span></label>
+											<div class="col-sm-4">
+												<ul class="nav nav-tabs" role="tablist">
+													{% for language in languages %}
+													<li{{ language_id == language.language_id ? ' class="active"' }}><a href="#standard_d_free_cost_text_{{ language.language_id }}" aria-controls="standard_d_free_cost_text_{{ language.language_id }}" role="tab" data-toggle="tab"><img src="{{ language_flag[language.language_id] }}" title="{{ language.name }}" /> {{ language.name }}</a></li>
+													{% endfor %}
+												</ul>
+												<div class="tab-content">
+												    {% for language in languages %}
+												    <div role="tabpanel" class="tab-pane{{ language_id == language.language_id ? ' active' }}" id="standard_d_free_cost_text_{{ language.language_id }}">
+														<input type="text" name="shipping_ukrposhta[shipping_methods][standard_d][free_cost_text][{{ language.language_id }}]" value="{{ ukrposhta['shipping_methods']['standard_d']['free_cost_text'][language.language_id] }}" placeholder="{{ entry_free_cost_text }}" id="input-standard_d_free_cost_text_{{ language.language_id }}" class="form-control" />
+													</div>
+                                                    {% endfor %}
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-2 control-label" for="input-standard_d_cost-enabled"><span data-toggle="tooltip" title="{{ help_cost }}">{{ entry_cost }}</span></label>
+											<div class="col-sm-2">
+												<div class="radio-switch">
+													<input type="radio" name="shipping_ukrposhta[shipping_methods][standard_d][cost]" value="0" id="input-standard_d_cost-disabled"{{ not ukrposhta['shipping_methods']['standard_d']['cost'] ? ' checked' }}><label class="col-sm-4" for="input-standard_d_cost-enabled">{{ text_no }}</label>
+													<input type="radio" name="shipping_ukrposhta[shipping_methods][standard_d][cost]" value="1" id="input-standard_d_cost-enabled"{{ ukrposhta['shipping_methods']['standard_d']['cost'] ? ' checked' }}><label class="col-sm-4" for="input-standard_d_cost-disabled">{{ text_yes }}</label>
+												</div>
+											</div>
+											<label class="col-sm-2 control-label" for="input-standard_d_api_calculation-enabled"><span data-toggle="tooltip" title="{{ help_api_calculation }}">{{ entry_api_calculation }}</span></label>
+											<div class="col-sm-2">
+												<div class="radio-switch">
+													<input type="radio" name="shipping_ukrposhta[shipping_methods][standard_d][api_calculation]" value="0" id="input-standard_d_api_calculation-disabled"{{ not ukrposhta['shipping_methods']['standard_d']['api_calculation'] ? ' checked' }}><label class="col-sm-4" for="input-standard_d_api_calculation-enabled">{{ text_no }}</label>
+													<input type="radio" name="shipping_ukrposhta[shipping_methods][standard_d][api_calculation]" value="1" id="input-standard_d_api_calculation-enabled"{{ ukrposhta['shipping_methods']['standard_d']['api_calculation'] ? ' checked' }}><label class="col-sm-4" for="input-standard_d_api_calculation-disabled">{{ text_yes }}</label>
+												</div>
+											</div>
+											<label class="col-sm-2 control-label" for="input-standard_d_tariff_calculation-enabled"><span data-toggle="tooltip" title="{{ help_tariff_calculation }}">{{ entry_tariff_calculation }}</span></label>
+											<div class="col-sm-2">
+												<div class="radio-switch">
+													<input type="radio" name="shipping_ukrposhta[shipping_methods][standard_d][tariff_calculation]" value="0" id="input-standard_d_tariff_calculation-disabled"{{ not ukrposhta['shipping_methods']['standard_d']['tariff_calculation'] ? ' checked' }}><label class="col-sm-4" for="input-standard_d_tariff_calculation-enabled">{{ text_no }}</label>
+													<input type="radio" name="shipping_ukrposhta[shipping_methods][standard_d][tariff_calculation]" value="1" id="input-standard_d_tariff_calculation-enabled"{{ ukrposhta['shipping_methods']['standard_d']['tariff_calculation'] ? ' checked' }}><label class="col-sm-4" for="input-standard_d_tariff_calculation-disabled">{{ text_yes }}</label>
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-2 control-label" for="input-standard_d_delivery_period-enabled"><span data-toggle="tooltip" title="{{ help_delivery_period }}">{{ entry_delivery_period }}</span></label>
+											<div class="col-sm-2">
+												<div class="radio-switch">
+													<input type="radio" name="shipping_ukrposhta[shipping_methods][standard_d][delivery_period]" value="0" id="input-standard_d_delivery_period-disabled"{{ not ukrposhta['shipping_methods']['standard_d']['delivery_period'] ? ' checked' }}><label class="col-sm-4" for="input-standard_d_delivery_period-enabled">{{ text_no }}</label>
+													<input type="radio" name="shipping_ukrposhta[shipping_methods][standard_d][delivery_period]" value="1" id="input-standard_d_delivery_period-enabled"{{ ukrposhta['shipping_methods']['standard_d']['delivery_period'] ? ' checked' }}><label class="col-sm-4" for="input-standard_d_delivery_period-disabled">{{ text_yes }}</label>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+                  		</div>
+						<div class="tab-pane fade" id="tab-tariffs">
+							<blockquote>
+								<h2>{{ text_express_tariffs }}</h2>
+							</blockquote>
+							<div class="table-responsive">
+								<table class="table table-bordered table-hover" id="table-tariffs-express">
+									<thead>
+									<tr>
+										<td class="text-center" rowspan="3">{{ column_weight }}</td>
+										<td class="text-center" rowspan="3">{{ column_longest_side }}</td>
+										<td class="text-center" colspan="2">{{ column_warehouse_service_cost }}</td>
+										<td class="text-center" colspan="2">{{ column_doors_service_cost }}</td>
+										<td class="text-center" rowspan="3">{{ column_action }}</td>
+									</tr>
+									<tr>
+										<td class="text-center">{{ column_tariff_zone_region }}</td>
+										<td class="text-center">{{ column_tariff_zone_ukraine }}</td>
+										<td class="text-center" rowspan="2">{{ column_doors_pickup }}</td>
+										<td class="text-center" rowspan="2">{{ column_doors_delivery }}</td>
+									</tr>
+									<tr>
+										<td class="text-center">{{ column_delivery_period }} <input type="text" name="shipping_ukrposhta[tariffs][express][region_delivery_period]" value="{{ ukrposhta['tariffs']['express']['region_delivery_period'] }}" class="form-control" style="display: inline; width: auto;" /></td>
+										<td class="text-center">{{ column_delivery_period }} <input type="text" name="shipping_ukrposhta[tariffs][express][ukraine_delivery_period]" value="{{ ukrposhta['tariffs']['express']['ukraine_delivery_period'] }}" class="form-control" style="display: inline; width: auto;" /></td>
+									</tr>
+									</thead>
+									<tbody>
+									{% for tariff in ukrposhta['tariffs']['express'] if tariff is iterable %}
+									<tr>
+										<td><input type="text" name="shipping_ukrposhta[tariffs][express][{{ loop.index0 }}][weight]" value="{{ tariff.weight }}" class="form-control" /></td>
+										<td><input type="text" name="shipping_ukrposhta[tariffs][express][{{ loop.index0 }}][longest_side]" value="{{ tariff.longest_side }}" class="form-control" /></td>
+										<td><input type="text" name="shipping_ukrposhta[tariffs][express][{{ loop.index0 }}][region]" value="{{ tariff.region }}" class="form-control" /></td>
+										<td><input type="text" name="shipping_ukrposhta[tariffs][express][{{ loop.index0 }}][Ukraine]" value="{{ tariff.Ukraine }}" class="form-control" /></td>
+										<td><input type="text" name="shipping_ukrposhta[tariffs][express][{{ loop.index0 }}][overpay_doors_pickup]" value="{{ tariff.overpay_doors_pickup }}" class="form-control" /></td>
+										<td><input type="text" name="shipping_ukrposhta[tariffs][express][{{ loop.index0 }}][overpay_doors_delivery]" value="{{ tariff.overpay_doors_delivery }}" class="form-control" /></td>
+										<td class="text-center"><button type="button" onclick="$(this).parents('tr').remove();" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>
+									</tr>
+									{% endfor %}
+									</tbody>
+									<tfoot>
+									<tr>
+										<td colspan="6"></td>
+										<td class="text-center"><button type="button" onclick="addTariff('express');" data-toggle="modal" class="btn btn-primary"><i class="fa fa-plus-circle"></i></button>
+										</td>
+									</tr>
+									</tfoot>
+								</table>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="input-tariffs-express_discount"><span data-toggle="tooltip" title="{{ help_discount }}">{{ entry_discount }}</span></label>
+								<div class="col-sm-10">
+									<div class="input-group">
+										<input type="text" name="shipping_ukrposhta[tariffs][express][discount]" value="{{ ukrposhta['tariffs']['express']['discount'] }}" placeholder="{{ entry_discount }}" id="input-tariffs-express_discount" class="form-control" />
+										<span class="input-group-addon">{{ text_pct }}</span>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="input-tariffs-express_declared_cost_commission"><span data-toggle="tooltip" title="{{ help_declared_cost_commission }}">{{ entry_declared_cost_commission }}</span></label>
+								<div class="col-sm-2">
+									<div class="input-group">
+										<input type="text" name="shipping_ukrposhta[tariffs][express][declared_cost_commission]" value="{{ ukrposhta['tariffs']['express']['declared_cost_commission'] }}" placeholder="{{ entry_declared_cost_commission }}" id="input-tariffs-express_declared_cost_commission" class="form-control" />
+										<span class="input-group-addon">{{ text_pct }}</span>
+									</div>
+								</div>
+								<label class="col-sm-2 control-label" for="input-tariffs-express_declared_cost_minimum_commission"><span data-toggle="tooltip" title="{{ help_declared_cost_minimum_commission }}">{{ entry_declared_cost_minimum_commission }}</span></label>
+								<div class="col-sm-2">
+									<div class="input-group">
+										<input type="text" name="shipping_ukrposhta[tariffs][express][declared_cost_minimum_commission]" value="{{ ukrposhta['tariffs']['express']['declared_cost_minimum_commission'] }}" placeholder="{{ entry_declared_cost_minimum_commission }}" id="input-tariffs-express_declared_cost_minimum_commission" class="form-control" />
+										<span class="input-group-addon">{{ text_grn }}</span>
+									</div>
+								</div>
+								<label class="col-sm-2 control-label" for="input-tariffs-express_declared_cost_bottom_line"><span data-toggle="tooltip" title="{{ help_declared_cost_bottom_line }}">{{ entry_declared_cost_bottom_line }}</span></label>
+								<div class="col-sm-2">
+									<div class="input-group">
+										<input type="text" name="shipping_ukrposhta[tariffs][express][declared_cost_bottom_line]" value="{{ ukrposhta['tariffs']['express']['declared_cost_bottom_line'] }}" placeholder="{{ entry_declared_cost_bottom_line }}" id="input-tariffs-express_declared_cost_bottom_line" class="form-control" />
+										<span class="input-group-addon">{{ text_grn }}</span>
+									</div>
+								</div>
+							</div>
+							<hr>
+							<br><br><br>
+							<blockquote>
+								<h2>{{ text_standard_tariffs }}</h2>
+							</blockquote>
+							<div class="table-responsive">
+								<table class="table table-bordered table-hover" id="table-tariffs-standard">
+									<thead>
+									<tr>
+										<td class="text-center" rowspan="3">{{ column_weight }}</td>
+										<td class="text-center" rowspan="3">{{ column_longest_side }}</td>
+										<td class="text-center" colspan="2">{{ column_warehouse_service_cost }}</td>
+										<td class="text-center" colspan="2">{{ column_doors_service_cost }}</td>
+										<td class="text-center" rowspan="3">{{ column_action }}</td>
+									</tr>
+									<tr>
+										<td class="text-center">{{ column_tariff_zone_region }}</td>
+										<td class="text-center">{{ column_tariff_zone_ukraine }}</td>
+										<td class="text-center" rowspan="2">{{ column_doors_pickup }}</td>
+										<td class="text-center" rowspan="2">{{ column_doors_delivery }}</td>
+									</tr>
+									<tr>
+										<td class="text-center">{{ column_delivery_period }} <input type="text" name="shipping_ukrposhta[tariffs][standard][region_delivery_period]" value="{{ ukrposhta['tariffs']['standard']['region_delivery_period'] }}" class="form-control" style="display: inline; width: auto;" /></td>
+										<td class="text-center">{{ column_delivery_period }} <input type="text" name="shipping_ukrposhta[tariffs][standard][ukraine_delivery_period]" value="{{ ukrposhta['tariffs']['standard']['ukraine_delivery_period'] }}" class="form-control" style="display: inline; width: auto;" /></td>
+									</tr>
+									</thead>
+									<tbody>
+									{% for tariff in ukrposhta['tariffs']['standard'] if tariff is iterable %}
+									<tr>
+										<td><input type="text" name="shipping_ukrposhta[tariffs][standard][{{ loop.index0 }}][weight]" value="{{ tariff.weight }}" class="form-control" /></td>
+										<td><input type="text" name="shipping_ukrposhta[tariffs][standard][{{ loop.index0 }}][longest_side]" value="{{ tariff.longest_side }}" class="form-control" /></td>
+										<td><input type="text" name="shipping_ukrposhta[tariffs][standard][{{ loop.index0 }}][region]" value="{{ tariff.region }}" class="form-control" /></td>
+										<td><input type="text" name="shipping_ukrposhta[tariffs][standard][{{ loop.index0 }}][Ukraine]" value="{{ tariff.Ukraine }}" class="form-control" /></td>
+										<td><input type="text" name="shipping_ukrposhta[tariffs][standard][{{ loop.index0 }}][overpay_doors_pickup]" value="{{ tariff.overpay_doors_pickup }}" class="form-control" /></td>
+										<td><input type="text" name="shipping_ukrposhta[tariffs][standard][{{ loop.index0 }}][overpay_doors_delivery]" value="{{ tariff.overpay_doors_delivery }}" class="form-control" /></td>
+										<td class="text-center"><button type="button" onclick="$(this).parents('tr').remove();" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>
+									</tr>
+									{% endfor %}
+									</tbody>
+									<tfoot>
+									<tr>
+										<td colspan="6"></td>
+										<td class="text-center"><button type="button" onclick="addTariff('standard');" data-toggle="modal" class="btn btn-primary"><i class="fa fa-plus-circle"></i></button>
+										</td>
+									</tr>
+									</tfoot>
+								</table>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="input-tariffs-standard_discount"><span data-toggle="tooltip" title="{{ help_discount }}">{{ entry_discount }}</span></label>
+								<div class="col-sm-10">
+									<div class="input-group">
+										<input type="text" name="shipping_ukrposhta[tariffs][standard][discount]" value="{{ ukrposhta['tariffs']['standard']['discount'] }}" placeholder="{{ entry_discount }}" id="input-tariffs-standard_discount" class="form-control" />
+										<span class="input-group-addon">{{ text_pct }}</span>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="input-tariffs-standard_declared_cost_commission"><span data-toggle="tooltip" title="{{ help_declared_cost_commission }}">{{ entry_declared_cost_commission }}</span></label>
+								<div class="col-sm-2">
+									<div class="input-group">
+										<input type="text" name="shipping_ukrposhta[tariffs][standard][declared_cost_commission]" value="{{ ukrposhta['tariffs']['standard']['declared_cost_commission'] }}" placeholder="{{ entry_declared_cost_commission }}" id="input-tariffs-standard_declared_cost_commission" class="form-control" />
+										<span class="input-group-addon">{{ text_pct }}</span>
+									</div>
+								</div>
+								<label class="col-sm-2 control-label" for="input-tariffs-standard_declared_cost_minimum_commission"><span data-toggle="tooltip" title="{{ help_declared_cost_minimum_commission }}">{{ entry_declared_cost_minimum_commission }}</span></label>
+								<div class="col-sm-2">
+									<div class="input-group">
+										<input type="text" name="shipping_ukrposhta[tariffs][standard][declared_cost_minimum_commission]" value="{{ ukrposhta['tariffs']['standard']['declared_cost_minimum_commission'] }}" placeholder="{{ entry_declared_cost_minimum_commission }}" id="input-tariffs-standard_declared_cost_minimum_commission" class="form-control" />
+										<span class="input-group-addon">{{ text_grn }}</span>
+									</div>
+								</div>
+								<label class="col-sm-2 control-label" for="input-tariffs-standard_declared_cost_bottom_line"><span data-toggle="tooltip" title="{{ help_declared_cost_bottom_line }}">{{ entry_declared_cost_bottom_line }}</span></label>
+								<div class="col-sm-2">
+									<div class="input-group">
+										<input type="text" name="shipping_ukrposhta[tariffs][standard][declared_cost_bottom_line]" value="{{ ukrposhta['tariffs']['standard']['declared_cost_bottom_line'] }}" placeholder="{{ entry_declared_cost_bottom_line }}" id="input-tariffs-standard_declared_cost_bottom_line" class="form-control" />
+										<span class="input-group-addon">{{ text_grn }}</span>
+									</div>
+								</div>
+							</div>
+							<hr>
+						</div>
+          				<div class="tab-pane fade" id="tab-database">
+          					<div class="table-responsive">
+            					<table class="table table-bordered table-hover">
+              						<thead>
+                						<tr>
+                  							<td class="text-center">{{ column_type }}</td>
+                  							<td class="text-center">{{ column_date }}</td>
+                  							<td class="text-center">{{ column_amount }}</td>
+                  							<td class="text-center">{{ column_description }}</td>
+                  							<td class="text-center">{{ column_action }}</td>
+                						</tr>
+              						</thead>
+              						<tbody>
+               			 				<tr>
+                  							<td class="text-left">{{ entry_references }}</td>
+                  							<td class="text-center">{{ database['references']['update_datetime'] }}</td>
+                  							<td class="text-center" id="td-references_amount">{{ database['references']['amount'] }}</td>
+                  							<td class="text-left">{{ help_update_references }}</td>
+                  							<td class="text-center">
+                  								<a onclick="update('references');" id="button-update_references" data-toggle="tooltip" title="" class="btn btn-success" data-original-title="{{ text_update }}"><i class="fa fa-refresh"></i></a>
+                  							</td>
+               			 				</tr>
+              						</tbody>
+            					</table>
+          					</div>
+          				</div>
+          				<div class="tab-pane fade" id="tab-sender">
+							<div class="alert alert-info" role="alert"><i class="fa fa-floppy-o" aria-hidden="true"></i> {{ text_help_sender_save }}</div>
+							<div class="alert alert-info" role="alert"><i class="fa fa-search" aria-hidden="true"></i> {{ text_help_sender_search }}</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="input-sender_name"><span data-toggle="tooltip" title="{{ help_sender }}">{{ entry_sender }}</span></label>
+								<div class="col-sm-10">
+									<div class="input-group">
+										<input type="text" name="shipping_ukrposhta[sender_name]" value="{{ ukrposhta['sender_name'] }}" placeholder="{{ entry_sender }}" id="input-sender_name" class="form-control" />
+										<input type="hidden" name="shipping_ukrposhta[sender]" value="{{ ukrposhta['sender'] }}" id="input-sender" />
+										<span class="input-group-btn">
+											<button type="button" id="button-sender_save" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-floppy-o" aria-hidden="true"></i></button>
+										</span>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="input-sender_type"><span data-toggle="tooltip" title="{{ help_sender_client_type }}">{{ entry_client_type }}</span></label>
+								<div class="col-sm-10">
+									<select name="shipping_ukrposhta[sender_type]" id="input-sender_type" class="form-control">
+										<option value="">{{ text_select }}</option>
+										{% for v in client_types %}
+										<option value="{{ v.id }}"{{ v.id == ukrposhta['sender_type'] ? ' selected="selected"' }}>{{ v.description }}</option>
+										{% endfor %}
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="input-sender_tin"><span data-toggle="tooltip" title="{{ help_sender_tin }}">{{ entry_tin }}</span></label>
+								<div class="col-sm-10">
+									<input type="text" name="shipping_ukrposhta[sender_tin]" value="{{ ukrposhta['sender_tin'] }}" placeholder="{{ entry_tin }}" id="input-sender_tin" class="form-control" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="input-sender_edrpou"><span data-toggle="tooltip" title="{{ help_sender_edrpou }}">{{ entry_edrpou }}</span></label>
+								<div class="col-sm-10">
+									<input type="text" name="shipping_ukrposhta[sender_edrpou]" value="{{ ukrposhta['sender_edrpou'] }}" placeholder="{{ entry_edrpou }}" id="input-sender_edrpou" class="form-control" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="input-sender_bank_code"><span data-toggle="tooltip" title="{{ help_sender_bank_code }}">{{ entry_bank_code }}</span></label>
+								<div class="col-sm-10">
+									<input type="text" name="shipping_ukrposhta[sender_bank_code]" value="{{ ukrposhta['sender_bank_code'] }}" placeholder="{{ entry_bank_code }}" id="input-sender_bank_code" class="form-control" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="input-sender_bank_account"><span data-toggle="tooltip" title="{{ help_sender_bank_account }}">{{ entry_bank_account }}</span></label>
+								<div class="col-sm-10">
+									<input type="text" name="shipping_ukrposhta[sender_bank_account]" value="{{ ukrposhta['sender_bank_account'] }}" placeholder="{{ entry_bank_account }}" id="input-sender_bank_account" class="form-control" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="input-sender_email"><span data-toggle="tooltip" title="{{ help_sender_email }}">{{ entry_email }}</span></label>
+								<div class="col-sm-10">
+									<input type="text" name="shipping_ukrposhta[sender_email]" value="{{ ukrposhta['sender_email'] }}" placeholder="{{ entry_email }}" id="input-sender_email" class="form-control" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="input-sender_phone"><span data-toggle="tooltip" title="{{ help_sender_phone }}">{{ entry_phone }}</span></label>
+								<div class="col-sm-10">
+									<div class="input-group">
+										<input type="text" name="shipping_ukrposhta[sender_phone]" value="{{ ukrposhta['sender_phone'] }}" placeholder="{{ entry_phone }}" id="input-sender_phone" class="form-control">
+										<span class="input-group-btn">
+											<button type="button" id="button-sender_search" data-toggle="tooltip" title="{{ button_search }}" class="btn btn-info"><i class="fa fa-search" aria-hidden="true"></i></button>
+										</span>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="input-sender_region"><span data-toggle="tooltip" title="{{ help_sender_region }}">{{ entry_region }}</span></label>
+								<div class="col-sm-10">
+									<select name="shipping_ukrposhta[sender_region]" id="input-sender_region" class="form-control">
+										<option value="">{{ text_select }}</option>
+										{% for v in zones %}
+										<option value="{{ v.zone_id }}"{{ v.zone_id == ukrposhta['sender_region'] ? ' selected="selected"' }}>{{ v.name }}</option>
+										{% endfor %}
+									</select>
+								</div>
+							</div>
+              				<div class="form-group">
+            					<label class="col-sm-2 control-label" for="input-sender_city"><span data-toggle="tooltip" title="{{ help_sender_city }}">{{ entry_city }}</span></label>
+            					<div class="col-sm-10">
+              						<input type="text" name="shipping_ukrposhta[sender_city]" value="{{ ukrposhta['sender_city'] }}" placeholder="{{ entry_city }}" id="input-sender_city" class="form-control" />
+              					</div>
+              				</div>
+              				<div class="form-group">
+            					<label class="col-sm-2 control-label" for="input-sender_street"><span data-toggle="tooltip" title="{{ help_sender_street }}">{{ entry_street }}</span></label>
+            					<div class="col-sm-10">
+              						<input type="text" name="shipping_ukrposhta[sender_street]" value="{{ ukrposhta['sender_street'] }}" placeholder="{{ entry_street }}" id="input-sender_street" class="form-control" />
+              					</div>
+              				</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="input-sender_house"><span data-toggle="tooltip" title="{{ help_sender_house }}">{{ entry_house }}</span></label>
+								<div class="col-sm-10">
+									<input type="text" name="shipping_ukrposhta[sender_house]" value="{{ ukrposhta['sender_house'] }}" placeholder="{{ entry_house }}" id="input-sender_house" class="form-control" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="input-sender_flat"><span data-toggle="tooltip" title="{{ help_sender_flat }}">{{ entry_flat }}</span></label>
+								<div class="col-sm-10">
+									<input type="text" name="shipping_ukrposhta[sender_flat]" value="{{ ukrposhta['sender_flat'] }}" placeholder="{{ entry_flat }}" id="input-sender_flat" class="form-control" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="input-sender_postcode"><span data-toggle="tooltip" title="{{ help_sender_postcode }}">{{ entry_postcode }}</span></label>
+								<div class="col-sm-10">
+									<input type="text" name="shipping_ukrposhta[sender_postcode]" value="{{ ukrposhta['sender_postcode'] }}" placeholder="{{ entry_postcode }}" id="input-sender_postcode" class="form-control" />
+									<input type="hidden" name="shipping_ukrposhta[sender_address]" value="{{ ukrposhta['sender_address'] }}" id="input-sender_address" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="input-sender_address_pick_up-enabled"><span data-toggle="tooltip" title="{{ help_address_pick_up }}">{{ entry_address_pick_up }}</span></label>
+								<div class="col-sm-2">
+									<div class="radio-switch">
+										<input type="radio" name="shipping_ukrposhta[sender_address_pick_up]" value="0" id="input-sender_address_pick_up-disabled"{{ not ukrposhta['sender_address_pick_up'] ? ' checked' }}><label class="col-sm-4" for="input-sender_address_pick_up-enabled">{{ text_no }}</label>
+										<input type="radio" name="shipping_ukrposhta[sender_address_pick_up]" value="1" id="input-sender_address_pick_up-enabled"{{ ukrposhta['sender_address_pick_up'] ? ' checked' }}><label class="col-sm-4" for="input-sender_address_pick_up-disabled">{{ text_yes }}</label>
+									</div>
+								</div>
+							</div>
+          				</div>
+          				<div class="tab-pane fade" id="tab-recipient">
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="input-recipient"><span data-toggle="tooltip" title="{{ help_recipient }}">{{ entry_recipient }}</span></label>
+								<div class="col-sm-10">
+									<input type="text" name="shipping_ukrposhta[recipient]" value="{{ ukrposhta['recipient'] }}" placeholder="{{ entry_recipient }}" id="input-recipient" class="form-control" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="input-recipient_type"><span data-toggle="tooltip" title="{{ help_recipient_client_type }}">{{ entry_client_type }}</span></label>
+								<div class="col-sm-10">
+									<input type="text" name="shipping_ukrposhta[recipient_type]" value="{{ ukrposhta['recipient_type'] }}" placeholder="{{ entry_client_type }}" id="input-recipient_type" class="form-control" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="input-recipient_tin"><span data-toggle="tooltip" title="{{ help_recipient_tin }}">{{ entry_tin }}</span></label>
+								<div class="col-sm-10">
+									<input type="text" name="shipping_ukrposhta[recipient_tin]" value="{{ ukrposhta['recipient_tin'] }}" placeholder="{{ entry_tin }}" id="input-recipient_tin" class="form-control" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="input-recipient_edrpou"><span data-toggle="tooltip" title="{{ help_recipient_edrpou }}">{{ entry_edrpou }}</span></label>
+								<div class="col-sm-10">
+									<input type="text" name="shipping_ukrposhta[recipient_edrpou]" value="{{ ukrposhta['recipient_edrpou'] }}" placeholder="{{ entry_edrpou }}" id="input-recipient_edrpou" class="form-control" />
+								</div>
+							</div>
+              				<div class="form-group">
+            					<label class="col-sm-2 control-label" for="input-recipient_phone"><span data-toggle="tooltip" title="{{ help_recipient_phone }}">{{ entry_phone }}</span></label>
+            					<div class="col-sm-10">
+            						<input type="text" name="shipping_ukrposhta[recipient_phone]" value="{{ ukrposhta['recipient_phone'] }}" placeholder="{{ entry_phone }}" id="input-recipient_phone" class="form-control" />
+              					</div>
+              				</div>
+              				<div class="form-group">
+            					<label class="col-sm-2 control-label" for="input-recipient_region"><span data-toggle="tooltip" title="{{ help_recipient_region }}">{{ entry_region }}</span></label>
+            					<div class="col-sm-10">
+              						<input type="text" name="shipping_ukrposhta[recipient_region]" value="{{ ukrposhta['recipient_region'] }}" placeholder="{{ entry_region }}" id="input-recipient_region" class="form-control" />
+              					</div>
+              				</div>
+              				<div class="form-group">
+            					<label class="col-sm-2 control-label" for="input-recipient_city"><span data-toggle="tooltip" title="{{ help_recipient_city }}">{{ entry_city }}</span></label>
+            					<div class="col-sm-10">
+              						<input type="text" name="shipping_ukrposhta[recipient_city]" value="{{ ukrposhta['recipient_city'] }}" placeholder="{{ entry_city }}" id="input-recipient_city" class="form-control" />
+              					</div>
+              				</div>
+              				<div class="form-group">
+            					<label class="col-sm-2 control-label" for="input-recipient_address"><span data-toggle="tooltip" title="{{ help_recipient_address }}">{{ entry_address }}</span></label>
+            					<div class="col-sm-10">
+            						<input type="text" name="shipping_ukrposhta[recipient_address]" value="{{ ukrposhta['recipient_address'] }}" placeholder="{{ entry_address }}" id="input-recipient_address" class="form-control" />
+              					</div>
+              				</div>
+              				<div class="form-group">
+            					<label class="col-sm-2 control-label" for="input-recipient_street"><span data-toggle="tooltip" title="{{ help_recipient_street }}">{{ entry_street }}</span></label>
+            					<div class="col-sm-10">
+            						<input type="text" name="shipping_ukrposhta[recipient_street]" value="{{ ukrposhta['recipient_street'] }}" placeholder="{{ entry_street }}" id="input-recipient_street" class="form-control" />
+              					</div>
+              				</div>
+              				<div class="form-group">
+            					<label class="col-sm-2 control-label" for="input-recipient_house"><span data-toggle="tooltip" title="{{ help_recipient_house }}">{{ entry_house }}</span></label>
+            					<div class="col-sm-10">
+            						<input type="text" name="shipping_ukrposhta[recipient_house]" value="{{ ukrposhta['recipient_house'] }}" placeholder="{{ entry_house }}" id="input-recipient_house" class="form-control" />
+              					</div>
+              				</div>
+              				<div class="form-group">
+            					<label class="col-sm-2 control-label" for="input-recipient_flat"><span data-toggle="tooltip" title="{{ help_recipient_flat }}">{{ entry_flat }}</span></label>
+            					<div class="col-sm-10">
+            						<input type="text" name="shipping_ukrposhta[recipient_flat]" value="{{ ukrposhta['recipient_flat'] }}" placeholder="{{ entry_flat }}" id="input-recipient_flat" class="form-control" />
+              					</div>
+              				</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="input-recipient_postcode"><span data-toggle="tooltip" title="{{ help_recipient_postcode }}">{{ entry_postcode }}</span></label>
+								<div class="col-sm-10">
+									<input type="text" name="shipping_ukrposhta[recipient_postcode]" value="{{ ukrposhta['recipient_postcode'] }}" placeholder="{{ entry_postcode }}" id="input-recipient_postcode" class="form-control" />
+								</div>
+							</div>
+          				</div>
+          				<div class="tab-pane fade" id="tab-departure">
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="input-calculate_volume-enabled"><span data-toggle="tooltip" title="{{ help_calculate_volume }}">{{ entry_calculate_volume }}</span></label>
+								<div class="col-sm-2">
+									<div class="radio-switch">
+										<input type="radio" name="shipping_ukrposhta[calculate_volume]" value="0" id="input-calculate_volume-disabled"{{ not ukrposhta['calculate_volume'] ? ' checked' }}><label class="col-sm-4" for="input-calculate_volume-enabled">{{ text_no }}</label>
+										<input type="radio" name="shipping_ukrposhta[calculate_volume]" value="1" id="input-calculate_volume-enabled"{{ ukrposhta['calculate_volume'] ? ' checked' }}><label class="col-sm-4" for="input-calculate_volume-disabled">{{ text_yes }}</label>
+									</div>
+								</div>
+								<label class="col-sm-2 control-label" for="input-calculate_volume_type"><span data-toggle="tooltip" title="{{ help_calculate_volume_type }}">{{ entry_calculate_volume_type }}</span></label>
+								<div class="col-sm-6">
+									<select name="shipping_ukrposhta[calculate_volume_type]" id="input-calculate_volume_type" class="form-control">
+									{% for k, v in calculate_volume_types %}
+										<option value="{{ k }}"{{ k == ukrposhta['calculate_volume_type'] ? ' selected="selected"' }}>{{ v }}</option>
+                                    {% endfor %}
+									</select>
+								</div>
+							</div>
+            				<div class="form-group">
+            					<label class="col-sm-2 control-label" for="input-seats_amount"><span data-toggle="tooltip" title="{{ help_seats_amount }}">{{ entry_seats_amount }}</span></label>
+            					<div class="col-sm-10">
+              						<input type="text" name="shipping_ukrposhta[seats_amount]" value="{{ ukrposhta['seats_amount'] }}" placeholder="{{ entry_seats_amount }}" id="input-seats_amount" class="form-control" />
+              					</div>
+              				</div>
+            				<div class="form-group">
+			            		<label class="col-sm-2 control-label" for="input-announced_price"><span data-toggle="tooltip" title="{{ help_announced_price }}">{{ entry_announced_price }}</span></label>
+			            		<div class="col-sm-4">
+			            			<div class="well well-sm" style="height: 150px; overflow: auto;">
+			            			    {% for code, title in totals %}
+										<div class="checkbox">
+											<label>
+											<input type="checkbox" name="shipping_ukrposhta[announced_price][]" value="{{ code }}"{{ code in ukrposhta['announced_price'] ? ' checked' }} /> {{ title }}
+											</label>
+										</div>
+										{% endfor %}
+										{% for v in ukrposhta['announced_price'] if v is iterable %}
+										<div class="checkbox">
+										    <label>
+												<input type="checkbox" name="shipping_ukrposhta[announced_price][]" value="{{ v.code }}"{{ v.code in ukrposhta['announced_price'] ? ' checked' }} /> {{ v.name }}
+												<button type="button" class="btn btn-danger btn-xs" onclick="$(this).parents('div.checkbox').remove();"><i class="fa fa-minus-circle" aria-hidden="true"></i></button>
+											</label>
+											<input type="hidden" name="shipping_ukrposhta[announced_price][{{ v.code }}][code]" value="{{ v.code }}" />
+											<input type="hidden" name="shipping_ukrposhta[announced_price][{{ v.code }}][name]" value="{{ v.name }}" />
+										</div>
+                                        {% endfor %}
+										<br/>
+										<button type="button" class="btn btn-primary btn-sm" data-toggle="tooltip" title="{{ button_add }}" onclick="addCustomMethod('announced_price');"><i class="fa fa-plus-circle" aria-hidden="true"></i></button>
+			            			</div>
+			            		</div>
+			            		<label class="col-sm-2 control-label" for="input-announced_price_default"><span data-toggle="tooltip" title="{{ help_announced_price_default }}">{{ entry_announced_price_default }}</span></label>
+            					<div class="col-sm-4">
+            						<div class="input-group">
+              							<input type="text" name="shipping_ukrposhta[announced_price_default]" value="{{ ukrposhta['announced_price_default'] }}" placeholder="{{ entry_announced_price_default }}" id="input-announced_price_default" class="form-control" />
+              							<span class="input-group-addon">{{ text_grn }}</span>
+              						</div>
+              					</div>
+			            	</div>
+              				<div class="form-group">
+			          			<label class="col-sm-2 control-label" for="input-departure_description"><span data-toggle="tooltip" title="{{ help_departure_description }}">{{ entry_departure_description }}</span></label>
+			            		<div class="col-sm-10">
+									<a class="btn btn-default pull-right" data-toggle="collapse" href="#departure_description_t_m" aria-expanded="false" aria-controls="departure_description_t_m" role="button">{{ text_macros }} <i class="fa fa-angle-down" aria-hidden="true"></i></a>
+									<div class="clearfix"></div>
+									<div id="departure_description_t_m" class="collapse">
+										<div class="panel panel-default">
+											<div class="panel-body">
+												<div class="col-sm-6">
+													{{ text_order_template_macros }}
+												</div>
+												<div class="col-sm-6">
+													{{ text_products_template_macros }}
+												</div>
+											</div>
+										</div>
+									</div>
+			            			<textarea name="shipping_ukrposhta[departure_description]" rows="3" id="input-departure_description" class="form-control">{{ ukrposhta['departure_description'] }}</textarea>
+			          			</div>
+			          		</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="input-recommended_letter-enabled"><span data-toggle="tooltip" title="{{ help_recommended_letter }}">{{ entry_recommended_letter }}</span></label>
+								<div class="col-sm-2">
+									<div class="radio-switch">
+										<input type="radio" name="shipping_ukrposhta[recommended_letter]" value="0" id="input-recommended_letter-disabled"{{ not ukrposhta['recommended_letter'] ? ' checked' }}><label class="col-sm-4" for="input-recommended_letter-enabled">{{ text_no }}</label>
+										<input type="radio" name="shipping_ukrposhta[recommended_letter]" value="1" id="input-recommended_letter-enabled"{{ ukrposhta['recommended_letter'] ? ' checked' }}><label class="col-sm-4" for="input-recommended_letter-disabled">{{ text_yes }}</label>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="input-check_on_delivery-enabled"><span data-toggle="tooltip" title="{{ help_check_on_delivery }}">{{ entry_check_on_delivery }}</span></label>
+								<div class="col-sm-2">
+									<div class="radio-switch">
+										<input type="radio" name="shipping_ukrposhta[check_on_delivery]" value="0" id="input-check_on_delivery-disabled"{{ not ukrposhta['check_on_delivery'] ? ' checked' }}><label class="col-sm-4" for="input-check_on_delivery-enabled">{{ text_no }}</label>
+										<input type="radio" name="shipping_ukrposhta[check_on_delivery]" value="1" id="input-check_on_delivery-enabled"{{ ukrposhta['check_on_delivery'] ? ' checked' }}><label class="col-sm-4" for="input-check_on_delivery-disabled">{{ text_yes }}</label>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="input-on_fail_receive"><span data-toggle="tooltip" title="{{ help_on_fail_receive }}">{{ entry_on_fail_receive }}</span></label>
+								<div class="col-sm-10">
+									<select name="shipping_ukrposhta[on_fail_receive]" id="input-on_fail_receive" class="form-control">
+										<option value="0">{{ text_select }}</option>
+										{% for v in fail_receive_types %}
+										<option value="{{ v.id }}"{{ v.id == ukrposhta['on_fail_receive'] ? ' selected="selected"' }}>{{ v.description }}</option>
+                                        {% endfor %}
+									</select>
+								</div>
+							</div>
+            				<legend>{{ text_default_departure_options }}</legend>
+            				<div class="form-group">
+            					<label class="col-sm-2 control-label" for="input-use_parameters"><span data-toggle="tooltip" title="{{ help_use_parameters }}">{{ entry_use_parameters }}</span></label>
+            					<div class="col-sm-10">
+            						<select name="shipping_ukrposhta[use_parameters]" id="input-use_parameters" class="form-control">
+                					{% for k, v in use_parameters %}
+									<option value="{{ k }}"{{ k == ukrposhta['use_parameters'] ? ' selected="selected"' }}>{{ v }}</option>
+                                    {% endfor %}
+              						</select>
+            					</div>
+            				</div>
+              				<div class="form-group">
+            					<label class="col-sm-2 control-label" for="input-weight"><span data-toggle="tooltip" title="{{ help_weight }}">{{ entry_weight }}</span></label>
+            					<div class="col-sm-10">
+            						<div class="input-group">
+              							<input type="text" name="shipping_ukrposhta[weight]" value="{{ ukrposhta['weight'] }}" placeholder="0" id="input-weight" class="form-control" />
+              							<span class="input-group-addon">{{ text_kg }}</span>
+              						</div>
+              					</div>
+              				</div>
+              				<div class="form-group">	
+              					<label class="col-sm-2 control-label" for="input-dimensions_w"><span data-toggle="tooltip" title="{{ help_dimensions }}">{{ entry_dimensions }}</span></label>
+            					<div class="col-sm-3">
+            						<div class="input-group">
+              							<input type="text" name="shipping_ukrposhta[dimensions_w]" value="{{ ukrposhta['dimensions_w'] }}" placeholder="0" id="input-dimensions_w" class="form-control" />
+              							<span class="input-group-addon">{{ text_cm }}</span>
+              						</div>
+            					</div>
+            					<div class="col-sm-4">
+            						<div class="input-group">
+              							<input type="text" name="shipping_ukrposhta[dimensions_l]" value="{{ ukrposhta['dimensions_l'] }}" placeholder="0" id="input-dimensions_l" class="form-control" />
+              							<span class="input-group-addon">{{ text_cm }}</span>
+              						</div>
+            					</div>
+            					<div class="col-sm-3">
+            						<div class="input-group">
+	              						<input type="text" name="shipping_ukrposhta[dimensions_h]" value="{{ ukrposhta['dimensions_h'] }}" placeholder="0" id="input-dimensions_h" class="form-control" />
+	              						<span class="input-group-addon">{{ text_cm }}</span>
+              						</div>
+            					</div>
+          					</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="input-allowance_w"><span data-toggle="tooltip" title="{{ help_allowance }}">{{ entry_allowance }}</span></label>
+								<div class="col-sm-3">
+									<div class="input-group">
+										<input type="text" name="shipping_ukrposhta[allowance_w]" value="{{ ukrposhta['allowance_w'] }}" placeholder="0" id="input-allowance_w" class="form-control" />
+										<span class="input-group-addon">{{ text_cm }}</span>
+									</div>
+								</div>
+								<div class="col-sm-4">
+									<div class="input-group">
+										<input type="text" name="shipping_ukrposhta[allowance_l]" value="{{ ukrposhta['allowance_l'] }}" placeholder="0" id="input-allowance_l" class="form-control" />
+										<span class="input-group-addon">{{ text_cm }}</span>
+									</div>
+								</div>
+								<div class="col-sm-3">
+									<div class="input-group">
+										<input type="text" name="shipping_ukrposhta[allowance_h]" value="{{ ukrposhta['allowance_h'] }}" placeholder="0" id="input-allowance_h" class="form-control" />
+										<span class="input-group-addon">{{ text_cm }}</span>
+									</div>
+								</div>
+							</div>
+          				</div>
+          				<div class="tab-pane fade" id="tab-payment">
+          					<div class="form-group">
+          						<label class="col-sm-2 control-label" for="input-payer"><span data-toggle="tooltip" title="{{ help_payer }}">{{ entry_payer }}</span></label>
+            					<div class="col-sm-10">
+            						<select name="shipping_ukrposhta[payer]" id="input-payer" class="form-control">
+										<option value="0">{{ text_select }}</option>
+                					    {% for v in payer_types %}
+										<option value="{{ v.id }}"{{ v.id == ukrposhta['payer'] ? ' selected="selected"' }}>{{ v.description }}</option>
+                                        {% endfor %}
+              						</select>
+              					</div>
+          					</div>
+          					<div class="form-group">
+			                  	<label class="col-sm-2 control-label" for="input-payment_cod"><span data-toggle="tooltip" title="{{ help_payment_cod }}">{{ entry_payment_cod }}</span></label>
+			            		<div class="col-sm-10">
+			            			<div class="well well-sm" style="height: 150px; overflow: auto;">
+			            			{% for code, title in payment_methods %}
+										<div class="checkbox">
+											<label>
+												<input type="checkbox" name="shipping_ukrposhta[payment_cod][]" value="{{ code }}"{{ code in ukrposhta['payment_cod'] ? ' checked' }} /> {{ title }}
+											</label>
+										</div>
+                                    {% endfor %}
+                                    {% for v in ukrposhta['payment_cod'] if v is iterable %}
+									<div class="checkbox">
+										<label>
+											<input type="checkbox" name="shipping_ukrposhta[payment_cod][]" value="{{ v.code }}"{{ v.code in ukrposhta['payment_cod'] ? ' checked' }} /> {{ v.name }}
+											<button type="button" class="btn btn-danger btn-xs" onclick="$(this).parents('div.checkbox').remove();"><i class="fa fa-minus-circle" aria-hidden="true"></i></button>
+										</label>
+										<input type="hidden" name="shipping_ukrposhta[payment_cod][{{ v.code }}][code]" value="{{ v.code }}" />
+									    <input type="hidden" name="shipping_ukrposhta[payment_cod][{{ v.code }}][name]" value="{{ v.name }}" />
+									</div>
+                                    {% endfor %}
+										<br/>
+										<button type="button" class="btn btn-primary btn-sm" data-toggle="tooltip" title="{{ button_add }}" onclick="addCustomMethod('payment_cod');"><i class="fa fa-plus-circle" aria-hidden="true"></i></button>
+			            			</div>
+			            		</div>
+			            	</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="input-backward_delivery_payer"><span data-toggle="tooltip" title="{{ help_backward_delivery_payer }}">{{ entry_backward_delivery_payer }}</span></label>
+								<div class="col-sm-10">
+									<select name="shipping_ukrposhta[backward_delivery_payer]" id="input-backward_delivery_payer" class="form-control">
+										<option value="0">{{ text_select }}</option>
+										{% for v in backward_delivery_payers %}
+										<option value="{{ v.id }}"{{ v.id == ukrposhta['backward_delivery_payer'] ? ' selected="selected"' }}>{{ v.description }}</option>
+                                        {% endfor %}
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="input-money_transfer_method"><span data-toggle="tooltip" title="{{ help_money_transfer_method }}">{{ entry_money_transfer_method }}</span></label>
+								<div class="col-sm-10">
+									<select name="shipping_ukrposhta[money_transfer_method]" id="input-money_transfer_method" class="form-control">
+										<option value="0">{{ text_select }}</option>
+										{% for k, v in money_transfer_methods %}
+										<option value="{{ k }}"{{ k == ukrposhta['money_transfer_method'] ? ' selected="selected"' }}>{{ v }}</option>
+                                        {% endfor %}
+									</select>
+								</div>
+							</div>
+          				</div>
+						<div class="tab-pane fade" id="tab-consignment_note">
+							<legend>{{ text_consignment_note_creating }}</legend>
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="input-sms_message-enabled"><span data-toggle="tooltip" title="{{ help_sms_message }}">{{ entry_sms_message }}</span></label>
+								<div class="col-sm-2">
+									<div class="radio-switch">
+										<input type="radio" name="shipping_ukrposhta[sms_message]" value="0" id="input-sms_message-disabled"{{ not ukrposhta['sms_message'] ? ' checked' }}><label class="col-sm-4" for="input-sms_message-enabled">{{ text_no }}</label>
+										<input type="radio" name="shipping_ukrposhta[sms_message]" value="1" id="input-sms_message-enabled"{{ ukrposhta['sms_message'] ? ' checked' }}><label class="col-sm-4" for="input-sms_message-disabled">{{ text_yes }}</label>
+									</div>
+								</div>
+							</div>
+							<legend>{{ text_consignment_note_list }}</legend>
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="input-consignment_displayed_information"><span data-toggle="tooltip" title="{{ help_displayed_information }}">{{ entry_displayed_information }}</span></label>
+								<div class="col-sm-10">
+									<select name="shipping_ukrposhta[consignment_displayed_information][]" id="input-consignment_displayed_information" class="selectpicker form-control" data-icon-base="fa" data-tick-icon="fa-check" title="{{ text_select }}" multiple>
+									{% for k, v in consignment_displayed_information %}
+										<option value="{{ k }}"{{ k in ukrposhta['consignment_displayed_information'] ? ' selected="selected"' }}>{{ v }}</option>
+                                    {% endfor %}
+									</select>
+								</div>
+							</div>
+							<legend>{{ text_print_settings }}</legend>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="input-print_type"><span data-toggle="tooltip" title="{{ help_print_type }}">{{ entry_print_type }}</span></label>
+                                <div class="col-sm-10">
+                                    <select name="shipping_ukrposhta[print_type]" id="input-print_type" class="form-control">
+                                        <option value="0">{{ text_select }}</option>
+                                        {% for k, v in print_types %}
+										<option value="{{ k }}"{{ k == ukrposhta['print_type'] ? ' selected="selected"' }}>{{ v }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="input-print_format"><span data-toggle="tooltip" title="{{ help_print_format }}">{{ entry_print_format }}</span></label>
+								<div class="col-sm-10">
+									<select name="shipping_ukrposhta[print_format]" id="input-print_format" class="form-control">
+										<option value="0">{{ text_select }}</option>
+									    {% for k, v in print_formats %}
+										<option value="{{ k }}"{{ k == ukrposhta['print_format'] ? ' selected="selected"' }}>{{ v }}</option>
+                                        {% endfor %}
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="input-print_sender_name-enabled"><span data-toggle="tooltip" title="{{ help_print_sender_name }}">{{ entry_print_sender_name }}</span></label>
+								<div class="col-sm-2">
+									<div class="radio-switch">
+										<input type="radio" name="shipping_ukrposhta[print_sender_name]" value="0" id="input-print_sender_name-disabled"{{ not ukrposhta['print_sender_name'] ? ' checked' }}><label class="col-sm-4" for="input-print_sender_name-enabled">{{ text_no }}</label>
+										<input type="radio" name="shipping_ukrposhta[print_sender_name]" value="1" id="input-print_sender_name-enabled"{{ ukrposhta['print_sender_name'] ? ' checked' }}><label class="col-sm-4" for="input-print_sender_name-disabled">{{ text_yes }}</label>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="input-print_delivery_price-enabled"><span data-toggle="tooltip" title="{{ help_print_delivery_price }}">{{ entry_print_delivery_price }}</span></label>
+								<div class="col-sm-2">
+									<div class="radio-switch">
+										<input type="radio" name="shipping_ukrposhta[print_delivery_price]" value="0" id="input-print_delivery_price-disabled"{{ not ukrposhta['print_delivery_price'] ? ' checked' }}><label class="col-sm-4" for="input-print_delivery_price-enabled">{{ text_no }}</label>
+										<input type="radio" name="shipping_ukrposhta[print_delivery_price]" value="1" id="input-print_delivery_price-enabled"{{ ukrposhta['print_delivery_price'] ? ' checked' }}><label class="col-sm-4" for="input-print_delivery_price-disabled">{{ text_yes }}</label>
+									</div>
+								</div>
+							</div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="input-print_declared_price-enabled"><span data-toggle="tooltip" title="{{ help_print_declared_price }}">{{ entry_print_declared_price }}</span></label>
+                                <div class="col-sm-2">
+                                    <div class="radio-switch">
+                                        <input type="radio" name="shipping_ukrposhta[print_declared_price]" value="0" id="input-print_declared_price-disabled"{{ not ukrposhta['print_declared_price'] ? ' checked' }}><label class="col-sm-4" for="input-print_declared_price-enabled">{{ text_no }}</label>
+                                        <input type="radio" name="shipping_ukrposhta[print_declared_price]" value="1" id="input-print_declared_price-enabled"{{ ukrposhta['print_declared_price'] ? ' checked' }}><label class="col-sm-4" for="input-print_declared_price-disabled">{{ text_yes }}</label>
+                                    </div>
+                                </div>
+                            </div>
+							<legend>{{ text_integration_with_orders }}</legend>
+							<div class="alert alert-info" role="alert"><i class="fa fa-info-circle" aria-hidden="true"></i> {{ text_help_integration_with_orders }}</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="input-compatible_shipping_method"><span data-toggle="tooltip" title="{{ help_compatible_shipping_method }}">{{ entry_compatible_shipping_method }}</span></label>
+								<div class="col-sm-10">
+									<div class="well well-sm" style="height: 150px; overflow: auto;">
+									{% for k, v in shipping_methods %}
+										<div class="checkbox">
+											<label>
+												<input type="checkbox" name="shipping_ukrposhta[compatible_shipping_method][]" value="{{ k }}"{{ k in ukrposhta['compatible_shipping_method'] ? ' checked' }} /> {{ v }}
+											</label>
+										</div>
+									{% endfor %}
+									{% for v in ukrposhta['compatible_shipping_method'] if v is iterable %}
+									    <div class="checkbox">
+											<label>
+												<input type="checkbox" name="shipping_ukrposhta[compatible_shipping_method][]" value="{{ v.code }}"{{ v.code in ukrposhta['compatible_shipping_method'] ? ' checked' }} /> {{ v.name }}
+												<button type="button" class="btn btn-danger btn-xs" onclick="$(this).parents('div.checkbox').remove();"><i class="fa fa-minus-circle" aria-hidden="true"></i></button>
+											</label>
+											<input type="hidden" name="shipping_ukrposhta[compatible_shipping_method][{{ v.code }}][code]" value="{{ v.code }}" />
+											<input type="hidden" name="shipping_ukrposhta[compatible_shipping_method][{{ v.code }}][name]" value="{{ v.name }}" />
+										</div>
+                                    {% endfor %}
+										<br/>
+										<button type="button" class="btn btn-primary btn-sm" data-toggle="tooltip" title="{{ button_add }}" onclick="addCustomMethod('compatible_shipping_method');"><i class="fa fa-plus-circle" aria-hidden="true"></i></button>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="input-consignment_create-enabled"><span data-toggle="tooltip" title="{{ help_consignment_create }}">{{ entry_consignment_create }}</span></label>
+								<div class="col-sm-1">
+									<div class="radio-switch">
+										<input type="radio" name="shipping_ukrposhta[consignment_create]" value="0" id="input-consignment_create-disabled"{{ not ukrposhta['consignment_create'] ? ' checked' }}><label class="col-sm-4" for="input-consignment_create-enabled">{{ text_no }}</label>
+										<input type="radio" name="shipping_ukrposhta[consignment_create]" value="1" id="input-consignment_create-enabled"{{ ukrposhta['consignment_create'] ? ' checked' }}><label class="col-sm-4" for="input-consignment_create-disabled">{{ text_yes }}</label>
+									</div>
+								</div>
+								<label class="col-sm-1 control-label" for="input-consignment_create_text">{{ entry_menu_text }}</label>
+								<div class="col-sm-8">
+									<ul class="nav nav-tabs" role="tablist">
+									{% for language in languages %}
+										<li{{ language_id == language.language_id ? ' class="active"' }}><a href="#consignment_create_text_{{ language.language_id }}" aria-controls="consignment_create_text_{{ language.language_id }}" role="tab" data-toggle="tab"><img src="{{ language_flag[language.language_id] }}" title="{{ language.name }}" /> {{ language.name }}</a></li>
+                                    {% endfor %}
+									</ul>
+									<div class="tab-content">
+                                    {% for language in languages %}
+										<div role="tabpanel" class="tab-pane{{ language_id == language.language_id ? ' active' }}" id="consignment_create_text_{{ language.language_id }}">
+											<input type="text" name="shipping_ukrposhta[consignment_create_text][{{ language.language_id }}]" value="{{ ukrposhta['consignment_create_text'][language.language_id] }}" placeholder="{{ entry_menu_text }}" class="form-control" />
+										</div>
+                                    {% endfor %}
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="input-consignment_edit-enabled"><span data-toggle="tooltip" title="{{ help_consignment_edit }}">{{ entry_consignment_edit }}</span></label>
+								<div class="col-sm-1">
+									<div class="radio-switch">
+										<input type="radio" name="shipping_ukrposhta[consignment_edit]" value="0" id="input-consignment_edit-disabled"{{ not ukrposhta['consignment_edit'] ? ' checked' }}><label class="col-sm-4" for="input-consignment_edit-enabled">{{ text_no }}</label>
+										<input type="radio" name="shipping_ukrposhta[consignment_edit]" value="1" id="input-consignment_edit-enabled"{{ ukrposhta['consignment_edit'] ? ' checked' }}><label class="col-sm-4" for="input-consignment_edit-disabled">{{ text_yes }}</label>
+									</div>
+								</div>
+								<label class="col-sm-1 control-label" for="input-consignment_edit_text">{{ entry_menu_text }}</label>
+								<div class="col-sm-8">
+									<ul class="nav nav-tabs" role="tablist">
+                                    {% for language in languages %}
+										<li{{ language_id == language.language_id ? ' class="active"' }}><a href="#consignment_edit_text_{{ language.language_id }}" aria-controls="consignment_edit_text_{{ language.language_id }}" role="tab" data-toggle="tab"><img src="{{ language_flag[language.language_id] }}" title="{{ language.name }}" /> {{ language.name }}</a></li>
+                                    {% endfor %}
+									</ul>
+									<div class="tab-content">
+                                    {% for language in languages %}
+										<div role="tabpanel" class="tab-pane{{ language_id == language.language_id ? ' active' }}" id="consignment_edit_text_{{ language.language_id }}">
+											<input type="text" name="shipping_ukrposhta[consignment_edit_text][{{ language.language_id }}]" value="{{ ukrposhta['consignment_edit_text'][language.language_id] }}" placeholder="{{ entry_menu_text }}" class="form-control" />
+										</div>
+                                    {% endfor %}
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="input-consignment_delete-enabled"><span data-toggle="tooltip" title="{{ help_consignment_delete }}">{{ entry_consignment_delete }}</span></label>
+								<div class="col-sm-1">
+									<div class="radio-switch">
+										<input type="radio" name="shipping_ukrposhta[consignment_delete]" value="0" id="input-consignment_delete-disabled"{{ not ukrposhta['consignment_delete'] ? ' checked' }}><label class="col-sm-4" for="input-consignment_delete-enabled">{{ text_no }}</label>
+										<input type="radio" name="shipping_ukrposhta[consignment_delete]" value="1" id="input-consignment_delete-enabled"{{ ukrposhta['consignment_delete'] ? ' checked' }}><label class="col-sm-4" for="input-consignment_delete-disabled">{{ text_yes }}</label>
+									</div>
+								</div>
+								<label class="col-sm-1 control-label" for="input-consignment_delete_text">{{ entry_menu_text }}</label>
+								<div class="col-sm-8">
+									<ul class="nav nav-tabs" role="tablist">
+                                    {% for language in languages %}
+										<li{{ language_id == language.language_id ? ' class="active"' }}><a href="#consignment_delete_text_{{ language.language_id }}" aria-controls="consignment_delete_text_{{ language.language_id }}" role="tab" data-toggle="tab"><img src="{{ language_flag[language.language_id] }}" title="{{ language.name }}" /> {{ language.name }}</a></li>
+                                    {% endfor %}
+									</ul>
+									<div class="tab-content">
+                                    {% for language in languages %}
+										<div role="tabpanel" class="tab-pane{{ language_id == language.language_id ? ' active' }}" id="consignment_delete_text_{{ language.language_id }}">
+											<input type="text" name="shipping_ukrposhta[consignment_delete_text][{{ language.language_id }}]" value="{{ ukrposhta['consignment_delete_text'][language.language_id] }}" placeholder="{{ entry_menu_text }}" class="form-control" />
+										</div>
+                                    {% endfor %}
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="input-consignment_assignment_to_order-enabled"><span data-toggle="tooltip" title="{{ help_consignment_assignment_to_order }}">{{ entry_consignment_assignment_to_order }}</span></label>
+								<div class="col-sm-1">
+									<div class="radio-switch">
+										<input type="radio" name="shipping_ukrposhta[consignment_assignment_to_order]" value="0" id="input-consignment_assignment_to_order-disabled"{{ not ukrposhta['consignment_assignment_to_order'] ? ' checked' }}><label class="col-sm-4" for="input-consignment_assignment_to_order-enabled">{{ text_no }}</label>
+										<input type="radio" name="shipping_ukrposhta[consignment_assignment_to_order]" value="1" id="input-consignment_assignment_to_order-enabled"{{ ukrposhta['consignment_assignment_to_order'] ? ' checked' }}><label class="col-sm-4" for="input-consignment_assignment_to_order-disabled">{{ text_yes }}</label>
+									</div>
+								</div>
+								<label class="col-sm-1 control-label" for="input-consignment_assignment_to_order_text">{{ entry_menu_text }}</label>
+								<div class="col-sm-8">
+									<ul class="nav nav-tabs" role="tablist">
+                                    {% for language in languages %}
+										<li{{ language_id == language.language_id ? ' class="active"' }}><a href="#consignment_assignment_to_order_text_{{ language.language_id }}" aria-controls="consignment_assignment_to_order_text_{{ language.language_id }}" role="tab" data-toggle="tab"><img src="{{ language_flag[language.language_id] }}" title="{{ language.name }}" /> {{ language.name }}</a></li>
+                                    {% endfor %}
+									</ul>
+									<div class="tab-content">
+                                    {% for language in languages %}
+										<div role="tabpanel" class="tab-pane{{ language_id == language.language_id ? ' active' }}" id="consignment_assignment_to_order_text_{{ language.language_id }}">
+											<input type="text" name="shipping_ukrposhta[consignment_assignment_to_order_text][{{ language.language_id }}]" value="{{ ukrposhta['consignment_assignment_to_order_text'][language.language_id] }}" placeholder="{{ entry_menu_text }}" class="form-control" />
+										</div>
+                                    {% endfor %}
+									</div>
+								</div>
+							</div>
+						</div>
+          				<div class="tab-pane fade" id="tab-cron">
+          					<div class="alert alert-info" role="alert"><i class="fa fa-info-circle" aria-hidden="true"></i> {{ text_help_cron }}</div>
+          					<div class="form-group">
+            					<label class="col-sm-2 control-label" for="input-key_cron"><span data-toggle="tooltip" title="{{ help_key_cron }}">{{ entry_key_cron }}</span></label>
+            					<div class="col-sm-10">
+    								<div class="input-group">
+    									<input type="text" name="shipping_ukrposhta[key_cron]" value="{{ ukrposhta['key_cron'] }}" placeholder="{{ entry_key_cron }}" id="input-key_cron" class="form-control" />
+    									<span class="input-group-btn">
+    										<button id="button-generate-cron-key" onclick="generateKey();" type="button" class="btn btn-info" data-toggle="tooltip" title="{{ button_generate }}"><i class="fa fa-cog"></i></button>
+    									</span>
+    								</div>	
+    							</div>
+              				</div>
+          					<legend>{{ text_base_update }}</legend>
+              				<div class="form-group">
+            					<label class="col-sm-2 control-label" for="input-cron_update_references">{{ entry_references }}</label>
+            					<div class="col-sm-10">
+									<div class="input-group">
+              							<input type="text" value="{{ cron_update_references }}"  id="input-cron_update_references" class="form-control" readonly />
+										<span class="input-group-btn">
+											<button class="btn btn-default" type="button" data-toggle="tooltip" title="{{ button_copy }}" onclick="copyToClipboard('input-cron_update_references');"><i class="fa fa-files-o" aria-hidden="true"></i></button>
+										</span>
+									</div>
+              					</div>
+              				</div>
+              				<legend>{{ text_departures_tracking }}</legend>
+          					<div class="form-group">
+            					<label class="col-sm-2 control-label" for="input-cron_departures_tracking">{{ entry_departures_tracking }}</label>
+            					<div class="col-sm-10">
+									<div class="input-group">
+              							<input type="text" value="{{ cron_departures_tracking }}"  id="input-cron_departures_tracking" class="form-control" readonly />
+										<span class="input-group-btn">
+											<button class="btn btn-default" type="button" data-toggle="tooltip" title="{{ button_copy }}" onclick="copyToClipboard('input-cron_departures_tracking');"><i class="fa fa-files-o" aria-hidden="true"></i></button>
+											<a href="{{ cron_departures_tracking_href }}" class="btn btn-default" role="button" data-toggle="tooltip" title="{{ button_run }}" target="_blank"><i class="fa fa-terminal" aria-hidden="true"></i></a>
+										</span>
+									</div>
+              					</div>
+              				</div>
+              				<div class="form-group">
+					        	<label class="col-sm-2 control-label" for="input-tracking_statuses"><span data-toggle="tooltip" title="{{ help_tracking_statuses }}">{{ entry_tracking_statuses }}</span></label>
+					        	<div class="col-sm-10">
+									<select name="shipping_ukrposhta[tracking_statuses][]" id="input-tracking_statuses" class="selectpicker form-control" data-icon-base="fa" data-tick-icon="fa-check" title="{{ text_select }}" multiple>
+									{%  for order_status in order_statuses %}
+										<option value="{{ order_status.order_status_id }}"{{ order_status.order_status_id in ukrposhta['tracking_statuses'] ? ' selected="selected"' }}>{{ order_status.name }}</option>
+									{% endfor %}
+									</select>
+					        	</div>
+					        </div>
+							<a class="btn btn-default pull-right" data-toggle="collapse" href="#message-macros-collapse" aria-expanded="false" aria-controls="message-macros-collapse" role="button">{{ text_message_template_macros }} <i class="fa fa-angle-down" aria-hidden="true"></i></a>
+							<div class="clearfix"></div>
+							<div id="message-macros-collapse" class="collapse">
+								<div class="panel panel-default">
+									<div class="panel-body">
+										<div class="col-sm-4">
+											{{ text_cn_template_macros }}
+										</div>
+										<div class="col-sm-4">
+											{{ text_order_template_macros }}
+										</div>
+										<div class="col-sm-4">
+											{{ text_products_template_macros }}
+										</div>
+									</div>
+								</div>
+							</div>
+					        <div class="panel panel-default">
+							    <div class="panel-heading">
+							    	<h3 class="panel-title">{{ text_settings_departures_statuses }}</h3>
+								</div>
+								<div class="table-responsive">
+					            	<table class="table table-bordered table-hover" id="table-tracking_statuses">
+					              		<thead>
+					                		<tr>
+					                  			<td class="text-center" width="15%">{{ column_postal_company_status }}</td>
+					                  			<td class="text-center">{{ column_store_status }}</td>
+												<td class="text-center">{{ column_implementation_delay }}</td>
+					                  			<td class="text-center">{{ column_notification }}</td>
+					                  			<td class="text-center" width="40%">{{ column_message_template }}</td>
+					                  			<td class="text-center">{{ column_action }}</td>
+					                		</tr>
+					              		</thead>
+										<tbody>
+										{% for i, settings in ukrposhta['settings_tracking_statuses'] %}
+											<tr>
+												<td>
+													<select name="shipping_ukrposhta[settings_tracking_statuses][{{ loop.index0 }}][ukrposhta_status]" class="form-control">
+                                                    {% for shipment_status in shipment_statuses %}
+															<option value="{{ shipment_status.event }}"{{ shipment_status.event == settings.ukrposhta_status ? ' selected="selected"' }}>{{ shipment_status.eventName }}</option>
+													{% endfor %}
+													</select>
+												</td>
+											    <td>
+													<select name="shipping_ukrposhta[settings_tracking_statuses][{{ loop.index0 }}][store_status]" class="form-control">
+                                                    {% for order_status in order_statuses %}
+															<option value="{{ order_status.order_status_id }}"{{ order_status.order_status_id == settings.store_status ? ' selected="selected"' }}>{{ order_status.name }}</option>
+                                                    {% endfor %}
+													</select>
+												</td>
+												<td>
+													<div class="input-group">
+														<span class="input-group-btn" style="width: 50%;">
+															<select name="shipping_ukrposhta[settings_tracking_statuses][{{ loop.index0 }}][implementation_delay][type]" class="form-control">
+															{% for k, v in time %}
+																<option value="{{ k }}"{{ k == settings.implementation_delay.type ? ' selected="selected"' }}>{{ v }}</option>
+                                                            {% endfor %}
+															</select>
+														</span><input type="text" name="shipping_ukrposhta[settings_tracking_statuses][{{ loop.index0 }}][implementation_delay][value]" value="{{ ukrposhta['settings_tracking_statuses'][i]['implementation_delay']['value'] }}" class="form-control" />
+													</div>
+												</td>
+												<td>
+													<div class="form-group">
+														<label class="col-sm-10 control-label">{{ entry_admin_notification }}</label>
+														<div class="col-sm-2">
+															<input type="checkbox" name="shipping_ukrposhta[settings_tracking_statuses][{{ loop.index0 }}][admin_notification]"{{ settings.admin_notification ? ' checked' }}>
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-10 control-label">{{ entry_customer_notification }}</label>
+														<div class="col-sm-2">
+															<input type="checkbox" name="shipping_ukrposhta[settings_tracking_statuses][{{ loop.index0 }}][customer_notification]"{{ settings.customer_notification ? ' checked' }}>
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-10 control-label">{{ entry_customer_notification_default }}</label>
+														<div class="col-sm-2">
+															<input type="checkbox" name="shipping_ukrposhta[settings_tracking_statuses][{{ loop.index0 }}][customer_notification_default]"{{ settings.customer_notification_default ? ' checked' }}>
+														</div>
+													</div>
+												</td>
+												<td>
+													<div class="form-group">
+														<label class="col-sm-2 control-label">{{ entry_email }}</label>
+														<div class="col-sm-10">
+															<ul class="nav nav-tabs" role="tablist">
+                                                            {% for language in languages %}
+																<li{{ language_id == language.language_id ? ' class="active"' }}><a href="#tracking_statuses_email_{{ loop.parent.loop.index0 ~ '_' ~ language.language_id }}" aria-controls="tracking_statuses_email_{{ loop.parent.loop.index0 ~ '_' ~ language.language_id }}" role="tab" data-toggle="tab"><img src="{{ language_flag[language.language_id] }}" title="{{ language.name }}" /> {{ language.name }}</a></li>
+                                                            {% endfor %}
+															</ul>
+															<div class="tab-content">
+                                                            {% for language in languages %}
+																<div role="tabpanel" class="tab-pane{{ language_id == language.language_id ? ' active' }}" id="tracking_statuses_email_{{ loop.parent.loop.index0 ~ '_' ~ language.language_id }}">
+																	<textarea name="shipping_ukrposhta[settings_tracking_statuses][{{ loop.parent.loop.index0 }}][email][{{ language.language_id }}]" placeholder="{{ entry_email }}"class="form-control summernote">{{ ukrposhta['settings_tracking_statuses'][i]['email'][language.language_id] }}</textarea>
+																</div>
+                                                            {% endfor %}
+															</div>
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-2 control-label">{{ entry_sms }}</label>
+														<div class="col-sm-10">
+															<ul class="nav nav-tabs" role="tablist">
+                                                            {% for language in languages %}
+																<li{{ language_id == language.language_id ? ' class="active"' }}><a href="#tracking_statuses_sms_{{ loop.parent.loop.index0 ~ '_' ~ language.language_id }}" aria-controls="tracking_statuses_sms_{{ loop.parent.loop.index0 ~ '_' ~ language.language_id }}" role="tab" data-toggle="tab"><img src="{{ language_flag[language.language_id] }}" title="{{ language.name }}" /> {{ language.name }}</a></li>
+                                                            {% endfor %}
+															</ul>
+															<div class="tab-content">
+															{% for language in languages %}
+																<div role="tabpanel" class="tab-pane{{ language_id == language.language_id ? ' active' }}" id="tracking_statuses_sms_{{ loop.parent.loop.index0 ~ '_' ~ language.language_id }}">
+																	<textarea name="shipping_ukrposhta[settings_tracking_statuses][{{ loop.parent.loop.index0 }}][sms][{{ language.language_id }}]" placeholder="{{ entry_sms }}"class="form-control">{{ ukrposhta['settings_tracking_statuses'][i]['sms'][language.language_id] }}</textarea>
+																</div>
+                                                            {% endfor %}
+														    </div>
+													    </div>
+													</div>
+												</td>
+												<td class="text-center"><button type="button" onclick="$(this).parents('tr').remove()" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>
+											</tr>
+                                        {% endfor %}
+										</tbody>
+					              		<tfoot>
+					              			<tr>
+					              				<td colspan="5"></td>
+					              				<td class="text-center"><button type="button" onclick="addTrackingStatus();" data-toggle="modal" class="btn btn-primary"><i class="fa fa-plus-circle"></i></button></td>
+					              			</tr>
+					              		</tfoot>
+					            	</table>
+					          	</div>
+				          	</div>
+          				</div>
+                    {%  endif %}
+          				<div class="tab-pane fade{{ not license ? ' in active' }}" id="tab-support">
+          					{{ support }}			
+          				</div>
+          			</div>
+          			
+          			<!-- START Modal of Verifying access to the API -->
+					<div class="modal fade" id="modal-verifying_api_access" tabindex="-1" role="dialog" aria-labelledby="modal-verifying_api_access-label">
+						  <div class="modal-dialog" role="document">
+						    <div class="modal-content">
+						      	<div class="modal-header">
+						        	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						        	<h4 class="modal-title" id="modal-verifying_api_access-label">{{ heading_verifying_api_access }}</h4>
+						      	</div>
+							    <div class="modal-body">
+				          			<div class="well" id="verifying_api_access-log"></div>
+				          			<p class="text-center"><i class="fa fa-cog fa-spin fa-3x text-primary" id="verifying_api_access-icon"></i></p>
+							    </div>
+							    <div class="modal-footer">
+									<button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-check"></i></button>
+							    </div>
+						    </div>
+						</div>
+					</div>         
+				    <!-- END Modal of Verifying access to the API -->
+
+					<!-- START Modal of custom total -->
+					<div class="modal fade" id="modal-custom-method" tabindex="-1" role="dialog" aria-labelledby="modal-custom-method-label">
+						<div class="modal-dialog" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+									<h4 class="modal-title" id="modal-custom-method-label">{{ heading_adding_custom_method }}</h4>
+								</div>
+								<div class="modal-body">
+									<input type="hidden" name="custom_method_type" value="" id="input-custom-method-type" />
+									<div class="form-group">
+										<label class="col-sm-2 control-label" for="input-custom-method-name">{{ entry_name }}</label>
+										<div class="col-sm-10">
+											<input type="text" name="custom_method_name" value="" placeholder="{{ entry_name }}" id="input-custom-method-name" class="form-control" />
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-2 control-label" for="input-custom-method-code">{{ entry_code }}</label>
+										<div class="col-sm-10">
+											<input type="text" name="custom_method_code" value="" placeholder="{{ entry_code }}" id="input-custom-method-code" class="form-control" />
+										</div>
+									</div>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-primary" onclick="addCustomMethod('save');"><i class="fa fa-check"></i></button>
+									<button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i></button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- END Modal of custom total -->
+        		</form>
+				<form action="{{ action_settings }}&type=import" method="post" enctype="multipart/form-data" style="display: none;">
+					<input type="file" name="import" accept="text/plain" id="input-import-settings" onchange="this.form.submit();">
+				</form>
+      		</div>
+    	</div>
+  	</div>
+</div>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
+<script type="text/javascript"><!--
+	function save(type) {
+		var post_data = $('#form-ukrposhta').serialize() + '&store_id=' + $('#input-store_id').val();
+
+		if (type === 'exit') {
+			post_data += '&exit'
+		}
+
+		$.ajax( {
+			url: 'index.php?route=extension/shipping/ukrposhta&user_token={{ user_token }}',
+			type: 'POST',
+			data: post_data,
+			dataType: 'html',
+			success: function (data, textStatus, jqXHR) {
+				var $data = $(data);
+
+				if ($data.find('div.alert-danger').length) {
+					$('.container-fluid:eq(1)').prepend($data.find('div.alert-danger'));
+				} else {
+					if (type === 'exit') {
+						location.href = 'index.php?route=marketplace/extension&user_token={{ user_token }}&type=shipping';
+					}
+				}
+
+				if ($data.find('div.text-danger').length) {
+					$data.find('div.text-danger').each(function(i, el) {
+						var id = '#' + $(el).parents('div[class^="col-sm"]:first').find('input, select, textarea, radio').attr('id');
+
+						$(id).parents('div[class^="col-sm"]:first').append(el);
+						$(id).parents('div.form-group').addClass('has-error');
+					} );
+				}
+
+				if ($data.find('div.alert-success').length) {
+					$('.container-fluid:eq(1)').prepend($data.find('div.alert-success'));
+				}
+			}
+		} );
+	}
+
+	function settings(type) {
+		if (!confirm('{{ text_confirm }}')) {
+			return false;
+		}
+
+		if (type == 'basic') {
+			$.ajax( {
+				url: 'index.php?route=extension/shipping/ukrposhta/extensionSettings&user_token={{ user_token }}&type=' + type,
+				type: 'GET',
+				dataType: 'json',
+				success: function (json) {
+					if (json['success']) {
+						$('.container-fluid:eq(1)').prepend('<div class="alert alert-success"><i class="fa fa-check-circle"></i> ' + json['success'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+
+						setTimeout(function() { location.reload(); }, 2000);
+					}
+
+					if(json['error']) {
+						$('.container-fluid:eq(1)').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+					}
+
+					$('html, body').animate({ scrollTop: 0 }, 'slow');
+				}
+			} );
+		} else if (type == 'export') {
+			location.href = 'index.php?route=extension/shipping/ukrposhta/extensionSettings&user_token={{ user_token }}&type=' + type;
+		} else if (type == 'import') {
+			$('#input-import-settings').trigger('click');
+		}
+	}
+
+	function formHandler(element) {
+		switch (element.id) {
+			case 'input-ecom_bearer':
+            case 'input-tracking_bearer':
+            case 'input-user_token':
+				var
+					ecom_bearer = $('#input-ecom_bearer').val(),
+                    tracking_bearer = $('#input-tracking_bearer').val(),
+                    user_token = $('#input-user_token').val();
+
+				if (!ecom_bearer || !tracking_bearer || !user_token) {
+				    break;
+                }
+
+				$('#modal-verifying_api_access').modal('show');
+
+				$('#verifying_api_access-icon').addClass('fa-spin');
+				$('#verifying_api_access-log').empty().append('<p>{{ text_verification_ecom_bearer }} <i class="fa fa-circle-o-notch fa-spin"></i></p>');
+
+				function action(act) {
+					$.ajax( {
+						url: 'index.php?route=extension/shipping/ukrposhta/verifyingAPIaccess&user_token={{ user_token }}',
+						type: 'POST',
+						data: 'action=' + act + '&ecom_bearer=' + ecom_bearer + '&tracking_bearer=' + tracking_bearer + '&user_token=' + user_token,
+						dataType: 'json',
+						beforeSend: function () {
+						},
+						complete: function () {
+						},
+						success: function(json) {
+							if (json['error']) {
+								$('#verifying_api_access-log').find('i:last').replaceWith('<i class="fa fa-exclamation-circle text-danger"></i>');
+								$('#verifying_api_access-icon').removeClass('fa-spin');
+
+								for(var e in json['error']) {
+									$('#verifying_api_access-log').append('<p class="text-danger">' + json['error'][e] + '</p>');
+								}
+							}
+
+							if (json['next_action']) {
+								$('#verifying_api_access-log').find('i').replaceWith('<i class="fa fa-check text-success" aria-hidden="true"></i>');
+								$('#verifying_api_access-log').append('<p>' + json['next_action_text'] + ' <i class="fa fa-circle-o-notch fa-spin"></i></p>');
+
+								if (json['next_action'] == 'saving') {
+									$('#verifying_api_access-icon').removeClass('fa-spin');
+
+									save();
+
+									setTimeout(function() {
+										$('#modal-verifying_api_access').modal('hide');
+										location.reload();
+									}, 3000);
+								} else {
+									action(json['next_action']);
+								}
+							}
+						}
+					} );
+				}
+
+				action('verification_ecom_bearer');
+
+				break;
+
+            case 'input-sender_type':
+                if (element.value == 'COMPANY') {
+                    $('#input-sender_tin').parents('div.form-group').fadeOut();
+					$('#input-sender_edrpou, #input-sender_bank_code, #input-sender_bank_account').parents('div.form-group').fadeIn();
+                } else if (element.value == 'PRIVATE_ENTREPRENEUR') {
+            		$('#input-sender_edrpou').parents('div.form-group').fadeOut();
+            		$('#input-sender_tin, #input-sender_bank_code, #input-sender_bank_account').parents('div.form-group').fadeIn();
+                } else {
+					$('#input-sender_edrpou, #input-sender_bank_code, #input-sender_bank_account').parents('div.form-group').fadeOut();
+					$('#input-sender_tin').parents('div.form-group').fadeIn();
+				}
+
+                break;
+
+            case 'input-sender_name':
+                if (!$('#input-sender_name').val()) {
+                    $('#input-sender').val('');
+                }
+
+                break;
+
+            case 'input-sender_region':
+            case 'input-sender_city':
+            case 'input-sender_street':
+            case 'input-sender_house':
+            case 'input-sender_flat':
+			case 'input-sender_postcode':
+				$('#input-sender_address').val('');
+
+                break;
+
+			case 'input-standard_w_cost-enabled':
+			case 'input-standard_w_cost-disabled':
+			case 'input-standard_d_cost-enabled':
+			case 'input-standard_d_cost-disabled':
+			case 'input-express_w_cost-enabled':
+			case 'input-express_w_cost-disabled':
+			case 'input-express_d_cost-enabled':
+			case 'input-express_d_cost-disabled':
+			case 'input-calculate_volume-enabled':
+			case 'input-calculate_volume-disabled':
+				if (+element.value) {
+					$(element).parent().parent().nextAll().fadeIn();
+				} else {
+					$(element).parent().parent().nextAll().fadeOut();
+				}
+
+				break;
+		}
+	}
+
+	function update(type) {
+		$.ajax( {
+			url: 'index.php?route=extension/shipping/ukrposhta/update&type=' + type + '&user_token={{ user_token }}',
+			dataType: 'json',
+			beforeSend: function () {
+				$('#button-update_' + type + ' > i').addClass('fa-spin');
+			},
+			complete: function () {
+				var $alerts = $('.alert-danger, .alert-success');
+
+				setTimeout(function() { $alerts.fadeOut(); }, 5000);
+
+				$('#button-update_' + type + ' > i').removeClass('fa-spin');
+			},
+			success: function (json) {
+				if(json['success']) {
+					var diff = json['amount'] - $('#td-' + type + '_amount').text();
+
+					$('.container-fluid:eq(1)').prepend('<div class="alert alert-success"><i class="fa fa-check-circle"></i> ' + json['success'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+
+					if (diff > 0) {
+						$('#td-' + type + '_amount').append(' <strong><font color="green">+' + diff + '</font></strong>');
+					} else if (diff < 0) {
+						$('#td-' + type + '_amount').append(' <strong><font color="red">' + diff + '</font></strong>');
+					}
+				}
+
+				if(json['error']) {
+					$('.container-fluid:eq(1)').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+				}
+
+				$('html, body').animate({ scrollTop: 0 }, 'slow');
+			}
+		} );
+	}
+
+	function addCustomMethod(type) {
+		if (type != 'save') {
+			$('#input-custom-method-type').val(type);
+			$('#modal-custom-method').modal('show');
+		} else {
+			var
+				method_type = $('#input-custom-method-type').val(),
+				method_name = $('#input-custom-method-name').val(),
+				method_code = $('#input-custom-method-code').val();
+
+			$('label[for=input-' + method_type + '] + div').find('br').before('<div class="checkbox"><label><input type="hidden" name="shipping_ukrposhta[' + method_type + '][' + method_code + '][code]" value="' + method_code + '" /><input type="hidden" name="shipping_ukrposhta[' + method_type + '][' + method_code + '][name]" value="' + method_name + '" /><input type="checkbox" name="shipping_ukrposhta[' + method_type + '][]" value="' + method_code + '" /> ' + method_name + ' <button type="button" class="btn btn-danger btn-xs" onclick="$(this).parents(\'div.checkbox\').remove();"><i class="fa fa-minus-circle" aria-hidden="true"></i></button></label></div>');
+		}
+	}
+
+	function addTariff(tariff_name) {
+		var
+			count = $('#table-tariffs-' + tariff_name + ' tbody tr').length + 1,
+			row = '<tr>';
+
+		row += '<td><input type="text" name="shipping_ukrposhta[tariffs][' + tariff_name + '][' + count + '][weight]" value="" class="form-control" /></td>';
+		row += '<td><input type="text" name="shipping_ukrposhta[tariffs][' + tariff_name + '][' + count + '][longest_side]" value="" class="form-control" /></td>';
+		row += '<td><input type="text" name="shipping_ukrposhta[tariffs][' + tariff_name + '][' + count + '][region]" value="" class="form-control" /></td>';
+		row += '<td><input type="text" name="shipping_ukrposhta[tariffs][' + tariff_name + '][' + count + '][Ukraine]" value="" class="form-control" /></td>';
+		row += '<td><input type="text" name="shipping_ukrposhta[tariffs][' + tariff_name + '][' + count + '][overpay_doors_pickup]" value="" class="form-control" /></td>';
+		row += '<td><input type="text" name="shipping_ukrposhta[tariffs][' + tariff_name + '][' + count + '][overpay_doors_delivery]" value="" class="form-control" /></td>';
+		row += '<td class="text-center"><button type="button" onclick="$(this).parents(\'tr\').remove();" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>';
+		row += '</tr>';
+
+		$('#table-tariffs-' + tariff_name + ' tbody').append(row);
+	}
+
+    function addTrackingStatus() {
+        var
+            count = $('#table-tracking_statuses tbody tr').length,
+            row = '<tr>';
+
+        row += '<td><select name="shipping_ukrposhta[settings_tracking_statuses][' + count + '][ukrposhta_status]" class="form-control">{% for shipment_status in shipment_statuses %}<option value="{{ shipment_status.event }}">{{ shipment_status.eventName }}</option>{% endfor %}</select></td>';
+        row += '<td><select name="shipping_ukrposhta[settings_tracking_statuses][' + count + '][store_status]" class="form-control">{% for order_status in order_statuses %}<option value="{{ order_status.order_status_id }}">{{ order_status.name }}</option>{% endfor %}</select></td>';
+        row += '<td><div class="input-group"><span class="input-group-btn" style="width: 50%;"><select name="shipping_ukrposhta[settings_tracking_statuses][' + count + '][implementation_delay][type]" class="form-control">{% for k, v in time %}<option value="{{ k }}">{{ v }}</option>{% endfor %}</select></span><input type="text" name="shipping_ukrposhta[settings_tracking_statuses][' + count + '][implementation_delay][value]" value="" class="form-control" /></div></td>';
+        row += '<td><div class="form-group"><label class="col-sm-10 control-label">{{ entry_admin_notification }}</label><div class="col-sm-2"><input type="checkbox" name="shipping_ukrposhta[settings_tracking_statuses][' + count + '][admin_notification]"></div></div><div class="form-group"><label class="col-sm-10 control-label">{{ entry_customer_notification }}</label><div class="col-sm-2"><input type="checkbox" name="shipping_ukrposhta[settings_tracking_statuses][' + count + '][customer_notification]"></div></div><div class="form-group"><label class="col-sm-10 control-label">{{ entry_customer_notification_default }}</label> <div class="col-sm-2"><input type="checkbox" name="shipping_ukrposhta[settings_tracking_statuses][' + count + '][customer_notification_default]"></div></div></td>';
+        row += '<td><div class="form-group"><label class="col-sm-2 control-label">{{ entry_email }}</label><div class="col-sm-10"><ul class="nav nav-tabs" role="tablist">{% for language in languages %}<li{{ language_id == language.language_id ? ' class="active"' }}><a href="#tracking_statuses_email_' + count + '_{{ language.language_id }}" aria-controls="tracking_statuses_email_' + count + '_{{ language.language_id }}" role="tab" data-toggle="tab"><img src="{{ language_flag[language.language_id] }}" title="{{ language.name }}" /> {{ language.name }}</a></li>{% endfor %} </ul><div class="tab-content">{% for language in languages %}<div role="tabpanel" class="tab-pane{{ language_id == language.language_id ? ' active' }}" id="tracking_statuses_email_' + count + '_{{ language.language_id }}"><textarea name="shipping_ukrposhta[settings_tracking_statuses][' + count + '][email][{{ language.language_id }}]" placeholder="{{ entry_email }}" class="form-control summernote"></textarea></div>{% endfor %}</div></div></div><div class="form-group"><label class="col-sm-2 control-label">{{ entry_sms }}</label><div class="col-sm-10"><ul class="nav nav-tabs" role="tablist">{% for language in languages %}<li{{ language_id == language.language_id ? ' class="active"' }}><a href="#tracking_statuses_sms_' + count + '_{{ language.language_id }}" aria-controls="tracking_statuses_sms_' + count + '_{{ language.language_id }}" role="tab" data-toggle="tab"><img src="{{ language_flag[language.language_id] }}" title="{{ language.name }}" /> {{ language.name }}</a></li>{% endfor %} </ul><div class="tab-content">{% for language in languages %}<div role="tabpanel" class="tab-pane{{ language_id == language.language_id ? ' active' }}" id="tracking_statuses_sms_' + count + '_{{ language.language_id }}"><textarea name="shipping_ukrposhta[settings_tracking_statuses][' + count + '][sms][{{ language.language_id }}]" placeholder="{{ entry_sms }}"class="form-control"></textarea></div>{% endfor %}</div></div></div></td>';
+        row += '<td class="text-center"><button type="button" onclick="$(this).parents(\'tr\').remove();" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>';
+        row += '</tr>';
+
+        $('#table-tracking_statuses tbody').append(row);
+
+        $('#table-tracking_statuses tbody tr:last textarea.summernote').summernote();
+
+    }
+
+	function generateKey() {
+		$.ajax( {
+			url: 'index.php?route=extension/shipping/ukrposhta/generateKey&user_token={{ user_token }}',
+			dataType: 'json',
+			beforeSend: function () {
+				$('#button-generate-cron-key > i').addClass('fa-spin');
+			},
+			complete: function () {
+				$('#button-generate-cron-key > i').removeClass('fa-spin');
+			},
+			success: function (json) {
+				if (json['code']) {
+					$('#input-key_cron').val(json['code'])
+				}
+			}
+		} );
+	}
+
+	function copyToClipboard(container_id) {
+		window.getSelection().removeAllRanges();
+
+		if (document.selection) {
+			var
+				range = document.body.createTextRange(),
+				el = document.getElementById(container_id);
+
+			range.moveToElementText(el);
+			range.select().createTextRange();
+			document.execCommand('Copy');
+		} else if (window.getSelection) {
+			var
+				range = document.createRange(),
+				el = document.getElementById(container_id);
+
+			range.selectNode(el);
+			window.getSelection().addRange(range);
+			document.execCommand('Copy');
+		}
+	}
+
+	$(function() {
+		$('.summernote').summernote();
+
+		$.ajaxSetup( {
+			beforeSend: function () {
+				$('body').fadeTo('fast', 0.7).prepend('<div id="ocmax-loader" style="position: fixed; top: 50%;	left: 50%; z-index: 9999;"><i class="fa fa-spinner fa-spin fa-3x fa-fw"></i></div>');
+			},
+			complete: function () {
+				var $alerts = $('.alert-danger, .alert-success');
+
+				setTimeout(function() { $alerts.fadeOut(); }, 5000);
+
+				$('body').fadeTo('fast', 1);
+				$('#ocmax-loader').remove();
+			},
+			error: function (jqXHR, textStatus, errorThrown) {
+				console.log(textStatus);
+			}
+		} );
+
+
+		$('input[id^="input-standard_w_cost"]:checked, input[id^="input-standard_d_cost"]:checked, input[id^="input-express_w_cost"]:checked, input[id^="input-express_d_cost"]:checked, #input-sender_type, input[id^="input-calculate_volume"]:checked').each(function() {
+			formHandler(this);
+		} );
+
+		$('input, select, textarea').on('change', function(e) {
+			formHandler(e.currentTarget);
+		} );
+
+		$('#button-sender_save').on('click', function(e) {
+			var $button = $(e.currentTarget),
+				post_data = 'action=saveSender';
+
+			post_data += '&sender='      + encodeURIComponent($('#input-sender').val());
+			post_data += '&sender_name=' + encodeURIComponent($('#input-sender_name').val());
+			post_data += '&sender_type=' + encodeURIComponent($('#input-sender_type').val());
+
+			if ($('#input-sender_tin').is(':visible')) {
+				post_data += '&sender_tin=' + encodeURIComponent($('#input-sender_tin').val());
+			}
+
+			if ($('#input-sender_edrpou').is(':visible')) {
+				post_data += '&sender_edrpou=' + encodeURIComponent($('#input-sender_edrpou').val());
+			}
+
+			if ($('#input-sender_bank_code').is(':visible')) {
+				post_data += '&sender_bank_code=' + encodeURIComponent($('#input-sender_bank_code').val());
+			}
+
+			if ($('#input-sender_bank_account').is(':visible')) {
+				post_data += '&sender_bank_account=' + encodeURIComponent($('#input-sender_bank_account').val());
+			}
+
+			post_data += '&sender_email='        + encodeURIComponent($('#input-sender_email').val());
+			post_data += '&sender_phone='        + encodeURIComponent($('#input-sender_phone').val());
+			post_data += '&sender_region='       + encodeURIComponent($('#input-sender_region').val());
+			post_data += '&sender_city='         + encodeURIComponent($('#input-sender_city').val());
+			post_data += '&sender_street='       + encodeURIComponent($('#input-sender_street').val());
+			post_data += '&sender_house='        + encodeURIComponent($('#input-sender_house').val());
+			post_data += '&sender_flat='         + encodeURIComponent($('#input-sender_flat').val());
+			post_data += '&sender_postcode='     + encodeURIComponent($('#input-sender_postcode').val());
+			post_data += '&sender_address='      + encodeURIComponent($('#input-sender_address').val());
+
+			$.ajax( {
+				url: 'index.php?route=extension/shipping/ukrposhta/ukrposhtaData&user_token={{ user_token }}',
+				type: 'POST',
+				data:  post_data,
+				dataType: 'json',
+				beforeSend: function() {
+					$button.find('i').removeClass().addClass('fa fa-circle-o-notch fa-spin');
+				},
+				complete: function() {
+					var $alerts = $('.alert-danger, .alert-success'),
+						$errors = $('.has-error'),
+						$errors_text = $('.help-block');
+
+					setTimeout(function() {
+						$alerts.fadeOut();
+						$errors.removeClass('has-error');
+						$errors_text.remove();
+					}, 5000);
+
+					$button.find('i').removeClass().addClass('fa fa-floppy-o');
+				},
+				success: function (json) {
+					if (json['success']) {
+						$('.container-fluid:eq(1)').prepend('<div class="alert alert-success"><i class="fa fa-check-circle"></i> ' + json['success'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+
+						$('#input-sender').val(json['sender']);
+						$('#input-sender_address').val(json['sender_address']);
+
+						setTimeout(function() { save(); }, 2000);
+					} else {
+						if (json['errors'] instanceof Array || json['errors'] instanceof Object) {
+							for (var field in json['errors']) {
+								$('div.form-group').has('label[for="input-' + field + '"]').removeClass('has-success').addClass('has-error');
+								$('#span-' + field).remove('.help-block');
+								$('div.form-group > div[class^="col-sm"]').has('#input-' + field).append('<span id="span-' + field + '" class="help-block">' + json['errors'][field] + '</span>');
+							}
+						}
+
+						if (json['error'] instanceof Array || json['error'] instanceof Object) {
+							for(var e in json['error']) {
+								$('.container-fluid:eq(1)').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error'][e] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+							}
+						} else if (json['error']) {
+							$('.container-fluid:eq(1)').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+						}
+					}
+				}
+			} );
+		} );
+
+		$('#button-sender_search').on('click', function(e) {
+			var $button = $(e.currentTarget);
+
+			$.ajax( {
+				url: 'index.php?route=extension/shipping/ukrposhta/ukrposhtaData&user_token={{ user_token }}',
+				type: 'POST',
+				data: 'action=getClientByPhone&filter=' + encodeURIComponent($('#input-sender_phone').val()),
+				dataType: 'json',
+				beforeSend: function() {
+					$button.find('i').removeClass().addClass('fa fa-circle-o-notch fa-spin');
+				},
+				complete: function() {
+					var $alerts = $('.alert-danger, .alert-success');
+
+					setTimeout(function() { $alerts.fadeOut(); }, 5000);
+
+					$button.find('i').removeClass().addClass('fa fa-search');
+				},
+				success: function (json) {
+					if (json['success']) {
+						$('.container-fluid:eq(1)').prepend('<div class="alert alert-success"><i class="fa fa-check-circle"></i> ' + json['success'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+
+						$('#input-sender_type').val(json['type']).trigger('change');
+						$('#input-sender').val(json['uuid']);
+						$('#input-sender_name').val(json['name']);
+						$('#input-sender_tin').val(json['tin']);
+						$('#input-sender_edrpou').val(json['edrpou']);
+						$('#input-sender_bank_code').val(json['bankCode']);
+						$('#input-sender_bank_account').val(json['bankAccount']);
+						$('#input-sender_email').val(json['email']);
+						$('#input-sender_address').val(json['addressId']);
+						$('#input-sender_region').val(json['zone_id']);
+						$('#input-sender_city').val(json['city']);
+						$('#input-sender_street').val(json['street']);
+						$('#input-sender_house').val(json['houseNumber']);
+						$('#input-sender_flat').val(json['apartmentNumber']);
+						$('#input-sender_postcode').val(json['postcode']);
+					} else {
+						if (json['error']) {
+							$('.container-fluid:eq(1)').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+						}
+						if (json['warning']) {
+							$('.container-fluid:eq(1)').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['warning'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+						}
+					}
+				}
+			} );
+		} );
+	} );
+//--></script>
+{{ footer }}

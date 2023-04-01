@@ -1,0 +1,59 @@
+{{ header }}
+<div class="container">
+	{{ oct_breadcrumbs }}
+	<div class="row">
+		<div class="col-12">
+			<h1 class="us-main-shop-title">{{ heading_title }}</h1>
+		</div>
+	</div>
+	<div class="content-top-box">{{ content_top }}</div>
+	<div class="row us-blog-category-row">
+		{{ column_left }}
+		{% if column_left and column_right %}
+		{% set class = 'col-md-6' %}
+		{% elseif column_left or column_right %}
+		{% set class = 'col-md-9' %}
+		{% else %}
+		{% set class = 'col-md-12' %}
+		{% endif %}
+		<div class="{{ class }} us-blog-category-content">
+			<div class="us-blog-category-cont d-flex flex-wrap justify-content-between">
+				{% if articles %}
+					{% for article in articles %}
+					<div class="us-news-block d-flex flex-column">
+						<div class="us-news-block-photo">
+							<div class="us-news-stickers-date">
+								{{ article.date_added }}
+							</div>
+							<a href="{{ article.href }}" title="{{ article.name }}" class="h-100 w-100"><img src="{{ article.thumb }}" class="w-100" alt="{{ article.name }}" width="{{ article.width }}" height="{{ article.height }}" /></a>
+						</div>
+						<div class="us-news-block-cont d-flex flex-column justify-content-start h-100">
+							<a href="{{ article.href }}" class="us-news-block-title">
+								{{ article.name }}
+							</a>
+							<div class="us-news-block-text">
+								<p>
+									{{ article.description }}
+								</p>
+							</div>
+						</div>
+					</div>
+					{% endfor %}
+				{% else %}
+				<div class="us-content w-100">
+					<p>{{ text_empty }}</p>
+					<a href="{{ continue }}" class="us-module-btn mt-3 d-inline-block">{{ button_continue }}</a>
+				</div>
+				{% endif %}
+			</div>
+			{% if pagination|striptags %}
+			<div class="us-pagination-cont">
+				{{ pagination }}
+			</div>
+			{% endif %}
+		</div>
+		{{ column_right }}
+	</div>
+	{{ content_bottom }}
+</div>
+{{ footer }}

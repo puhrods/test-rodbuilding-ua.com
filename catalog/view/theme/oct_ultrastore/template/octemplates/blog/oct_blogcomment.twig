@@ -1,0 +1,41 @@
+{% if comments %}
+{% for comment in comments %}
+<div class="us-review-item">
+	<div class="row">
+		<div class="col-md-3">
+			<div class="us-review-info">
+				<div class="us-review-icon">
+					<img src="catalog/view/theme/oct_ultrastore/img/sprite.svg#include--user-icon" alt="user-icon" width="50" height="50" />
+				</div>
+				<div class="us-review-name">
+					{{ comment.author }}
+				</div>
+				<div class="us-review-date">
+					{{ comment.date_added }}
+				</div>
+			</div>
+		</div>
+		<div class="col-md-9">
+			<div class="us-review-block d-flex flex-column">
+				<div class="us-review-text">
+					<div class="us-review-text-main">
+						{{ comment.text }}
+					</div>
+				</div>
+				{% if comment.admin_text %}
+				<div class="us-admin-answer">
+					<div class="us-admin-answer-title us-admin-answer-blog">{{ text_admin_title }}</div>
+					<div class="us-review-text-main">
+						{{ comment.admin_text }}
+					</div>
+				</div>
+				{% endif %}
+			</div>
+		</div>
+	</div>
+</div>
+{% endfor %}
+{{ pagination }}
+{% else  %}
+<p class="blog-no-comments">{{ entry_empty_comments }}</p>
+{% endif %}

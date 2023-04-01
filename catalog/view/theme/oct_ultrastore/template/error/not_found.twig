@@ -1,0 +1,31 @@
+{{ header }}
+<div id="error-not-found" class="container flex-container">
+	<nav aria-label="breadcrumb">
+	  <ul class="breadcrumb us-breadcrumb">
+	    {% for breadcrumb in breadcrumbs %}
+	    <li class="breadcrumb-item us-breadcrumb-item"><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+	    {% endfor %}
+	  </ul>
+	</nav>
+	<div class="row">
+		<div class="col-lg-12">
+			<h1 class="us-main-shop-title">{{ heading_title }}</h1>
+		</div>
+	</div>
+	<div class="content-top-box">{{ content_top }}</div>
+		<div class="row">
+	    <div id="content" class="col-12">
+		    <div class="us-content us-content-inform">
+		    	{% if (oct_404_image is defined and oct_404_image is not empty) %} 
+		        <div class="text-center oct-404-image"><img class="img-fluid" src="{{ oct_404_image }}" /></div>
+				{% endif %}
+				<div>{{ text_error }}</div>
+				<div class="buttons">
+			        <a href="{{ continue }}" class="us-module-btn mt-3 d-inline-block">{{ button_continue }}</a>
+			    </div>
+		    </div>
+	    </div>
+    </div>
+	{{ content_bottom }}
+</div>
+{{ footer }}

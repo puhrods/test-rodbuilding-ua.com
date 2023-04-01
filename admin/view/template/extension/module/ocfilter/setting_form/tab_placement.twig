@@ -1,0 +1,167 @@
+<div class="alert alert-info" role="alert">{{ text_placement }}</div>
+<div class="row" id="placement-content">
+  <div class="col-sm-3">
+    <div class="jumbotron" style="padding: 15px;">
+      <ul class="nav nav-pills nav-stacked">
+        <li role="presentation"><a href="#" onclick="addModulePlace(); return false;"><i class="fa fa-plus-circle"></i> {{ button_add_placement }}</a></li>
+        {% set placement_row = 0 %}
+        {% for place in placement_layout %}
+        <li role="presentation"><a href="#tab-place-{{ placement_row }}" role="tab" data-toggle="tab"><span class="pull-right" data-toggle="tooltip" data-placement="top" title="{{ button_remove_placement }}" onclick="removeModulePlace('{{ placement_row }}');"><i class="fa fa-lg fa-times-circle"></i></span> {{ place.layout_name }}</a></li>
+        {% set placement_row = placement_row + 1 %}
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="col-sm-9">
+    <div class="tab-content">
+      {% set placement_row = 0 %}
+      {% for place in placement_layout %}
+      <div role="tabpanel" class="tab-pane" id="tab-place-{{ placement_row }}">
+        <div class="form-group">
+          <label class="col-sm-3 control-label">{{ entry_placement_layout }}</label>
+          <div class="col-sm-5">
+            <select name="placement_layout[{{ placement_row }}][layout_id]" class="form-control" data-row="{{ placement_row }}">
+              <option value="">{{ text_select }}</option>
+              {% for layout in layouts %}
+              {% if layout.layout_id == place.layout_id %}
+              <option value="{{ layout.layout_id }}" selected="selected">{{ layout.name }}</option>
+              {% else %}
+              <option value="{{ layout.layout_id }}" {{ layout.disabled ? 'disabled="disabled"' : '' }}>{{ layout.name }}</option>
+              {% endif %}
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-3 control-label">{{ entry_placement_filter }}</label>
+          <div class="col-sm-9">
+            <div class="input-group">
+              <input type="text" name="autocomplete_filter[{{ placement_row }}]" value="" placeholder="{{ placeholder_autocomplete }}" class="form-control" />
+              <div class="input-group-addon"><i class="fa fa-bars"></i></div>
+            </div>            
+            <div class="well well-sm" id="placement-filter-{{ placement_row }}" style="height: 150px; overflow: auto;">
+              {% for filter in place.filters %}
+              <div id="placemenet-filter-{{ placement_row }}-{{ filter.filter_id }}-{{ filter.source }}">
+                <i class="fa fa-fw fa-minus-circle" onclick="$(this).parent().remove();"></i> {{ filter.name }}
+                <input type="hidden" name="placement_layout[{{ placement_row }}][filters][]" value="{{ filter.filter_key }}" />
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+      {% set placement_row = placement_row + 1 %}
+      {% endfor %}
+    </div>
+  </div>
+</div>
+<script id="template-placement-row" type="text/x-handlebars-template">
+<div role="tabpanel" class="tab-pane" id="tab-place-{row}">
+  <div class="form-group">
+    <label class="col-sm-3 control-label">{{ entry_placement_layout }}</label>
+    <div class="col-sm-5">
+      <select name="placement_layout[{row}][layout_id]" class="form-control" data-row="{row}">
+        <option value="">{{ text_select }}</option>
+        {% for layout in layouts %}
+        <option value="{{ layout.layout_id }}" {{ layout.disabled ? 'disabled="disabled"' : '' }}>{{ layout.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="col-sm-3 control-label">{{ entry_placement_filter }}</label>
+    <div class="col-sm-9">
+      <div class="input-group">
+        <input type="text" name="autocomplete_filter[{row}]" value="" placeholder="{{ placeholder_autocomplete }}" class="form-control" data-placement-row="{row}" />
+        <div class="input-group-addon"><i class="fa fa-bars"></i></div>
+      </div>       
+      <div class="well well-sm" id="placement-filter-{row}" style="height: 150px; overflow: auto;"></div>
+    </div>
+  </div>
+</div>
+</script>
+<script>
+var
+
+ocfDOMReady = function(fn) {
+  if (document.readyState != 'loading') {
+    fn();
+  } else {
+    document.addEventListener('DOMContentLoaded', fn);
+  }
+},
+
+placement_row = {{ placement_row }},
+
+addModulePlace = function() {
+  $('#placement-content .tab-content').prepend($('#template-placement-row').html().replace(/\{row\}/g, placement_row));
+
+  $('#placement-content .nav.nav-pills').find('> li:eq(0)').after('<li role="presentation"><a href="#tab-place-' + placement_row + '" role="tab" data-toggle="tab"><span class="pull-right" data-toggle="tooltip" data-placement="top" title="{{ button_remove_placement }}" onclick="removeModulePlace(\'' + placement_row + '\');"><i class="fa fa-lg fa-times-circle"></i></span> {{ text_new_placement }}</a></li>');
+  $('#placement-content .nav.nav-pills').find('> li:eq(1) > a').tab('show');
+
+  $('a[href="#tab-place-' + placement_row + '"] [data-toggle="tooltip"]').tooltip({ container: 'body', html: true });
+
+  filterAutocomplete(placement_row);
+
+  placement_row++;
+},
+
+removeModulePlace = function(placement_row) {
+  $('#tab-place-' + placement_row + ', a[href="#tab-place-' + placement_row + '"]').remove();
+
+  let $tabs = $('a[href^="#tab-place-"]');
+
+  if ($tabs.length > 0) {
+    $tabs.filter(':first').tab('show');
+  }
+},
+
+filterAutocomplete = function(placement_row) {
+	$('input[name="autocomplete_filter[' + placement_row + ']"]').autocomplete({  
+		'source': function(request, response) {
+      var $this = $(this);
+      
+      $this.parent().find('.input-group-addon').find('i').attr('class', 'fa fa-refresh fa-spin');  
+    
+			$.ajax({
+				url: ocfilter.link('extension/module/ocfilter/filter/autocompleteFilters', 'filter_status=1&filter_name=' +  request),
+				dataType: 'json',
+				success: function(json) {
+					response($.map(json, function(item) {
+						return {
+							category: item.category,
+							label: item.name,
+							value: item.filter_key,
+              filter_id: item.filter_id,
+              source: item.source,
+						}
+					}));
+				}
+			});
+      
+      $this.parent().find('.input-group-addon').find('i').attr('class', 'fa fa-bars');
+		},
+		'select': function(item) {
+			$('input[name="autocomplete_filter[' + placement_row + ']"]').val('');
+
+      $('#placement-filter-' + placement_row).append('<div id="placemenet-filter-' + placement_row + '-' + item['filter_id'] + '-' + item['source'] + '"><i class="fa fa-fw fa-minus-circle" onclick="$(this).parent().remove();"></i> ' + item['label'] + '<input type="hidden" name="placement_layout[' + placement_row + '][filters][]" value="' + item['value'] + '" /></div>');
+		}
+	});
+};
+
+ocfDOMReady(function() {
+  $(function() {
+    $('#placement-content .tab-pane').each(function(index, element) {
+       filterAutocomplete(index);
+    });
+
+    $('#placement-content').on('change', 'select[name$="[layout_id]"]', function() {
+      let $tab = $('a[href="#tab-place-' + $(this).data().row + '"]');
+
+      $tab.html($tab.html().replace($tab.text(), '') + $(this).find('option[value="' + $(this).val() + '"]').text());
+    });
+
+    $('#placement-content .nav.nav-pills').find('> li:eq(1) > a').tab('show');
+  });
+});  
+</script>

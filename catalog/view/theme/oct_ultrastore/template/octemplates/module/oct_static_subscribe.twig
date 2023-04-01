@@ -1,0 +1,63 @@
+<div class="row us-foooter-subscribe-row">
+    <div class="col-md-12 col-lg-6">
+        <div class="us-footer-subscribe-text d-flex align-items-center">
+            <div class="us-footer-subscribe-text-icon">
+                <img src="catalog/view/theme/oct_ultrastore/img/sprite.svg#include--footer-subscribe-icon" alt="" width="76" height="66" />
+            </div>
+            <div class="us-footer-subscribe-text-text">
+                <div>{{ oct_footer_subscribe_promo }}</div>
+                <div>{{ oct_footer_subscribe }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12 col-lg-6">
+        <div class="us-footer-subscribe-form">
+			<form action="javascript:;" id="footer-subscribe">
+				<div class="us-footer-form-top d-flex">
+					<input type="email" id="InputSubscribeEmail" class="us-footer-form-top-input" name="email" placeholder="{{ enter_email_static_subscribe }}">
+					<button type="submit" id="footer-make-subscribe" class="us-footer-form-top-buttton">{{ button_subscribe }}</button>
+				</div>
+				{% if text_terms %}
+				<div class="us-footer-form-bottom">
+					<input type="checkbox" id="footer-scales" class="us-footer-form-bottom-input" name="agree">
+					<label for="footer-scales" class="d-flex-inline align-items-center">
+						{{ text_terms }}
+					</label>
+				</div>
+				{% endif %}
+			</form>
+        </div>
+    </div>
+</div>
+<script>
+$("#InputSubscribeEmail").on("change paste keyup", function() {
+	$(this).removeClass('error_style');
+});
+$('#footer-make-subscribe').on('click', function() {
+	$.ajax({
+		type: 'post',
+		url:  'index.php?route=octemplates/module/oct_subscribe/makeSubscribe',
+		dataType: 'json',
+		cache: false,
+		data: $('#footer-subscribe').serialize(),
+		success: function(json) {
+			if (json['error']) {
+				$('#us-subscribe-modal .text-danger').remove();
+				let errorOption = '';
+
+				$.each(json['error'], function(i, val) {
+					$('#footer-subscribe [name="' + i + '"]').addClass('error_style');
+					errorOption += '<div class="alert-text-item">' + val + '</div>';
+				});
+
+				usNotify('danger', errorOption);
+			} else {
+				if (json['output']) {
+					$('#footer-subscribe [name="email"]').val('');
+					usNotify('success', '<div class="alert-text-item">' + json['output'] + '</div>');
+				}
+			}
+		}
+	});
+});
+</script>

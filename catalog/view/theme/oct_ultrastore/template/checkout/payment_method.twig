@@ -1,0 +1,41 @@
+{% if error_warning %}
+<script>
+usNotify('warning', '{{ error_warning }}');
+</script>
+{% endif %}
+{% if payment_methods %}
+<div class="us-acc-info-text">{{ text_payment_method }}</div>
+<div class="us-form-check-group-acc">
+	{% for payment_method in payment_methods %}
+	<div class="form-check">
+	  	{% if payment_method.code == code or not code %}
+	    {% set code = payment_method.code %}
+	    <input type="radio" id="payment_method{{ payment_method.code }}" name="payment_method" value="{{ payment_method.code }}" checked="checked" class="form-check-input" />
+	    {% else %}
+	    <input type="radio" id="payment_method{{ payment_method.code }}" name="payment_method" value="{{ payment_method.code }}" class="form-check-input" />
+	    {% endif %}
+	    <label for="payment_method{{ payment_method.code }}" class="radio-inline">{{ payment_method.title }}
+	    {% if payment_method.terms %}
+	    ({{ payment_method.terms }})
+	    {% endif %} </label>
+	</div>
+	{% endfor %}
+</div>
+{% endif %}
+<div class="us-acc-info-text"><strong>{{ text_comments }}</strong></div>
+<p>
+  <textarea name="comment" rows="8" class="form-control">{{ comment }}</textarea>
+</p>
+<div class="us-form-checkbox-group">
+	{% if text_agree %}
+	{% if agree %}
+    <input type="checkbox" id="payment_scales" class="us-form-checkbox-input" name="agree" value="1" checked="checked" />
+    {% else %}
+    <input type="checkbox" id="payment_scales" class="us-form-checkbox-input" name="agree" value="1" />
+    {% endif %}
+	<label for="payment_scales" class="d-flex align-items-center mt-3"><span>{{ text_agree }}</span></label>
+	{% endif %} 
+	<div class="buttons my-3">
+	    <input type="button" value="{{ button_continue }}" id="button-payment-method" data-loading-text="{{ text_loading }}" class="us-module-btn us-module-btn-green" />
+	</div>
+</div>

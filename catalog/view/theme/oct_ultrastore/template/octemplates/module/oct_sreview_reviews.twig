@@ -1,0 +1,265 @@
+{{ header }}
+<div id="sreview-reviews" class="container">
+	<nav aria-label="breadcrumb">
+		<ul class="breadcrumb us-breadcrumb">
+		{% for breadcrumb in breadcrumbs %}
+			{% if loop.last %}
+				<li class="breadcrumb-item us-breadcrumb-item">{{ breadcrumb.text }}</li>
+			{% else %}
+				<li class="breadcrumb-item us-breadcrumb-item"><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+			{% endif %}
+		{% endfor %}
+		</ul>
+	</nav>
+	 <script type="application/ld+json">
+	{
+	     "@context": "http://schema.org",
+	     "@type": "BreadcrumbList",
+	     "itemListElement":
+	     [
+	      {% for breadcrumb in breadcrumbs %}
+	      {% if loop.first %}
+	      {% else  %}{
+		       "@type": "ListItem",
+		       "position": {{ loop.index -1 }},
+		       "item":
+		       {
+		        "@id": "{{ breadcrumb.href }}",
+		        "name": "{{ breadcrumb.text }}"
+		        }
+		      }{% if not loop.last %},{% endif %}
+			{% endif %}
+	     {% endfor %}
+	     ]
+	}
+	</script>
+	{{ content_top }}
+	<main>
+		<div class="row">
+			<div class="col-lg-12">
+				<h1 class="us-main-shop-title">{{ heading_title }}</h1>
+			</div>
+		</div>
+		<div class="row">
+		{{ column_left }}
+		{% if column_left and column_right %}
+		{% set class = 'col-sm-6' %}
+		{% elseif column_left or column_right %}
+		{% set class = 'col-sm-9' %}
+		{% else %}
+		{% set class = 'col-sm-12' %}
+		{% endif %}
+		<div id="content" class="{{ class }}">
+			<div class="us-content us-content-reviews">
+				<div class="us-content-reviews-top d-flex justify-content-between">
+					<div class="us-content-reviews-top-left d-flex flex-column align-items-start">
+						<div class="us-content-title">
+							{{ text_store_rating }}
+						</div>
+						<div class="us-rating-block">
+							{{ store_rating }}
+						</div>
+						<div class="us-content-reviews-text">
+							{{ text_about_store_rating }}
+						</div>
+						<div class="btn-group">
+							<button type="button" class="us-module-btn us-module-btn-green" data-toggle="modal" data-target="#us-add-review-modal">{{ button_write_review }}</button>
+							<div class="modal show" id="us-add-review-modal" tabindex="-1" role="dialog" aria-labelledby="us-add-review-modal">
+								<div class="modal-dialog modal-dialog-centered" role="document">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title" id="us-add-review">{{ heading_title }}</h5>
+											<button type="button" class="us-close" data-dismiss="modal" aria-label="Close">
+											<span aria-hidden="true" class="us-modal-close-icon us-modal-close-left"></span>
+											<span aria-hidden="true" class="us-modal-close-icon us-modal-close-right"></span>
+											</button>
+										</div>
+										<div class="modal-body">
+											<form method="post" enctype="multipart/form-data" id="add-review-form">
+												<div class="form-group-20">
+													<input type="text" name="author" value="{{ author }}" class="form-control" id="InputAuthor" placeholder="{{ entry_name }}">
+												</div>
+												<div class="form-group-10">
+													<textarea name="text" class="form-control" id="InputReview" placeholder="{{ entry_review }}"></textarea>
+												</div>
+												<div class="us-modal-comment">{{ text_note }}</div>
+												{% if subjects %}
+												{% for subject in subjects %}
+												<div class="us-review-block d-flex align-items-center justify-content-between mb-2">
+													<label class="control-label mr-2">{{ subject.name }}</label>
+													<div class="us-module-rating-stars d-flex align-items-center" id="block-rev-{{ subject.oct_sreview_subject_id }}">
+														<label class="us-module-rating-star"><input class="d-none" type="radio" name="rating[{{ subject.oct_sreview_subject_id }}]" value="1" /></label>
+														<label class="us-module-rating-star"><input class="d-none" type="radio" name="rating[{{ subject.oct_sreview_subject_id }}]" value="2" /></label>
+														<label class="us-module-rating-star"><input class="d-none" type="radio" name="rating[{{ subject.oct_sreview_subject_id }}]" value="3" /></label>
+														<label class="us-module-rating-star"><input class="d-none" type="radio" name="rating[{{ subject.oct_sreview_subject_id }}]" value="4" /></label>
+														<label class="us-module-rating-star"><input class="d-none" type="radio" name="rating[{{ subject.oct_sreview_subject_id }}]" value="5" /></label>
+													</div>
+												</div>
+												{% endfor %}
+												<div class="form-group-20">
+													{{ captcha }}
+												</div>
+												<script>
+												window.addEventListener('DOMContentLoaded', () => {
+													const ratingForm = document.querySelector('#add-review-form'),
+														  ratingStars = ratingForm.querySelectorAll('.us-module-rating-star');
+
+													const previousSiblings = (elem) => {
+														let siblings = [];
+
+														while (elem = elem.previousElementSibling) {
+															siblings.push(elem);
+														}
+														return siblings;
+													};
+
+													const nextSiblings = (elem) => {
+														let siblings = [];
+
+														while (elem = elem.nextElementSibling) {
+															siblings.push(elem);
+														}
+														return siblings;
+													};
+
+													ratingStars.forEach((item) => {
+														item.addEventListener('click', (e) => {
+															const target = e.currentTarget,
+																	prevAll = previousSiblings(target),
+																	nextAll = nextSiblings(target);
+														
+															nextAll.forEach(el => el.classList.remove('us-module-rating-star-is'));
+															target.classList.add('us-module-rating-star-is');
+															prevAll.forEach(el => el.classList.add('us-module-rating-star-is'));
+															
+														});
+													});
+												});
+												</script>
+												{% endif %}
+												<div class="btn-group mt-2" role="group" aria-label="us-cont-btn">
+													<button type="submit" class="us-module-btn us-module-btn-green">{{ button_send_review }}</button>
+												</div>
+											</form>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<ul class="us-content-reviews-list">
+						{% for store_rating_with_subject in store_rating_with_subjects %}
+						<li class="us-content-reviews-item d-flex align-items-center justify-content-end">
+							<span class="us-content-reviews-item-name">{{ store_rating_with_subject.name }}</span>
+							<span class="us-content-reviews-quantity">({{ store_rating_with_subject.value }})</span>
+							<div class="us-module-rating-stars d-flex align-items-center justify-content-end">
+								{% for i in 1..5 %}
+								{% if store_rating_with_subject.value < i %}
+								<span class="us-module-rating-star"></span>
+								{% else %}
+								<span class="us-module-rating-star us-module-rating-star-is"></span>
+								{% endif %}
+								{% endfor %}
+							</div>
+						</li>
+						{% endfor %}
+					</ul>
+				</div>
+				{% for review in reviews %}
+				<div class="us-review-item">
+					<div class="row">
+						<div class="col-md-3">
+							<div class="us-review-info">
+								<div class="us-review-icon">
+									<img src="catalog/view/theme/oct_ultrastore/img/sprite.svg#include--user-icon" alt="user-icon" width="50" height="50">
+								</div>
+								<div class="us-review-name">
+									{{ review.author }}
+								</div>
+								<div class="us-review-date">
+									{{ review.date_added }}
+								</div>
+								<div class="us-rating-shop">
+									<span>{{ review.avg_rating }}</span>
+									<div class="us-rating-shop-details">
+										{% for rev in review.review_subject_array %}
+										<div class="us-rating-shop-details-item"><b>{{ rev.name }}</b> - {{ rev.rating }}</div>
+										{% endfor %}
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-9">
+							<div class="us-review-block d-flex flex-column">
+								<div class="us-review-text">
+									<div class="us-review-text-main">
+										{{ review.text }}
+									</div>
+								</div>
+								{% if review.admin_text is defined and review.admin_text is not empty %}
+								<div class="us-admin-answer-title">
+									{{ admin_text }}
+								</div>
+								<div class="us-admin-answer">
+									<div class="us-review-text-main">
+										{{ review.admin_text }}
+									</div>
+								</div>
+								{% endif %}
+							</div>
+						</div>
+					</div>
+				</div>
+				{% endfor %}
+				{{ pagination }}
+				{% if description %}
+				<div class="review_description">
+					{{ description }}
+				</div>
+				{% endif %}
+			</div>
+		</div>
+		{{ column_right }}
+	</div>
+	</main>
+	{{ content_bottom }}
+</div>
+<script>
+$("#InputAuthor, #InputReview").on("change paste keyup", function() {
+	$(this).removeClass('error_style');
+});
+
+$('#add-review-form').on('submit', function( event ) {
+	event.preventDefault();
+	$.ajax({
+		type: 'post',
+		url:  'index.php?route=octemplates/module/oct_sreview_reviews/write',
+		dataType: 'json',
+		data: $('#add-review-form').serialize(),
+		cache: false,
+		success: function(json) {
+			if (json['error']) {
+				$('#us-add-review-modal .text-danger').remove();
+				let errorOption = '';
+
+				$.each(json['error'], function(i, val) {
+					$('#us-add-review-modal [name="' + i + '"]').addClass('error_style');
+					errorOption += '<div class="alert-text-item">' + val + '</div>';
+				});
+
+				usNotify('danger', errorOption);
+			} else {
+				if (json['success']) {
+					usNotify('success', json['success']);
+					$('#us-add-review-modal').modal('hide');
+					$('input[name=\'author\']').val('');
+					$('textarea[name=\'text\']').val('');
+					$('input[name=\'rating\']:checked').prop('checked', false);
+					$('.us-module-rating-star-is').removeClass('us-module-rating-star-is');
+				}
+			}
+		}
+	});
+});
+</script>
+{{ footer }}

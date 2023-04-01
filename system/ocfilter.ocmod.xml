@@ -1,0 +1,679 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+  <name>OCFilter Modification</name>
+  <code>ocfilter</code>
+  <version>4.8.0.19.1</version>
+  <author>Aleksandr S.</author>
+  <link>https://ocfilter.com</link>
+
+  <!-- ******* -->
+  <!-- ******* -->
+  <!--  ADMIN  -->
+  <!-- ******* -->
+  <!-- ******* -->  
+
+  <!-- CONTROLLER -->
+  <file path="admin/controller/catalog/product.php">
+    <operation>
+      <search><![CDATA[$this->load->model('design/layout')]]></search>
+      <add position="before"><![CDATA[
+    // OCFilter start
+    $this->document->addStyle('view/stylesheet/ocfilter/ocfilter.css?v=' . OCF_VERSION);
+    $this->document->addScript('view/javascript/ocfilter/ocfilter.js?v=' . OCF_VERSION); 
+    // OCFilter end
+      ]]></add>
+    </operation>
+  </file>
+
+  <!-- 2.0 -->
+  <file path="admin/controller/common/menu.php">
+    <operation>
+      <search><![CDATA[$data['information']]]></search> 
+      <add position="before"><![CDATA[
+    // OCFilter start
+    $this->language->load('extension/module/ocfilter');
+    
+    $data['text_ocfilter'] = $this->language->get('text_ocfilter');
+    $data['text_ocfilter_filter'] = $this->language->get('text_ocfilter_filter');
+    $data['text_ocfilter_page'] = $this->language->get('text_ocfilter_page');
+    $data['text_ocfilter_setting'] = $this->language->get('text_ocfilter_setting');
+    
+    $data['ocfilter_filter'] = $this->url->link('extension/module/ocfilter/filter', 'token=' . $this->session->data['token'], 'SSL');
+    $data['ocfilter_page'] = $this->url->link('extension/module/ocfilter/page', 'token=' . $this->session->data['token'], 'SSL');
+    $data['ocfilter_setting'] = $this->url->link('extension/module/ocfilter', 'token=' . $this->session->data['token'], 'SSL');
+    // OCFilter end
+      ]]></add>
+    </operation>
+  </file><!-- /admin/controller/common/menu.php -->
+  
+  <!-- 2.3+ -->
+  <file path="admin/controller/common/column_left.php">
+    <operation>
+      <search><![CDATA[if ($this->user->hasPermission('access', 'catalog/filter'))]]></search>
+      <add position="before"><![CDATA[
+      // OCFilter start
+      $this->language->load('extension/module/ocfilter');
+      
+      $ocfilter = array();
+
+      if ($this->user->hasPermission('access', 'extension/module/ocfilter')) {
+        if (isset($this->session->data['user_token'])) {
+          $token_key = 'user_token';
+        } else {
+          $token_key = 'token';
+        }
+      
+        $ocfilter[] = array(
+          'name'     => $this->language->get('text_ocfilter_filter'),
+          'href'     => $this->url->link('extension/module/ocfilter/filter', $token_key . '=' . $this->session->data[$token_key], 'SSL'),
+          'children' => array()
+        );
+
+        $ocfilter[] = array(
+          'name'     => $this->language->get('text_ocfilter_page'),
+          'href'     => $this->url->link('extension/module/ocfilter/page', $token_key . '=' . $this->session->data[$token_key], 'SSL'),
+          'children' => array()
+        );
+
+        $ocfilter[] = array(
+          'name'     => $this->language->get('text_ocfilter_setting'),
+          'href'     => $this->url->link('extension/module/ocfilter', $token_key . '=' . $this->session->data[$token_key], 'SSL'),
+          'children' => array()
+        );
+      }
+
+      if ($ocfilter) {
+        $catalog[] = array(
+          'name'     => $this->language->get('text_ocfilter'),
+          'href'     => '',
+          'children' => $ocfilter
+        );
+      }
+      // OCFilter end
+      ]]></add>
+    </operation>
+  </file><!-- /admin/controller/common/column_left.php -->  
+  
+  <!-- OpenCart 2.0 - 2.2 compatibility -->
+  <file path="admin/controller/extension/module.php">    
+    <operation>
+      <search><![CDATA['module/' . $extension]]></search>
+      <add position="replace"><![CDATA[($extension == 'ocfilter' ? 'extension/' : '') . 'module/' . $extension]]></add>
+    </operation>
+    <operation>
+      <search><![CDATA['module/' . $this->request->get['extension']]]></search>
+      <add position="replace"><![CDATA[($this->request->get['extension'] == 'ocfilter' ? 'extension/' : '') . 'module/' . $this->request->get['extension']]]></add>
+    </operation>
+    <operation>
+      <search><![CDATA[glob(DIR_APPLICATION . 'controller/module/*.php');]]></search>
+      <add position="after"><![CDATA[
+    // OCFilter start
+    if (is_array($files)) {
+      $files[] = DIR_APPLICATION . 'controller/extension/module/ocfilter.php';
+    
+      $files = array_unique($files);
+    }        
+    
+    sort($files);
+    // OCFilter end
+      ]]></add>
+    </operation>       
+    <operation>
+      <search><![CDATA[if (!file_exists(DIR_APPLICATION]]></search>
+      <add position="before"><![CDATA[
+      // OCFilter start
+      if (isset($value) && $value == 'ocfilter') {
+        continue;
+      }        
+      // OCFilter end
+      ]]></add>
+    </operation>   
+  </file><!-- /admin/controller/extension/module.php -->  
+  
+  <file path="admin/controller/design/layout.php">    
+    <operation>
+      <search><![CDATA['module/' . $code]]></search>
+      <add position="replace"><![CDATA[($code == 'ocfilter' ? 'extension/' : '') . 'module/' . $code]]></add>
+    </operation>
+  </file><!-- /admin/controller/design/layout.php -->    
+  
+  <file path="admin/controller/catalog/category.php">    
+    <operation>
+      <search><![CDATA[$results = $this->model_catalog_category->getCategories($filter_data);]]></search>
+      <add position="before"><![CDATA[
+      // OCFilter start
+      if (isset($filter_data['filter_name']) && isset($filter_data['limit']) && $filter_data['limit'] == 5) {
+        $filter_data['limit'] = 15;
+      }
+      // OCFilter end
+      ]]></add>
+    </operation>
+  </file><!-- /admin/controller/catalog/category.php -->    
+   
+  <!-- /CONTROLLER -->
+
+  <!-- MODEL -->
+  <file path="admin/model/catalog/product.php">
+    <operation>
+      <search><![CDATA[if (isset($data['product_layout']))]]></search> 
+      <add position="before"><![CDATA[
+    // OCFilter start
+    $this->load->model('extension/module/ocfilter/filter');
+    
+    $this->model_extension_module_ocfilter_filter->setOCFilterFilter($product_id, $data, (isset($ocf_product_info) ? $ocf_product_info : null));
+    // OCFilter end
+      ]]></add>
+    </operation>
+    <operation>
+      <search><![CDATA[$this->getProductAttributes($product_id);]]></search>
+      <add position="after"><![CDATA[
+    // OCFilter start
+    $this->load->model('extension/module/ocfilter/filter');
+
+    $data['ocfilter_filter'] = $this->model_extension_module_ocfilter_filter->getProductOCFilterValues($product_id);
+    // OCFilter end
+      ]]></add>
+    </operation>
+    <operation>
+      <search><![CDATA[$this->db->query("DELETE FROM " . DB_PREFIX . "product WHERE product_id]]></search>
+      <add position="before"><![CDATA[
+    // OCFilter start
+    $this->db->query("DELETE FROM " . DB_PREFIX . "ocfilter_filter_value_to_product WHERE product_id = '" . $this->db->escape((string)$product_id) . "'");
+    // OCFilter end
+      ]]></add>
+    </operation>
+    <operation>
+      <search><![CDATA[editProduct($product_id, $data) {]]></search> 
+      <add position="after"><![CDATA[
+    // OCFilter start
+    $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "product WHERE product_id = '" . $this->db->escape((string)$product_id) . "'");
+    
+    $ocf_product_info = $query->row;
+    // OCFilter end
+      ]]></add>
+    </operation>    
+  </file><!-- /admin/model/catalog/product.php -->
+
+  <!-- /MODEL -->
+
+  <!-- VIEW -->
+  <!-- 2.0 -->
+  <file path="admin/view/template/common/menu.tpl">
+    <operation>
+      <search><![CDATA[<?php echo $text_product; ?></a></li>]]></search>
+      <add position="after"><![CDATA[
+      <!-- OCFilter start -->
+      <li>
+        <a class="parent"><?php echo $text_ocfilter; ?></a>
+        <ul>
+          <li><a href="<?php echo $ocfilter_filter; ?>"><?php echo $text_ocfilter_filter; ?></a></li>
+          <li><a href="<?php echo $ocfilter_page; ?>"><?php echo $text_ocfilter_page; ?></a></li>
+          <li><a href="<?php echo $ocfilter_setting; ?>"><?php echo $text_ocfilter_setting; ?></a></li>
+        </ul>
+      </li>
+      <!-- OCFilter end -->
+      ]]></add>
+    </operation>
+  </file>
+  <!-- /VIEW -->
+
+  <!-- ******* -->
+  <!-- ******* -->
+  <!-- CATALOG -->
+  <!-- ******* -->
+  <!-- ******* -->
+  
+  <!-- CONTROLLER -->  
+
+  <file path="catalog/controller/{common,startup,extension,extension/d_seo_module}/{seo_url,seo_pro,wkseo_url,seo_mega_pack_pro_url,d_seo_module_url,multimerch_seo_url}.php">
+    <operation>
+      <search><![CDATA[$this->url->addRewrite($this);]]></search>
+      <add position="after"><![CDATA[
+      // OCFilter start
+      if ($this->registry->get('ocfilter')) {
+        $this->url->addRewrite($this->ocfilter->seo);
+      }
+      // OCFilter end
+      ]]></add>
+    </operation>
+  </file>
+  
+  <file path="catalog/controller/{common,startup}/seo_url.php">
+    <operation>
+      <search><![CDATA[if ($url[0] == 'information_id')]]></search>
+      <add position="before"><![CDATA[
+          // OCFilter start
+          if ($url[0] == 'ocfilter_page_id') {
+            $this->request->get['ocfilter_page_id'] = $url[1];
+            
+            continue;
+          }
+          // OCFilter end
+      ]]></add>
+    </operation>
+  </file>  
+
+  <file path="catalog/controller/product/{category,special,search,manufacturer}.php">
+    <operation>
+      <search><![CDATA[$data['sorts'] = array]]></search>
+      <add position="before"><![CDATA[
+      // OCFilter start
+      if (isset($url) && $this->registry->get('ocfilter') && $this->ocfilter->startup() && $this->ocfilter->api->isSelected()) {
+        $url .= '&' . $this->ocfilter->api->getParamsIndex() . '=' . $this->ocfilter->api->getParamsString();
+        
+        if (isset($this->request->get['ocfilter_placement'])) {
+          $url .= '&ocfilter_placement=' . $this->request->get['ocfilter_placement'];
+        }
+      }
+      // OCFilter end
+      ]]></add>
+    </operation>
+
+    <operation>
+      <search><![CDATA[$data['limits'] = array]]></search>
+      <add position="before"><![CDATA[
+      // OCFilter start
+      if (isset($url) && $this->registry->get('ocfilter') && $this->ocfilter->startup() && $this->ocfilter->api->isSelected()) {
+        $url .= '&' . $this->ocfilter->api->getParamsIndex() . '=' . $this->ocfilter->api->getParamsString();
+        
+        if (isset($this->request->get['ocfilter_placement'])) {
+          $url .= '&ocfilter_placement=' . $this->request->get['ocfilter_placement'];
+        }        
+      }
+      // OCFilter end
+      ]]></add>
+    </operation>
+
+    <operation>
+      <search><![CDATA[$pagination = new Pagination]]></search>
+      <add position="before"><![CDATA[
+      // OCFilter start
+      if (isset($url) && $this->registry->get('ocfilter') && $this->ocfilter->startup() && $this->ocfilter->api->isSelected()) {
+        $url .= '&' . $this->ocfilter->api->getParamsIndex() . '=' . $this->ocfilter->api->getParamsString();
+        
+        if (isset($this->request->get['ocfilter_placement'])) {
+          $url .= '&ocfilter_placement=' . $this->request->get['ocfilter_placement'];
+        }        
+      }
+      // OCFilter end
+      ]]></add>
+    </operation>
+
+    <operation>
+      <search limit="1"><![CDATA[$data['limit'] = $limit;]]></search>
+      <add position="after"><![CDATA[
+      // OCFilter Start
+      if ($this->registry->get('ocfilter') && $this->ocfilter->startup()) {
+        $this->ocfilter->api->setProductListControllerData($data, (isset($product_total) ? $product_total : null));
+      }
+      // OCFilter End
+      ]]></add>
+    </operation>
+  </file><!-- /catalog/controller/product/{category,special,search,manufacturer}.php -->
+
+  <file path="catalog/controller/product/category.php">
+    <operation>
+      <search><![CDATA[$product_total =]]></search>
+      <add position="before"><![CDATA[
+      // OCFilter start
+      if ($this->registry->get('ocfilter') && $this->ocfilter->startup() && $this->ocfilter->api->useSubCategory() && $this->ocfilter->api->isSelected() && empty($filter_data['filter_sub_category'])) {
+        $filter_data['filter_sub_category'] = true;
+      }
+      // OCFilter end
+      ]]></add>
+    </operation>
+  </file><!-- /catalog/controller/product/category.php -->
+  
+  <file path="catalog/controller/product/product.php">
+    <operation>
+      <search><![CDATA[$data['column_left']]]></search>
+      <add position="before"><![CDATA[
+      // OCFilter Start
+      if ($this->registry->get('ocfilter') && $this->ocfilter->startup()) {
+        $this->ocfilter->api->setProductItemControllerData($data);
+      }
+      // OCFilter End
+      ]]></add>
+    </operation>
+  </file><!-- /catalog/controller/product/product.php -->  
+  
+  <file path="catalog/controller/common/{column_,content_}*.php">
+    <operation error="skip">
+      <search><![CDATA[$this->load->model('extension/module');]]></search>
+      <add position="before"><![CDATA[
+    // OCFilter start
+    if (isset($route) && $route == 'product/category' && isset($this->request->get['ocfilter_page_id']) && $this->registry->get('ocfilter') && $this->ocfilter->startup()) {
+      if ($_layout_id = $this->ocfilter->api->getSeoPageLayoutId()) {
+        $layout_id = $_layout_id;
+      }      
+    }   
+    // OCFilter end
+      ]]></add>
+    </operation>
+  </file>
+  <file path="catalog/controller/common/{column_,content_}*.php">
+    <operation error="skip">
+      <search><![CDATA[$this->load->model('setting/module');]]></search>
+      <add position="before"><![CDATA[
+    // OCFilter start
+    if (isset($route) && $route == 'product/category' && isset($this->request->get['ocfilter_page_id']) && $this->registry->get('ocfilter') && $this->ocfilter->startup()) {
+      if ($_layout_id = $this->ocfilter->api->getSeoPageLayoutId()) {
+        $layout_id = $_layout_id;
+      }      
+    }   
+    // OCFilter end
+      ]]></add>
+    </operation>
+  </file>
+
+  <!-- OpenCart 2.0 - 2.2 compatibility -->
+  <file path="catalog/controller/common/{column_,content_}*.php">    
+    <operation error="skip">
+      <search><![CDATA[$data['modules'][] = $this->load->controller('module/' . $part[0]);]]></search>
+      <add position="replace"><![CDATA[
+        // OCFilter start
+        if ($part[0] == 'ocfilter') {
+          $data['modules'][] = $this->load->controller('extension/module/' . $part[0]);
+        } else {
+          $data['modules'][] = $this->load->controller('module/' . $part[0]);
+        }
+        // OCFilter end
+      ]]></add>
+    </operation>   
+  </file>
+  
+  <file path="catalog/controller/common/{column_,content_}*.php">    
+    <operation error="skip">
+      <search><![CDATA[$module_data = $this->load->controller('module/' . $part[0]);]]></search>
+      <add position="replace"><![CDATA[
+          // OCFilter start
+          if ($part[0] == 'ocfilter') {
+            $module_data = $this->load->controller('extension/module/' . $part[0]);
+          } else {
+            $module_data = $this->load->controller('module/' . $part[0]);
+          }
+          // OCFilter end
+      ]]></add>
+    </operation>            
+  </file><!-- /catalog/controller/common/{column_,content_}*.php --> 
+
+  <!-- MODEL -->  
+  
+  <file path="catalog/model/catalog/product.php">
+    <operation>
+      <search><![CDATA[$query = $this->db->query($]]></search>
+      <add position="before"><![CDATA[
+    // OCFilter start
+    if ($this->registry->get('ocfilter') && $this->ocfilter->startup() && $this->ocfilter->api->isSelected()) {
+      $this->ocfilter->api->setProductSQL(__FUNCTION__, $sql);
+    }
+    // OCFilter end
+      ]]></add>
+    </operation>
+    <operation>
+      <search><![CDATA[if (!empty($data['filter_manufacturer_id']))]]></search>
+      <add position="before"><![CDATA[
+    // OCFilter start (reset caching by sql string key)
+    if ($this->registry->get('ocfilter') && $this->ocfilter->startup() && $this->ocfilter->api->isSelected()) {
+      $sql .= " /* " . crc32($this->ocfilter->api->getParamsString()) . " */ ";
+    }
+    // OCFilter end
+      ]]></add>
+    </operation>  
+    <operation>
+      <search><![CDATA[getTotalProductSpecials() {]]></search>
+      <add position="after"><![CDATA[
+    // OCFilter start
+    if ($this->registry->get('ocfilter') && $this->ocfilter->startup() && $this->ocfilter->api->isSelected()) {
+      return $this->ocfilter->api->getTotalProductSpecials();
+    }
+    // OCFilter end    
+      ]]></add>
+    </operation>    
+  </file><!-- /catalog/model/catalog/product.php -->  
+  
+  <!-- VIEW -->  
+  
+  <file path="catalog/view/theme/*/template/product/category.tpl">
+    <operation error="skip">
+      <search index="0"><![CDATA[<?php if ($products) { ?>]]></search>
+      <add position="before"><![CDATA[
+      <!-- OCFilter Start -->
+      <?php if (!empty($ocfilter_description_top)) { ?>
+      <div class="ocf-description ocf-description-top"><?php echo $ocfilter_description_top; ?></div>
+      <?php } ?>
+      
+      <?php if (!empty($ocfilter_pages['top'])) { ?>
+      <nav class="ocf-page-list-top">      
+        <?php foreach ($ocfilter_pages['top'] as $ocfilter_page_group) { ?>
+        <div class="ocf-page-group">
+          <?php if ($ocfilter_page_group['name']) { ?>
+          <div class="ocf-page-group-name"><?php echo $ocfilter_page_group['name']; ?></div>
+          <?php } ?>        
+          <ul class="ocf-category-page-list">
+            <?php foreach ($ocfilter_page_group['pages'] as $ocfilter_page) { ?>
+            <?php if ($ocfilter_page['selected']) { ?>
+            <li class="ocf-page-selected"><a href="<?php echo $ocfilter_page['href']; ?>"><?php echo $ocfilter_page['name']; ?></a></li>
+            <?php } else { ?>
+            <li><a href="<?php echo $ocfilter_page['href']; ?>"><?php echo $ocfilter_page['name']; ?></a></li>
+            <?php } ?>  
+            <?php } ?>
+          </ul>       
+        </div>
+        <?php } ?>
+      </nav>
+      <?php } ?> 
+      <!-- /OCFilter End -->
+      ]]></add>
+    </operation>
+    <operation error="skip">
+      <search><![CDATA[<?php echo $content_bottom; ?>]]></search>
+      <add position="before"><![CDATA[
+      <!-- OCFilter Start -->
+      <?php if (!empty($ocfilter_pages['bottom'])) { ?>
+      <nav class="ocf-page-list-bottom">      
+        <?php foreach ($ocfilter_pages['bottom'] as $ocfilter_page_group) { ?>
+        <div class="ocf-page-group">
+          <?php if ($ocfilter_page_group['name']) { ?>
+          <div class="ocf-page-group-name"><?php echo $ocfilter_page_group['name']; ?></div>
+          <?php } ?>        
+          <ul class="ocf-category-page-list">
+            <?php foreach ($ocfilter_page_group['pages'] as $ocfilter_page) { ?>           
+            <?php if ($ocfilter_page['selected']) { ?>
+            <li class="ocf-page-selected"><a href="<?php echo $ocfilter_page['href']; ?>"><?php echo $ocfilter_page['name']; ?></a></li>
+            <?php } else { ?>
+            <li><a href="<?php echo $ocfilter_page['href']; ?>"><?php echo $ocfilter_page['name']; ?></a></li>
+            <?php } ?>            
+            <?php } ?>
+          </ul>       
+        </div>               
+        <?php } ?>
+      </nav>
+      <?php } ?>     
+      
+      <?php if (!empty($ocfilter_description_bottom)) { ?>      
+      <div class="ocf-description ocf-description-bottom"><?php echo $ocfilter_description_bottom; ?></div>      
+      <?php } ?>      
+      <!-- /OCFilter End -->
+      ]]></add>
+    </operation>    
+  </file><!-- /catalog/view/theme/*/template/product/category.tpl -->
+  
+  <file path="catalog/view/theme/*/template/product/category.twig">
+    <operation error="skip">
+      <search regex="true" limit="1"><![CDATA[~(\{% if \(?products\)? %\})~]]></search>
+      <add><![CDATA[
+      <!-- OCFilter Start -->
+      {% if ocfilter_description_top %}
+      <div class="ocf-description ocf-description-top">{{ ocfilter_description_top }}</div>
+      {% endif %}
+      
+      {% if ocfilter_pages.top %}
+      <nav class="ocf-page-list-top">  
+        {% for ocfilter_page_group in ocfilter_pages.top %}
+        <div class="ocf-page-group">
+          {% if ocfilter_page_group.name %}
+          <div class="ocf-page-group-name">{{ ocfilter_page_group.name }}</div>
+          {% endif %}
+          <ul class="ocf-category-page-list">
+            {% for ocfilter_page in ocfilter_page_group.pages %}           
+            {% if ocfilter_page.selected %}
+            <li class="ocf-page-selected"><a href="{{ ocfilter_page.href }}">{{ ocfilter_page.name }}</a></li>
+            {% else %}
+            <li><a href="{{ ocfilter_page.href }}">{{ ocfilter_page.name }}</a></li>
+            {% endif %}            
+            {% endfor %}
+          </ul>         
+        </div>
+        {% endfor %}
+      </nav>
+      {% endif %} 
+      
+      $1
+      <!-- /OCFilter End -->
+      ]]></add>
+    </operation>
+    <operation error="skip">
+      <search regex="true" limit="1"><![CDATA[~(\{\{\s?content_bottom\s?\}\})~]]></search>
+      <add><![CDATA[
+      <!-- OCFilter Start -->
+      {% if ocfilter_pages.bottom %}
+      <nav class="ocf-page-list-bottom">      
+        {% for ocfilter_page_group in ocfilter_pages.bottom %}    
+        <div class="ocf-page-group">
+          {% if ocfilter_page_group.name %}
+          <div class="ocf-page-group-name">{{ ocfilter_page_group.name }}</div>
+          {% endif %}
+          <ul class="ocf-category-page-list">
+            {% for ocfilter_page in ocfilter_page_group.pages %}
+            {% if ocfilter_page.selected %}
+            <li class="ocf-page-selected"><a href="{{ ocfilter_page.href }}">{{ ocfilter_page.name }}</a></li>
+            {% else %}
+            <li><a href="{{ ocfilter_page.href }}">{{ ocfilter_page.name }}</a></li>
+            {% endif %}     
+            {% endfor %}
+          </ul>         
+        </div>               
+        {% endfor %}
+      </nav>
+      {% endif %}
+      
+      {% if ocfilter_description_bottom %}   
+      <div class="ocf-description ocf-description-bottom">{{ ocfilter_description_bottom }}</div>
+      {% endif %}
+      <!-- /OCFilter End -->
+      
+      $1
+      ]]></add>
+    </operation>    
+  </file><!-- /catalog/view/theme/*/template/product/category.twig -->  
+  
+  <file path="catalog/view/theme/*/template/product/{category,search,manufacturer,special}.tpl">
+    <operation>
+      <search index="0"><![CDATA[<?php if ($products) { ?>]]></search>
+      <add position="after"><![CDATA[
+      <!-- OCFilter Start -->      
+      <?php if (!empty($ocfilter_mobile_button)) { ?>
+      <div class="ocf-btn-mobile-static ocf-mobile">
+        <button type="button" class="ocf-btn ocf-btn-default" data-ocf="mobile"><span class="ocf-btn-name"><?php echo $button_ocfilter_mobile; ?></span> <i class="ocf-icon ocf-icon-16 ocf-brand ocf-sliders"></i></button>
+      </div>
+      <?php } ?>
+      <!-- /OCFilter End -->
+      ]]></add>
+    </operation> 
+  </file><!-- /catalog/view/theme/*/template/product/{category,search,manufacturer,special}.tpl -->
+  
+  <file path="catalog/view/theme/*/template/product/{category,search,manufacturer,special}.twig">
+    <operation>
+      <search regex="true" limit="1"><![CDATA[~(\{% if \(?products\)? %\})~]]></search>
+      <add><![CDATA[
+      $1
+      <!-- OCFilter Start -->      
+      {% if ocfilter_mobile_button %}
+      <div class="ocf-btn-mobile-static ocf-mobile">
+        <button type="button" class="ocf-btn ocf-btn-default" data-ocf="mobile"><span class="ocf-btn-name">{{ button_ocfilter_mobile }}</span> <i class="ocf-icon ocf-icon-16 ocf-brand ocf-sliders"></i></button>
+      </div>
+      {% endif %}   
+      <!-- /OCFilter End -->
+      ]]></add>
+    </operation> 
+  </file><!-- /catalog/view/theme/*/template/product/{category,search,manufacturer,special}.twig" -->  
+  
+  <file path="catalog/view/theme/*/template/product/product.tpl">
+    <operation>
+      <search><![CDATA[<?php echo strip_tags($attribute['text']); ?>]]></search>
+      <add position="replace"><![CDATA[<?php echo strip_tags($attribute['text'], '<a>'); ?>]]></add>
+    </operation> 
+  </file><!-- /catalog/view/theme/*/template/product/product.tpl -->  
+  
+  <!-- ******* -->
+  <!-- ******* -->
+  <!-- SYSTEM  -->
+  <!-- ******* -->
+  <!-- ******* -->  
+  
+  <!-- MAIN INIT -->  
+  
+  <file path="system/engine/{router,front}.php">
+    <operation>
+      <search><![CDATA[public function __construct($registry) {]]></search>
+      <add position="after"><![CDATA[
+    // OCFilter start   
+    $file = DIR_SYSTEM . 'library/ocfilter/init.php';
+
+    if (file_exists($file)) {
+      include_once($file);
+
+      initOCFilter($registry);
+    }
+    // OCFilter end
+      ]]></add>
+    </operation>
+  </file>  
+  
+  <file path="system/library/document.php">
+    <operation>
+      <search><![CDATA[public function getLinks]]></search>
+      <add position="before"><![CDATA[
+  // OCFilter start
+  public function ocfDeleteLink($rel) {
+    foreach ($this->links as $href => $link) {
+      if ($link['rel'] == $rel) {
+        unset($this->links[$href]);
+      }
+    }
+  }
+  // OCFilter end
+      ]]></add>
+    </operation>    
+  </file>  
+  
+  <!-- SEO Pro fix -->
+  <file path="system/library/seopro.php">
+    <operation>
+      <search><![CDATA[validate() {]]></search>
+      <add position="after"><![CDATA[
+    // OCFilter start
+    if (method_exists($this, 'detectAjax')) {
+      $this->detectAjax();
+    }  
+    // OCFilter end
+      ]]></add>
+    </operation>    
+  </file>    
+
+  <!-- Twig `include` fix -->
+  <file path="system/library/template/twig.php">
+    <operation>
+      <search><![CDATA[$loader = new \Twig\Loader\ArrayLoader(array($filename . '.twig' => $code));]]></search>
+      <add position="replace"><![CDATA[
+  // OCFilter start
+  $loader_array = new \Twig\Loader\ArrayLoader(array($filename . '.twig' => $code));
+  $loader_filesystem = new \Twig_Loader_Filesystem(DIR_TEMPLATE);
+        
+  $loader = new \Twig_Loader_Chain(array($loader_array, $loader_filesystem));
+  // OCFilter end
+      ]]></add>
+    </operation>    
+  </file>     
+</modification>

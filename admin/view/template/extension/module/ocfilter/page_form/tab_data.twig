@@ -1,0 +1,133 @@
+<div class="row">          
+  <div class="col-md-9">  
+    {% if multilang_keyword %}
+    <div class="row">
+      <label class="col-sm-3 control-label">{{ entry_keyword }}</label>
+    </div>
+    
+    {% for store in stores %}
+    <div class="form-group">
+      <label class="col-sm-3 control-label">{{ store.name }}</label>
+      <div class="col-sm-9">
+        {% for language in languages %}
+        <div class="input-group">
+          <div class="input-group-addon"><img src="{{ language.image }}" title="{{ language.name }}" /></div>
+          <input type="text" name="keyword[{{ store.store_id }}][{{ language.language_id }}]" value="{{ keyword[store.store_id][language.language_id] ? keyword[store.store_id][language.language_id] : '' }}" placeholder="{{ entry_keyword }}" class="form-control" />
+        </div>              
+        {% if error_keyword[store.store_id][language.language_id] %}
+        <div class="text-danger">{{ error_keyword[store.store_id][language.language_id] }}</div>
+        {% endif %} 
+        {% endfor %}
+      </div>
+    </div> 
+    {% endfor %}    
+    <div class="row">
+      <div class="col-sm-offset-3 col-sm-9 help-block">{{ help_keyword }}</div>
+    </div>  
+    {% else %}    
+    <div class="form-group">
+      <label class="col-sm-3 control-label" for="input-keyword">{{ entry_keyword }}</label>
+      <div class="col-sm-9">
+        <input type="text" name="keyword" value="{{ keyword }}" placeholder="{{ entry_keyword }}" id="input-keyword" class="form-control" />
+        {% if error_keyword %}
+        <div class="text-danger">{{ error_keyword }}</div>
+        {% endif %}
+        <p class="help-block">{{ help_keyword }}</p>
+      </div>
+    </div>      
+    {% endif %}
+      
+    <ul class="nav nav-tabs" id="language">
+      {% for language in languages %}
+      <li><a href="#tab-language-{{ language.language_id }}" data-toggle="tab"><img src="{{ language.image }}" title="{{ language.name }}" /> {{ language.name }}</a></li>
+      {% endfor %}
+    </ul>
+    <div class="tab-content">       
+      {% for language in languages %}
+      <div class="tab-pane" id="tab-language-{{ language.language_id }}">
+        <div class="form-group">
+          <label class="col-sm-3 control-label" for="input-name-{{ language.language_id }}">{{ entry_name }}</label>
+          <div class="col-sm-9">
+            <input type="text" name="page_description[{{ language.language_id }}][name]" value="{{ page_description[language.language_id] ? page_description[language.language_id].name : '' }}" placeholder="{{ entry_name }}" id="input-name-{{ language.language_id }}" class="form-control" />
+            {% if error_name[language.language_id] %}
+            <div class="text-danger">{{ error_name[language.language_id] }}</div>
+            {% endif %}
+            <p class="help-block">{{ help_name }}</p>
+          </div>
+        </div>
+        <div class="form-group required">
+          <label class="col-sm-3 control-label" for="input-heading-title-{{ language.language_id }}">{{ entry_heading_title }}</label>
+          <div class="col-sm-9">
+            <input type="text" name="page_description[{{ language.language_id }}][heading_title]" value="{{ page_description[language.language_id] ? page_description[language.language_id].heading_title : '' }}" placeholder="{{ entry_heading_title }}" id="input-heading-title-{{ language.language_id }}" class="form-control" />
+            {% if error_heading_title[language.language_id] %}
+            <div class="text-danger">{{ error_heading_title[language.language_id] }}</div>
+            {% endif %}
+            <p class="help-block">{{ help_heading_title }}</p>
+          </div>
+        </div>
+        <div class="form-group required">
+          <label class="col-sm-3 control-label" for="input-meta-title{{ language.language_id }}">{{ entry_meta_title }}</label>
+          <div class="col-sm-9">
+            <input type="text" name="page_description[{{ language.language_id }}][meta_title]" value="{{ page_description[language.language_id] ? page_description[language.language_id].meta_title : '' }}" placeholder="{{ entry_meta_title }}" id="input-meta-title-{{ language.language_id }}" class="form-control" />
+            {% if error_meta_title[language.language_id] %}
+            <div class="text-danger">{{ error_meta_title[language.language_id] }}</div>
+            {% endif %}
+            <p class="help-block">{{ help_meta_title }}</p>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-3 control-label" for="input-description-{{ language.language_id }}">{{ entry_description_top }}</label>
+          <div class="col-sm-9">
+            <textarea name="page_description[{{ language.language_id }}][description_top]" placeholder="{{ entry_description_top }}" id="input-description-top-{{ language.language_id }}" class="form-control">{{ page_description[language.language_id] ? page_description[language.language_id].description_top : '' }}</textarea>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-3 control-label" for="input-description-{{ language.language_id }}">{{ entry_description_bottom }}</label>
+          <div class="col-sm-9">
+            <textarea name="page_description[{{ language.language_id }}][description_bottom]" placeholder="{{ entry_description_bottom }}" id="input-description-bottom-{{ language.language_id }}" class="form-control">{{ page_description[language.language_id] ? page_description[language.language_id].description_bottom : '' }}</textarea>
+          </div>
+        </div>                  
+        <div class="form-group">
+          <label class="col-sm-3 control-label" for="input-meta-description-{{ language.language_id }}">{{ entry_meta_description }}</label>
+          <div class="col-sm-9">
+            <textarea name="page_description[{{ language.language_id }}][meta_description]" rows="3" placeholder="{{ entry_meta_description }}" id="input-meta-description-{{ language.language_id }}" class="form-control">{{ page_description[language.language_id] ? page_description[language.language_id].meta_description : '' }}</textarea>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-3 control-label" for="input-meta-keyword-{{ language.language_id }}">{{ entry_meta_keyword }}</label>
+          <div class="col-sm-9">
+            <textarea name="page_description[{{ language.language_id }}][meta_keyword]" rows="3" placeholder="{{ entry_meta_keyword }}" id="input-meta-keyword-{{ language.language_id }}" class="form-control">{{ page_description[language.language_id] ? page_description[language.language_id].meta_keyword : '' }}</textarea>
+          </div>
+        </div>                  
+      </div>             
+      {% endfor %}       
+    </div>
+  </div>
+  <div class="col-md-3 sticky-md-top">
+    <div class="well">
+      {{ text_info_mask }}
+      <hr />
+      <ul class="media-list lead" id="page-mask-vars-list"></ul>                    
+      <p>{{ text_info_mask_static }}</p>
+    </div>
+  </div>    
+</div><!-- /.row -->   
+<script> 
+ocfDOMReady(function() {
+$(function() {
+  $('#language a:first').tab('show');
+  
+  $('a[href="#tab-data"]').on('show.bs.tab', function() {
+    ocfilter.buldMaskVarsList(buildMaskOptions);
+  });  
+  
+  var options = ocfilter.getSummernoteOptions();
+
+  $('textarea[name*="[description_"]').each(function() {
+    options.placeholder = $(this).attr('placeholder');
+    
+    $(this).summernote(options);
+  });   
+});
+});
+</script> 

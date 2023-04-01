@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+	<code>oct_subscribe</code>
+	<name>Octemplates - Subscribe</name>
+	<version>1.0.0</version>
+	<author>Octemplates</author>
+	<link>http://octemplates.net/</link>
+	<file path="catalog/controller/common/footer.php">
+		<operation error="skip">
+			<search><![CDATA[$this->load->language('common/footer');]]></search>
+			<add position="after"><![CDATA[
+			$data['oct_subscribe_form_data'] = $this->config->get('oct_subscribe_form_data');
+			$data['oct_subscribe_status'] = $this->config->get('oct_subscribe_status');
+			$data['oct_subscribe_day_now'] = date("Y-m-d H:i:s");
+
+			if (isset($data['oct_ultrastore_data']['footer_subscribe']) && $data['oct_ultrastore_data']['footer_subscribe'] == 'on') {
+				$data['oct_subscribe'] = $this->load->controller('octemplates/module/oct_subscribe');
+			}
+			]]></add>
+		</operation>
+	</file>
+</modification>

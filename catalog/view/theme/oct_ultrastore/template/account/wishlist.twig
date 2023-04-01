@@ -1,0 +1,61 @@
+{{ header }}
+<div id="account-wishlist" class="container">
+	{{ oct_breadcrumbs }}
+	<div class="row">
+		<div class="col-lg-12">
+			<h1 class="us-main-shop-title">{{ heading_title }}</h1>
+		</div>
+	</div>
+	<div class="content-top-box">{{ content_top }}</div>
+	{% if success %}
+	<script>
+	usNotify('success', '{{ success }}');
+	</script>
+	{% endif %}
+	<div class="row">{{ column_left }}
+	    {% if column_left and column_right %}
+	    {% set class = 'col-sm-6' %}
+	    {% elseif column_left or column_right %}
+	    {% set class = 'col-sm-9' %}
+	    {% else %}
+	    {% set class = 'col-sm-12' %}
+	    {% endif %}
+	    <div id="content" class="{{ class }}">
+		    <div class="us-content">
+		      {% if products %}
+		      {% for product in products %}
+				<div class="us-acc-info-block us-acc-info-block-wishlist d-flex justify-content-between">
+					<div class="us-acc-info-block-left d-flex align-items-center">
+						{% if product.thumb %}
+						<div class="us-acc-info-block-img">
+							<a class="d-block" href="{{ product.href }}"><img src="{{ product.thumb }}"  alt="{{ product.name }}" title="{{ product.name }}" /></a>
+						</div>
+						{% endif %}
+						<div class="us-acc-info-block-desc">
+							<a href="{{ product.href }}" class="us-content-title us-content-title-wishlist">{{ product.name }}</a>
+							<div class="us-acc-info-text">{{ column_model }}: <span>{{ product.model }}</span></div>
+							<div class="us-acc-info-text">{{ column_stock }}: <span>{{ product.stock }}</span></div>
+							{% if product.price %}
+							<div class="us-acc-info-text">{{ column_price }}:{% if not product.special %}<span class="us-module-price-actual">{{ product.price }}</span>{% else %}<span class="us-module-price-new">{{ product.special }}</span><span class="us-module-price-old">{{ product.price }}</span>{% endif %}</div>
+							{% endif %}
+						</div>
+					</div>
+					<div class="us-acc-info-block-right d-flex flex-column align-items-end justify-content-between">
+						<a href="{{ product.remove }}" class="us-acc-del-btn d-flex align-items-center" title="{{ button_remove }}"><i class="fas fa-times"></i><span>{{ button_remove }}</span></a>
+						<button type="button" onclick="cart.add('{{ product.product_id }}');" class="us-product-btn us-acc-product-btn us-product-btn-active" title="{{ button_cart }}">{{ button_cart }}</button>
+					</div>
+				</div>
+		      {% endfor %}
+		      {% else %}
+		      <p>{{ text_empty }}</p>
+		      {% endif %}
+		      <div class="buttons">
+		      	<a href="{{ continue }}" class="us-module-btn">{{ button_continue }}</a>
+		      </div>
+		    </div>
+	    </div>
+	    {{ column_right }}
+	</div>
+	{{ content_bottom }}
+</div>
+{{ footer }}

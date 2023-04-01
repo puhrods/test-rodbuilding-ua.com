@@ -1,0 +1,76 @@
+{{ header }}
+<div id="account-recurring" class="container">
+	{{ oct_breadcrumbs }}
+	<div class="row">
+		<div class="col-lg-12">
+			<h1 class="us-main-shop-title">{{ heading_title }}</h1>
+		</div>
+	</div>
+	<div class="content-top-box">{{ content_top }}</div>
+	<div class="row">{{ column_left }}
+	    {% if column_left and column_right %}
+	    {% set class = 'col-sm-6' %}
+	    {% elseif column_left or column_right %}
+	    {% set class = 'col-sm-9' %}
+	    {% else %}
+	    {% set class = 'col-sm-12' %}
+	    {% endif %}
+	    <div id="content" class="{{ class }}">
+		    <div class="us-content">
+			    <div class="us-acc-info-block">
+					<div class="us-content-title">{{ text_recurring_detail }}</div>
+					<div class="us-acc-info-list">
+						<div class="us-acc-info-text">{{ text_order_recurring_id }}:<span>#{{ order_recurring_id }}</span></div>
+						<div class="us-acc-info-text">{{ text_date_added }}:<span>{{ date_added }}</span></div>
+						<div class="us-acc-info-text">{{ text_status }}:<span>{{ status }}</span></div>
+						<div class="us-acc-info-text">{{ text_payment_method }}:<span>{{ payment_method }}</span></div>
+						<div class="us-acc-info-text">{{ text_order_id }}:<span><a href="{{ order }}">#{{ order_id }}</a></span></div>
+						<div class="us-acc-info-text">{{ text_product }}:<span><a href="{{ product }}">#{{ product_name }}</a></span></div>
+						<div class="us-acc-info-text">{{ text_quantity }}:<span>{{ product_quantity }}</span></div>
+					</div>
+				</div>
+				<div class="us-acc-info-block us-acc-info-block-last">
+					<div class="us-content-title">{{ text_description }}</div>
+					<div class="us-acc-info-list">
+						<div class="us-acc-info-text">{{ recurring_description }}</div>
+					</div>
+					<div class="us-content-title">{{ text_reference }}</div>
+					<div class="us-acc-info-list">
+						<div class="us-acc-info-text">{{ reference }}</div>
+					</div>
+				</div>
+				<div class="us-content-title">{{ text_transaction }}</div>
+			    <div class="table-responsive-sm us-table-box">
+			        <table class="table table-hover">
+			          <thead class="thead-dark">
+			            <tr>
+			              <th>{{ column_date_added }}</th>
+			              <th>{{ column_type }}</th>
+			              <th>{{ column_amount }}</th>
+			            </tr>
+			          </thead>
+			          <tbody>
+			          {% if transactions %}
+			          {% for transaction in transactions %}
+			          <tr>
+			            <td>{{ transaction.date_added }}</td>
+			            <td>{{ transaction.type }}</td>
+			            <td>{{ transaction.amount }}</td>
+			          </tr>
+			          {% endfor %}
+			          {% else %}
+			          <tr>
+			            <td colspan="3" class="text-center">{{ text_no_results }}</td>
+			          </tr>
+			          {% endif %}
+			            </tbody>
+			        </table>
+			    </div>
+				{{ recurring }}
+		    </div>
+		    {{ column_right }}
+		</div>
+		{{ content_bottom }}
+	</div>
+</div>
+{{ footer }} 

@@ -1,0 +1,117 @@
+{{ header }}
+<div class="container">
+  <nav aria-label="breadcrumb">
+	<ul class="breadcrumb us-breadcrumb">
+	{% for breadcrumb in breadcrumbs %}
+		{% if loop.last %}
+			<li class="breadcrumb-item us-breadcrumb-item">{{ breadcrumb.text }}</li>
+		{% else %}
+			<li class="breadcrumb-item us-breadcrumb-item"><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+		{% endif %}
+	{% endfor %}
+	</ul>
+</nav>
+	<div class="row">
+		<div class="col-lg-12">
+			<h1 class="us-main-shop-title">{{ heading_title }}</h1>
+		</div>
+	</div>
+	<div class="content-top-box">{{ content_top }}</div>
+	<div class="us-category-content">
+  <div class="row">
+  	{{ column_left }}
+    {% if column_left and column_right %}
+			{% set class = 'col-md-6' %}
+			{% elseif column_left or column_right %}
+			{% set class = 'col-md-9' %}
+			{% else %}
+			{% set class = 'col-md-12' %}
+			{% endif %}
+    <div id="content" class="{{ class }} showcase-list">
+	   {% if thumb or description %}
+      <div class="row">
+        {% if thumb %}
+        <div class="col-sm-2"><img src="{{ thumb }}" alt="{{ heading_title }}" title="{{ heading_title }}" class="img-thumbnail" /></div>
+        {% endif %}
+        {% if description %}
+        <div class="col-sm-10">{{ description }}</div>
+		{% endif %}
+      </div>
+      <hr>
+	  {% endif %}
+      {% if articles %}
+      <div class="us-category-sort-block d-flex justify-content-between">
+						<div class="sort-limit">
+							<select id="input-sort" class="sort-select" onchange="location = this.value;">
+								{% for sorts in sorts %}
+								{% if sorts.value == '%s-%s'|format(sort, order) %}
+								<option value="{{ sorts.href }}" selected="selected">{{ sorts.text }}</option>
+								{% else %}
+								<option value="{{ sorts.href }}">{{ sorts.text }}</option>
+								{% endif %}
+								{% endfor %}
+							</select>
+							<select id="input-limit" class="limit-select" onchange="location = this.value;">
+								{% for limits in limits %}
+								{% if limits.value == limit %}
+								<option value="{{ limits.href }}" selected="selected">{{ limits.text }}</option>
+								{% else %}
+								<option value="{{ limits.href }}">{{ limits.text }}</option>
+								{% endif %}
+								{% endfor %}
+							</select>
+						</div>
+					</div>
+      <div class="row">  
+        {% for article in articles %} 
+        <div class="ocs-article-box col-sm-12 col-md-6 col-lg-4 col-xl-3">
+	    <div class="us-module-item ocs-article-item d-flex flex-column">
+		    <div class="us-module-img">
+				<a href="{{ article.href }}">
+				<img src="{{ article.thumb }}" alt="{{ article.name }}" title="{{ article.name }}" class="img-responsive" />
+				</a>
+			</div>
+			<div class="us-module-caption d-flex flex-column">
+				<div class="us-module-title flex-grow-1">
+					<a href="{{ article.href }}">{{ article.name }}</a>
+				</div>
+				{% if article.rating %}
+				<div class="us-module-rating d-flex align-items-center justify-content-center">
+					<div class="us-module-rating-stars d-flex align-items-center">
+						{% for i in 1..5 %}
+						{% if product.rating < i %}
+						<span class="us-module-rating-star"></span>
+						{% else %}
+						<span class="us-module-rating-star us-module-rating-star-is"></span>
+						{% endif %}
+						{% endfor %}
+					</div>
+				</div>
+		        {% endif %}
+		        <div class="us-product-list-description">{{ article.description }}</div>
+		        <div class="button-group d-flex align-items-center justify-content-around">
+			        <button class="us-module-btn us-module-btn-green" type="button" onclick="location.href = ('{{ article.href }}');"><i class="fas fa-share"></i> <span class="hidden-xs hidden-sm hidden-md">{{ button_more }}</span></button>
+			        <button class="us-module-btn" type="button" data-toggle="tooltip" title="{{ article.date_added }}" "><i class="far fa-clock"></i></button>
+			        <button class="us-module-btn" type="button" data-toggle="tooltip" title="{{ text_views }} {{ article.viewed }}" "><i class="far fa-eye"></i></button>
+			    </div>
+		    </div>
+		</div>
+	</div>
+       {% endfor %}
+      </div>
+      <div class="row">
+        <div class="col-sm-6 text-left">{{ pagination }}</div>
+      </div>
+      {% else %}
+      <p>{{ text_empty }}</p>
+      <div class="buttons">
+        <div class="pull-right"><a href="{{ continue }}" class="btn btn-primary">{{ button_continue }}</a></div>
+      </div>
+      {% endif %}
+      </div>
+			{{ column_right }}
+		</div>
+	</div>
+	{{ content_bottom }}
+</div>
+{{ footer }}

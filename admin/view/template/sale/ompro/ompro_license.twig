@@ -1,0 +1,222 @@
+{{ header }}
+<div class="content-wrapper" id="content-omanager">
+
+<section class="content-header">
+  <h1>{{ heading_license }}</h1>
+  <ol class="breadcrumb">
+	{% for breadcrumb in breadcrumbs %}
+		{{ breadcrumb }}
+	{% endfor %}
+  </ol>
+</section>
+
+<section class="content">
+  <div class="box box-info">
+	<div class="box-header with-border">
+	  <h3 class="box-title"><a onclick="$('#license-info').slideToggle();"><i class="fa fa-info"></i>&nbsp;&nbsp; {{ text_license_info_title }}</a></h3>
+	</div>
+	<div id="license-info" class="box-body">
+	  <ol>
+		<li>{{ text_license_info1 }}</li>
+		<li>{{ text_license_info2 }}</li>
+		<li>{{ text_license_info3 }}</li>
+	  </ol>
+	  <div class="alert callout callout-danger">
+		<h4><i class="icon fa fa-ban"></i> {{ text_license_warning_title }}</h4>
+		<p>{{ text_license_warning_content }}</p>
+	  </div>
+	</div>
+  </div>
+  <div class="box box-primary activate-form">
+	<div class="box-header with-border">
+	  <h3 class="box-title">{{ heading_form }}<span class="text-danger text-bold">{{ domain }}</span></h3>
+	</div>
+
+	<div id="activate-form-box">
+		<div class="form-horizontal box-body">
+			<div class="form-group">
+			  <label for="license_key" class="col-sm-2 control-label">{{ text_key }}</label>
+			  <div class="col-sm-10 valid-block">
+				<input type="text" id="license_key" name="license_key" class="field-input mustbe form-control" placeholder="{{ placeholder_license_key }}" value="{{ license_key }}" />
+			  </div>
+			</div>
+		</div>
+		<div class="box-footer">
+		  <button class="btn btn-danger open-license-form" onclick="$('#license-form-box').slideDown(); $('#activate-form-box').slideUp();" {{ btn_activate_attr }}>{{ text_request }}</button>
+		  <button class="save-button activate btn btn-primary pull-right" {{ btn_activate_attr }}>{{ button_activate }}</button>
+		</div>
+	</div>
+
+	<div id="license-form-box" style="display: none;">
+	  <div class="box-body">
+		<div class="col-sm-6">
+			<div class="form-group">
+				<label for="test_domain" class="control-label">{{ text_test_domain }}</label>
+				<div class="input-group valid-block">
+				  <span class="input-group-addon" data-toggle="tooltip" title="{{ text_test_domain_info }}"><i class="fa fa-spinner"></i></span>
+				  <select id="test_domain" name="test_domain" class="field-select field-input mustbe form-control">
+					<option value="" selected="selected" ></option>
+					<option value="0">{{ text_no }}</option>
+					<option value="1" >{{ text_yes }}</option>
+				  </select>
+				</div>
+			</div>
+			<div class="form-group">
+			  <label for="email" class="control-label">{{ text_email }}</label>
+			  <div class="input-group valid-block">
+				<span class="input-group-addon" data-toggle="tooltip" title="{{ text_email_info }}"><i class="fa fa-at"></i></span>
+				<input type="text" id="email" name="email" class="field-input emailmusbe form-control" value="{{ config_email }}"/>
+			</div>
+			</div>
+		</div>
+		<div class="col-sm-6">
+			<div class="form-group">
+			  <label for="sale_resourse" class="control-label">{{ text_site }}</label>
+			  <div class="input-group valid-block">
+				<span class="input-group-addon" data-toggle="tooltip" title="{{ text_site_info }}"><i class="fa fa-globe"></i></span>
+				<select id="sale_resourse" name="sale_resourse" class="field-select field-input mustbe form-control">
+					<option value=""></option>
+					{% for resourse in sale_resourses %}
+					<option value="{{ resourse }}">{{ resourse }}</option>
+					{% endfor %}
+				</select>
+			  </div>
+			</div>
+			<div class="form-group">
+			  <label for="order_id" class="control-label">{{ text_order_id }}</label>
+			  <div class="input-group valid-block">
+				<span class="input-group-addon" data-toggle="tooltip" title="{{ text_order_id_info }}"><i class="fa fa-shopping-cart"></i></span>
+			    <input type="text" id="order_id" name="order_id" class="field-input digitmustbe form-control" />
+			  </div>
+			</div>
+		</div>
+	  </div>
+	  <div class="box-footer">
+		<button class="btn btn-default" onclick="$('#license-form-box').slideUp(); $('#activate-form-box').slideDown();">{{ text_hide_form }}</button>
+		<button class="save-button get btn btn-primary pull-right" >{{ button_request }}</button>
+	  </div>
+	</div>
+  </div>
+
+</section>
+
+<!-- license forms -->
+<script type="text/javascript"><!--
+
+/* activate-form */
+$(function () { window.validation.init({ container: '#activate-form-box' });});
+
+$('input[name=\'license_key\']').on('change, click, keyup', function () {
+	if (window.validation.isValid({ container: '.activate-form' })) {
+		$('button.save-button.activate').removeClass("btn-primary");
+		$('button.save-button.activate').addClass("btn-success");
+	} else {
+		$('button.save-button.activate').removeClass("btn-success");
+		$('button.save-button.activate').addClass("btn-primary");
+	}
+	$('button.save-button.activate').prop('disabled', false);
+	$('button.open-license-form').prop('disabled', false);
+});
+
+$('.activate-form .save-button.activate').on('click', function () {
+	if (window.validation.isValid({ container: '#activate-form-box' })) {
+		var license_key = $('input[name=\'license_key\']').val();
+		var dataString = 'license_key='+ license_key;
+		url = '{{ index_route }}/activate&{{ strtoken }}';
+		$.ajax({
+			url: url,
+			type: 'post',
+			dataType: 'json',
+			data: dataString,
+			beforeSend: function() {
+				$('button.save-button.activate').text('{{ text_waiting }}');
+			},
+			success: function(json) {
+				$('button.save-button.activate').text('{{ button_activate }}');
+				if (json['error']) {
+					modalAlert('modal-danger', '{{ text_alert_error }}', '<p>'+json['error']+'</p>', '');
+				}
+				if (json['success']) {
+					var footer = '<button type="button" class="btn btn-outline pull-left" data-dismiss="modal">{{ text_close }}</button><button type="button" class="btn btn-outline" onclick="location = \'index.php?route=sale/ompro/admin&{{ strtoken }}\';">{{ text_goto }}</button>';
+					modalAlert('modal-success', '{{ text_alert_success }}', '<p>'+json['success']+'</p>', footer);
+				}
+			},
+			error: function(xhr, ajaxOptions, thrownError) {
+				alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+			}
+		});
+	} else {
+		modalAlert('modal-danger', '{{ text_alert_error }}', '<p>{{ text_alert_check_form }}</p>', '');
+		$('button.save-button.activate').removeClass("btn-success");
+		$('button.save-button.activate').addClass("btn-primary");
+	}
+});
+
+/* license-form */
+$(function () { window.validation.init({ container: '#license-form-box' });});
+
+$('#license-form-box .field-input').on('change, click, keyup', function () {
+	if (window.validation.isValid({ container: '#license-form-box' })) {
+		$('button.save-button.get').removeClass("btn-primary");
+		$('button.save-button.get').addClass("btn-success");
+	} else {
+		$('button.save-button.get').removeClass("btn-success");
+		$('button.save-button.get').addClass("btn-primary");
+	}
+});
+
+$('#license-form-box .save-button.get').on('click', function () {
+	if (window.validation.isValid({ container: '#license-form-box' })) {
+		var sale_resourse = $('select[name=\'sale_resourse\']').val();
+		var order_id = $('input[name=\'order_id\']').val();
+		var test_domain = $('select[name=\'test_domain\']').val();
+		var email = $('input[name=\'email\']').val();
+		var dataString = 'sale_resourse=' + sale_resourse + '&order_id=' + order_id + '&test_domain=' + test_domain + '&email=' + email;
+		url = '{{ index_route }}/requestLicense&{{ strtoken }}';
+
+		$.ajax({
+			url: url,
+			type: 'post',
+			dataType: 'json',
+			data: dataString,
+			beforeSend: function() {
+				$('button.save-button.get').text('{{ text_waiting }}');
+			},
+			success: function(json) {
+				if (json['error']) {
+					modalAlert('modal-danger', '{{ text_alert_error }}', '<p>'+json['error']+'</p>', '');
+				}
+				if (json['success']) {
+					$('input[name=\'license_key\']').val(json['license_key']).trigger('change');
+					$('#license-form-box').slideUp();
+					$('#activate-form-box').slideDown();
+					$('html, body').animate({ scrollTop: $("button.save-button.get").offset().top }, 2000);
+
+					modalAlert('modal-success', '{{ text_alert_success }}', '<p>'+json['success']+'</p>', '');
+				}
+				$('button.save-button.get').text('{{ button_request }}');
+			}
+		});
+
+	} else {
+		modalAlert('modal-danger', '{{ text_alert_error }}', '<p>{{ text_alert_check_form }}</p>', '');
+		$('button.save-button.get').removeClass("btn-success");
+		$('button.save-button.get').addClass("btn-primary");
+	}
+});
+
+//--></script>
+
+<!-- document ready -->
+<script type="text/javascript"><!--
+$(document).ready(function(){
+	var warning = '{{ error_warning }}';
+	if (warning) {
+		modalAlert('modal-warning', '{{ text_alert_warning }}', '<p>'+warning+'</p>', '');
+	}
+	tooltipRefresh();
+});
+//--></script>
+
+</div>
+{{ footer }}

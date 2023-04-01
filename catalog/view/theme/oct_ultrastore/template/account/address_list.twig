@@ -1,0 +1,53 @@
+{{ header }}
+<div id="account-address" class="container">
+	{{ oct_breadcrumbs }}
+	<div class="row">
+		<div class="col-lg-12">
+			<h1 class="us-main-shop-title">{{ text_address_book }}</h1>
+		</div>
+	</div>
+	<div class="content-top-box">{{ content_top }}</div>
+	{% if success %}
+	<script>
+	usNotify('success', '{{ success }}');
+	</script>
+	{% endif %}
+	{% if error_warning %}
+	<script>
+	usNotify('warning', '{{ error_warning }}');
+	</script>
+	{% endif %}
+	<div class="row">{{ column_left }}
+	    {% if column_left and column_right %}
+	    {% set class = 'col-sm-6' %}
+	    {% elseif column_left or column_right %}
+	    {% set class = 'col-sm-9' %}
+	    {% else %}
+	    {% set class = 'col-sm-12' %}
+	    {% endif %}
+	    <div id="content" class="{{ class }}">
+		    <div class="us-content">
+		      {% if addresses %}
+		      {% for result in addresses %}
+		      <div class="us-acc-info-block">
+		      	<div class="us-acc-info-block-top">
+		      		<div class="us-content-text">{{ result.address }}</div>
+		      		<a href="{{ result.update }}" class="us-acc-info-link d-inline-flex align-items-center"><i class="fas fa-edit"></i><span>{{ button_edit }}</span></a>
+		      		<a href="{{ result.delete }}" class="us-acc-del-btn d-inline-flex align-items-center"><i class="fas fa-times"></i><span>{{ button_delete }}</span></a>
+		      	</div>
+		      </div>
+		      {% endfor %}
+		      {% else %}
+		      <p class="us-content-text">{{ text_empty }}</p>
+		      {% endif %}
+		      <div class="btn-group d-flex justify-content-between">
+		          <a href="{{ back }}" class="us-module-btn">{{ button_back }}</a>
+		          <a href="{{ add }}" class="us-module-btn us-module-btn-green">+ {{ button_new_address }}</a>
+		        </div>
+		    </div>
+	    </div>
+	    {{ column_right }}
+	</div>
+	{{ content_bottom }}
+</div>
+{{ footer }}

@@ -1,0 +1,42 @@
+.radio-switch input {
+    display: none;
+}
+
+.radio-switch input[type=radio]:not(:checked) + label {
+    display: none;
+
+}
+
+.radio-switch label {
+    display: inline-block;
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    float: left;
+    position: relative;
+    cursor: pointer;
+    margin: 0 2% 0 0;
+    padding: 8px 8px;
+    overflow: hidden;
+    border: none;
+    border-radius: 3px;
+    color: #ffffff;
+    -o-text-overflow: clip;
+    text-overflow: clip;
+    text-align: center;
+    background: #f01a1a;
+    -webkit-box-shadow: 0 6px 0 0 #ac0c0c;
+    box-shadow: 0 6px 0 0 #ac0c0c ;
+}
+
+.radio-switch input[id$="enabled"] + label {
+    top: 2px;
+    background: #75a74d;
+    text-align: center;
+    -webkit-box-shadow: 0 3px 0 0 #5c843d;
+    box-shadow: 0 3px 0 0 #5c843d ;
+}
+
+.radio-switch label:hover {
+  color: #e3e3e3;
+}

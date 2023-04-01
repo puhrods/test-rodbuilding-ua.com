@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+	<code>oct_popup_found_cheaper</code>
+	<name>Octemplates - Popup Found Cheaper</name>
+	<version>1.0.0</version>
+	<author>Octemplates</author>
+	<link>http://octemplates.net/</link>
+	<file path="catalog/controller/product/product.php">
+		<operation error="skip">
+			<search><![CDATA[public function index() {]]></search>
+			<add position="after"><![CDATA[
+			$data['oct_popup_found_cheaper_status'] = $this->config->get('oct_popup_found_cheaper_status');
+			]]></add>
+		</operation>
+		<operation error="skip">
+			<search><![CDATA[if ($product_info['quantity'] <= 0) {]]></search>
+			<add position="before"><![CDATA[
+			$data['text_oct_popup_found_cheaper'] = $this->language->get('oct_product_cheaper');
+			]]></add>
+		</operation>
+	</file>
+</modification>

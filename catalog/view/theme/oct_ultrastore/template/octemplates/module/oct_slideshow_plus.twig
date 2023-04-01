@@ -1,0 +1,121 @@
+{% if oct_slideshows_plus %}
+<div class="row row-padding-top">
+	<div class="{% if status_additional_banners %}col-lg-9{% else %}col-lg-12{% endif %}{% if position_banners == 0 %} order-1{% endif %} us-slideshow-plus-box">
+		<div id="us-slideshow-plus-{{ module }}" class="us-slideshow-plus h-100">
+		{% set key = 0 %}
+		{% for item_slide in oct_slideshows_plus %}
+		{% set key = key + 1 %}
+		    <div class="us-slideshow-plus-item us-slideshow-plus-item_{{ key }} align-items-center justify-content-between h-100">
+				<div class="us-slideshow-plus-item-info">
+			      	<p class="us-slideshow-plus-item-title">{{ item_slide.title }}</p>
+			      	<p class="us-slideshow-plus-item-text">{{ item_slide.description }}</p>
+			      	<a href="{{ item_slide.link }}" class="us-slideshow-plus-item-btn">{{ item_slide.button }}</a>
+			    </div>
+			    <div class="us-slideshow-plus-item-img">
+			    	<a href="{{ item_slide.link }}"><img src="{{ item_slide.image }}" alt="{{ item_slide.title }}" width="{{ item_slide.width }}" height="{{ item_slide.height }}" /></a>
+			    </div>
+			    <style>
+				{% if item_slide.background_color %}
+				#us-slideshow-plus-{{ module }} .us-slideshow-plus-item_{{ key }} {background-color: {{ item_slide.background_color }};}
+				{% endif %}
+				{% if item_slide.title_color %}
+				#us-slideshow-plus-{{ module }} .us-slideshow-plus-item_{{ key }} .us-slideshow-plus-item-title {color: {{ item_slide.title_color }};}
+				{% endif %}
+				{% if item_slide.text_color %}
+				#us-slideshow-plus-{{ module }} .us-slideshow-plus-item_{{ key }} .us-slideshow-plus-item-text {color: {{ item_slide.text_color }};}
+				{% endif %}
+				{% if item_slide.button_color and item_slide.button_background %}
+				#us-slideshow-plus-{{ module }} .us-slideshow-plus-item_{{ key }} .us-slideshow-plus-item-btn {color: {{ item_slide.button_color }};background-color: {{ item_slide.button_background }};}
+				{% endif %}
+				{% if item_slide.button_color_hover and item_slide.button_background_hover %}
+				#us-slideshow-plus-{{ module }} .us-slideshow-plus-item_{{ key }} .us-slideshow-plus-item-btn:hover {color: {{ item_slide.button_color_hover }};background-color: {{ item_slide.button_background_hover }};}
+				{% endif %}
+			    </style>
+		    </div>
+		{% endfor %}
+		</div>
+	</div>
+	{% if status_additional_banners %}
+	<div class="col-lg-3 us-slideshow-plus-blocks" id="us-slideshow-plus-block-{{ module }}">
+		<div class="us-slideshow-plus-block" id="block_1">
+			<img src="{{ oct_slideshows_plus_banners.b1_image }}" class="us-slideshow-plus-block-img" alt="{{ oct_slideshows_plus_banners.b1_banner_button }}" width="{{ oct_slideshows_plus_banners.width }}" height="{{ oct_slideshows_plus_banners.height }}" />
+			<a href="{{ oct_slideshows_plus_banners.b1_banner_link }}" class="us-slideshow-plus-block-btn" title="{{ oct_slideshows_plus_banners.b1_banner_button }}">{{ oct_slideshows_plus_banners.b1_banner_button }}</a>
+			<p class="us-slideshow-plus-block-text">{{ oct_slideshows_plus_banners.b1_banner_title }}</p>
+		</div>
+		<div class="us-slideshow-plus-block" id="block_2">
+			<img src="{{ oct_slideshows_plus_banners.b2_image }}" class="us-slideshow-plus-block-img" alt="{{ oct_slideshows_plus_banners.b2_banner_button }}" width="{{ oct_slideshows_plus_banners.width }}" height="{{ oct_slideshows_plus_banners.height }}" />
+			<a href="{{ oct_slideshows_plus_banners.b2_banner_link }}" class="us-slideshow-plus-block-btn" title="{{ oct_slideshows_plus_banners.b2_banner_button }}">{{ oct_slideshows_plus_banners.b2_banner_button }}</a>
+			<p class="us-slideshow-plus-block-text">{{ oct_slideshows_plus_banners.b2_banner_title }}</p>
+		</div>
+	</div>
+	{% endif %}
+</div>
+<script>
+	$( document ).ready(function() {
+	    $('#us-slideshow-plus-{{ module }}').slick({
+			autoplay: true,
+			dots: true,
+			arrows: false,
+			infinite: true,
+			autoplaySpeed: 5000,
+			slidesToShow: 1
+		});
+	});
+</script>
+<style>
+{% if pag_background %}
+	#us-slideshow-plus-{{ module }} .slick-dots button {
+		background: {{ pag_background }};
+	}
+{% endif %}
+
+{% if pag_background_active %}
+	#us-slideshow-plus-{{ module }} .slick-dots li.slick-active button,
+	#us-slideshow-plus-{{ module }} .slick-dots li:hover button {
+		background: {{ pag_background_active }};
+	}
+{% endif %}
+
+{% if oct_slideshows_plus_banners.b1_button_background and oct_slideshows_plus_banners.b1_button_color %}
+	#us-slideshow-plus-block-{{ module }} #block_1 .us-slideshow-plus-block-btn {
+		background-color: {{ oct_slideshows_plus_banners.b1_button_background }};
+		color: {{ oct_slideshows_plus_banners.b1_button_color }};
+	}
+{% endif %}
+
+{% if oct_slideshows_plus_banners.b2_button_background and oct_slideshows_plus_banners.b2_button_color %}
+	#us-slideshow-plus-block-{{ module }} #block_2 .us-slideshow-plus-block-btn {
+		background-color: {{ oct_slideshows_plus_banners.b2_button_background }};
+		color: {{ oct_slideshows_plus_banners.b2_button_color }};
+	}
+{% endif %}
+
+{% if oct_slideshows_plus_banners.b1_button_background_hover and oct_slideshows_plus_banners.b1_button_color_hover %}
+	#us-slideshow-plus-block-{{ module }} #block_1 .us-slideshow-plus-block-btn:hover {
+		background-color: {{ oct_slideshows_plus_banners.b1_button_background_hover }};
+		color: {{ oct_slideshows_plus_banners.b1_button_color_hover }};
+	}
+{% endif %}
+
+{% if oct_slideshows_plus_banners.b2_button_background_hover and oct_slideshows_plus_banners.b2_button_color_hover %}
+	#us-slideshow-plus-block-{{ module }} #block_2 .us-slideshow-plus-block-btn:hover {
+		background-color: {{ oct_slideshows_plus_banners.b2_button_background_hover }};
+		color: {{ oct_slideshows_plus_banners.b2_button_color_hover }};
+	}
+{% endif %}
+
+{% if oct_slideshows_plus_banners.b1_title_background and oct_slideshows_plus_banners.b1_title_color %}
+	#us-slideshow-plus-block-{{ module }} #block_1 .us-slideshow-plus-block-text {
+		background-color: {{ oct_slideshows_plus_banners.b1_title_background }};
+		color: {{ oct_slideshows_plus_banners.b1_title_color }};
+	}
+{% endif %}
+
+{% if oct_slideshows_plus_banners.b2_title_background and oct_slideshows_plus_banners.b2_title_color %}
+	#us-slideshow-plus-block-{{ module }} #block_2 .us-slideshow-plus-block-text {
+		background-color: {{ oct_slideshows_plus_banners.b2_title_background }};
+		color: {{ oct_slideshows_plus_banners.b2_title_color }};
+	}
+{% endif %}
+</style>
+{% endif %}

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+	<code>oct_popup_review</code>
+	<name>Octemplates - Popup review</name>
+	<version>1.0.0</version>
+	<author>Octemplates</author>
+	<link>http://octemplates.net/</link>
+	<file path="catalog/controller/product/product.php">
+    	<operation error="skip">
+			<search><![CDATA[$json['error'] = $this->language->get('error_name');]]></search>
+			<add position="replace"><![CDATA[$json['error']['name'] = $this->language->get('error_name');]]></add>
+    	</operation>
+    	<operation error="skip">
+			<search><![CDATA[$json['error'] = $this->language->get('error_text');]]></search>
+			<add position="replace"><![CDATA[$json['error']['text'] = $this->language->get('error_text');]]></add>
+    	</operation>
+    	<operation error="skip">
+			<search><![CDATA[$json['error'] = $this->language->get('error_rating');]]></search>
+			<add position="replace"><![CDATA[$json['error']['rating'] = $this->language->get('error_rating');]]></add>
+    	</operation>
+    	<operation error="skip">
+			<search><![CDATA[$json['error'] = $captcha;]]></search>
+			<add position="replace"><![CDATA[$json['error']['captcha'] = $captcha;]]></add>
+    	</operation>
+	</file>
+</modification>

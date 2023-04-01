@@ -1,0 +1,40 @@
+
+{% if not logged %} 
+<div  class="socnetauthbox" style="{{ socnetauth2_widget_css_socnetauthbox }}">
+<div class="socnetauthhead" style="{{ socnetauth2_widget_css_socnetauthbox_socnetauthhead }}">
+ <h3 style="{{ socnetauth2_widget_css_socnetauthbox_h3 }}">{{ widget_heading_title }}</h3>
+</div>
+<div class="socnetauthbody" style="{{ socnetauth2_widget_css_socnetauthbox_socnetauthbody }}">
+	<form action="{{ action }}" method="post" enctype="multipart/form-data">
+	<table class="socnetauthform" width=100%  style="{{ socnetauth2_widget_css_socnetauthbox_socnetauthform }}">
+		<tr>
+			<td style="{{ socnetauth2_widget_css_socnetauthbox_socnetauthform_td }}">{{ widget_entry_email }}</td>
+		</tr>
+		<tr>
+			<td style="{{ socnetauth2_widget_css_socnetauthbox_socnetauthform_td }}"><input type="text" class="form-control col-sm-3" name="email" value=""></td>
+		</tr>
+		<tr>
+			<td style="{{ socnetauth2_widget_css_socnetauthbox_socnetauthform_td }}">{{ widget_entry_password }}</td>
+		</tr>
+		<tr>
+			<td style="{{ socnetauth2_widget_css_socnetauthbox_socnetauthform_td }}"><input type="password" class="form-control col-sm-3" name="password"></td>
+		</tr>
+		<tr>
+			<td style="{{ socnetauth2_widget_css_socnetauthbox_socnetauthform_td }}">
+				<input type="submit" value="{{ widget_text_login }}" class="btn btn-primary" />
+			</td>
+		</tr>
+	</table>
+		{{ SOCNETAUTH2_DATA_BUTTONS['code'] }}
+	</form>
+    <ul>
+      <li><a href="{{ login }}">{{ widget_text_login }}</a> / <a href="{{ register }}">{{ widget_text_register }}</a></li>
+      <li><a href="{{ forgotten }}">{{ widget_text_forgotten }}</a></li>
+    </ul>
+    
+</div>
+
+</div>
+{% endif %}
+
+ 

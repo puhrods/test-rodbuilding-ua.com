@@ -1,0 +1,288 @@
+{% if show_socauth2_popup %}
+<div>
+<style>
+#socAuthOverlay {
+    background: none repeat scroll 0 0 #fff;
+    height: 100%;
+    position: fixed;
+    width: 100%; 
+	left: 0;
+    overflow: hidden;
+    top: 0;
+    z-index: 99;
+}
+
+#socAuthPopUp {
+    background: none repeat scroll 0 0 #fff;
+    border: 1px solid #DFDFDF;
+	box-shadow: 0px 0px 10px #DFDFDF;
+    z-index: 99999999;
+	
+	position: fixed;
+	width: 517px;
+	
+	-moz-border-radius: 15px;
+	border-radius: 15px;
+	padding-top: 28px;
+}
+
+#socAuthPopUp table td {
+	padding: 10px;
+}
+
+#socAuthPopUp .header
+{
+	text-align: center;
+	padding: 0px;
+	font-size: 30px;
+	line-height: 28px;
+	margin-bottom: 10px;
+}
+
+#socAuthPopUp .skipp
+{
+	padding-top: 18px;
+
+}
+
+#socAuthPopUp .skiplink
+{
+	color: #000;
+	text-decoration: none;
+	font-size: 25px;
+}
+
+a.socnetauth_buttons:hover img
+{
+	opacity: 0.8;
+}
+
+</style>
+<div id="socAuthOverlay" style="display: none; opacity: 0.9;"></div>
+<div id="socAuthPopUp" style="display: none;">
+<p class="header">{{ widget_heading_title }}</p>
+<p style="height: 4px;"></p>
+
+{% if count_socnets <= 4 %}
+<table width=100%>
+	<tr>
+		<td width=4%></td>
+		{% for socnet in socnetauth2_socnets %}
+		<td width={{ count_socnets_width }}% align=center {% if not socnet['is_close'] %} style="position: relative;"{% endif %}><a class="socnetauth_buttons" {% if socnet['is_close']  %}onclick="closeSocAuthPopUp();"{% endif %}  
+		href="{{ socnet['link'] }}"
+		><img src="{{ socnet['img_url'] }}"></a>{{ socnet['js_block'] }}</td>
+		{% endfor %}
+		<td width=4%></td>
+	</tr>
+</table>
+{% elseif count_socnets <= 6 %}
+
+<table width=100%>
+	<tr>
+		<td width=4%></td>
+		
+		<td width=30% align=center{% if not socnetauth2_socnets[0]['is_close'] %} style="position: relative;"{% endif %}><a class="socnetauth_buttons" {% if socnetauth2_socnets[0]['is_close']  %}onclick="closeSocAuthPopUp();"{% endif %}  
+		href="{{ socnetauth2_socnets[0]['link'] }}"
+		><img src="{{ socnetauth2_socnets[0]['img_url'] }}"></a>{{ socnetauth2_socnets[0]['js_block'] }}</td>
+		
+		<td width=30% align=center{% if not socnetauth2_socnets[1]['is_close'] %} style="position: relative;"{% endif %}><a class="socnetauth_buttons" {% if socnetauth2_socnets[1]['is_close']  %}onclick="closeSocAuthPopUp();"{% endif %}  
+		href="{{ socnetauth2_socnets[1]['link'] }}"
+		><img src="{{ socnetauth2_socnets[1]['img_url'] }}"></a>{{ socnetauth2_socnets[1]['js_block'] }}</td>
+		
+		<td width=30% align=center{% if not socnetauth2_socnets[1]['is_close'] %} style="position: relative;"{% endif %}><a class="socnetauth_buttons" {% if socnetauth2_socnets[2]['is_close']  %}onclick="closeSocAuthPopUp();"{% endif %}  
+		href="{{ socnetauth2_socnets[2]['link'] }}"
+		><img src="{{ socnetauth2_socnets[2]['img_url'] }}"></a>{{ socnetauth2_socnets[2]['js_block'] }}</td>
+		
+		
+		<td width=4%></td>
+	</tr>
+	<tr>
+		<td width=4%></td>
+		
+		<td width=30% align=center{% if not socnetauth2_socnets[3]['is_close'] %} style="position: relative;"{% endif %}><a class="socnetauth_buttons" {% if socnetauth2_socnets[3]['is_close']  %}onclick="closeSocAuthPopUp();"{% endif %}  
+		href="{{ socnetauth2_socnets[3]['link'] }}"
+		><img src="{{ socnetauth2_socnets[3]['img_url'] }}"></a>{{ socnetauth2_socnets[3]['js_block'] }}</td>
+		
+		<td width=30% align=center{% if not socnetauth2_socnets[4]['is_close'] %} style="position: relative;"{% endif %}><a class="socnetauth_buttons" {% if socnetauth2_socnets[4]['is_close']  %}onclick="closeSocAuthPopUp();"{% endif %}  
+		href="{{ socnetauth2_socnets[4]['link'] }}"
+		><img src="{{ socnetauth2_socnets[4]['img_url'] }}"></a>{{ socnetauth2_socnets[4]['js_block'] }}</td>
+		
+		
+		<td width=30% align=center{% if not socnetauth2_socnets[5]['is_close'] %} style="position: relative;"{% endif %}>
+		{% if socnetauth2_socnets[5]['link'] %}<a class="socnetauth_buttons"
+		{% if socnetauth2_socnets[5]['is_close']  %}onclick="closeSocAuthPopUp();"{% endif %}  
+		href="{{ socnetauth2_socnets[5]['link'] }}"
+		><img src="{{ socnetauth2_socnets[5]['img_url'] }}"></a
+				>{{ socnetauth2_socnets[5]['js_block'] }}{% endif %}</td>
+		
+		<td width=4%></td>
+	</tr>
+</table> 
+{% elseif count_socnets == 9 %}
+
+<table width=100%>
+	<tr>
+		<td width=4%></td>
+		
+		<td width=23% align=center{% if not socnetauth2_socnets[0]['is_close'] %} style="position: relative;"{% endif %}><a class="socnetauth_buttons" 
+		{% if socnetauth2_socnets[0]['is_close']  %}onclick="closeSocAuthPopUp();"{% endif %}  
+		href="{{ socnetauth2_socnets[0]['link'] }}"
+		><img src="{{ socnetauth2_socnets[0]['img_url'] }}"></a>{{ socnetauth2_socnets[0]['js_block'] }}</td>
+		
+		<td width=23% align=center{% if not socnetauth2_socnets[1]['is_close'] %} style="position: relative;"{% endif %}><a class="socnetauth_buttons" {% if socnetauth2_socnets[1]['is_close']  %}onclick="closeSocAuthPopUp();"{% endif %}  
+		href="{{ socnetauth2_socnets[1]['link'] }}"
+		><img src="{{ socnetauth2_socnets[1]['img_url'] }}"></a>{{ socnetauth2_socnets[1]['js_block'] }}</td>
+		
+		<td width=23% align=center{% if not socnetauth2_socnets[2]['is_close'] %} style="position: relative;"{% endif %}><a class="socnetauth_buttons" {% if socnetauth2_socnets[2]['is_close']  %}onclick="closeSocAuthPopUp();"{% endif %}  
+		href="{{ socnetauth2_socnets[2]['link'] }}"
+		><img src="{{ socnetauth2_socnets[2]['img_url'] }}"></a>{{ socnetauth2_socnets[2]['js_block'] }}</td>
+		
+		
+		<td width=4%></td>
+	</tr>
+	<tr>
+		<td width=4%></td>
+		<td width=23% align=center{% if not socnetauth2_socnets[3]['is_close'] %} style="position: relative;"{% endif %}><a class="socnetauth_buttons" {% if socnetauth2_socnets[3]['is_close']  %}onclick="closeSocAuthPopUp();"{% endif %}  
+		href="{{ socnetauth2_socnets[3]['link'] }}"
+		><img src="{{ socnetauth2_socnets[3]['img_url'] }}"></a>{{ socnetauth2_socnets[3]['js_block'] }}</td>
+		
+		
+		<td width=23% align=center{% if not socnetauth2_socnets[4]['is_close'] %} style="position: relative;"{% endif %}><a class="socnetauth_buttons" {% if socnetauth2_socnets[4]['is_close']  %}onclick="closeSocAuthPopUp();"{% endif %}  
+		href="{{ socnetauth2_socnets[4]['link'] }}"
+		><img src="{{ socnetauth2_socnets[4]['img_url'] }}"></a>{{ socnetauth2_socnets[4]['js_block'] }}</td>
+		
+		
+		<td width=23% align=center{% if not socnetauth2_socnets[5]['is_close'] %} style="position: relative;"{% endif %}><a class="socnetauth_buttons" {% if socnetauth2_socnets[5]['is_close']  %}onclick="closeSocAuthPopUp();"{% endif %}  
+		href="{{ socnetauth2_socnets[5]['link'] }}"
+		><img src="{{ socnetauth2_socnets[5]['img_url'] }}"></a>{{ socnetauth2_socnets[5]['js_block'] }}</td>
+		
+		<td width=4%></td>
+	</tr>
+	<tr>
+		<td width=4%></td>
+		
+		<td width=23% align=center{% if not socnetauth2_socnets[6]['is_close'] %} style="position: relative;"{% endif %}><a class="socnetauth_buttons" {% if socnetauth2_socnets[6]['is_close']  %}onclick="closeSocAuthPopUp();"{% endif %}  
+		href="{{ socnetauth2_socnets[6]['link'] }}"
+		><img src="{{ socnetauth2_socnets[6]['img_url'] }}"></a>{{ socnetauth2_socnets[6]['js_block'] }}</td>
+		
+		
+		<td width=23% align=center{% if not socnetauth2_socnets[7]['is_close'] %} style="position: relative;"{% endif %}>
+		{% if socnetauth2_socnets[7]['link'] %} <a class="socnetauth_buttons" {% if socnetauth2_socnets[7]['is_close']  %}onclick="closeSocAuthPopUp();"{% endif %}  
+		href="{{ socnetauth2_socnets[7]['link'] }}"
+		><img src="{{ socnetauth2_socnets[7]['img_url'] }}"></a>{{ socnetauth2_socnets[7]['js_block'] }}
+		{% endif %}</td>
+		
+		<td width=23% align=center{% if not socnetauth2_socnets[8]['is_close'] %} style="position: relative;"{% endif %}>
+		{% if socnetauth2_socnets[8]['link'] %} 
+		<a class="socnetauth_buttons" {% if socnetauth2_socnets[8]['is_close']  %}onclick="closeSocAuthPopUp();"{% endif %}  
+		href="{{ socnetauth2_socnets[8]['link'] }}"
+		><img src="{{ socnetauth2_socnets[8]['img_url'] }}"></a>{{ socnetauth2_socnets[8]['js_block'] }}{% endif %}</td>
+		
+		
+		
+		<td width=4%></td>
+	</tr>
+</table>
+ 
+{% else %}
+
+<table width=100%>
+	<tr>
+		<td width=4%></td>
+		
+		<td width=23% align=center{% if not socnetauth2_socnets[0]['is_close'] %} style="position: relative;"{% endif %}><a class="socnetauth_buttons" {% if socnetauth2_socnets[0]['is_close']  %}onclick="closeSocAuthPopUp();"{% endif %}  
+		href="{{ socnetauth2_socnets[0]['link'] }}"
+		><img src="{{ socnetauth2_socnets[0]['img_url'] }}"></a>{{ socnetauth2_socnets[0]['js_block'] }}</td>
+		
+		<td width=23% align=center{% if not socnetauth2_socnets[1]['is_close'] %} style="position: relative;"{% endif %}><a class="socnetauth_buttons" {% if socnetauth2_socnets[1]['is_close']  %}onclick="closeSocAuthPopUp();"{% endif %}  
+		href="{{ socnetauth2_socnets[1]['link'] }}"
+		><img src="{{ socnetauth2_socnets[1]['img_url'] }}"></a>{{ socnetauth2_socnets[1]['js_block'] }}</td>
+		
+		<td width=23% align=center{% if not socnetauth2_socnets[2]['is_close'] %} style="position: relative;"{% endif %}><a class="socnetauth_buttons" {% if socnetauth2_socnets[2]['is_close']  %}onclick="closeSocAuthPopUp();"{% endif %}  
+		href="{{ socnetauth2_socnets[2]['link'] }}"
+		><img src="{{ socnetauth2_socnets[2]['img_url'] }}"></a>{{ socnetauth2_socnets[2]['js_block'] }}</td>
+		
+		<td width=23% align=center{% if not socnetauth2_socnets[3]['is_close'] %} style="position: relative;"{% endif %}><a class="socnetauth_buttons" {% if socnetauth2_socnets[3]['is_close']  %}onclick="closeSocAuthPopUp();"{% endif %}  
+		href="{{ socnetauth2_socnets[3]['link'] }}"
+		><img src="{{ socnetauth2_socnets[3]['img_url'] }}"></a>{{ socnetauth2_socnets[3]['js_block'] }}</td>
+		
+		
+		<td width=4%></td>
+	</tr>
+	<tr>
+		<td width=4%></td>
+		
+		<td width=23% align=center{% if not socnetauth2_socnets[4]['is_close'] %} style="position: relative;"{% endif %}><a class="socnetauth_buttons" {% if socnetauth2_socnets[4]['is_close']  %}onclick="closeSocAuthPopUp();"{% endif %}  
+		href="{{ socnetauth2_socnets[4]['link'] }}"
+		><img src="{{ socnetauth2_socnets[4]['img_url'] }}"></a>{{ socnetauth2_socnets[4]['js_block'] }}</td>
+		
+		
+		<td width=23% align=center{% if not socnetauth2_socnets[5]['is_close'] %} style="position: relative;"{% endif %}><a class="socnetauth_buttons" {% if socnetauth2_socnets[5]['is_close']  %}onclick="closeSocAuthPopUp();"{% endif %}  
+		href="{{ socnetauth2_socnets[5]['link'] }}"
+		><img src="{{ socnetauth2_socnets[5]['img_url'] }}"></a>{{ socnetauth2_socnets[5]['js_block'] }}</td>
+		
+		
+		<td width=23% align=center{% if not socnetauth2_socnets[6]['is_close'] %} style="position: relative;"{% endif %}><a class="socnetauth_buttons" {% if socnetauth2_socnets[6]['is_close']  %}onclick="closeSocAuthPopUp();"{% endif %}  
+		href="{{ socnetauth2_socnets[6]['link'] }}"
+		><img src="{{ socnetauth2_socnets[6]['img_url'] }}"></a>{{ socnetauth2_socnets[6]['js_block'] }}</td>
+		
+		
+		<td width=23% align=center {% if not socnetauth2_socnets[7]['is_close'] %}style="position: relative;"{% endif %}>{% if socnetauth2_socnets[7]['link'] %}<a class="socnetauth_buttons" {% if socnet['is_close']  %}onclick="closeSocAuthPopUp();"{% endif %}  
+		href="{{ socnetauth2_socnets[7]['link'] }}"
+		><img src="{{ socnetauth2_socnets[7]['img_url'] }}"></a>{{ socnetauth2_socnets[7]['js_block'] }}
+		{% endif %} </td>
+		
+		
+		<td width=4%></td>
+	</tr>
+</table>
+
+{% endif %}
+
+<p align=center class="skipp"><i><a href="javascript: closeSocAuthPopUp();" class="skiplink"
+>{{ widget_text_skip }}</a></i></p>
+</div>
+<script>
+function show_socauth_popup()
+{
+	{% if socnetauth2_mobile_control %}
+	if( $(window).width()<520 ) return;
+	{% endif %}
+	
+	var otstup1 = ($(window).width() - 517)/2;
+	var otstup2 = ($(window).height() - 420)/2;
+	
+	if( $(window).width() < 520  )
+	{
+		document.getElementById('socAuthPopUp').style.left    = '0px';
+		document.getElementById('socAuthPopUp').style.width = $(window).width()+'px';
+	}
+	else
+	{
+		document.getElementById('socAuthPopUp').style.left    = otstup1+'px';
+	}
+	document.getElementById('socAuthPopUp').style.top     = otstup2+'px';
+	document.getElementById('socAuthPopUp').style.display = 'block';
+	document.getElementById('socAuthOverlay').style.display = 'block';
+}
+
+function closeSocAuthPopUp()
+{
+	document.getElementById('socAuthPopUp').style.display = 'none';
+	document.getElementById('socAuthOverlay').style.display = 'none';
+	setCookie('show_socauth2_popup','1');
+}
+
+function setCookie( c_name, value, exdays )
+{
+	var exdate=new Date();
+	exdate.setDate(exdate.getDate() + exdays);
+	var c_value=escape(value) + ((exdays==null) ? "" : "; expires="+exdate.toUTCString());
+	document.cookie=c_name + "=" + c_value;
+}
+
+
+show_socauth_popup();
+</script>
+</div>
+{% endif %}

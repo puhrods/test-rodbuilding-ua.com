@@ -1,0 +1,244 @@
+<h3 class="jumbotron">{{ nav_appearance_module }}</h3>
+<div class="form-group">
+  <label class="col-sm-3 control-label" new-feature>{{ entry_theme }}</label>
+  <div class="col-sm-3">
+    <select name="theme" class="form-control">
+      {% if theme == 'light' %}
+      <option value="light" selected="selected">{{ text_theme_light }}</option>
+      {% else %}
+      <option value="light">{{ text_theme_light }}</option>
+      {% endif %}
+      {% if theme == 'light-block' %}
+      <option value="light-block" selected="selected">{{ text_theme_light_block }}</option>
+      {% else %}
+      <option value="light-block">{{ text_theme_light_block }}</option>
+      {% endif %}      
+    </select>
+  </div>
+</div>
+
+<div class="form-group">
+  <label class="col-sm-3 control-label" new-feature>{{ entry_module_heading_title }}</label>
+  <div class="col-sm-9">
+    {% for language in languages %}
+    <div class="input-group">
+      <span class="input-group-addon"><img src="{{ language.image }}" title="{{ language.name }}" /></span>
+      <input type="text" name="module_heading_title[{{ language.language_id }}]" value="{{ module_heading_title[language.language_id] ? module_heading_title[language.language_id] : '' }}" placeholder="{{ entry_module_heading_title }}" class="form-control" />
+    </div>
+    {% if error_module_heading_title[language.language_id] %}
+    <div class="text-danger">{{ error_module_heading_title[language.language_id] }}</div>
+    {% endif %}
+    {% endfor %}
+  </div>
+</div>
+
+<div class="form-group">
+  <label class="col-sm-3 control-label" new-feature>{{ entry_mobile_button_text }}</label>
+  <div class="col-sm-9">
+    {% for language in languages %}
+    <div class="input-group">
+      <span class="input-group-addon"><img src="{{ language.image }}" title="{{ language.name }}" /></span>
+      <input type="text" name="mobile_button_text[{{ language.language_id }}]" value="{{ mobile_button_text[language.language_id] ? mobile_button_text[language.language_id] : '' }}" placeholder="{{ entry_mobile_button_text }}" class="form-control" />
+    </div>
+    {% if error_mobile_button_text[language.language_id] %}
+    <div class="text-danger">{{ error_mobile_button_text[language.language_id] }}</div>
+    {% endif %}
+    {% endfor %}
+  </div>
+</div>
+
+<div class="form-group">
+  <label class="col-sm-3 control-label" new-feature>{{ entry_mobile_button_position }}</label>
+  <div class="col-sm-9">
+    <div class="btn-group" data-toggle="buttons">
+      {% if mobile_button_position == 'fixed' %}
+      <label class="btn btn-default active">
+        <input type="radio" name="mobile_button_position" value="fixed" checked="checked" /> {{ text_mobile_button_position_fixed }}
+      </label>
+      {% else %}
+      <label class="btn btn-default">
+        <input type="radio" name="mobile_button_position" value="fixed" /> {{ text_mobile_button_position_fixed }}
+      </label>      
+      {% endif %}
+      
+      {% if mobile_button_position == 'static' %}
+      <label class="btn btn-default active">
+        <input type="radio" name="mobile_button_position" value="static" checked="checked" /> {{ text_mobile_button_position_static }}
+      </label>
+      {% else %}
+      <label class="btn btn-default">
+        <input type="radio" name="mobile_button_position" value="static" /> {{ text_mobile_button_position_static }}
+      </label>      
+      {% endif %}
+      
+      {% if mobile_button_position == 'both' %}
+      <label class="btn btn-default active">
+        <input type="radio" name="mobile_button_position" value="both" checked="checked" /> {{ text_mobile_button_position_both }}
+      </label>
+      {% else %}
+      <label class="btn btn-default">
+        <input type="radio" name="mobile_button_position" value="both" /> {{ text_mobile_button_position_both }}
+      </label>      
+      {% endif %}      
+    </div>
+  </div>
+</div>
+
+<div class="form-group">
+  <label class="col-sm-3 control-label" for="input-mobile-max-width" new-feature>{{ entry_mobile_max_width }}</label>
+  <div class="col-sm-3">
+    <div class="input-group">
+      <input type="number" name="mobile_max_width" min="0" value="{{ mobile_max_width }}" class="form-control" id="input-mobile-max-width" />
+      <span class="input-group-addon">px</span>
+    </div>
+  </div>
+  <div class="col-sm-offset-3 col-sm-9">
+    <p class="help-block">{{ help_mobile_max_width }}</p>
+  </div>
+</div>
+
+<div class="form-group">
+  <label class="col-sm-3 control-label" new-feature>{{ entry_mobile_placement }}</label>
+  <div class="col-sm-9">
+    <div class="btn-group" data-toggle="buttons">
+      {% if mobile_placement == 'left' %}
+      <label class="btn btn-default active">
+        <input type="radio" name="mobile_placement" value="left" checked="checked" /> <i class="fa fa-step-backward"></i> {{ text_mobile_placement_left }}
+      </label>
+      <label class="btn btn-default">
+        <input type="radio" name="mobile_placement" value="right" /> {{ text_mobile_placement_right }} <i class="fa fa-step-forward"></i>
+      </label>      
+      {% endif %}
+      {% if mobile_placement == 'right' %}
+      <label class="btn btn-default">
+        <input type="radio" name="mobile_placement" value="left" /> <i class="fa fa-step-backward"></i> {{ text_mobile_placement_left }}
+      </label>
+      <label class="btn btn-default active">
+        <input type="radio" name="mobile_placement" value="right" checked="checked" /> {{ text_mobile_placement_right }} <i class="fa fa-step-forward"></i>
+      </label>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="form-group">
+  <label class="col-sm-3 control-label" new-feature>{{ entry_mobile_remember_state }}</label>
+  <div class="col-sm-5">    
+    {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: mobile_remember_state, name: 'mobile_remember_state' }) }}
+  </div>
+  <div class="col-sm-offset-3 col-sm-9">
+    <p class="help-block">{{ help_mobile_remember_state }}</p>
+  </div>  
+</div>
+
+<h3 class="jumbotron">{{ nav_appearance_filter }}</h3>
+
+<div class="form-group">
+  <label class="col-sm-3 control-label" for="input-show-filters-limit">{{ entry_show_first_limit }}</label>
+  <div class="col-sm-3">
+    <div class="input-group">
+      <input type="number" name="show_filters_limit" min="0" value="{{ show_filters_limit }}" class="form-control" id="input-show-filters-limit" />
+      <span class="input-group-addon">{{ text_filters }}</span>
+    </div>
+  </div>
+  <div class="col-sm-offset-3 col-sm-9">
+    <p class="help-block">{{ help_show_filters_limit }}</p>
+  </div>
+</div>
+
+<div class="form-group">
+  <label class="col-sm-3 control-label" new-feature>{{ entry_hidden_filters_lazy_load }}</label>
+  <div class="col-sm-5">
+    {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: hidden_filters_lazy_load, name: 'hidden_filters_lazy_load' }) }}
+  </div>
+  <div class="col-sm-offset-3 col-sm-9">
+    <p class="help-block">{{ help_hidden_filters_lazy_load }}</p>
+  </div>  
+</div>
+
+<div class="form-group">
+  <label class="col-sm-3 control-label" new-feature>{{ entry_hide_single_value }}</label>
+  <div class="col-sm-9">
+    {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: hide_single_value, name: 'hide_single_value' }) }}
+
+    <p class="help-block">{{ help_hide_single_value }}</p>
+  </div>
+</div>
+
+<div class="form-group">
+  <label class="col-sm-3 control-label" new-feature>{{ entry_slider_input }}</label>
+  <div class="col-sm-9">
+    {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: slider_input, name: 'slider_input' }) }}
+    
+    <p class="help-block">{{ help_slider_input }}</p>
+  </div>
+</div>
+
+<div class="form-group">
+  <label class="col-sm-3 control-label" new-feature>{{ entry_slider_pips }}</label>
+  <div class="col-sm-9">
+    {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: slider_pips, name: 'slider_pips' }) }}
+  </div>
+</div>
+
+<div class="form-group">
+  <label class="col-sm-3 control-label">{{ entry_show_selected }}</label>
+  <div class="col-sm-9">
+    {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: show_selected, name: 'show_selected' }) }}
+    
+    <p class="help-block">{{ help_show_selected }}</p>
+  </div>
+</div>
+
+<h3 class="jumbotron">{{ nav_appearance_filter_value }}</h3>
+
+<div class="form-group">
+  <label class="col-sm-3 control-label">{{ entry_show_counter }}</label>
+  <div class="col-sm-9">    
+    {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: show_counter, name: 'show_counter' }) }}
+
+    <p class="help-block">{{ help_show_counter }}</p>
+  </div>
+</div>
+
+<div class="form-group">
+  <label class="col-sm-3 control-label" for="input-show-values-limit">{{ entry_show_first_limit }}</label>
+  <div class="col-sm-3">
+    <div class="input-group">
+      <input type="number" name="show_values_limit" min="0" value="{{ show_values_limit }}" class="form-control" id="input-show-values-limit" />
+      <span class="input-group-addon">{{ text_values }}</span>
+    </div>
+  </div>
+  <div class="col-sm-offset-3 col-sm-9">
+    <p class="help-block">{{ help_show_values_limit }}</p>
+  </div>    
+</div>
+
+<div class="form-group">
+  <label class="col-sm-3 control-label" new-feature>{{ entry_hidden_values_lazy_load }}</label>
+  <div class="col-sm-5">
+    {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: hidden_values_lazy_load, name: 'hidden_values_lazy_load', text_yes: text_enabled, text_no: text_disabled }) }}
+  </div>
+  <div class="col-sm-offset-3 col-sm-9">
+    <p class="help-block">{{ help_hidden_values_lazy_load }}</p>
+  </div>   
+</div>
+
+<div class="form-group">
+  <label class="col-sm-3 control-label">{{ entry_hide_empty_values }}</label>
+  <div class="col-sm-9">
+    {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: hide_empty_values, name: 'hide_empty_values' }) }}
+
+    <p class="help-block">{{ help_hide_empty_values }}</p>
+  </div>
+</div>
+
+<div class="form-group">
+  <label class="col-sm-3 control-label beta-feature" new-feature>{{ entry_values_auto_column }}</label>
+  <div class="col-sm-5">
+    {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: values_auto_column, name: 'values_auto_column' }) }}
+  </div>
+  <div class="col-sm-offset-3 col-sm-9">
+    <p class="help-block">{{ help_values_auto_column }}</p>
+  </div>    
+</div>

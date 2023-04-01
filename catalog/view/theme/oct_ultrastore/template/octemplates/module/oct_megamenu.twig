@@ -1,0 +1,372 @@
+{% if mobile is defined and mobile %}
+	{% if (standart_menu is defined and standart_menu) or (oct_megamenu_mobile_categories is defined and oct_megamenu_mobile_categories) or (oct_megamenu_brands is defined and oct_megamenu_brands) or (oct_megamenu_informations is defined and oct_megamenu_informations) or (oct_megamenu_links is defined and oct_megamenu_links) %}
+		<ul id="oct-menu-ul" class="oct-menu-ul oct-menu-parent-ul list-unstyled">
+		{% if standart_menu is defined and standart_menu is not empty %}
+			{{ standart_menu }}
+		{% endif %}
+		{% if items is defined and items is not empty %}
+			{% for item in items %}
+			{% if item.item_type == 1 and (oct_megamenu_links is defined and oct_megamenu_links) %}
+			<li class="oct-menu-li"><a href="{{ item.href }}" {{ item.open_link_type ? 'target="_blank"' : '' }} class="oct-menu-a"><span class="oct-menu-item-name">{{ item.title }}</span></a></li>
+			{% endif %}
+			{% if item.children %}
+				{% if item.item_type == 2 and (oct_megamenu_mobile_categories is defined and oct_megamenu_mobile_categories) %}
+					{% if item.display_type == 1 or item.display_type == 3 %}
+					<li class="oct-menu-li">
+						<div class="d-flex align-items-center justify-content-between"><a href="{{ item.href }}" {{ item.open_link_type ? 'target="_blank"' : '' }} class="oct-menu-a"><span class="oct-menu-item-name">{{ item.title }}</span></a>{% if item.children %}<span class="oct-menu-toggle"><i class="fas fa-chevron-right"></i></span>{% endif %}</div>
+						<div class="oct-menu-child-ul">
+							<div class="oct-menu-back"><i class="fas fa-long-arrow-alt-left"></i> {{ item.title }}</div>
+							<ul class="oct-menu-ul list-unstyled">
+								{% for children in item.children %}
+									<li class="oct-menu-li">
+										<div class="d-flex align-items-center justify-content-between"><a href="{{ children.href }}"><span class="oct-menu-item-name">{{ children.name }}</span></a>{% if children.children %}<span class="oct-menu-toggle"><i class="fas fa-chevron-right"></i></span>{% endif %}</div>
+									{% if children.children %}
+									<div class="oct-menu-child-ul">
+										<div class="oct-menu-back"><i class="fas fa-long-arrow-alt-left"></i> {{ children.name }}</div>
+										<ul class="oct-menu-ul list-unstyled">
+											{% for child in children.children %}
+											<li class="oct-menu-li"><a href="{{ child.href }}"><span class="oct-menu-item-name">{{ child.name }}</span></a></li>
+											{% endfor %}
+										</ul>
+									</div>
+									{% endif %}
+									</li>
+								{% endfor %}
+							</ul>
+						</div>
+					</li>
+					{% endif %}
+				{% endif %}
+				{% if item.item_type == 3 and (oct_megamenu_brands is defined and oct_megamenu_brands) %}
+				<li class="oct-menu-li">
+					<div class="d-flex align-items-center justify-content-between"><a href="{{ item.href }}" {{ item.open_link_type ? 'target="_blank"' : '' }} class="oct-menu-a"><span class="oct-menu-item-name">{{ item.title }}</span></a>{% if item.children %}<span class="oct-menu-toggle"><i class="fas fa-chevron-right"></i></span>{% endif %}</div>
+					<div class="oct-menu-child-ul">
+						<div class="oct-menu-back"><i class="fas fa-long-arrow-alt-left"></i> {{ item.title }}</div>
+						<ul class="oct-menu-ul list-unstyled">
+							{% for children in item.children %}
+							<li class="oct-menu-li"><a class="oct-menu-a" href="{{ children.href }}"><span class="oct-menu-item-name">{{ children.name }}</span></a></li>
+							{% endfor %}
+						</ul>
+					</div>
+				</li>
+				{% endif %}
+				{% if item.item_type == 5 and (oct_megamenu_informations is defined and oct_megamenu_informations) %}
+				<li class="oct-menu-li">
+					<div class="d-flex align-items-center justify-content-between"><a href="{{ item.href }}" {{ item.open_link_type ? 'target="_blank"' : '' }} class="oct-menu-a"><span class="oct-menu-item-name">{{ item.title }}</span></a>{% if item.children %}<span class="oct-menu-toggle"><i class="fas fa-chevron-right"></i></span>{% endif %}</div>
+					<div class="oct-menu-child-ul">
+						<div class="oct-menu-back"><i class="fas fa-long-arrow-alt-left"></i> {{ item.title }}</div>
+						<ul class="oct-menu-ul list-unstyled">
+							{% for children in item.children %}
+							<li class="oct-menu-li"><a href="{{ children.href }}" class="oct-menu-a"><span class="oct-menu-item-name">{{ children.title }}</span></a></li>
+							{% endfor %}
+						</ul>
+					</div>
+				</li>
+				{% endif %}
+				{% if item.item_type == 8 and (oct_megamenu_blog is defined and oct_megamenu_blog) %}
+				<li class="oct-menu-li">
+					<div class="d-flex align-items-center justify-content-between"><a href="{{ item.href }}" {{ item.open_link_type ? 'target="_blank"' : '' }} class="oct-menu-a"><span class="oct-menu-item-name">{{ item.title }}</span></a>{% if item.children %}<span class="oct-menu-toggle"><i class="fas fa-chevron-right"></i></span>{% endif %}</div>
+					<div class="oct-menu-child-ul">
+						<div class="oct-menu-back"><i class="fas fa-long-arrow-alt-left"></i> {{ item.title }}</div>
+						<ul class="oct-menu-ul list-unstyled">
+							{% for children in item.children %}
+							<li class="oct-menu-li"><a href="{{ children.href }}" class="oct-menu-a"><span class="oct-menu-item-name">{{ children.title }}</span></a></li>
+							{% endfor %}
+						</ul>
+					</div>
+				</li>
+				{% endif %}
+			{% endif %}
+			{% endfor %}
+		{% endif %}
+		</ul>
+	{% endif %}
+
+	{% if deff is defined and deff %}
+	<ul id="oct-menu-ul" class="oct-menu-ul oct-menu-parent-ul list-unstyled">
+		{% if standart_menu is defined and standart_menu is not empty %}
+			{{ standart_menu }}
+		{% endif %}
+	</ul>
+	{% endif %}
+	<script>
+		$(document).ready(function() {
+			$('#us_menu_mobile_content #oct-menu-ul').append($('#us_mobile_megamenu > li'));
+		});
+	</script>
+{% else %}
+	{% if standart_menu is defined and standart_menu is not empty %}
+	<div id="oct-menu-box" class="col-lg-3">
+	<div  id="oct-ultra-menu-header" class="oct-ultra-menu d-flex align-items-center justify-content-center">
+		<span><i class="fas fa-bars"></i> {{ text_category }}</span>
+	</div>
+	<nav id="oct-menu-dropdown-menu">
+		<ul id="oct-menu-ul" class="oct-menu-ul oct-menu-parent-ul list-unstyled">
+			{{ standart_menu }}
+			</ul>
+		</nav>
+	</div>
+	{% endif %}
+	{% if items is defined and items is not empty %}
+	<div id="oct-megamenu-box" class="{% if standart_menu is defined and standart_menu is not empty %}col-lg-9{% else %}col-lg-12{% endif %}">
+		<nav id="oct-megamenu" class="navbar">
+			<ul class="nav navbar-nav flex-row">
+				{% for item in items %}
+					{% if item.children %}
+					{% if item.item_type == 2 %}
+					{% if item.display_type == 1 %}
+					<li class="oct-mm-link">
+						<a href="{{ item.href }}" {{ item.open_link_type ? 'target="_blank"' : '' }}>{{ item.title }}{% if item.children %}<i class="fas fa-chevron-down"></i>{% endif %}</a>
+						<div class="oct-mm-dropdown oct-mm-full-width">
+							<div class="row">
+								<div class="col-lg-{% if item.description %}8{% else %}12{% endif %}">
+									{% set divide_value = item.description ? 4 : 6 %}
+									<div class="row">
+										{% for children in item.children|batch(divide_value) %}
+											{% for children_inner in children %}
+											<div class="oct-mm-hassubchild col-lg-{% if item.description %}3{% else %}2{% endif %} d-flex flex-column">
+												<a class="oct-mm-parent-link d-flex flex-column{% if not children_inner.children %} oct-mm-brands-link{% endif %}" href="{{ children_inner.href }}">
+												{% if children_inner.thumb %}
+												<img src="{{ children_inner.thumb }}"{% if oct_lazyload %} data-srcset="{{ children_inner.thumb }} 100w" srcset="{{ oct_lazy_image }} 100w" sizes="100vw"{% endif %} alt="{{ children_inner.name }}" title="{{ children_inner.name }}" class="oct-mm-parent-img oct-mm-parent-img-full-width{% if oct_lazyload %} oct-lazy{% endif %}" width="{{ children_inner.width }}" height="{{ children_inner.height }}" />
+												{% endif %}
+												<span class="oct-mm-parent-title{% if not children_inner.children %} oct-mm-parent-title-light text-center{% endif %}">{{ children_inner.name }}</span>
+												</a>
+												{% if children_inner.children %}
+												<ul class="oct-mm-child list-unstyled">
+													{% set countstop = 1 %}
+													{% for child in children_inner.children %}
+													{% set countstop = countstop + 1 %}
+													<li><a href="{{ child.href }}" >{{ child.name }}</a></li>
+													{% if countstop > item.limit_item %}
+													<li><i class="fas fa-long-arrow-alt-right"></i> <a class="oct-mm-see-all" href="{{ children_inner.href }}" >{{ text_all_category }}</a></li>
+													{% endif %}
+													{% endfor %}
+												</ul>
+												{% endif %}
+											</div>
+											{% endfor %}
+										{% endfor %}
+									</div>
+								</div>
+								{% if item.description %}
+								<div class="col-lg-4">
+									<div id="oct-mm-banner{{ item.megamenu_id }}" class="oct-mm-banner">
+										<div class="oct-mm-banner-title">{{ item.banner_title }}</div>
+										{% if item.banner_image %}
+										<div class="oct-mm-banner-img">
+											<img src="{{ item.banner_image }}" alt="{{ item.banner_title }}" />
+										</div>
+										{% endif %}
+										<div class="oct-mm-banner-text">{{ item.banner_text }}</div>
+										<a href="{{ item.banner_link }}" class="oct-mm-banner-button">{{ item.banner_button }}</a>
+									</div>
+								</div>
+								<style>
+								{% if item.banner_image_color %}
+								#oct-mm-banner{{ item.megamenu_id }}.oct-mm-banner {
+									background: {{ item.banner_image_color }};
+								}
+								{% endif %}
+								{% if item.banner_image_title_color %}
+								#oct-mm-banner{{ item.megamenu_id }} .oct-mm-banner-title {
+									color: {{ item.banner_image_title_color }};
+								}
+								{% endif %}
+								{% if item.banner_image_text_color %}
+								#oct-mm-banner{{ item.megamenu_id }} .oct-mm-banner-text {
+									color: {{ item.banner_image_text_color }};
+								}
+								{% endif %}
+								{% if item.banner_image_button_color or item.banner_image_link_color %}
+								#oct-mm-banner{{ item.megamenu_id }} .oct-mm-banner-button {
+									{% if item.banner_image_button_color %}background: {{ item.banner_image_button_color }};{% endif %}
+									{% if item.banner_image_link_color %}color: {{ item.banner_image_link_color }};{% endif %}
+								}
+								{% endif %}
+								{% if item.banner_image_button_border_hover_color or item.banner_image_link_hover_color %}
+								#oct-mm-banner{{ item.megamenu_id }} .oct-mm-banner-button:hover {
+									{% if item.banner_image_button_hover_color %}background: {{ item.banner_image_button_hover_color }};{% endif %}
+									{% if item.banner_image_link_hover_color %}color: {{ item.banner_image_link_hover_color }};{% endif %}
+								}
+								{% endif %}
+								</style>
+								{% endif %}
+							</div>
+						</div>
+					</li>
+					{% else %}
+					<li class="oct-mm-link position-relative">
+						<a href="{{ item.href }}" {{ item.open_link_type ? 'target="_blank"' : '' }}>{{ item.title }}{% if item.children %}<i class="fas fa-chevron-down"></i>{% endif %}</a>
+						<div class="oct-mm-dropdown oct-mm-dropdown-sm">
+							<div class="oct-mm-dropdown-simple">
+								<ul class="oct-menu-ul oct-menu-parent-ul list-unstyled">
+									{% for children in item.children %}
+										{% if children.children %}
+										<li class="oct-menu-li">
+											<div class="d-flex align-items-center justify-content-between"><a href="{{ children.href }}" class="oct-menu-a"><span class="oct-menu-item-name">{{ children.name }}</span></a>{% if children.children %}<span class="oct-menu-toggle"><i class="fas fa-chevron-right"></i></span>{% endif %}</div>
+											<div class="oct-menu-child-ul">
+												<ul class="oct-menu-ul list-unstyled">
+													{% for child in children.children %}
+													<li class="oct-menu-li">
+														<a href="{{ child.href }}"><span class="oct-menu-item-name">{{ child.name }}</span></a>
+													</li>
+													{% endfor %}
+												</ul>
+											</div>
+										</li>
+										{% else %}
+										<li class="oct-menu-li"><a href="{{ children.href }}" class="oct-menu-a"><span class="oct-menu-item-name">{{ children.name }}</span></a></li>
+										{% endif %}
+									{% endfor %}
+								</ul>
+							</div>
+						</div>
+					</li>
+					{% endif %}
+					{% endif %}
+					{% if item.item_type == 3 %}
+					<li class="oct-mm-link">
+						<a href="{{ item.href }}" {{ item.open_link_type ? 'target="_blank"' : '' }}>{{ item.title }}{% if item.children %}<i class="fas fa-chevron-down"></i>{% endif %}</a>
+						<div class="oct-mm-dropdown oct-mm-full-width oct-mm-brands-dropdown">
+							<div class="row">
+								{% for children in item.children %}
+								<div class="oct-mm-hassubchild col-lg-2 d-flex flex-column">
+									<a class="oct-mm-parent-link oct-mm-brands-link d-flex flex-column" href="{{ children.href }}">
+										{% if children.thumb %}
+										<img src="{{ children.thumb }}"{% if oct_lazyload %} data-srcset="{{ children.thumb }} 100w" srcset="{{ oct_lazy_image }} 100w" sizes="100vw"{% endif %} alt="{{ children.name }}" title="{{ children.name }}" class="oct-mm-parent-img oct-mm-img-transition{% if oct_lazyload %} oct-lazy{% endif %}" width="{{ children.width }}" height="{{ children.height }}" />
+										{% endif %}
+										<span class="oct-mm-parent-title oct-mm-parent-title-light flex-grow-1 text-center">{{ children.name }}</span>
+									</a>
+								</div>
+								{% endfor %}
+							</div>
+						</div>
+					</li>
+					{% endif %}
+					{% if item.item_type == 4 %}
+					<li class="oct-mm-link">
+						<a href="{{ item.href }}" {{ item.open_link_type ? 'target="_blank"' : '' }}>{{ item.title }}{% if item.children %}<i class="fas fa-chevron-down"></i>{% endif %}</a>
+						<div class="oct-mm-dropdown oct-mm-full-width">
+							<div class="row align-items-center">
+								<div class="col-lg-{% if item.description %}8{% else %}12{% endif %}">
+									{% set divide_value = item.description ? 4 : 6 %}
+									<div class="row">
+										{% for children in item.children|batch(divide_value) %}
+											{% for child in children %}
+											<div class="oct-mm-hassubchild oct-mm-product col-lg-{% if item.description %}3{% else %}2{% endif %} d-flex flex-column">
+												<a class="oct-mm-parent-link d-flex flex-column flex-grow-1" href="{{ child.href }}">
+												{% if child.thumb %}
+												<img src="{{ child.thumb }}" alt="{{ child.name }}" title="{{ child.name }}" class="oct-mm-parent-img" width="{{ child.width }}" height="{{ child.height }}" />
+												{% endif %}
+												<span class="oct-mm-parent-title oct-mm-product-parent-title  flex-grow-1 text-center">{{ child.name }}</span>
+												</a>
+												{% if not child.special %}
+												<div class="oct-mm-price">
+													<span class="oct-price-normal">{{ child.price }}</span>
+												</div>
+												{% else %}
+												<div class="oct-mm-price">
+													<span class="oct-price-old">{{ child.price }}</span>
+													<span class="oct-price-new">{{ child.special }}</span>
+												</div>
+												{% endif %}
+											</div>
+											{% endfor %}
+										{% endfor %}
+									</div>
+								</div>
+								{% if item.description %}
+								<div class="col-lg-4">
+									<div id="oct-mm-banner{{ item.megamenu_id }}" class="oct-mm-banner">
+										<div class="oct-mm-banner-title">{{ item.banner_title }}</div>
+										{% if item.banner_image %}
+										<div class="oct-mm-banner-img">
+											<img src="{{ item.banner_image }}" alt="{{ item.banner_title }}" width="{{ item.width }}" height="{{ item.height }}" />
+										</div>
+										{% endif %}
+										<div class="oct-mm-banner-text">{{ item.banner_text }}</div>
+										<a href="{{ item.banner_link }}" class="oct-mm-banner-button">{{ item.banner_button }}</a>
+									</div>
+								</div>
+								<style>
+								{% if item.banner_image_color %}
+								#oct-mm-banner{{ item.megamenu_id }}.oct-mm-banner {
+									background: {{ item.banner_image_color }};
+								}
+								{% endif %}
+								{% if item.banner_image_title_color %}
+								#oct-mm-banner{{ item.megamenu_id }} .oct-mm-banner-title {
+									color: {{ item.banner_image_title_color }};
+								}
+								{% endif %}
+								{% if item.banner_image_text_color %}
+								#oct-mm-banner{{ item.megamenu_id }} .oct-mm-banner-text {
+									color: {{ item.banner_image_text_color }};
+								}
+								{% endif %}
+								{% if item.banner_image_button_color or item.banner_image_link_color %}
+								#oct-mm-banner{{ item.megamenu_id }} .oct-mm-banner-button {
+									{% if item.banner_image_button_color %}background: {{ item.banner_image_button_color }};{% endif %}
+									{% if item.banner_image_link_color %}color: {{ item.banner_image_link_color }};{% endif %}
+								}
+								{% endif %}
+								{% if item.banner_image_button_border_hover_color or item.banner_image_link_hover_color %}
+								#oct-mm-banner{{ item.megamenu_id }} .oct-mm-banner-button:hover {
+									{% if item.banner_image_button_hover_color %}background: {{ item.banner_image_button_hover_color }};{% endif %}
+									{% if item.banner_image_link_hover_color %}color: {{ item.banner_image_link_hover_color }};{% endif %}
+								}
+								{% endif %}
+								</style>
+								{% endif %}
+							</div>
+						</div>
+					</li>
+					{% endif %}
+					{% if item.item_type == 5 %}
+					<li class="oct-mm-link position-relative">
+						<a href="{{ item.href }}" {{ item.open_link_type ? 'target="_blank"' : '' }}>{{ item.title }}{% if item.children %}<i class="fas fa-chevron-down"></i>{% endif %}</a>
+						<div class="oct-mm-dropdown oct-mm-dropdown-sm">
+							<div class="dropdown-inner">
+								<ul class="oct-menu-ul oct-menu-parent-ul list-unstyled oct-menu-information-ul">
+									{% for children in item.children %}
+									<li class="oct-menu-li"><a href="{{ children.href }}" class="oct-menu-a"><span class="oct-menu-item-name">{{ children.title }}</span></a></li>
+									{% endfor %}
+								</ul>
+							</div>
+						</div>
+					</li>
+					{% endif %}
+					{% if item.item_type == 8 %}
+					<li class="oct-mm-link position-relative">
+						<a href="{{ item.href }}" {{ item.open_link_type ? 'target="_blank"' : '' }}>{{ item.title }}{% if item.children %}<i class="fas fa-chevron-down"></i>{% endif %}</a>
+						<div class="oct-mm-dropdown oct-mm-dropdown-sm">
+							<div class="dropdown-inner">
+								<ul class="oct-menu-ul oct-menu-parent-ul list-unstyled oct-menu-information-ul">
+									{% for children in item.children %}
+									<li class="oct-menu-li"><a href="{{ children.href }}" class="oct-menu-a"><span class="oct-menu-item-name">{{ children.title }}</span></a></li>
+									{% endfor %}
+								</ul>
+							</div>
+						</div>
+					</li>
+					{% endif %}
+					{% else %}
+					{% if item.item_type == 7 and item.custom_html %}
+					<li class="oct-mm-link">
+						<a href="{{ item.href }}" {{ item.open_link_type ? 'target="_blank"' : '' }}>{{ item.title }}<i class="fas fa-chevron-down"></i></a>
+						<div class="oct-mm-dropdown oct-mm-full-width oct-mm-html">
+							{{ item.custom_html }}
+						</div>
+					</li>
+					{% else %}
+					<li class="oct-mm-simple-link"><a href="{{ item.href }}" {{ item.open_link_type ? 'target="_blank"' : '' }}>{{ item.title }}</a></li>
+					{% endif %}
+					{% endif %}
+					{% if item.description %}
+					{% endif %}
+				{% endfor %}
+			</ul>
+		</nav>
+	</div>
+	{% endif %}
+{% endif %}

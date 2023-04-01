@@ -1,0 +1,120 @@
+{% if oct_byoneclick_status is defined and oct_byoneclick_status %}
+  <div class="us-product-one-click">
+    <form action="javascript:;" id="oct_purchase_byoneclick_form{{ oct_byoneclick_page }}" method="post">
+      <div class="us-product-one-click-top d-flex align-items-center">
+        <div class="us-product-one-click-icon">
+          <i class="fas fa-mobile-alt"></i>
+        </div>
+        <div class="us-product-one-click-info">
+          <div class="us-product-attr-title">{{ oct_product_oneclick }}</div>
+          <div class="us-product-one-click-text">{{ oct_product_oneclick_enter }}</div>
+        </div>
+      </div>
+      <div class="us-product-one-click-bottom">
+        <div class="input-group">
+          <input type="tel" name="telephone" placeholder="{{ oct_product_oneclick_placeholder }}" id="one_click_input" class="one_click_input form-control">
+          {% if oct_byoneclick_product_id is defined and oct_byoneclick_product_id %}
+            <input type="hidden" name="product_id" value="{{ oct_byoneclick_product_id }}"/>
+          {% endif %}
+          <input type="hidden" name="oct_byoneclick" value="1"/>
+          {% if oct_cart_in is defined and oct_cart_in %}
+            <input type="hidden" name="oct_cart_in" value="1"/>
+          {% endif %}
+          <span class="input-group-btn">
+            <button class="us-module-btn us-product-one-click-btn" type="button">{{ oct_product_oneclickbuy }}</button>
+          </span>
+        </div>
+      </div>
+    </form>
+  </div>
+  {% if oct_byoneclick_mask is defined and oct_byoneclick_mask %}
+    <script src="catalog/view/theme/oct_ultrastore/js/jquery.inputmask.bundle.min.js"></script>
+    <script>
+      usInputMask('#oct_purchase_byoneclick_form{{ oct_byoneclick_page }} .one_click_input', '{{ oct_byoneclick_mask }}');
+    </script>
+  {% endif %}
+  <script>
+    $('#oct_purchase_byoneclick_form{{ oct_byoneclick_page }} .us-product-one-click-btn').on('click', function() {
+      $.ajax({
+        type: 'post',
+        dataType: 'json',
+        url: 'index.php?route=octemplates/module/oct_popup_purchase/makeorder',
+        cache: false,
+        data: $('#oct_purchase_byoneclick_form{{ oct_byoneclick_page }}').serialize(),
+        beforeSend: function() {
+          $('#oct_purchase_byoneclick_form{{ oct_byoneclick_page }} .us-product-one-click-btn').attr('disabled', 'disabled').button('loading');
+          masked('body', true);
+        },
+        complete: function() {
+          $('#oct_purchase_byoneclick_form{{ oct_byoneclick_page }} .us-product-one-click-btn').button('reset');
+          masked('body', false);
+        },
+        success: function(json) {
+          if (json['error']) {
+            let errorOption = '';
+            $("#oct_purchase_byoneclick_form{{ oct_byoneclick_page }} .us-product-one-click-btn").prop("disabled", false);
+
+            $.each(json['error'], function(i, val) {
+              if (val) {
+                $('#oct_purchase_byoneclick_form{{ oct_byoneclick_page }} [name="' + i + '"]').addClass('error_style');
+                errorOption += '<div class="alert-text-item">' + val + '</div>';
+              }
+            });
+
+            usNotify('danger', errorOption);
+          } else {
+            if (json['success']) {
+
+              successOption = '<div class="alert-text-item">' + json['success'] + '</div>';
+
+              $('#oct_purchase_byoneclick_form{{ oct_byoneclick_page }} #one_click_input').val('');
+              $('#oct_purchase_byoneclick_form{{ oct_byoneclick_page }} #one_click_input').removeClass('error_style');
+              $('#oct_purchase_byoneclick_form{{ oct_byoneclick_page }} .us-product-one-click-btn').prop('disabled', true);
+
+              {% if oct_cart_in is defined and oct_cart_in %}
+                {% if oct_popup_cart is defined and oct_popup_cart %}
+                  octPopupCart();
+                {% endif %}
+
+                setTimeout(function() {
+                  $('#oct-cart-quantity, .header-cart-index, .mobile-header-index').html(0);
+                  $('.us-cart-text').html('{{ total_amount }}');
+                }, 100);
+
+                {% if oct_cart_page is defined and oct_cart_page %}
+                  setTimeout(function() {
+                    document.location.reload(true);
+                  }, 3000);
+                {% endif %}
+              {% endif %}
+
+              {% if oct_analytics_google_ecommerce is defined and oct_analytics_google_ecommerce is not empty %}
+              if (typeof gtag != 'undefined' && json['ecommerce']) {
+                  gtag('event', 'purchase', json['ecommerce']);
+              }
+              {% endif %}
+
+              {% if oct_analytics_yandex_ecommerce is defined and oct_analytics_yandex_ecommerce is not empty and oct_analytics_yandex_container is defined and oct_analytics_yandex_container is not empty %}
+              window.{{ oct_analytics_yandex_container }} = window.{{ oct_analytics_yandex_container }} || [];
+              if(typeof {{ oct_analytics_yandex_container }} != 'undefined' && json['ecommerce']) {
+                  {{ oct_analytics_yandex_container }}.push({
+                      "ecommerce": {
+                          "purchase": {
+                              "actionField": {
+                                  "id" : json['ecommerce']['transaction_id']
+                              },
+                              "products": json['ecommerce']['items']
+                          }
+                      }
+                  });
+              }
+              {% endif %}
+
+              usNotify('success', successOption);
+            }
+          }
+        }
+      });
+    });
+  </script>
+{% endif %}

@@ -1,0 +1,723 @@
+{{ header }}{{ column_left }} 
+<div id="content">
+	<div class="page-header">
+		<div class="container-fluid">
+			<div class="pull-right">
+				<button type="submit" form="form" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+				<a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a>
+			</div>
+			<h1>{{ heading_title }}</h1>
+			<ul class="breadcrumb">
+				{% for breadcrumb in breadcrumbs %}
+				<li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+				{% endfor %}
+			</ul>
+		</div>
+	</div>
+	<div class="container-fluid">
+		{% if error_warning %}
+		<script>
+			usNotify('warning', '{{ error_warning }}');
+		</script>
+		{% endif %}
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_form }}</h3>
+			</div>
+			<div class="panel-body">
+				<form action="{{ action }}" method="post" enctype="multipart/form-data" id="form" class="form-horizontal">
+					<ul class="nav nav-tabs">
+						<li class="active"><a href="#tab-general" data-toggle="tab">{{ tab_general }}</a></li>
+						<li><a href="#tab-language" data-toggle="tab">{{ tab_language }}</a></li>
+						<li><a href="#tab-links" data-toggle="tab">{{ tab_links }}</a></li>
+					</ul>
+					<div class="tab-content">
+						<div class="tab-pane" id="tab-links">
+							<div class="form-group">
+								<label class="col-sm-2 control-label">{{ entry_store }}</label>
+								<div class="col-sm-10">
+									<div class="well well-sm" style="height: 150px; overflow: auto;">
+										<div class="checkbox">
+											<label>
+											{% if 0 in menu_stores %} 
+											<input type="checkbox" name="store[]" value="0" checked="checked" />
+											{{ text_default }} 
+											{% else %} 
+											<input type="checkbox" name="store[]" value="0" />
+											{{ text_default }} 
+											{% endif %} 
+											</label>
+										</div>
+										{% for store in stores %} 
+										<div class="checkbox">
+											<label>
+											{% if store.store_id in menu_stores %} 
+											<input type="checkbox" name="store[]" value="{{ store.store_id }}" checked="checked" />
+											{{ store['name'] }} 
+											{% else %} 
+											<input type="checkbox" name="store[]" value="{{ store.store_id }}" />
+											{{ store['name'] }} 
+											{% endif %} 
+											</label>
+										</div>
+										{% endfor %} 
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="input-priority">{{ entry_customer_group_id }}</label>
+								<div class="col-sm-10">
+									<div class="well well-sm" style="height: 150px; overflow: auto;">
+										{% for customer_group in customer_groups %} 
+										<div class="checkbox">
+											<label>
+											{% if 0 in menu_customer_groups %} 
+											<input type="checkbox" name="customer_group[]" value="{{ customer_group.customer_group_id }}" checked="checked" />
+											{{ customer_group['name'] }} 
+											{% else %} 
+											{% if customer_group.customer_group_id in menu_customer_groups %} 
+											<input type="checkbox" name="customer_group[]" value="{{ customer_group.customer_group_id }}" checked="checked" />
+											{{ customer_group['name'] }} 
+											{% else %} 
+											<input type="checkbox" name="customer_group[]" value="{{ customer_group.customer_group_id }}" />
+											{{ customer_group['name'] }} 
+											{% endif %} 
+											{% endif %} 
+											</label>
+										</div>
+										{% endfor %} 
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="tab-pane active" id="tab-general">
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="input-status">{{ entry_status }}</label>
+								<div class="col-sm-10">
+									<div class="toggle-group">
+										<input type="checkbox" name="status" {% if status %}checked="checked"{% endif %} id="input-status" tabindex="1">
+										<label for="input-status"></label>
+										<div class="onoffswitch pull-left" aria-hidden="true">
+											<div class="onoffswitch-label">
+												<div class="onoffswitch-inner"></div>
+												<div class="onoffswitch-switch"></div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">{{ text_type }}</label>
+								<div class="col-sm-10">
+									<select name="item_type" class="form-control">
+										<option value="0" {{ item_type == 0 ? 'selected="selected"' : '' }}>{{ text_select }}</option>
+										<option value="1" {{ item_type == 1 ? 'selected="selected"' : '' }}>{{ text_type_1 }}</option>
+										<option value="2" {{ item_type == 2 ? 'selected="selected"' : '' }}>{{ text_type_2 }}</option>
+										<option value="3" {{ item_type == 3 ? 'selected="selected"' : '' }}>{{ text_type_3 }}</option>
+										<option value="4" {{ item_type == 4 ? 'selected="selected"' : '' }}>{{ text_type_4 }}</option>
+										<option value="5" {{ item_type == 5 ? 'selected="selected"' : '' }}>{{ text_type_5 }}</option>
+										<option value="7" {{ item_type == 7 ? 'selected="selected"' : '' }}>{{ text_type_7 }}</option>
+										<option value="8" {{ item_type == 8 ? 'selected="selected"' : '' }}>{{ text_type_8 }}</option>
+									</select>
+								</div>
+							</div>
+							<div style="{{ item_type == 2 ? '' : 'display:none;' }}" id="oct_megamenu_categories">
+								<div class="form-group">
+									<label class="col-sm-2 control-label">{{ text_enter_category }}</label>
+									<div class="col-sm-10">
+										<div class="well well-sm" style="min-height: 150px;max-height:300px;overflow: auto;">
+											<table class="table table-striped">
+												{% for category in categories %} 
+												<tr>
+													<td class="checkbox">
+														<label>
+														{% if category.category_id in category_id %} 
+														<input type="checkbox" name="oct_megamenu_categories[]" value="{{ category.category_id }}" checked="checked" />
+														{{ category['name'] }} 
+														{% else %} 
+														<input type="checkbox" name="oct_megamenu_categories[]" value="{{ category.category_id }}" />
+														{{ category['name'] }} 
+														{% endif %} 
+														</label>
+													</td>
+												</tr>
+												{% endfor %} 
+											</table>
+										</div>
+										<a onclick="$(this).parent().find(':checkbox').prop('checked', true);">{{ text_select_all }}</a> / <a onclick="$(this).parent().find(':checkbox').prop('checked', false);">{{ text_unselect_all }}</a>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label" for="input-sub_categories">{{ entry_sub_categories }}</label>
+									<div class="col-sm-10">
+										<div class="toggle-group">
+											<input type="checkbox" name="sub_categories" {% if sub_categories %}checked="checked"{% endif %} id="sub_categories" tabindex="1">
+											<label for="sub_categories"></label>
+											<div class="onoffswitch pull-left" aria-hidden="true">
+												<div class="onoffswitch-label">
+													<div class="onoffswitch-inner"></div>
+													<div class="onoffswitch-switch"></div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div style="{{ item_type == 8 ? '' : 'display:none;' }}" id="oct_megamenu_blogcategories">
+								<div class="form-group">
+									<label class="col-sm-2 control-label">{{ text_enter_category }}</label>
+									<div class="col-sm-10">
+										<div class="well well-sm" style="min-height: 150px;max-height:300px;overflow: auto;">
+											<table class="table table-striped">
+												{% for blog_category in blog_categories %} 
+												<tr>
+													<td class="checkbox">
+														<label>
+														{% if blog_category.blogcategory_id in blogcategory_id %} 
+														<input type="checkbox" name="oct_megamenu_blogcategories[]" value="{{ blog_category.blogcategory_id }}" checked="checked" />
+														{{ blog_category.name }} 
+														{% else %} 
+														<input type="checkbox" name="oct_megamenu_blogcategories[]" value="{{ blog_category.blogcategory_id }}" />
+														{{ blog_category.name }} 
+														{% endif %} 
+														</label>
+													</td>
+												</tr>
+												{% endfor %} 
+											</table>
+										</div>
+										<a onclick="$(this).parent().find(':checkbox').prop('checked', true);">{{ text_select_all }}</a> / <a onclick="$(this).parent().find(':checkbox').prop('checked', false);">{{ text_unselect_all }}</a>
+									</div>
+								</div>
+							</div>
+							<div class="form-group" style="{{ item_type == 3 ? '' : 'display:none;' }}" id="oct_megamenu_manufacturers">
+								<label class="col-sm-2 control-label" for="input-manufacturer">{{ text_enter_manufacturer }}</label>
+								<div class="col-sm-10">
+									<div class="well well-sm" style="min-height: 150px;max-height:300px;overflow: auto;">
+										<table class="table table-striped">
+											{% for manufacturer in manufacturers %} 
+											<tr>
+												<td class="checkbox">
+													<label>
+													{% if manufacturer.manufacturer_id in manufacturer_id %} 
+													<input type="checkbox" name="oct_megamenu_manufacturers[]" value="{{ manufacturer.manufacturer_id }}" checked="checked" />
+													{{ manufacturer['name'] }} 
+													{% else %} 
+													<input type="checkbox" name="oct_megamenu_manufacturers[]" value="{{ manufacturer.manufacturer_id }}" />
+													{{ manufacturer['name'] }} 
+													{% endif %} 
+													</label>
+												</td>
+											</tr>
+											{% endfor %} 
+										</table>
+									</div>
+									<a onclick="$(this).parent().find(':checkbox').prop('checked', true);">{{ text_select_all }}</a> / <a onclick="$(this).parent().find(':checkbox').prop('checked', false);">{{ text_unselect_all }}</a>
+								</div>
+							</div>
+							<div class="form-group" style="{{ item_type == 4 ? '' : 'display:none;' }}" id="oct_megamenu_products">
+								<label class="col-sm-2 control-label" for="input-product">{{ text_enter_product }}</label>
+								<div class="col-sm-10">
+									<input type="text" name="product" value="" placeholder="{{ text_enter_product }}" id="input-product" class="form-control" />
+									<div id="featured-product" class="well well-sm" style="height: 150px; overflow: auto;">
+										{% for product in products %} 
+										<div id="featured-product{{ product['product_id'] }}"><i class="fa fa-minus-circle"></i> {{ product['name'] }} 
+											<input type="hidden" name="oct_megamenu_products[]" value="{{ product['product_id'] }}" />
+										</div>
+										{% endfor %} 
+									</div>
+								</div>
+							</div>
+							<div style="{{ item_type == 5 ? '' : 'display:none;' }}" id="oct_megamenu_informations">
+								<div class="form-group">
+									<label class="col-sm-2 control-label" for="input-information">{{ text_enter_information }}</label>
+									<div class="col-sm-10">
+										<div class="well well-sm" style="min-height: 150px;max-height:300px;overflow: auto;">
+											<table class="table table-striped">
+												{% for information in informations %} 
+												<tr>
+													<td class="checkbox">
+														<label>
+														{% if information.information_id in information_id %} 
+														<input type="checkbox" name="oct_megamenu_informations[]" value="{{ information.information_id }}" checked="checked" />
+														{{ information['title'] }} 
+														{% else %} 
+														<input type="checkbox" name="oct_megamenu_informations[]" value="{{ information.information_id }}" />
+														{{ information['title'] }} 
+														{% endif %} 
+														</label>
+													</td>
+												</tr>
+												{% endfor %} 
+											</table>
+										</div>
+										<a onclick="$(this).parent().find(':checkbox').prop('checked', true);">{{ text_select_all }}</a> / <a onclick="$(this).parent().find(':checkbox').prop('checked', false);">{{ text_unselect_all }}</a>
+									</div>
+								</div>
+							</div>
+							<div class="form-group" style="{{ item_type == 7 ? '' : 'display:none;' }}" id="oct_megamenu_custom_html">
+								<label class="col-sm-2 control-label" for="input-manufacturer">{{ entry_custom_html }}</label>
+								<div class="col-sm-10">
+									<ul class="nav nav-tabs" id="custom_html">
+										{% for language in languages %} 
+										<li><a href="#custom_html{{ language.language_id }}" data-toggle="tab"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}" />  {{ language.name }}</a></li>
+										{% endfor %} 
+									</ul>
+									<div class="tab-content">
+										{% for language in languages %} 
+										<div class="tab-pane" id="custom_html{{ language.language_id }}">
+											<textarea name="oct_megamenu_description[{{ language.language_id }}][custom_html]" placeholder="{{ entry_description }}" id="input-custom_html{{ language.language_id }}" class="form-control" data-toggle="summernote" data-lang="{{ summernote }}">{{ oct_megamenu_description[language.language_id] is defined ? oct_megamenu_description[language.language_id].custom_html : '' }}</textarea>
+										</div>
+										{% endfor %} 
+									</div>
+								</div>
+							</div>
+							<div id="additional_setting_block">
+								<div class="form-group">
+									<label class="col-sm-2 control-label" for="input-show_img">{{ entry_show_img }}</label>
+									<div class="col-sm-10">
+										<div class="toggle-group">
+											<input type="checkbox" name="show_img" {% if show_img %}checked="checked"{% endif %} id="show_img" tabindex="1">
+											<label for="show_img"></label>
+											<div class="onoffswitch pull-left" aria-hidden="true">
+												<div class="onoffswitch-label">
+													<div class="onoffswitch-inner"></div>
+													<div class="onoffswitch-switch"></div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label" for="input-img_width">{{ entry_img_width }}</label>
+									<div class="col-sm-10">
+										<input type="text" name="img_width" value="{{ img_width }}" placeholder="{{ entry_img_width }}" id="input-img_width" class="form-control" />
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label" for="input-img_height">{{ entry_img_height }}</label>
+									<div class="col-sm-10">
+										<input type="text" name="img_height" value="{{ img_height }}" placeholder="{{ entry_img_height }}" id="input-img_height" class="form-control" />
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label" for="input-limit_item">{{ entry_limit_item }}</label>
+									<div class="col-sm-10">
+										<input type="text" name="limit_item" value="{{ limit_item }}" placeholder="{{ entry_limit_item }}" id="input-limit_item" class="form-control" />
+									</div>
+								</div>
+								<div class="form-group for-category-only">
+									<label class="col-sm-2 control-label">{{ entry_display_type }}</label>
+									<div class="col-sm-10">
+										<select name="display_type" class="form-control">
+											<option value="1" {{ display_type == 1 ? 'selected="selected"' : '' }} >{{ text_display_type_1 }}</option>
+											<option value="3" {{ display_type == 3 ? 'selected="selected"' : '' }} class="for-category-only">{{ text_display_type_3 }}</option>
+										</select>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="input-sort-order">{{ entry_sort_order }}</label>
+								<div class="col-sm-10">
+									<input type="text" name="sort_order" value="{{ sort_order }}" placeholder="{{ entry_sort_order }}" id="input-sort-order" class="form-control" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="input-open_link_type">{{ entry_open_link_type }}</label>
+								<div class="col-sm-10">
+									<div class="toggle-group">
+										<input type="checkbox" name="open_link_type" {% if open_link_type %}checked="checked"{% endif %} id="open_link_type" tabindex="1">
+										<label for="open_link_type"></label>
+										<div class="onoffswitch pull-left" aria-hidden="true">
+											<div class="onoffswitch-label">
+												<div class="onoffswitch-inner"></div>
+												<div class="onoffswitch-switch"></div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="tab-pane" id="tab-language">
+							<legend>{{ text_banner_url_element }}</legend>
+							<ul class="nav nav-tabs" id="language">
+								{% for language in languages %} 
+								<li><a href="#language{{ language.language_id }}" data-toggle="tab"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}" />  {{ language.name }}</a></li>
+								{% endfor %} 
+							</ul>
+							<div class="tab-content">
+								{% for language in languages %} 
+								<div class="tab-pane" id="language{{ language.language_id }}">
+									<div class="form-group">
+										<label class="col-sm-2 control-label" for="input-link{{ language.language_id }}">{{ entry_link }}</label>
+										<div class="col-sm-10">
+											<input type="text" name="oct_megamenu_description[{{ language.language_id }}][link]" value="{{ oct_megamenu_description[language.language_id] is defined ? oct_megamenu_description[language.language_id].link : '' }}" placeholder="{{ entry_link }}" id="input-link{{ language.language_id }}" class="form-control" />
+											{% if (error_link[language.language_id] is defined) %} 
+											<div class="text-danger">
+												<script>
+													usNotify('warning', '{{ error_link[language.language_id] }}');
+												</script>
+											</div>
+											{% endif %} 
+										</div>
+									</div>
+									<div class="form-group required">
+										<label class="col-sm-2 control-label" for="input-title{{ language.language_id }}">{{ entry_title }}</label>
+										<div class="col-sm-10">
+											<input type="text" name="oct_megamenu_description[{{ language.language_id }}][title]" value="{{ oct_megamenu_description[language.language_id] is defined ? oct_megamenu_description[language.language_id].title : '' }}" placeholder="{{ entry_title }}" id="input-title{{ language.language_id }}" class="form-control" />
+											{% if (error_title[language.language_id] is defined) %} 
+											<div class="text-danger">
+												<script>
+													usNotify('warning', '{{ error_title[language.language_id] }}');
+												</script>
+											</div>
+											{% endif %} 
+										</div>
+									</div>
+								</div>
+								{% endfor %}
+							</div>
+							<fieldset class="for-product-only">
+								<legend>{{ text_banner_settings }}</legend>
+								<ul class="nav nav-tabs" id="language_banner">
+									{% for language in languages %}
+									<li><a href="#banner_language{{ language.language_id }}" data-toggle="tab"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}" />  {{ language.name }}</a></li>
+									{% endfor %}
+								</ul>
+								<div class="tab-content">
+									{% for language in languages %}
+									<div class="tab-pane" id="banner_language{{ language.language_id }}">
+										<div class="form-group">
+											<label class="col-sm-2 control-label" for="input-banner_title{{ language.language_id }}">{{ entry_banner_title }}</label>
+											<div class="col-sm-10">
+												<input type="text" name="oct_megamenu_description[{{ language.language_id }}][banner_title]" value="{{ oct_megamenu_description[language.language_id] is defined ? oct_megamenu_description[language.language_id].banner_title : '' }}" placeholder="{{ entry_banner_title }}" id="input-banner_title{{ language.language_id }}" class="form-control" />
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-2 control-label" for="input-banner_text{{ language.language_id }}">{{ entry_banner_text }}</label>
+											<div class="col-sm-10">
+												<input type="text" name="oct_megamenu_description[{{ language.language_id }}][banner_text]" value="{{ oct_megamenu_description[language.language_id].banner_text is defined ? oct_megamenu_description[language.language_id].banner_text : '' }}" placeholder="{{ entry_banner_text }}" id="input-banner_text{{ language.language_id }}" class="form-control" />
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-2 control-label" for="input-banner_button{{ language.language_id }}">{{ entry_banner_button }}</label>
+											<div class="col-sm-10">
+												<input type="text" name="oct_megamenu_description[{{ language.language_id }}][banner_button]" value="{{ oct_megamenu_description[language.language_id].banner_button is defined ? oct_megamenu_description[language.language_id].banner_button : '' }}" placeholder="{{ entry_banner_button }}" id="input-banner_button{{ language.language_id }}" class="form-control" />
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-2 control-label" for="input-banner_link{{ language.language_id }}">{{ entry_banner_link }}</label>
+											<div class="col-sm-10">
+												<input type="text" name="oct_megamenu_description[{{ language.language_id }}][banner_link]" value="{{ oct_megamenu_description[language.language_id].banner_link is defined ? oct_megamenu_description[language.language_id].banner_link : '' }}" placeholder="{{ entry_banner_link }}" id="input-banner_link{{ language.language_id }}" class="form-control" />
+											</div>
+										</div>
+									</div>
+									{% endfor %}
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label" for="input-info_text">{{ entry_info_text }}</label>
+									<div class="col-sm-10">
+										<div class="toggle-group">
+											<input type="checkbox" name="info_text" {% if info_text %}checked="checked"{% endif %} id="input-info_text" tabindex="1">
+											<label for="input-info_text"></label>
+											<div class="onoffswitch pull-left" aria-hidden="true">
+												<div class="onoffswitch-label">
+													<div class="onoffswitch-inner"></div>
+													<div class="onoffswitch-switch"></div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label" for="input-banner_image">{{ entry_banner_image }}</label>
+									<div class="col-sm-10">
+										<a href="" id="thumb-image" data-toggle="image" class="img-thumbnail"><img src="{{ thumb }}" alt="" title="" data-placeholder="{{ placeholder }}" /></a>
+										<input type="hidden" name="oct_megamenu_banner_image" value="{{ oct_megamenu_banner_image }}" id="input-banner_image" />
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label" for="input-entry_banner_color_block">{{ entry_banner_color_block }}</label>
+									<div class="col-sm-10">
+										<input type="text" name="oct_megamenu_banner_image_color" value="{{ oct_megamenu_banner_image_color is defined ? oct_megamenu_banner_image_color : '' }}" placeholder="{{ entry_banner_color_block }}" id="input-entry_banner_color_block" class="form-control spectrum" />
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label" for="input-banner_image_title_color">{{ entry_banner_image_title_color }}</label>
+									<div class="col-sm-10">
+										<input type="text" name="oct_megamenu_banner_image_title_color" value="{{ oct_megamenu_banner_image_title_color is defined ? oct_megamenu_banner_image_title_color : '' }}" placeholder="{{ entry_banner_image_title_color }}" id="input-banner_image_title_color" class="form-control spectrum" />
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label" for="input-banner_image_text_color">{{ entry_banner_image_text_color }}</label>
+									<div class="col-sm-10">
+										<input type="text" name="oct_megamenu_banner_image_text_color" value="{{ oct_megamenu_banner_image_text_color is defined ? oct_megamenu_banner_image_text_color : '' }}" placeholder="{{ entry_banner_image_text_color }}" id="input-banner_image_text_color" class="form-control spectrum" />
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label" for="input-banner_image_button_color">{{ entry_banner_image_button_color }}</label>
+									<div class="col-sm-10">
+										<input type="text" name="oct_megamenu_banner_image_button_color" value="{{ oct_megamenu_banner_image_button_color is defined ? oct_megamenu_banner_image_button_color : '' }}" placeholder="{{ entry_banner_image_button_color }}" id="input-banner_image_button_color" class="form-control spectrum" />
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label" for="input-banner_image_button_hover_color">{{ entry_banner_image_button_hover_color }}</label>
+									<div class="col-sm-10">
+										<input type="text" name="oct_megamenu_banner_image_button_hover_color" value="{{ oct_megamenu_banner_image_button_hover_color is defined ? oct_megamenu_banner_image_button_hover_color : '' }}" placeholder="{{ entry_banner_image_button_hover_color }}" id="input-banner_image_button_hover_color" class="form-control spectrum" />
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label" for="input-banner_image_link_color">{{ entry_banner_image_link_color }}</label>
+									<div class="col-sm-10">
+										<input type="text" name="oct_megamenu_banner_image_link_color" value="{{ oct_megamenu_banner_image_link_color is defined ? oct_megamenu_banner_image_link_color : '' }}" placeholder="{{ entry_banner_image_link_color }}" id="input-banner_image_link_color" class="form-control spectrum" />
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label" for="input-banner_image_link_hover_color">{{ entry_banner_image_link_hover_color }}</label>
+									<div class="col-sm-10">
+										<input type="text" name="oct_megamenu_banner_image_link_hover_color" value="{{ oct_megamenu_banner_image_link_hover_color is defined ? oct_megamenu_banner_image_link_hover_color : '' }}" placeholder="{{ entry_banner_image_link_color }}" id="input-banner_image_link_hover_color" class="form-control spectrum" />
+									</div>
+								</div>
+							</fieldset>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	// Products
+	$('input[name=\'product\']').autocomplete({
+	  'source': function(request, response) {
+	    $.ajax({
+	      url: 'index.php?route=catalog/product/autocomplete&user_token={{ user_token }}&filter_name=' +  encodeURIComponent(request),
+	      dataType: 'json',
+	      cache: false,   
+	      success: function(json) {
+	        response($.map(json, function(item) {
+	          return {
+	            label: item['name'],
+	            value: item['product_id']
+	          }
+	        }));
+	      }
+	    });
+	  },
+	  'select': function(item) {
+	    $('input[name=\'product\']').val('');
+	    
+	    $('#octemplates_megamenu-product' + item['value']).remove();
+	    
+	    $('#octemplates_megamenu-product').append('<div id="octemplates_megamenu-product' + item['value'] + '"><i class="fa fa-minus-circle"></i> ' + item['label'] + '<input type="hidden" name="octemplates_megamenu_product[]" value="' + item['value'] + '" /></div>');  
+	  } 
+	});
+	
+	$('#octemplates_megamenu-product').delegate('.fa-minus-circle', 'click', function() {
+	  $(this).parent().remove();
+	});
+</script>
+<script>
+	$('#language a:first').tab('show');
+	$('#language_banner a:first').tab('show');
+	$('#custom_html a:first').tab('show');
+</script>
+<script>
+	$('.date').datetimepicker({
+		pickTime: false
+	});
+	
+	$('.time').datetimepicker({
+		pickDate: false
+	});
+	
+	$('.datetime').datetimepicker({
+		pickDate: true,
+		pickTime: true
+	});
+</script> 
+<script>
+	$('select[name=item_type]').change(function() {
+		let val = $(this).val();
+		
+		if (val == 1) {
+			$('#oct_megamenu_categories').hide();
+			$('#oct_megamenu_blogcategories').hide();
+			$('#oct_megamenu_manufacturers').hide();
+			$('#oct_megamenu_products').hide();
+			$('#oct_megamenu_informations').hide();
+			$('#oct_megamenu_custom_html').hide();
+			$('#additional_setting_block').hide();
+			$('.for-category-only').hide();
+			$('.not-for-category').show();
+			$('#input-columns').attr('readonly', true);
+			$('#oct_megamenu_descr').hide();
+			$('[name=info_text]').parent().parent().parent().hide();
+			$('.for-product-only').hide();
+			$('[name=limit_item]').parent().parent().hide();
+		} else if(val == 2) {
+			$('#oct_megamenu_categories').show();
+			$('#oct_megamenu_blogcategories').hide();
+			$('#oct_megamenu_manufacturers').hide();
+			$('#oct_megamenu_products').hide();
+			$('#oct_megamenu_informations').hide();
+			$('#oct_megamenu_custom_html').hide();
+			$('#additional_setting_block').show();
+			$('.for-category-only').show();
+			$('.not-for-category').hide();
+			$('#input-columns').attr('readonly', false);
+			$('#oct_megamenu_descr').hide();
+			$('[name=info_text]').parent().parent().parent().show();
+			$('.for-product-only').show();
+			$('[name=limit_item]').parent().parent().show();
+		} else if(val == 8) {
+			$('#oct_megamenu_categories').hide();
+		    $('#oct_megamenu_blogcategories').show();
+		    $('#oct_megamenu_manufacturers').hide();
+		    $('#oct_megamenu_products').hide();
+		    $('#oct_megamenu_informations').hide();
+		    $('#oct_megamenu_custom_html').hide();
+		    $('#additional_setting_block').hide();
+		    $('.for-category-only').hide();
+		    $('.not-for-category').show();
+		    $('#input-columns').attr('readonly', true);
+		    $('#oct_megamenu_descr').hide();
+		    $('[name=info_text]').parent().parent().parent().hide();
+		    $('.for-product-only').hide();
+		    $('[name=limit_item]').parent().parent().hide();
+		} else if (val == 3) {
+			$('#oct_megamenu_categories').hide();
+			$('#oct_megamenu_blogcategories').hide();
+			$('#oct_megamenu_manufacturers').show();
+			$('#oct_megamenu_products').hide();
+			$('#oct_megamenu_informations').hide();
+			$('#oct_megamenu_custom_html').hide();
+			$('#additional_setting_block').show();
+			$('.for-category-only').hide();
+			$('.not-for-category').show();
+			$('#input-columns').attr('readonly', true);
+			$('#oct_megamenu_descr').hide();
+			$('[name=info_text]').parent().parent().parent().hide();
+			$('.for-product-only').hide();
+			$('[name=limit_item]').parent().parent().hide();
+		} else if (val == 4) {
+		    $('#oct_megamenu_categories').hide();
+		    $('#oct_megamenu_blogcategories').hide();
+		    $('#oct_megamenu_manufacturers').hide();
+		    $('#oct_megamenu_products').show();
+		    $('#oct_megamenu_informations').hide();
+		    $('#oct_megamenu_custom_html').hide();
+		    $('#additional_setting_block').show();
+		    $('.for-category-only').hide();
+		    $('.not-for-category').show();
+		    $('#input-columns').attr('readonly', true);
+		    $('#oct_megamenu_descr').show();
+		    $('[name=info_text]').parent().parent().parent().show();
+		    $('.for-product-only').show();
+		    $('[name=limit_item]').parent().parent().hide();
+		} else if (val == 5) {
+		    $('#oct_megamenu_categories').hide();
+		    $('#oct_megamenu_blogcategories').hide();
+		    $('#oct_megamenu_manufacturers').hide();
+		    $('#oct_megamenu_products').hide();
+		    $('#oct_megamenu_informations').show();
+		    $('#oct_megamenu_custom_html').hide();
+		    $('#additional_setting_block').hide();
+		    $('.for-category-only').hide();
+		    $('.not-for-category').show();
+		    $('#input-columns').attr('readonly', true);
+		    $('#oct_megamenu_descr').hide();
+		    $('[name=info_text]').parent().parent().parent().hide();
+		    $('.for-product-only').hide();
+		    $('[name=limit_item]').parent().parent().hide();
+		} else if (val == 7) {
+		    $('#oct_megamenu_categories').hide();
+		    $('#oct_megamenu_blogcategories').hide();
+		    $('#oct_megamenu_manufacturers').hide();
+		    $('#oct_megamenu_products').hide();
+		    $('#oct_megamenu_informations').hide();
+		    $('#oct_megamenu_custom_html').show();
+		    $('#additional_setting_block').hide();
+		    $('.for-category-only').hide();
+		    $('.not-for-category').show();
+		    $('#input-columns').attr('readonly', true);
+		    $('#oct_megamenu_descr').hide();
+		    $('[name=info_text]').parent().parent().parent().hide();
+		    $('.for-product-only').hide();
+		    $('[name=limit_item]').parent().parent().hide();
+		} else {
+		    $('#oct_megamenu_categories').hide();
+		    $('#oct_megamenu_blogcategories').hide();
+		    $('#oct_megamenu_manufacturers').hide();
+		    $('#oct_megamenu_products').hide();
+		    $('#oct_megamenu_informations').hide();
+		    $('#oct_megamenu_custom_html').hide();
+		    $('#additional_setting_block').hide();
+		    $('.for-category-only').hide();
+		    $('.not-for-category').show();
+		    $('#input-columns').attr('readonly', true);
+		    $('#oct_megamenu_descr').hide();
+		    $('[name=info_text]').parent().parent().parent().hide();
+		    $('.for-product-only').hide();
+		    $('[name=limit_item]').parent().parent().hide();
+		}
+	});
+	
+	$('select[name=display_type]').change(function() {
+		let val = $(this).val();
+		
+		if (val == 1) {
+		    $('[name=show_img]').parent().parent().show();
+		    $('[name=img_width]').parent().parent().show();
+		    $('[name=img_height]').parent().parent().show();
+		} else {
+		    $('[name=show_img]').parent().parent().hide();
+		    $('[name=img_width]').parent().parent().hide();
+		    $('[name=img_height]').parent().parent().hide();
+		}
+	});
+	
+	$(function() {
+		$('select[name=item_type]').trigger('change');
+		$('select[name=display_type]').trigger('change');
+	});
+</script>
+<script>
+	$('input[name=\'product\']').autocomplete({
+		source: function(request, response) {
+			$.ajax({
+				url: 'index.php?route=catalog/product/autocomplete&user_token={{ user_token }}&filter_name=' +  encodeURIComponent(request),
+				dataType: 'json',
+				cache: false,
+				success: function(json) {
+			    		response($.map(json, function(item) {
+						return {
+							label: item['name'],
+							value: item['product_id']
+						}
+					}));
+				}
+			});
+		},
+		select: function(item) {
+	    		$('input[name=\'product\']').val('');
+			$('#featured-product' + item['value']).remove();
+			$('#featured-product').append('<div id="featured-product' + item['value'] + '"><i class="fa fa-minus-circle"></i> ' + item['label'] + '<input type="hidden" name="oct_megamenu_products[]" value="' + item['value'] + '" /></div>');
+		}
+	});
+	
+	$('#featured-product').delegate('.fa-minus-circle', 'click', function() {
+		$(this).parent().remove();
+	});
+</script>
+<script>
+	$(".spectrum").spectrum({
+		preferredFormat: "rgb",
+		showInitial: true,
+		showInput: true,
+		showAlpha: true,
+		showPalette: true,
+		palette: [["red", "rgba(0, 255, 0, .5)", "rgb(0, 0, 255)"]]
+	});
+</script>
+{{ footer }}

@@ -1,0 +1,30 @@
+<div class="form-group">
+  <label class="col-sm-3 control-label">{{ entry_type }}</label>
+  <div class="col-sm-9">
+    <div class="btn-group" data-toggle="buttons">
+      {% if dynamic %}
+      <label class="btn btn-default">
+        <input type="radio" name="dynamic" value="0"> {{ text_type_static }}  
+      </label>                      
+      <label class="btn btn-default active">
+        <input type="radio" name="dynamic" value="1" checked="checked"> {{ text_type_dynamic }}  
+      </label>
+      {% else %}
+      <label class="btn btn-default active">
+        <input type="radio" name="dynamic" value="0" checked="checked"> {{ text_type_static }}  
+      </label>         
+      <label class="btn btn-default">
+        <input type="radio" name="dynamic" value="1"> {{ text_type_dynamic }}  
+      </label>                         
+      {% endif %}
+    </div>
+    <p class="help-block">{{ help_type }}</p>
+  </div>
+</div> 
+
+<div class="form-group">
+  <label class="col-sm-3 control-label">{{ entry_status }}</label>
+  <div class="col-sm-9">
+    {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: status, name: 'status', text_yes: text_enabled, text_no: text_disabled }) }}
+  </div>
+</div>  

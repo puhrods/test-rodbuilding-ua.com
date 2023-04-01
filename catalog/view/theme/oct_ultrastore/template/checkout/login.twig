@@ -1,0 +1,41 @@
+<div class="row">
+  <div class="col-sm-6">
+    <div class="us-content-title">{{ text_new_customer }}</div>
+    <div class="us-acc-info-text">{{ text_checkout }}</div>
+    <div class="us-form-check-group-acc mb-3">
+	    <div class="form-check">
+		    {% if account == 'register' %}
+	        <input type="radio" id="checkout_register" name="account" value="register" checked="checked" class="form-check-input" />
+	        {% else %}
+	        <input type="radio" id="checkout_register" name="account" value="register" class="form-check-input" />
+	        {% endif %}
+	        <label for="checkout_register" class="radio-inline">{{ text_register }}</label>
+	    </div>
+	    {% if checkout_guest %}
+	    <div class="form-check">
+	        {% if account == 'guest' %}
+	        <input type="radio" id="checkout_guest" name="account" value="guest" checked="checked" class="form-check-input" />
+	        {% else %}
+	        <input type="radio" id="checkout_guest" name="account" value="guest" class="form-check-input" />
+	        {% endif %}
+	        <label for="checkout_guest" class="radio-inline">{{ text_guest }}</label>
+	    </div>
+	    {% endif %}
+	</div>
+    <div class="us-acc-info-text">{{ text_register_account }}</div>
+    <input type="button" value="{{ button_continue }}" id="button-account" data-loading-text="{{ text_loading }}" class="us-module-btn us-module-btn-green" />
+  </div>
+  <div class="col-sm-6">
+    <div class="us-content-title">{{ text_returning_customer }}</div>
+    <div class="us-acc-info-text">{{ text_i_am_returning_customer }}</div>
+    <div class="form-group">
+      <label class="control-label" for="input-email">{{ entry_email }}</label>
+      <input type="text" name="email" value="" placeholder="{{ entry_email }}" id="input-email" class="form-control" />
+    </div>
+    <div class="form-group">
+      <label class="control-label" for="input-password">{{ entry_password }}</label>
+      <input type="password" name="password" value="" placeholder="{{ entry_password }}" id="input-password" class="form-control" />
+      <a href="{{ forgotten }}">{{ text_forgotten }}</a></div>
+    <input type="button" value="{{ button_login }}" id="button-login" data-loading-text="{{ text_loading }}" class="us-module-btn us-module-btn-green" />
+  </div>
+</div>

@@ -1,0 +1,11 @@
+{% if informations %}
+<div class="sidebar info-sidebar">
+  <ul class="us-column-list list-unstyled">
+    {% for information in informations %}
+    <li class="us-column-item"><a href="{{ information.href }}" class="us-column-link">{{ information.title }}</a></li>
+    {% endfor %}
+    <li class="us-column-item"><a href="{{ contact }}" class="us-column-link">{{ text_contact }}</a></li>
+    <li class="us-column-item"><a href="{{ sitemap }}" class="us-column-link">{{ text_sitemap }}</a></li>
+  </ul>
+</div>
+{% endif %}

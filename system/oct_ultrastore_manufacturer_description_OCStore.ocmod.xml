@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+	<code>oct_ultrastore_manufacturer_description_OCStore</code>
+	<name>Octemplates - Manufacturer description for OCStore</name>
+	<version>1.0.0</version>
+	<author>Octemplates</author>
+	<link>http://octemplates.net/</link>
+	<file path="catalog/view/theme/oct_ultrastore/template/product/manufacturer_info.twig">
+		<operation error="skip">
+			<search><![CDATA[{{ pagination }}]]></search>
+			<add position="after"><![CDATA[
+					{% if thumb and description %}
+					<div class="us-category-description">
+						<div class="d-flex">
+							<div class="us-category-description-img"><img src="{{ thumb }}" alt="{{ heading_title }}" title="{{ heading_title }}" /></div>
+							<div id="us-category-description"{% if categories or products %} class="us-category-description-cont"{% endif %}>
+								{% if description|length > 500  and (categories or products) %}
+								<div class="us-category-description-opacity"></div>
+								{% endif %}
+								<div class="us-category-description-text">{{ description }}</div>
+							</div>
+						</div>
+						{% if description|length > 500 and (categories or products) %}
+						<div class="us-show-more">
+							<a href="javascript:void(0);" class="us-show-more-link" id="us-show-more-link"><span class="us-show-more-expand">{{ oct_expand }}</span><span class="us-show-more-rollup">{{ oct_collapse }}</span><i class="fas fa-angle-down"></i></a>
+						</div>
+						<script>
+							$(function () {
+								$('#us-show-more-link').on('click', function () {
+									$(this).toggleClass('clicked');
+									$('.us-category-description-cont').toggleClass('expanded');
+									$('.us-category-description-opacity').toggleClass('hidden');
+								});
+							});
+						</script>
+						{% endif %}
+					</div>
+					{% endif %}
+			]]></add>
+    	</operation>
+	</file>
+</modification>

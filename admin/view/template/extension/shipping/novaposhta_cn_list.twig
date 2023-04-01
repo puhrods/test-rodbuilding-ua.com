@@ -1,0 +1,709 @@
+{{ header }}{{ column_left }}
+<div id="content">
+	<div class="page-header">
+		<div class="container-fluid">
+			<div class="row">
+				<ul class="breadcrumb">
+                    {% for breadcrumb in breadcrumbs %}
+						<li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+                    {% endfor %}
+				</ul>
+			</div>
+			<h1><i class="fa fa-truck"></i> {{ heading_title }} v. {{ v }}</h1>
+			<div class="pull-right">
+				<div class="btn-group">
+					<a href="{{ customized_printing }}" target="_blank" id="button-customized-printing" data-toggle="tooltip" title="{{ text_customized_printing }}" class="btn btn-default" disabled="disabled" role="button"><i class="fa fa-print"></i></a>
+					<button type="button" id="button-html-caret" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" disabled="disabled"><span class="caret"></span></button>
+					<ul class="dropdown-menu dropdown-menu-right">
+						<li class="dropdown-header"><i class="fa fa-file-pdf-o fa-fw"></i> {{ text_download_pdf }}</li>
+						<li><a href="{{ print_cn_pdf }}" target="_blank" id="button-pdf-cn-2">{{ text_cn }}</a></li>
+						<li><a href="{{ print_markings_pdf }}" target="_blank" id="button-pdf-m">{{ text_mark }}</a></li>
+						<li><a href="{{ print_markings_zebra_pdf }}" target="_blank" id="button-pdf-mz">{{ text_mark_zebra }}</a></li>
+						<li><a href="{{ print_markings_zebra_100_100_pdf }}" target="_blank" id="button-pdf-mz100x100">{{ text_mark_zebra_100_100 }}</a></li>
+						<li role="separator" class="divider"></li>
+						<li class="dropdown-header"><i class="fa fa-print fa-fw"></i> {{ text_print_html }}</li>
+						<li><a href="{{ print_cn_html }}" target="_blank" id="button-html-cn-2">{{ text_cn }}</a></li>
+						<li><a href="{{ print_markings_html }}" target="_blank" id="button-html-m">{{ text_mark }}</a></li>
+						<li><a href="{{ print_markings_zebra_html }}" target="_blank" id="button-html-mz">{{ text_mark_zebra }}</a></li>
+						<li><a href="{{ print_markings_zebra_100_100_html }}" target="_blank" id="button-html-mz100x100">{{ text_mark_zebra_100_100 }}</a></li>
+						<li role="separator" class="divider"></li>
+						<li><a onclick="printSettings(this);" style="cursor: pointer;" id="button-print"><i class="fa fa-print fa-fw"></i> {{ text_print_settings }}</a></li>
+					</ul>
+				</div>
+				<a href="{{ add }}" data-toggle="tooltip" title="{{ button_add }}" class="btn btn-primary" role="button"><i class="fa fa-plus"></i></a>
+				<button type="button" id="button-delete" onclick="deleteCN(this);" data-toggle="tooltip" data-value="" title="{{ button_delete }}" class="btn btn-danger" disabled="disabled"><i class="fa fa-trash-o"></i></button>
+				<a href="{{ back_to_orders }}" data-toggle="tooltip" title="{{ button_back_to_orders }}" class="btn btn-default"><i class="fa fa-reply"></i></a>
+			</div>
+		</div>
+	</div>
+  	<div class="container-fluid">
+   		{% if success %}
+    		<div class="alert alert-success"><i class="fa fa-check-circle"></i> {{ success }}
+      			<button type="button" class="close" data-dismiss="alert">&times;</button>
+    		</div>
+    	{% endif %}
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title"><i class="fa fa-list"></i> {{ text_consignment_note_list }}</h3>
+			</div>
+			<div class="panel-body">
+				<div class="well">
+					<div class="row">
+						<div class="col-sm-4">
+							<label class="control-label" for="input-filter_cn_type">{{ entry_cn_number }}</label>
+						</div>
+						<div class="col-sm-4">
+							<label class="control-label" for="input-filter_cn_type">{{ entry_cn_type }}</label>
+						</div>
+						<div class="col-sm-4">
+							<label class="control-label" for="input-filter_departure_date_from">{{ entry_departure_date }}</label>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-4">
+							<input type="text" name="filter_cn_number" value="{{ filter_cn_number }}" placeholder="{{ entry_cn_number }}" id="input-filter_cn_number" class="form-control" />
+						</div>
+						<div class="col-sm-4">
+							<select name="filter_cn_type" id="input-filter_cn_type" class="selectpicker form-control" data-icon-base="fa" data-tick-icon="fa-check" title="{{ text_select }}" multiple>
+								{% for k, v in filters %}
+									<option value="{{ k }}"{{ k in filter_cn_type ? ' selected="selected"' }}>{{ v }}</option>
+								{% endfor %}
+							</select>
+						</div>
+						<div class="col-sm-2">
+							<div class="input-group date">
+								<input type="text" name="filter_departure_date_from" value="{{ filter_departure_date_from }}" placeholder="{{ entry_departure_date }}" data-date-format="DD.MM.YYYY" id="input-filter_departure_date_from" class="form-control" />
+								<span class="input-group-btn">
+									<button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
+								</span>
+							</div>
+						</div>
+						<div class="col-sm-2">
+							<div class="input-group date">
+								<input type="text" name="filter_departure_date_to" value="{{ filter_departure_date_to }}" placeholder="{{ entry_departure_date }}" data-date-format="DD.MM.YYYY" id="input-filter_departure_date_to" class="form-control" />
+								<span class="input-group-btn">
+									<button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="form-group">
+							<div class="col-sm-4 col-sm-offset-8">
+								<button type="button" id="button-filter" class="btn btn-primary pull-right"><i class="fa fa-filter"></i> {{ button_filter }}</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<form method="post" enctype="multipart/form-data" id="form">
+					<div class="table-responsive">
+						<table class="table table-bordered table-hover">
+							<thead>
+								<tr>
+									<td style="width: 1px;" class="text-center"><input type="checkbox" onclick="$('input[name^=selected]').prop('checked', this.checked); $('input[name^=selected]').triggerHandler('change');" /></td>
+									<td{{ 'cn_identifier' not in displayed_information ? ' style="display: none"' }}>{{ column_cn_identifier }}</td>
+									{% if 'cn_number' in displayed_information %}
+										<td>{{ column_cn_number }}</td>
+									{% endif %}
+                                    {% if 'order_number' in displayed_information %}
+										<td>{{ column_order_number }}</td>
+                                    {% endif %}
+                                    {% if 'create_date' in displayed_information %}
+										<td>{{ column_create_date }}</td>
+                                    {% endif %}
+                                    {% if 'actual_shipping_date' in displayed_information %}
+										<td>{{ column_actual_shipping_date }}</td>
+                                    {% endif %}
+                                    {% if 'preferred_shipping_date' in displayed_information %}
+										<td>{{ column_preferred_shipping_date }}</td>
+                                    {% endif %}
+                                    {% if 'estimated_shipping_date' in displayed_information %}
+										<td>{{ column_estimated_shipping_date }}</td>
+                                    {% endif %}
+                                    {% if 'recipient_date' in displayed_information %}
+										<td>{{ column_recipient_date }}</td>
+                                    {% endif %}
+                                    {% if 'last_updated_status_date' in displayed_information %}
+										<td>{{ column_last_updated_status_date }}</td>
+                                    {% endif %}
+                                    {% if 'sender' in displayed_information %}
+										<td>{{ column_sender }}</td>
+                                    {% endif %}
+                                    {% if 'sender_address' in displayed_information %}
+										<td>{{ column_sender_address }}</td>
+                                    {% endif %}
+                                    {% if 'recipient' in displayed_information %}
+										<td>{{ column_recipient }}</td>
+                                    {% endif %}
+                                    {% if 'recipient_address' in displayed_information %}
+										<td>{{ column_recipient_address }}</td>
+                                    {% endif %}
+                                    {% if 'weight' in displayed_information %}
+										<td>{{ column_weight }}</td>
+                                    {% endif %}
+                                    {% if 'seats_amount' in displayed_information %}
+										<td>{{ column_seats_amount }}</td>
+                                    {% endif %}
+                                    {% if 'declared_cost' in displayed_information %}
+										<td>{{ column_declared_cost }}</td>
+                                    {% endif %}
+                                    {% if 'shipping_cost' in displayed_information %}
+										<td>{{ column_shipping_cost }}</td>
+                                    {% endif %}
+                                    {% if 'backward_delivery' in displayed_information %}
+										<td>{{ column_backward_delivery }}</td>
+                                    {% endif %}
+                                    {% if 'service_type' in displayed_information %}
+										<td>{{ column_service_type }}</td>
+                                    {% endif %}
+                                    {% if 'description' in displayed_information %}
+										<td>{{ column_description }}</td>
+                                    {% endif %}
+                                    {% if 'additional_information' in displayed_information %}
+										<td>{{ column_additional_information }}</td>
+                                    {% endif %}
+                                    {% if 'payer_type' in displayed_information %}
+										<td>{{ column_payer_type }}</td>
+                                    {% endif %}
+                                    {% if 'payment_method' in displayed_information %}
+										<td>{{ column_payment_method }}</td>
+                                    {% endif %}
+                                    {% if 'departure_type' in displayed_information %}
+										<td>{{ column_departure_type }}</td>
+                                    {% endif %}
+                                    {% if 'packing_number' in displayed_information %}
+										<td>{{ column_packing_number }}</td>
+                                    {% endif %}
+                                    {% if 'rejection_reason' in displayed_information %}
+										<td>{{ column_rejection_reason }}</td>
+                                    {% endif %}
+                                    {% if 'status' in displayed_information %}
+										<td>{{ column_status }}</td>
+                                    {% endif %}
+									<td class="text-center" width="130px">{{ column_action }}</td>
+								</tr>
+							</thead>
+							<tbody>
+								{% for cn in cns %}
+									{% if cn.DeletionMark %}
+										<tr class="danger">
+									{% elseif cn.Printed %}
+										<tr class="active">
+									{% else %}
+										<tr>
+									{% endif %}
+									<td class="text-center"><input type="checkbox" name="selected[]" value="{{ cn.IntDocNumber }}" /></td>
+									<td{{ 'cn_identifier' not in displayed_information ? ' style="display: none"' }}>
+										{{ cn.Ref }}
+										<input type="hidden" name="refs[]" value="{{ cn.Ref }}" />
+									</td>
+									{% if 'cn_number' in displayed_information %}
+										<td>{{ cn.IntDocNumber }}</td>
+									{% endif %}
+									{% if 'order_number' in displayed_information %}
+										<td class="text-center">
+											{% if cn.order %}
+												<a href="{{ cn.order }}" target="_blank">{{ cn.order_id }}</a>
+											{% endif %}
+										</td>
+									{% endif %}
+									{% if 'create_date' in displayed_information %}
+										<td>{{ cn.create_date }}</td>
+									{% endif %}
+									{% if 'actual_shipping_date' in displayed_information %}
+										<td>{{ cn.actual_shipping_date }}</td>
+									{% endif %}
+									{% if 'preferred_shipping_date' in displayed_information %}
+										<td>{{ cn.preferred_shipping_date }}</td>
+									{% endif %}
+									{% if 'estimated_shipping_date' in displayed_information %}
+										<td>{{ cn.estimated_shipping_date }}</td>
+									{% endif %}
+									{% if 'recipient_date' in displayed_information %}
+										<td>{{ cn.recipient_date }}</td>
+									{% endif %}
+									{% if 'last_updated_status_date' in displayed_information %}
+										<td>{{ cn.last_updated_status_date }}</td>
+									{% endif %}
+									{% if 'sender' in displayed_information %}
+										<td>{{ cn.sender }}</td>
+									{% endif %}
+									{% if 'sender_address' in displayed_information %}
+										<td>{{ cn.sender_address }}</td>
+									{% endif %}
+									{% if 'recipient' in displayed_information %}
+										<td>{{ cn.recipient }}</td>
+									{% endif %}
+									{% if 'recipient_address' in displayed_information %}
+										<td>{{ cn.recipient_address }}</td>
+									{% endif %}
+									{% if 'weight' in displayed_information %}
+										<td>{{ cn.Weight }}</td>
+									{% endif %}
+									{% if 'seats_amount' in displayed_information %}
+										<td>{{ cn.SeatsAmount }}</td>
+									{% endif %}
+									{% if 'declared_cost' in displayed_information %}
+										<td>{{ cn.declared_cost }}</td>
+									{% endif %}
+									{% if 'shipping_cost' in displayed_information %}
+										<td>{{ cn.shipping_cost }}</td>
+									{% endif %}
+									{% if 'backward_delivery' in displayed_information %}
+										<td>{{ cn.backward_delivery }}</td>
+									{% endif %}
+									{% if 'service_type' in displayed_information %}
+										<td>{{ cn.service_type }}</td>
+									{% endif %}
+									{% if 'description' in displayed_information %}
+										<td>{{ cn.Description }}</td>
+									{% endif %}
+									{% if 'additional_information' in displayed_information %}
+										<td>{{ cn.AdditionalInformation }}</td>
+									{% endif %}
+									{% if 'payer_type' in displayed_information %}
+										<td>{{ cn.payer_type }}</td>
+									{% endif %}
+									{% if 'payment_method' in displayed_information %}
+										<td>{{ cn.payment_method }}</td>
+									{% endif %}
+									{% if 'departure_type' in displayed_information %}
+										<td>{{ cn.departure_type }}</td>
+									{% endif %}
+									{% if 'packing_number' in displayed_information %}
+										<td>{{ cn.PackingNumber }}</td>
+									{% endif %}
+									{% if 'rejection_reason' in displayed_information %}
+										<td>{{ cn.RejectionReason }}</td>
+									{% endif %}
+									{% if 'status' in displayed_information %}
+										<td>{{ cn.status }}</td>
+									{% endif %}
+									<td class="text-center">
+										<div class="btn-group">
+											<a href="{{ customized_printing ~ '/orders[]/' ~ cn.IntDocNumber }}" id="button-customized-printing-{{ cn.IntDocNumber }}" target="_blank" data-toggle="tooltip" title="{{ text_customized_printing }}" class="btn btn-default btn-sm" role="button"><i class="fa fa-print"></i></a>
+											<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="caret"></span></button>
+											<ul class="dropdown-menu dropdown-menu-right">
+												<li class="dropdown-header"><i class="fa fa-file-pdf-o fa-fw"></i> {{ text_download_pdf }}</li>
+												<li><a href="{{ print_cn_pdf ~ '/orders[]/' ~ cn.IntDocNumber }}" target="_blank">{{ text_cn }}</a></li>
+												<li><a href="{{ print_markings_pdf ~ '/orders[]/' ~ cn.IntDocNumber }}" target="_blank">{{ text_mark }}</a></li>
+												<li><a href="{{ print_markings_zebra_pdf ~ '/orders[]/' ~ cn.IntDocNumber }}" target="_blank">{{ text_mark_zebra }}</a></li>
+												<li><a href="{{ print_markings_zebra_100_100_pdf ~ '/orders[]/' ~ cn.IntDocNumber }}" target="_blank">{{ text_mark_zebra_100_100 }}</a></li>
+												<li role="separator" class="divider"></li>
+												<li class="dropdown-header"><i class="fa fa-print fa-fw"></i> {{ text_print_html }}</li>
+												<li><a href="{{ print_cn_html ~ '/orders[]/' ~ cn.IntDocNumber }}" target="_blank">{{ text_cn }}</a></li>
+												<li><a href="{{ print_markings_html ~ '/orders[]/' ~ cn.IntDocNumber }}" target="_blank">{{ text_mark }}</a></li>
+												<li><a href="{{ print_markings_zebra_html ~ '/orders[]/' ~ cn.IntDocNumber }}" target="_blank">{{ text_mark_zebra }}</a></li>
+												<li><a href="{{ print_markings_zebra_100_100_html ~ '/orders[]/' ~ cn.IntDocNumber }}" target="_blank">{{ text_mark_zebra_100_100 }}</a></li>
+											</ul>
+										</div>
+										<div class="btn-group">
+											<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-cog" aria-hidden="true"></i> <span class="caret"></span></button>
+											<ul class="dropdown-menu dropdown-menu-right">
+												<li><a href="{{ add ~ '&cn_ref=' ~ cn.Ref }}"><i class="fa fa-pencil text-primary fa-fw"></i> {{ text_edit }}</a></li>
+												{% if not cn.order %}
+												<li><a onclick="assignmentOrder('{{ cn.IntDocNumber }}', '{{ cn.Ref }}');" style="cursor: pointer;"><i class="fa fa-plus-square text-success fa-fw" aria-hidden="true"></i> {{ text_assignment_order }}</a></li>
+                                                {% endif %}
+												<li><a onclick="printSettings(this);" style="cursor: pointer;"><i class="fa fa-print fa-fw"></i> {{ text_print_settings }}</a></li>
+												<li><a onclick="deleteCN(this);" style="cursor: pointer;"><i class="fa fa-trash-o text-danger fa-fw"></i> {{ text_delete }}</a></li>
+											</ul>
+										</div>
+									</td>
+								</tr>
+								{% else %}
+									<tr>
+										<td class="text-center" colspan="{{ (displayed_information|length + 2) }}">{{ text_no_results }}</td>
+									</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					</div>
+				</form>
+				<div class="row">
+					<div class="col-sm-6 text-left">{{ pagination }}</div>
+					<div class="col-sm-6 text-right">{{ results }}</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- START Modal assignment order to CN -->
+	<div class="modal fade" id="modal-assignment-order-to-cn" tabindex="-1" role="dialog" aria-labelledby="modal-assignment-order-to-cn-label">
+		<div class="modal-dialog modal-sm" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="modal-assignment-order-to-cn-label">{{ text_order }}</h4>
+				</div>
+				<div class="modal-body">
+					<div class="form-group clearfix">
+						<input type="hidden" name="cn_number" value="" id="input-cn_number" />
+						<input type="hidden" name="cn_ref" value="" id="input-cn_ref" />
+						<label class="col-sm-4 control-label" for="input-order_number">{{ entry_order_number }}</label>
+						<div class="col-sm-8">
+							<input type="text" name="order_number" value="" placeholder="{{ entry_order_number }}" id="input-order_number" class="form-control" />
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" onclick="assignmentOrder();"><i class="fa fa-check"></i></button>
+					<button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i></button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- END Modal assignment order to CN -->
+	<!-- START Print settings -->
+	<div class="modal fade" id="modal-print-settings" tabindex="-1" role="dialog" aria-labelledby="modal-print-settings-label">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="modal-print-settings-label">{{ text_print_settings }}</h4>
+				</div>
+				<div class="modal-body">
+					<input type="hidden" value="" id="input-print_button_id">
+					<div class="form-group clearfix">
+						<label class="col-sm-4 control-label" for="input-print_format">{{ entry_print_format }}</label>
+						<div class="col-sm-8">
+							<select name="print_format" id="input-print_format" class="form-control">
+								{% for k, v in print_formats %}
+									<option value="{{ k }}">{{ v }}</option>
+								{% endfor %}
+							</select>
+						</div>
+					</div>
+					<div class="form-group clearfix">
+						<label class="col-sm-4 control-label" for="input-number_of_copies">{{ entry_number_of_copies }}</label>
+						<div class="col-sm-8">
+							<select name="number_of_copies" id="input-number_of_copies" class="form-control">
+                                {% for i in 1..6 %}
+									<option value="{{ i }}">{{ i }}</option>
+                                {% endfor %}
+							</select>
+						</div>
+					</div>
+					<div class="form-group clearfix">
+						<label class="col-sm-4 control-label" for="input-template_type">{{ entry_template_type }}</label>
+						<div class="col-sm-8">
+							<select name="template_type" id="input-template_type" class="form-control">
+                                {% for k, v in template_types %}
+									<option value="{{ k }}">{{ v }}</option>
+                                {% endfor %}
+							</select>
+						</div>
+					</div>
+					<div class="form-group clearfix">
+						<label class="col-sm-4 control-label" for="input-print_type">{{ entry_print_type }}</label>
+						<div class="col-sm-8">
+							<select name="print_type" id="input-print_type" class="form-control">
+                                {% for k, v in print_types %}
+									<option value="{{ k }}">{{ v }}</option>
+                                {% endfor %}
+							</select>
+						</div>
+					</div>
+					<div class="form-group clearfix">
+						<label class="col-sm-4 control-label" for="input-print_start">{{ entry_print_start }}</label>
+						<div class="col-sm-8">
+							<div class="btn-group-vertical" id="div-vertical-1" data-toggle="buttons">
+                                {% for i in 1..8 %}
+								<label class="btn btn-default">
+									<input type="radio" name="print_start" value="{{ i }}" id="input-print_start-{{ i }}" autocomplete="off">{{ i }}
+								</label>
+                                {% endfor %}
+							</div>
+							<div class="btn-group-vertical" id="div-vertical-2" data-toggle="buttons">
+                                {% for i in 1..8 %}
+									<label class="btn btn-default">
+										<input type="radio" name="print_start" value="{{ i }}" id="input-print_start-{{ i }}" autocomplete="off">{{ i }}
+									</label>
+                                {% endfor %}
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" onclick="printSettings();"><i class="fa fa-check"></i></button>
+					<button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i></button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- END Print settings -->
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
+<script type="text/javascript"><!--
+    function assignmentOrder(number, ref) {
+        if ($('#modal-assignment-order-to-cn').is(':hidden')) {
+            $('#input-cn_number').val(number);
+            $('#input-cn_ref').val(ref)
+
+            $('#modal-assignment-order-to-cn').modal('show');
+        } else {
+            var post_data = 'order_id=' + $('#input-order_number').val() + '&cn_number=' + encodeURIComponent($('#input-cn_number').val()) + '&cn_ref=' + encodeURIComponent($('#input-cn_ref').val());
+
+            $.ajax( {
+                url: 'index.php?route=extension/shipping/novaposhta/addCNToOrder&user_token={{ user_token }}',
+                type: 'POST',
+                data: post_data,
+                dataType: 'json',
+                beforeSend: function () {
+                    $('body').fadeTo('fast', 0.7).prepend('<div id="ocmax-loader" style="position: fixed; top: 50%;	left: 50%; z-index: 9999;"><i class="fa fa-spinner fa-spin fa-3x fa-fw"></i></div>');
+                },
+                complete: function () {
+                    var $alerts = $('.alert-danger, .alert-success');
+
+                    if ($alerts.length !== 0) {
+                        setTimeout(function() { $alerts.fadeOut(); }, 5000);
+                    }
+
+                    $('body').fadeTo('fast', 1)
+                    $('#ocmax-loader').remove();
+                },
+                success: function(json) {
+                    if(json['error']) {
+                        $('.container-fluid:eq(1)').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                    }
+
+                    if (json['success']) {
+                        $('.container-fluid:eq(1)').prepend('<div class="alert alert-success"><i class="fa fa-check-circle"></i> ' + json['success'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+
+                        setTimeout(function() {
+                                location.reload();
+                            },
+                            2000
+                        );
+                    }
+
+                    $('html, body').animate({ scrollTop: 0 }, 'slow');
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus);
+                }
+            } );
+
+            $('#modal-assignment-order-to-cn').modal('hide');
+        }
+    }
+
+    function printSettings(self) {
+        if ($('#modal-print-settings').is(':hidden')) {
+            var p_id;
+
+            if (self.id == 'button-print') {
+                p_id = $(self).parents('div.btn-group').find('#button-customized-printing')[0].id;
+            } else {
+                p_id = $(self).parents('tr').find('a[id^="button-customized-printing"]')[0].id;
+            }
+
+            $('#input-print_button_id').val(p_id);
+
+            $('#modal-print-settings').modal('show');
+        } else {
+            var
+                print_format,
+                page_format,
+                print_direction,
+                position,
+                new_href;
+
+            if ($('#input-print_format').val() == 'document_A4') {
+                print_format = 'printDocument';
+                page_format = 'A4';
+            } else if ($('#input-print_format').val() == 'document_A5') {
+                print_format = 'printDocument';
+                page_format = 'A5';
+            } else if ($('#input-print_format').val() == 'markings_A4') {
+                print_format = 'printMarkings';
+                page_format = 'A4';
+
+                if ($('#input-template_type').val() == 'html') {
+                    print_direction = $('#input-print_type').val();
+                    position = $('input[id^="input-print_start"]:checked').val();
+                }
+            }
+
+            new_href = 'https://my.novaposhta.ua/orders/' + print_format + '/apiKey/{{ key_api }}/type/' + $('#input-template_type').val() + '/pageFormat/' + page_format + '/copies/' + $('#input-number_of_copies').val();
+
+            if (print_direction) {
+                new_href += '/printDirection/' + print_direction + '/position/' + position;
+            }
+
+            if ($('#input-print_button_id').val() == 'button-customized-printing') {
+                setTimeout(function() { $('input[name^="selected"]').trigger('change'); }, 1000);
+            } else {
+                new_href += '/orders[]/' + parseInt($('#input-print_button_id').val().replace(/\D/g,''));
+            }
+
+            $('#' + $('#input-print_button_id').val()).attr('href', new_href);
+
+            $('#modal-print-settings').modal('hide');
+        }
+    }
+
+    function deleteCN(self) {
+        if (!confirm('{{ text_confirm }}')) {
+            return false;
+        }
+
+        var post_data;
+
+        if (self.id == 'button-delete') {
+            post_data = $('input[name^="selected"]:checked').parents('tr').find('input[name^="refs"]').serialize();
+
+            $('input[name^="selected"]:checked').parents('tr').find('a[href*="order_id"]').each(function(i) {
+                post_data += '&orders[]=' + $(this).text();
+            } );
+        } else {
+            post_data = $(self).parents('tr').find('input[name^="refs"]').serialize();
+            post_data += '&orders[]=' + $(self).parents('tr').find('a[href*="order_id"]').text();
+        }
+
+        $.ajax( {
+            type: 'POST',
+            url: 'index.php?route=extension/shipping/novaposhta/deleteCN&user_token={{ user_token }}',
+            data: post_data,
+            dataType: 'json',
+            beforeSend: function () {
+                $(self).find('i').addClass('fa-spin');
+                $(self).parents('div.btn-group').find('i').addClass('fa-spin');
+            },
+            complete: function () {
+                var $alerts = $('.alert-danger, .alert-success');
+
+                if ($alerts.length !== 0) {
+                    setTimeout(function() { $alerts.fadeOut(); }, 5000);
+                }
+
+                $(self).find('i').removeClass('fa-spin');
+                $(self).parents('div.btn-group').find('i').removeClass('fa-spin');
+            },
+            success: function(json) {
+                if (json['success']) {
+                    for(var i in json['success']['refs']) {
+                        $('input[value ="' + json['success']['refs'][i]['Ref'] + '"]').parents('tr').fadeOut('slow');
+                    }
+
+                    $('.container-fluid:eq(1)').prepend('<div class="alert alert-success"><i class="fa fa-check-circle"></i> ' + json['success']['text'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                }
+
+                if (json['warning']) {
+                    for(var w in json['warning']) {
+                        $('.container-fluid:eq(1)').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['warning'][w] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                    }
+                }
+            }
+        } );
+    }
+
+    function formHandler(element) {
+        switch (element.id) {
+            case 'input-print_format':
+            case 'input-template_type':
+                var
+                    print_format = $('#input-print_format').val(),
+                    template_type = $('#input-template_type').val();
+
+                if (print_format == 'markings_A4' && template_type == 'html') {
+                    $('#input-print_type, input[id^="input-print_start"]').parents('div.form-group').fadeIn();
+                } else {
+                    $('#input-print_type, input[id^="input-print_start"]').parents('div.form-group').fadeOut();
+                }
+
+                break;
+
+            case 'input-print_type':
+                var
+                    $print_start_1 = $('#div-vertical-1'),
+                    $print_start_2 = $('#div-vertical-2')
+
+                if (element.value == 'horPrint') {
+                    $print_start_1.find('label:odd').hide();
+                    $print_start_1.find('label:even').show();
+                    $print_start_2.find('label:odd').show();
+                    $print_start_2.find('label:even').hide();
+                } else {
+                    $print_start_1.find('label:lt(4)').show();
+                    $print_start_1.find('label:gt(3)').hide();
+                    $print_start_2.find('label:lt(4)').hide();
+                    $print_start_2.find('label:gt(3)').show();
+                }
+
+                break;
+        }
+    }
+
+    $(function() {
+        $('.date').datetimepicker({
+            pickTime: false
+        } );
+
+        if ('{{ cn_number }}') {
+            $('tr:contains("{{ cn_number }}")').addClass('success');
+        }
+
+        $('input[name^="selected"]').on('change', function(e) {
+            var
+                orders = '',
+                selected = $('input[name^="selected"]:checked');
+
+            for(var i = 0; i < selected.length; i++) {
+                orders += '/orders[]/' + selected[i].value;
+            }
+
+            $('#button-customized-printing, a[id^="button-pdf"], a[id^="button-html"]').each( function(indx) {
+                $(this).attr('href', $(this).attr('href').replace(/\/orders\[\]\/.*/g, ''));
+                $(this).attr('href', $(this).attr('href') + orders);
+            });
+
+            if (selected.length) {
+                $('#button-customized-printing, [id^="button-pdf"], [id^="button-html"], #button-delete').attr('disabled', false);
+            } else {
+                $('#button-customized-printing, [id^="button-pdf"], [id^="button-html"], #button-delete').attr('disabled', true);
+            }
+        } );
+
+        $('#button-filter').on('click', function() {
+            var
+                url = 'index.php?route=extension/shipping/novaposhta/getCNList&user_token={{ user_token }}',
+                filter_cn_number = $('#input-filter_cn_number').val(),
+                filter_cn_type = $('#input-filter_cn_type').val(),
+                filter_departure_date_from = $('#input-filter_departure_date_from').val(),
+                filter_departure_date_to = $('#input-filter_departure_date_to').val();
+
+            if (filter_cn_number) {
+                url += '&filter_cn_number=' + encodeURIComponent(filter_cn_number);
+            }
+
+            if (filter_cn_type) {
+                for (var i in filter_cn_type) {
+                    url += '&filter_cn_type[]=' + encodeURIComponent(filter_cn_type[i]);
+                }
+            }
+
+            if (filter_departure_date_from) {
+                url += '&filter_departure_date_from=' + encodeURIComponent(filter_departure_date_from);
+            }
+
+            if (filter_departure_date_to) {
+                url += '&filter_departure_date_to=' + encodeURIComponent(filter_departure_date_to);
+            }
+
+            location = url;
+        } );
+
+        $('#input-print_format, #input-template_type, #input-print_type').each(function() {
+            formHandler(this);
+        } );
+
+        $('input, select, textarea').on('change', function(e) {
+            formHandler(e.currentTarget);
+        } );
+
+        $('#div-vertical-1, #div-vertical-2').on('click', function (e) {
+            $('#div-vertical-1, #div-vertical-2').not('#' + e.currentTarget.id).find('label').removeClass('active').find('input').removeAttr('checked');
+        } );
+    } );
+//--></script>
+{{ footer }}

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+    <name>Simple Custom For OrderPro</name>
+	<code>Simple Custom For OrderPro</code>
+    <version>3.7.8</version>
+    <author><![CDATA[<font color="#00CC00"><b>shchs@ya.ru</b></font>]]></author>
+    <link></link>
+    <file path="admin/view/template/sale/orderpro/order_form.twig">
+        <operation>
+            <search><![CDATA[<div id="shoverlay">]]></search>
+            <add position="after"><![CDATA[
+<script type="text/javascript"><!--
+jQuery(function(){
+	jQuery('#simple_custblock').append('<div id="simple_custom_order" class="simple-container width100"></div>');
+	jQuery('#simple_custom_order').load('index.php?option=com_mijoshop&format=raw&tmpl=component&route=extension/module/simple/custom&set=order&user_token={{ user_token }}&object=order&id={{ order_id }}');
+});
+
+jQuery(function(){
+	jQuery('#simple_payblock').append('<div id="simple_custom_payment_address" class="simple-container width100"></div>');
+	jQuery('#simple_custom_payment_address').load('index.php?option=com_mijoshop&format=raw&tmpl=component&route=extension/module/simple/custom&set=payment_address&user_token={{ user_token }}&object=order&id={{ order_id }}');
+});
+
+jQuery(function(){
+	jQuery('#simple_shipblock').append('<div id="simple_custom_shipping_address" class="simple-container width100"></div>');
+	jQuery('#simple_custom_shipping_address').load('index.php?option=com_mijoshop&format=raw&tmpl=component&route=extension/module/simple/custom&set=shipping_address&user_token={{ user_token }}&object=order&id={{ order_id }}');
+	jQuery('#simplefield').slideDown('slow');
+});
+//--></script>
+            ]]></add>
+        </operation>
+    </file>
+</modification>

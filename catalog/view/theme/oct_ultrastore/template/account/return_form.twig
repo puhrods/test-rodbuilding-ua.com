@@ -1,0 +1,201 @@
+{{ header }}
+<div id="account-return" class="container">
+	{{ oct_breadcrumbs }}
+	<div class="row">
+		<div class="col-lg-12">
+			<h1 class="us-main-shop-title">{{ heading_title }}</h1>
+		</div>
+	</div>
+	<div class="content-top-box">{{ content_top }}</div>
+	{% if error_warning %}
+	<script>
+	usNotify('warning', '{{ error_warning }}');
+	</script>
+	{% endif %}
+	<div class="row"> {{ column_left }}
+	    {% if column_left and column_right %}
+	    {% set class = 'col-sm-6' %}
+	    {% elseif column_left or column_right %}
+	    {% set class = 'col-sm-9' %}
+	    {% else %}
+	    {% set class = 'col-sm-12' %}
+	    {% endif %}
+	    <div id="content" class="{{ class }}">
+		    <div class="us-content">
+		      <div class="us-acc-info-text">{{ text_description }}</div>
+		      <form action="{{ action }}" method="post" enctype="multipart/form-data" class="form-horizontal">
+		        <fieldset>
+		          <legend class="us-content-title">{{ text_order }}</legend>
+		          <div class="form-group">
+		            <label for="input-firstname"><span class="required">*</span>{{ entry_firstname }}</label>
+		            {% if error_firstname %}
+		            <script>
+					usNotify('warning', '{{ error_firstname }}');
+					</script>
+		            {% endif %}
+		            <input type="text" name="firstname" value="{{ firstname }}" placeholder="{{ entry_firstname }}" id="input-firstname" class="form-control" />
+		          </div>
+		          <div class="form-group">
+		            <label for="input-lastname"><span class="required">*</span>{{ entry_lastname }}</label>
+		            {% if error_lastname %}
+		            <script>
+					usNotify('warning', '{{ error_lastname }}');
+					</script>
+		            {% endif %}
+		            <input type="text" name="lastname" value="{{ lastname }}" placeholder="{{ entry_lastname }}" id="input-lastname" class="form-control" />
+		          </div>
+		          <div class="form-group">
+		            <label for="input-email"><span class="required">*</span>{{ entry_email }}</label>
+		            {% if error_email %}
+		            <script>
+					usNotify('warning', '{{ error_email }}');
+					</script>
+		            {% endif %}
+		            <input type="text" name="email" value="{{ email }}" placeholder="{{ entry_email }}" id="input-email" class="form-control" />
+		          </div>
+		          <div class="form-group">
+		            <label for="input-telephone"><span class="required">*</span>{{ entry_telephone }}</label>
+		            {% if error_telephone %}
+		            <script>
+					usNotify('warning', '{{ error_telephone }}');
+					</script>
+		            {% endif %}
+		            <input type="text" name="telephone" value="{{ telephone }}" placeholder="{{ entry_telephone }}" id="input-telephone" class="form-control" />
+		          </div>
+		          <div class="form-group">
+		            <label for="input-order-id"><span class="required">*</span>{{ entry_order_id }}</label>
+		            {% if error_order_id %}
+		            <script>
+					usNotify('warning', '{{ error_order_id }}');
+					</script>
+		            {% endif %}
+		            <input type="text" name="order_id" value="{{ order_id }}" placeholder="{{ entry_order_id }}" id="input-order-id" class="form-control" />
+		          </div>
+		           <div class="form-group">
+		            <label for="input-date-ordered">{{ entry_date_ordered }}</label>
+		            <div class="input-group date">
+		                <input type="text" name="date_ordered" value="{{ date_ordered }}" placeholder="{{ entry_date_ordered }}" id="input-date-ordered" class="form-control{% if date_ordered|length == 0 %} datetime{% endif %}" />
+		            </div>
+		          </div>
+		        </fieldset>
+		        <fieldset>
+		          <legend class="us-content-title">{{ text_product }}</legend>
+		          <div class="form-group">
+		            <label for="input-product"><span class="required">*</span>{{ entry_product }}</label>
+		            {% if error_product %}
+		            <script>
+					usNotify('warning', '{{ error_product }}');
+					</script>
+		            {% endif %}
+		            <input type="text" name="product" value="{{ product }}" placeholder="{{ entry_product }}" id="input-product" class="form-control" />
+					{% if product_id is defined and product_id %}
+					<input type="hidden" name="product_id" value="{{ product_id }}" />
+					{% endif %}
+		          </div>
+		          <div class="form-group">
+		            <label for="input-model"><span class="required">*</span>{{ entry_model }}</label>
+		            {% if error_model %}
+		            <script>
+					usNotify('warning', '{{ error_model }}');
+					</script>
+		            {% endif %}
+		            <input type="text" name="model" value="{{ model }}" placeholder="{{ entry_model }}" id="input-model" class="form-control" />
+		          </div>
+		          <div class="form-group">
+		            <label for="input-quantity">{{ entry_quantity }}</label>
+		            <input type="text" name="quantity" value="{{ quantity }}" placeholder="{{ entry_quantity }}" id="input-quantity" class="form-control" />
+		          </div>
+		          <div class="form-group">
+		            <label><span class="required">*</span>{{ entry_reason }}</label>
+		            {% if error_reason %}
+		            <script>
+					usNotify('warning', '{{ error_reason }}');
+					</script>
+		            {% endif %}
+		            {% for return_reason in return_reasons %}
+		              {% if return_reason.return_reason_id == return_reason_id %}
+		              <div class="radio">
+		                <label for="return_reason_id">
+		                  <input type="radio" name="return_reason_id" value="{{ return_reason.return_reason_id }}" checked="checked" />
+		                  {{ return_reason.name }}</label>
+		              </div>
+		              {% else %}
+		              <div class="radio">
+		                <label for="return_reason_id">
+		                  <input type="radio" name="return_reason_id" value="{{ return_reason.return_reason_id }}" />
+		                  {{ return_reason.name }}</label>
+		              </div>
+		              {% endif %}
+		            {% endfor %}
+		          </div>
+		          <div class="us-form-check-group-acc">
+		            <div class="us-account-form-title"><span class="required">*</span>{{ entry_opened }}</div>
+		            <div class="form-check form-check-inline">
+		            	{% if opened %}
+		                <input type="radio" id="CheckYes" name="opened" value="1" checked="checked" />
+		                {% else %}
+		                <input type="radio" id="CheckYes" name="opened" value="1" />
+		                {% endif %}
+						<label class="radio-inline" for="CheckYes">{{ text_yes }}</label>
+		              	{% if not opened %}
+		                <input type="radio" id="CheckNo" name="opened" value="0" checked="checked" />
+		                {% else %}
+		                <input type="radio" id="CheckNo" name="opened" value="0" />
+		                {% endif %}
+		                <label class="radio-inline" for="CheckNo">{{ text_no }}</label>
+		            </div>
+		          </div>
+		          <div class="form-group">
+		            <label for="input-comment">{{ entry_fault_detail }}</label>
+		            <textarea name="comment" rows="10" placeholder="{{ entry_fault_detail }}" id="input-comment" class="form-control">{{ comment }}</textarea>
+		          </div>
+		          {{ captcha }}
+		        </fieldset>
+		        {% if text_agree %}
+		        <div class="us-form-checkbox-group">
+		            {% if agree %}
+		            <input type="checkbox" id="scales" class="us-form-checkbox-input" name="agree" value="1" checked="checked" />
+		            {% else %}
+		            <input type="checkbox" id="scales" class="us-form-checkbox-input" name="agree" value="1" />
+		            {% endif %}
+		            <label for="scales" class="d-flex align-items-center"><span>{{ text_agree }}</span></label>
+		        </div>
+		        {% endif %}
+		        <div class="btn-group d-flex justify-content-between">
+		          <a href="{{ back }}" class="us-module-btn">{{ button_back }}</a>
+		          <input type="submit" value="{{ button_continue }}" class="us-module-btn us-module-btn-green" />
+		        </div>
+		      </form>
+		    </div>
+	    </div>
+	    {{ column_right }}
+	</div>
+	{{ content_bottom }}
+</div>
+<script src="catalog/view/javascript/jquery/datetimepicker/moment/moment-with-locales.min.js"></script>
+<script src="catalog/view/theme/oct_ultrastore/js/bootstrap-datetimepicker.min.js"></script>
+<link href="catalog/view/javascript/jquery/datetimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+<script>
+
+var nowDate = new Date();
+var today = new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate(), 0, 0, 0, 0);
+
+$('#input-date-ordered.datetime').datetimepicker({
+	pickDate: true,
+	pickTime: false,
+	language: '{{ datepicker }}',
+	icons: {
+		time: 'fa fa-clock',
+		date: 'fa fa-calendar-alt',
+		up: 'fa fa-arrow-up',
+		down: 'fa fa-arrow-down',
+		previous: 'fa fa-chevron-left',
+		next: 'fa fa-chevron-right',
+		today: 'fa fa-calendar-check',
+		clear: 'fa fa-trash-alt',
+		close: 'fa fa-times'
+	}
+});
+
+</script>
+{{ footer }}

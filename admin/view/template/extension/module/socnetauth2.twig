@@ -1,0 +1,4859 @@
+{{ header }}{{ column_left }}
+<div id="content"> <!-- div id="content" -->
+  <div class="page-header"><!-- div class="page-header" -->
+    <div class="container-fluid">
+      <div class="pull-right">
+	  
+        <a href="javascript: $('#stay_field').attr('value', '0'); $('#form').submit();" 
+		data-toggle="tooltip" 
+		title="{{ button_save_and_go }}" 
+		class="btn btn-primary"><i class="fa fa-save"></i></a>
+		
+        <a href="javascript: set_tab(); $('#stay_field').attr('value', '1'); $('#form').submit();" 
+		data-toggle="tooltip"  
+		title="{{ button_save_and_stay }}" 
+		class="btn btn-primary"><i class="fa fa-pencil"></i></a>
+		
+        <a href="{{ cancel }}" 
+		data-toggle="tooltip" 
+		title="{{ button_cancel }}" 
+		class="btn btn-default"><i class="fa fa-reply"></i></a>
+	  </div>
+		 
+      <h1>{{ heading_title }}</h1>
+      <ul class="breadcrumb">
+		{% for breadcrumb in breadcrumbs %}
+        <li><a href="{{ breadcrumb['href'] }}">{{ breadcrumb['text'] }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div><!-- div class="page-header" -->
+
+	  <style>
+	  .clist 
+	  {
+		border-top:  1px #ccc solid;
+		border-left:  1px #ccc solid;
+	  }
+	  
+	  .clist td
+	  {
+		padding: 5px;
+		border-right: 1px #ccc solid;
+		border-bottom: 1px #ccc solid;
+	  }
+	  
+	  .plus
+	  {
+		background: green;
+		text-align: center;
+	  }
+	  
+	  .minus
+	  {
+		background: #F58C6C;
+		text-align: center;
+	  }
+	  
+	  .vopros
+	  {
+		text-align: center;
+	  }
+	  </style>
+  <div class="container-fluid"><!-- div class="container-fluid" -->
+  
+	{% if error_warning %}
+    <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+	
+    {% endif %}
+	
+	{% if success %}	
+    <div class="alert alert-success"><i class="fa fa-info-circle"></i> {{ success }}
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+	{% endif %}
+
+	
+    <div class="panel panel-default"> <!--  class="panel panel-default" -->
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-list"></i> {{ heading_title }}</h3>
+      </div>
+      <div class="panel-body"> <!--  class="panel-body" -->
+	  
+	<ul class="nav nav-tabs">
+	
+            <li class="active" style="cursor: pointer;" 
+			><a href="#tab-general" data-toggle="tab" id="link-tab-general" >{{ tab_general }}</a></li>
+            <li style="cursor: pointer;" 
+			><a href="#tab-design" data-toggle="tab" id="link-tab-design" >{{ tab_design }}</a></li>
+            <li style="cursor: pointer;" 
+			><a href="#tab-vkontakte" data-toggle="tab" id="link-tab-vkontakte" >{{ tab_vkontakte }}</a></li>
+            <li style="cursor: pointer;" 
+			><a href="#tab-facebook" data-toggle="tab" id="link-tab-facebook" >{{ tab_facebook }}</a></li>
+            <li style="cursor: pointer;" 
+			><a href="#tab-twitter" data-toggle="tab" id="link-tab-twitter" >{{ tab_twitter }}</a></li>
+            <li style="cursor: pointer;" 
+			><a href="#tab-odnoklassniki" data-toggle="tab" id="link-tab-odnoklassniki" >{{ tab_odnoklassniki }}</a></li>
+			
+            <li style="cursor: pointer;" 
+			><a href="#tab-gmail" data-toggle="tab" id="link-tab-gmail" >{{ tab_gmail }}</a></li>
+            <li style="cursor: pointer;" 
+			><a href="#tab-mailru" data-toggle="tab" id="link-tab-mailru" >{{ tab_mailru }}</a></li>
+			
+			 <li style="cursor: pointer;" 
+			><a href="#tab-yandex" data-toggle="tab" id="link-tab-yandex" >{{ tab_yandex }}</a></li>
+             <li style="cursor: pointer;" 
+			><a href="#tab-steam" data-toggle="tab" id="link-tab-steam" >{{ tab_steam }}</a></li>
+            
+			<li style="cursor: pointer;" 
+			><a href="#tab-telegram" data-toggle="tab" id="link-tab-telegram" >{{ tab_telegram }}</a></li>
+			
+			<li style="cursor: pointer;" 
+			><a href="#tab-tinkoff" data-toggle="tab" id="link-tab-tinkoff"  class="nav-link">{{ tab_tinkoff }}</a></li>
+			
+            <li style="cursor: pointer;" 
+			><a href="#tab-dobor" data-toggle="tab" id="link-tab-dobor" >{{ tab_dobor }}</a></li>
+			
+            <li id="link-tab-widget" 
+			><a href="#tab-widget" data-toggle="tab">{{ tab_widget }}</a></li>
+            
+            <li style="cursor: pointer;" 
+			><a href="#tab-support" data-toggle="tab" id="link-tab-support" >{{ tab_support }}</a></li>
+			
+      </ul>
+
+    <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form"
+	 class="form-horizontal"
+	>
+	<input type="hidden" name="stay" id="stay_field" value="1">
+		<input type="hidden" id="hiddentab" name="tab" value="{{ tab }}">
+	  
+		<input type="hidden" id="hiddentab2" name="tab2" value="{{ tab2 }}">
+	  
+<div class="tab-content"><!--  class="tab-content" -->
+	  
+		
+      
+	  
+	  <div id="tab-general" class="tab-pane active">
+	  
+	  <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_version }}
+			</label>
+            <div class="col-sm-10" style="padding-top: 9px;">
+				{{ version }}
+			</div>
+			
+        </div>
+	  
+	  
+	  <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_status }}
+			</label>
+            <div class="col-sm-10">
+				<select name="socnetauth2_status" class="form-control" >
+							
+					{% if socnetauth2_status %}	
+					<option value="1" selected="selected">{{ text_enabled }}</option>
+					<option value="0" >{{ text_disabled }}</option>
+                  {% else %}
+					<option value="1">{{ text_enabled }}</option>
+					<option value="0" selected="selected" >{{ text_disabled }}</option>
+                  {% endif %}
+                </select>
+			</div>
+			
+        </div>
+		
+		 <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_protokol }}
+			</label>
+            <div class="col-sm-10">
+				<select name="socnetauth2_protokol" class="form-control">
+					<option value="http"
+					{% if socnetauth2_protokol=='http' %}  selected {% endif %}
+					>http://</option>
+					<option value="https"
+					{% if socnetauth2_protokol=='https' %}  selected {% endif %}
+					>https://</option>
+					<option value="detect"
+					{% if socnetauth2_protokol=='detect' %}  selected {% endif %}
+					>{{ entry_protokol_detect }}</option> 
+				</select>
+			</div>
+        </div>
+		 <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_save_to_addr }}
+			</label>
+            <div class="col-sm-10">
+				<select name="socnetauth2_save_to_addr" class="form-control">
+					<option value="customer_only"
+					{% if socnetauth2_save_to_addr=='customer_only' %}   selected {% endif %}
+					>{{ text_customer_only }}</option>
+					<option value="customer_addr"
+					{% if socnetauth2_save_to_addr=='customer_addr' %}   selected {% endif %}
+					>{{ text_customer_addr }}</option>
+				</select>
+			</div>
+        </div>
+		
+		 <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_save_fullname_to_firstname }}
+			</label>
+            <div class="col-sm-10">
+				<select name="socnetauth2_save_fullname_to_firstname" class="form-control"> 
+				  {% if socnetauth2_save_fullname_to_firstname %}
+					<option value="1" selected="selected">{{ text_enabled }}</option>
+					<option value="0" >{{ text_disabled }}</option>
+                  {% else %}
+					<option value="1">{{ text_enabled }}</option>
+					<option value="0" selected="selected" >{{ text_disabled }}</option>
+                  {% endif %}
+				</select>
+			</div>
+        </div>
+		 <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_default_email }}
+			</label>
+            <div class="col-sm-10">
+				<input type="text" name="socnetauth2_default_email" class="form-control"  
+					value="{{ socnetauth2_default_email }}" />
+				<div>{{ entry_default_email_notice }}</div>
+			</div>
+        </div>
+		 
+		 <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_default_country }}
+			</label>
+            <div class="col-sm-10">
+				<select name="socnetauth2_default_country" class="form-control">
+					<option value="0">{{ text_no_country }}</option>
+					{% for country in countries %}
+					{% if country['country_id'] == socnetauth2_default_country %}
+					<option value="{{ country['country_id'] }}" selected="selected"
+						>{{ country['name'] }}</option>
+					{% else %}
+					<option value="{{ country['country_id'] }}">{{ country['name'] }}</option>
+					{% endif %}
+					{% endfor %}
+				</select>
+				{{ entry_default_country_notice }}
+				
+			</div>
+        </div> 
+		
+		 <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_shop_folder }}
+			</label>
+            <div class="col-sm-10">
+				{% if stores %} 
+					<style>
+					.text-left { padding: 5px; }
+					</style>
+					<table>
+					<tr>
+						<td class="text-left"><b>{{ entry_shop_folders_col_storename }}</b></td>
+						<td class="text-left"><b>{{ entry_shop_folders_col_storefolder }}</b></td>
+					</tr>
+					<tr>
+						<td class="text-left">{{ config_name }}</td>
+						<td class="text-left"><input type="text" name="socnetauth2_shop_folder" class="form-control"  
+								value="{{ socnetauth2_shop_folder }}" /></td>
+					</tr>
+						{% for store in stores %} 
+						<tr>
+							<td class="text-left">{{ store['name'] }}</td>
+							<td class="text-left"><input type="text" 
+							name="socnetauth2_shop_folders[{{ store['store_id'] }}]" class="form-control"  
+								value="{{ store['folder'] }}" /></td>
+						</tr> 
+						{% endfor %}
+					</table>
+				{% else %}
+					<input type="text" name="socnetauth2_shop_folder" class="form-control"  
+							value="{{ socnetauth2_shop_folder }}" />
+				{% endif %}
+				
+				<input type="checkbox" name="socnetauth2_shop_folder_in_img" value="1"
+				id="socnetauth2_shop_folder_in_img" 
+				{% if socnetauth2_shop_folder_in_img %} checked {% endif %} 
+				><label for="socnetauth2_shop_folder_in_img"
+				>{{ entry_shop_folder_in_img }}</label>
+				
+				<br>
+				<input type="checkbox" name="socnetauth2_shop_folder_in_redirect" value="1"
+				id="socnetauth2_shop_folder_in_redirect" 
+				{% if socnetauth2_shop_folder_in_redirect %} checked {% endif %}  
+				><label for="socnetauth2_shop_folder_in_redirect"
+				>{{ entry_shop_folder_in_redirect }}</label>
+				<br>
+				
+				<input type="checkbox" name="socnetauth2_shop_folder_in_url" value="1"
+				id="socnetauth2_shop_folder_in_url" 
+				{% if socnetauth2_shop_folder_in_url %} checked {% endif %}   
+				><label for="socnetauth2_shop_folder_in_url"
+				>{{ entry_shop_folder_in_url }}</label>
+			</div>
+        </div>
+		
+		
+		
+		<div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_redirect_url }}
+			</label>
+            <div class="col-sm-10">
+				<table style="width: 100%;">  
+					<tr>
+						<td style="width: 20%;">{{ entry_redirect_url_account }}</td>
+						<td style="width: 40%;"><select  class="form-control" name="socnetauth2_redirect_url_account"
+							onchange="if( this.value == 'set' ) $('#block_redirect_url_account').show(); else $('#block_redirect_url_account').hide();"
+							>
+								<option value="default"
+									{% if socnetauth2_redirect_url_account == 'default' %} selected {% endif %}
+								>{{ entry_redirect_url_account_default }}</option>
+								<option value="set"
+									{% if socnetauth2_redirect_url_account == 'set' %} selected {% endif %}
+								>{{ entry_redirect_url_set }}</option>
+							</select>
+						</td>
+						<td style="padding-left: 10px;">
+							<div id="block_redirect_url_account" {% if socnetauth2_redirect_url_account == 'default' %}style="display: none;"{% endif %}>
+							
+								<input type="text" name="socnetauth2_redirect_url_account_set" class="form-control"  
+									value="{{ socnetauth2_redirect_url_account_set }}" />
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>{{ entry_redirect_url_checkout }}</td>
+						<td><select  class="form-control" name="socnetauth2_redirect_url_checkout"
+							onchange="if( this.value == 'set' ) $('#block_redirect_url_checkout').show(); else $('#block_redirect_url_checkout').hide();"
+							>
+								<option value="default"
+									{% if socnetauth2_redirect_url_checkout == 'default' %} selected {% endif %}
+								>{{ entry_redirect_url_checkout_default }}</option>
+								<option value="set"
+									{% if socnetauth2_redirect_url_checkout == 'set' %} selected {% endif %}
+								>{{ entry_redirect_url_set }}</option>
+							</select>
+						</td>
+						<td style="padding-left: 10px;">
+							<div id="block_redirect_url_checkout" {% if socnetauth2_redirect_url_checkout == 'default' %}style="display: none;"{% endif %}>
+							
+								<input type="text" name="socnetauth2_redirect_url_checkout_set" class="form-control"  
+									value="{{ socnetauth2_redirect_url_checkout_set }}" />
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>{{ entry_redirect_url_reg }}</td>
+						<td><select  class="form-control" name="socnetauth2_redirect_url_reg"
+							onchange="if( this.value == 'set' ) $('#block_redirect_url_reg').show(); else $('#block_redirect_url_reg').hide();"
+							>
+								<option value="default"
+									{% if socnetauth2_redirect_url_reg == 'default' %} selected {% endif %}
+								>{{ entry_redirect_url_reg_default }}</option>
+								<option value="set"
+									{% if socnetauth2_redirect_url_reg == 'set' %} selected {% endif %}
+								>{{ entry_redirect_url_set }}</option>
+							</select>
+						</td>
+						<td style="padding-left: 10px;">
+							<div id="block_redirect_url_reg" {% if socnetauth2_redirect_url_reg == 'default' %}style="display: none;"{% endif %}>
+							
+								<input type="text" name="socnetauth2_redirect_url_reg_set" class="form-control"  
+									value="{{ socnetauth2_redirect_url_reg_set }}" />
+							</div>
+						</td>
+					</tr>
+				</table>
+			
+				
+			</div>
+        </div>
+		
+		
+	  <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_add_param }}
+			</label>
+            <div class="col-sm-10">
+				<select name="socnetauth2_add_param" class="form-control" > 
+				  {% if socnetauth2_add_param %}
+					<option value="1" selected="selected">{{ text_enabled }}</option>
+					<option value="0" >{{ text_disabled }}</option> 
+				  {% else %}
+					<option value="1">{{ text_enabled }}</option>
+					<option value="0" selected="selected" >{{ text_disabled }}</option>
+                  {% endif %}
+                </select>
+				<div>{{ entry_add_param_notice }}</div>
+			</div> 
+        </div>
+		
+		 <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_email_auth }}
+			</label>
+            <div class="col-sm-10">
+				<table width=100%>
+				<tr>
+					<td style="padding-right: 10px;">
+						<input type="radio" name="socnetauth2_email_auth" value="none" 
+					   id="socnetauth2_email_auth_none"
+							{% if socnetauth2_email_auth=='none' %}  checked {% endif %}
+					   >
+					 </td>
+					 <td>
+						<label for="socnetauth2_email_auth_none">
+							{{ entry_email_auth_none }}
+					   </label>
+					 </td>
+				</tr>
+				<tr>
+					<td style="padding-right: 10px;">
+						<input type="radio" name="socnetauth2_email_auth" value="confirm" 
+					   id="socnetauth2_email_auth_confirm"
+							{% if socnetauth2_email_auth=='confirm' %}  checked {% endif %}
+					   >
+					 </td>
+					 <td>
+					   <label for="socnetauth2_email_auth_confirm">
+						{{ entry_email_auth_confirm }}
+					   </label>
+					 </td>
+				</tr>
+				<tr>
+					<td style="padding-right: 10px;">
+						<input type="radio" name="socnetauth2_email_auth" value="noconfirm" 
+					   id="socnetauth2_email_auth_noconfirm"
+							{% if socnetauth2_email_auth=='noconfirm' %} checked {% endif %}
+					   >
+					</td>
+					<td>
+					   <label for="socnetauth2_email_auth_noconfirm">
+						{{ entry_email_auth_noconfirm }}
+					   </label>
+					</td>
+				 </tr>
+				 </table>
+			</div>
+        </div>
+		 
+		 <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_show_source_in_order }}
+			</label>
+            <div class="col-sm-10">
+				<select name="socnetauth2_show_source_in_order" class="form-control" >
+                  {% if socnetauth2_show_source_in_order %}
+					<option value="1" selected="selected">{{ text_enabled }}</option>
+					<option value="0" >{{ text_disabled }}</option>
+                  {% else %}
+					<option value="1">{{ text_enabled }}</option>
+					<option value="0" selected="selected" >{{ text_disabled }}</option>
+                  {% endif %}
+                </select>
+			</div>
+        </div>
+		 <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_show_source_in_customer }}
+			</label>
+            <div class="col-sm-10">
+				<select name="socnetauth2_show_source_in_customer" class="form-control" >
+                {% if socnetauth2_show_source_in_customer %}
+						<option value="1" selected="selected">{{ text_enabled }}</option>
+					<option value="0" >{{ text_disabled }}</option>
+                  {% else %}
+					<option value="1">{{ text_enabled }}</option>
+					<option value="0" selected="selected" >{{ text_disabled }}</option>
+                  {% endif %}
+                </select>
+			</div>
+        </div> 
+		 <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_addpass }}
+			</label>
+            <div class="col-sm-10">
+				<select name="socnetauth2_addpass" class="form-control" >
+                 {% if socnetauth2_addpass %}
+					<option value="1" selected="selected">{{ text_enabled }}</option>
+					<option value="0" >{{ text_disabled }}</option>
+                  {% else %}
+					<option value="1">{{ text_enabled }}</option>
+					<option value="0" selected="selected" >{{ text_disabled }}</option>
+                  {% endif %}
+                </select>
+				<p>{{ entry_addpass_notice }}</p>
+			</div>
+        </div>
+		{#  end 0902 #}
+			
+			
+		 <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_newcustomer_mail_type }}
+			</label>
+            <div class="col-sm-10">
+				<select name="socnetauth2_newcustomer_mail_type" class="form-control"
+				onchange="if( this.value == 'custom' ) $('#block_newcustomer_mail_custom').show(); else $('#block_newcustomer_mail_custom').hide();"
+				>
+					{% if socnetauth2_newcustomer_mail_type == 'common' %} 
+					<option value="common" selected="selected">{{ entry_newcustomer_mail_type_common }}</option>
+					<option value="custom" >{{ entry_newcustomer_mail_type_custom }}</option>
+                  {% else %}
+					<option value="common">{{ entry_newcustomer_mail_type_common }}</option>
+					<option value="custom" selected="selected" >{{ entry_newcustomer_mail_type_custom }}</option>
+                  {% endif %}
+                </select> 
+			</div>
+        </div>
+		
+		<div id="block_newcustomer_mail_custom" 
+		{% if socnetauth2_newcustomer_mail_type == 'custom' %} {% else %} style="display: none;" {% endif %}
+		>
+			 <div class="form-group">
+				<label class="col-sm-2 control-label" for="input-access-secret">
+					{{ entry_newcustomer_mail_subject }}
+				</label>
+				<div class="col-sm-10">
+					
+					{% for language in languages %} 
+						<p>
+							<input type="text"  class="form-control" 
+								name="socnetauth2_newcustomer_mail_subject[{{ language['language_id'] }}]" 
+								value="{{ socnetauth2_newcustomer_mail_subject[ language['language_id'] ] }}" >&nbsp;<img  src="{{ language['image'] }}" title="{{ language['name'] }}"  />
+						</p>
+					{% endfor %}
+				</div>
+			</div>
+		
+			 <div class="form-group">
+				<label class="col-sm-2 control-label" for="input-access-secret">
+					{{ entry_newcustomer_mail_text }}
+				</label>
+				<div class="col-sm-10">
+					{% for language in languages %}	
+						<p>
+							<textarea  class="form-control" cols="70" rows="7"
+								name="socnetauth2_newcustomer_mail_text[{{ language['language_id'] }}]"
+								>{{ socnetauth2_newcustomer_mail_text[ language['language_id'] ] }}</textarea>&nbsp;<img  src="{{ language['image'] }}" title="{{ language['name'] }}"  />
+						</p>
+					{% endfor %}
+				</div>
+			</div>
+		</div>
+			 
+		 <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_vkontakte_retargeting }}
+			</label>
+            <div class="col-sm-10" style="padding-top: 9px;">
+				<a href="{{ vkontakte_retargeting }}">{{ text_download_link }}</a>
+			</div>
+        </div>
+		 <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_facebook_retargeting }}
+			</label>
+            <div class="col-sm-10" style="padding-top: 9px;">
+				<a href="{{ facebook_retargeting }}">{{ text_download_link }}</a>
+			</div>
+        </div>
+		
+	  </div>
+	  
+	  
+	  
+	  <div id="tab-vkontakte" class="tab-pane">
+	  
+	  <p>Инструкция по интергации с ВКонтакте по ссылке:<br>
+		<a href="https://ocart.ru/socnetauth2/vkontakte" target=_blank
+		>https://ocart.ru/socnetauth2/vkontakte</a>
+		</p>
+	  
+		 <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_vkontakte_status }}
+			</label>
+            <div class="col-sm-10">
+				<select name="socnetauth2_vkontakte_status" class="form-control">
+                 {% if socnetauth2_vkontakte_status %}
+				 <option value="1" selected="selected">{{ text_enabled }}</option>
+					<option value="0" >{{ text_disabled }}</option>
+                  {% else %}
+					<option value="1">{{ text_enabled }}</option>
+					<option value="0" selected="selected" >{{ text_disabled }}</option>
+                  {% endif %}
+                </select>
+			</div>
+        </div> 
+		 <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_debug }}
+			</label>
+            <div class="col-sm-10">
+				<select name="socnetauth2_vkontakte_debug" class="form-control">
+                  {% if socnetauth2_vkontakte_debug %}
+				 <option value="1" selected="selected">{{ text_enabled }}</option>
+					<option value="0" >{{ text_disabled }}</option>
+                  {% else %}
+					<option value="1">{{ text_enabled }}</option>
+					<option value="0" selected="selected" >{{ text_disabled }}</option>
+                  {% endif %}
+                </select>
+				<div>{{ text_debug_notice }}</div>
+			</div>
+        </div> 
+		
+		
+		<div class="form-group">
+			<label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_socnet_title }}
+			</label>
+			<div class="col-sm-10">
+				{% for language in languages %}
+					<p>
+					<input type="text"  class="form-control" 
+						name="socnetauth2_vkontakte_title[{{ language['language_id'] }}]" 
+						value="{{ socnetauth2_vkontakte_title[ language['language_id'] ] }}" >&nbsp;<img 
+						src="{{ language['image'] }}" title="{{ language['name'] }}" align="top" />
+					</p>
+				{% endfor %}
+			</div>
+		</div>
+		
+		 <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_vkontakte_agent }}
+			</label>
+            <div class="col-sm-10">
+				<select name="socnetauth2_vkontakte_agent" class="form-control"
+				onchange="if( this.value == 'extension' ) { $('#block_vkontakte_agent_extension').show(); } else { $('#block_vkontakte_agent_extension').hide(); }"
+				>
+					<option value="extension" 
+					{% if socnetauth2_vkontakte_agent == 'extension' %}
+						selected="extension"
+					  {% endif %}
+					>{{ entry_vkontakte_agent_extension}}</option>
+					<option value="loginza" 
+					{% if socnetauth2_vkontakte_agent == 'loginza' %}
+						selected="loginza"
+					  {% endif %}
+					>{{ entry_vkontakte_agent_loginza}}</option>
+                </select>
+				<div>{{ entry_vkontakte_agent_notice }}</div>
+			</div>
+        </div>
+		
+		<div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_vkontakte_customer_group_id }}
+			</label>
+            <div class="col-sm-10">
+				<select name="socnetauth2_vkontakte_customer_group_id" class="form-control" >
+                    {% for customer_group in customer_groups %}
+                    {% if customer_group['customer_group_id'] == socnetauth2_vkontakte_customer_group_id %}
+                    <option value="{{ customer_group['customer_group_id'] }}" selected="selected">{{ customer_group['name'] }}</option>
+                    {% else %}
+                    <option value="{{ customer_group['customer_group_id'] }}">{{ customer_group['name'] }}</option>
+                    {% endif %}
+                    {% endfor %}
+                  </select>
+			</div>
+        </div>
+		
+		<div id="block_vkontakte_agent_extension"
+		{% if socnetauth2_vkontakte_agent == 'loginza' %}
+		style="display: none;" {% endif %}
+		> 
+		
+		{# start 0305 #}
+		 <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_redirect_url_vkontakte }}
+			</label>
+            <div class="col-sm-10"> 
+				<table class="table table-bordered table-hover">
+				<tr>
+					 {% if is_show_old_redirect %}
+					<td width=20%>
+						<input type="radio" name="socnetauth2_vkontakte_redirect_type" value="new"
+							{% if socnetauth2_vkontakte_redirect_type == 'new' %} checked {% endif %}
+							id="socnetauth2_vkontakte_redirect_type_new"
+						><label for="socnetauth2_vkontakte_redirect_type_new"
+						>{{ entry_redirect_url_new }}</label>
+					</td>
+					 {% endif %}
+					<td>
+						{% if not is_show_old_redirect %}
+						<input type="hidden" name="socnetauth2_vkontakte_redirect_type" value="new"  >
+						{% endif %}
+						<div>	
+							<input type="text" class="form-control" disabled value="{{ vkontakte_redirect_url_new }}">
+						</div>
+						<div>{{ entry_redirect_url_vkontakte_notice }}</div>
+					</td>
+					<td width=20%> 
+						<a onclick="copyToClipboard('{{ vkontakte_redirect_url_new }}');"
+							class="btn btn-primary">{{ text_copy }}</a>
+					</td>
+					
+				</tr>
+					 {% if is_show_old_redirect %}
+				<tr>
+					<td>
+						<input type="radio" name="socnetauth2_vkontakte_redirect_type" value="old"
+							{% if socnetauth2_vkontakte_redirect_type == 'old' %} checked {% endif %}
+							id="socnetauth2_vkontakte_redirect_type_old"
+						><label for="socnetauth2_vkontakte_redirect_type_old"
+						>{{ entry_redirect_url_old }}</label>
+					</td>
+					<td>
+						<div>	
+							<input type="text" class="form-control" disabled value="{{ vkontakte_redirect_url_old }}">
+						</div> 
+					</td>
+					<td> 
+						<a onclick="copyToClipboard('{{ vkontakte_redirect_url_old }}');"
+							class="btn btn-primary">{{ text_copy }}</a>
+					</td>
+					
+				</tr>
+					 {% endif %}
+				</table> 
+			</div>
+        </div>
+		
+		{# end 0305 #}
+		
+		
+		<table id="vkontakte_req" class="table table-bordered table-hover">
+          <thead>
+            <tr>
+              <td class="left">{{ col_domain }}</td>
+              <td class="left">{{ entry_vkontakte_appid }}</td>
+              <td class="left">{{ entry_vkontakte_appsecret }}</td>
+              <td></td>
+            </tr>
+          </thead>
+          <tbody id="vkontakte_req-row">
+            <tr>
+              <td class="left">
+				  {{ text_default_domain }}
+			  </td>
+              <td class="left">
+				<input type="text" class="form-control" name="socnetauth2_vkontakte_appid"  
+				value="{{ socnetauth2_vkontakte_appid }}" />
+			  </td>
+              <td class="left">
+				<input type="text" class="form-control" 
+				name="socnetauth2_vkontakte_appsecret"  
+				value="{{ socnetauth2_vkontakte_appsecret }}" />
+			  </td>
+			  <td></td>
+			</tr>
+          {% set vkontakte_req_row = 0 %}
+		  {% for req in socnetauth2_vkontakte_req %}
+          <tbody id="vkontakte_req-row{{ vkontakte_req_row }}">
+            <tr>
+              <td class="left">
+				<input type="text" class="form-control" name="socnetauth2_vkontakte_req[{{ vkontakte_req_row }}][domain]"  
+				value="{{ req['domain'] }}" />
+			  </td>
+              <td class="left">
+				<input type="text" class="form-control" 
+				name="socnetauth2_vkontakte_req[{{ vkontakte_req_row }}][appid]"  
+				value="{{ req['appid'] }}" />
+			  </td>
+              <td class="left">
+				<input type="text" class="form-control" 
+				name="socnetauth2_vkontakte_req[{{ vkontakte_req_row }}][appsecret]"  
+				value="{{ req['appsecret'] }}" />
+			  </td>
+			  <td><a onclick="$('#vkontakte_req-row{{ vkontakte_req_row }}').remove();" class="btn btn-primary">{{ button_remove }}</a></td>
+			</tr> 
+          </tbody>
+          {% set vkontakte_req_row = vkontakte_req_row + 1 %}
+		  {% endfor %}
+          <tfoot>
+            <tr>
+              <td colspan="3"></td>
+              <td class="left"><a onclick="addVkontakteReq();" class="btn btn-primary"
+			  >{{ button_add }}</a></td>
+            </tr>
+          </tfoot>
+        </table>
+		<script>
+		var vkontakte_req_row = {{ vkontakte_req_row }};
+		
+		function addVkontakteReq()
+		{
+			html = '';
+			
+			html += '<tbody id="vkontakte_req-row'+vkontakte_req_row+'">';
+			html += '<tr>';
+			html += '<td class="left">';
+			html += '<input type="text" class="form-control" name="socnetauth2_vkontakte_req['+vkontakte_req_row+'][domain]"   />';
+			html += '</td>';
+			html += '<td class="left">';
+			html += '<input type="text" class="form-control" ';
+			html += ' name="socnetauth2_vkontakte_req['+vkontakte_req_row+'][appid]"  />';
+			html += '</td>';
+			html += '<td class="left">';
+			html += '<input type="text" class="form-control" ';
+			html += 'name="socnetauth2_vkontakte_req['+vkontakte_req_row+'][appsecret]"   />';
+			html += '</td>';
+			html += '<td class="left"><a onclick="$(\'#vkontakte_req-row'+vkontakte_req_row+'\').remove();" class="btn btn-primary">{{ button_remove }}</a></td>';
+			html += '</tr> ';
+			html += '</tbody>';
+			
+			
+			$('#vkontakte_req tfoot').before(html);
+			
+			vkontakte_req_row++;
+		}
+		</script>
+		</div>
+		
+		
+	  </div>
+	  <div id="tab-facebook" class="tab-pane">
+	  <p>Инструкция по интергации с Facebook по ссылке:<br>
+		<a href="https://ocart.ru/socnetauth2/facebook" target=_blank
+		>https://ocart.ru/socnetauth2/facebook</a>
+		</p>
+	  
+		 <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_facebook_status }}
+			</label>
+            <div class="col-sm-10">
+				<select name="socnetauth2_facebook_status" class="form-control">
+                    {% if socnetauth2_facebook_status %}
+					<option value="1" selected="selected">{{ text_enabled }}</option>
+					<option value="0" >{{ text_disabled }}</option>
+                  {% else %}
+					<option value="1">{{ text_enabled }}</option>
+					<option value="0" selected="selected" >{{ text_disabled }}</option>
+                  {% endif %}
+                </select>
+			</div>
+        </div>
+		{#  start r3 #}
+		 <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_debug }}
+			</label>
+            <div class="col-sm-10">
+				<select name="socnetauth2_facebook_debug" class="form-control"> 
+                    {% if socnetauth2_facebook_debug %}
+					<option value="1" selected="selected">{{ text_enabled }}</option>
+					<option value="0" >{{ text_disabled }}</option>
+                  {% else %}
+					<option value="1">{{ text_enabled }}</option>
+					<option value="0" selected="selected" >{{ text_disabled }}</option>
+                  {% endif %}
+                </select>
+				<div>{{ text_debug_notice }}</div>
+			</div>
+        </div>
+		{#  end r3 #}
+		
+		<div class="form-group">
+			<label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_socnet_title }}
+			</label>
+			<div class="col-sm-10">
+				{% for language in languages %}
+					<p>
+					<input type="text"  class="form-control" 
+						name="socnetauth2_facebook_title[{{ language['language_id'] }}]" 
+						value="{{ socnetauth2_facebook_title[ language['language_id'] ] }}" >&nbsp;<img 
+						src="{{ language['image'] }}" title="{{ language['name'] }}" align="top" />
+					</p>
+				{% endfor %}
+			</div>
+		</div>
+		
+		
+		 <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_facebook_agent}}
+			</label>
+            <div class="col-sm-10">
+				<select name="socnetauth2_facebook_agent" class="form-control"
+				onchange="if( this.value == 'extension' ) { $('#block_facebook_agent_extension').show(); $('#block_facebook_agent_notice').show(); } else { $('#block_facebook_agent_extension').hide(); $('#block_facebook_agent_notice').hide(); }"
+				>
+					<option value="extension" 
+					  {% if socnetauth2_facebook_agent == 'extension' %}
+						selected="extension"
+					  {% endif %}
+					>{{ entry_facebook_agent_extension}}</option>
+					<option value="loginza" 
+					  {% if socnetauth2_facebook_agent == 'loginza' %}
+						selected="loginza"
+					  {% endif %}
+					>{{ entry_facebook_agent_loginza}}</option>
+                </select>
+				<div
+				id="block_facebook_agent_notice"
+					  {% if socnetauth2_facebook_agent == 'loginza' %}
+		style="display: none;" {% endif %}
+				>{{ entry_facebook_agent_notice }}</div>
+			</div>
+        </div>
+		 
+	  <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_facebook_customer_group_id }}
+			</label>
+            <div class="col-sm-10">
+				<select name="socnetauth2_facebook_customer_group_id" class="form-control" >
+                    {% for customer_group in customer_groups %}
+                    {% if customer_group['customer_group_id'] == socnetauth2_facebook_customer_group_id %}
+                    <option value="{{ customer_group['customer_group_id'] }}" selected="selected">{{ customer_group['name'] }}</option>
+                    {% else %}
+                    <option value="{{ customer_group['customer_group_id'] }}">{{ customer_group['name'] }}</option>
+                    {% endif %}
+                    {% endfor %}
+                  </select>
+			</div>
+        </div>
+			
+		<div id="block_facebook_agent_extension"
+		{% if socnetauth2_facebook_agent == 'loginza'  %} style="display: none;" {% endif %}
+		> 
+		
+		{# start 0305 #} 
+		 <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_redirect_url_facebook }}
+			</label>
+            <div class="col-sm-10"> 
+				<table class="table table-bordered table-hover">
+				<tr>
+					 {% if is_show_old_redirect %}
+					<td width=20%>
+						<input type="radio" name="socnetauth2_facebook_redirect_type" value="new"
+							{% if socnetauth2_facebook_redirect_type == 'new' %} checked {% endif %}
+							id="socnetauth2_facebook_redirect_type_new"
+						><label for="socnetauth2_facebook_redirect_type_new"
+						>{{ entry_redirect_url_new }}</label>
+					</td>
+					 {% endif %}
+					<td>
+						{% if not is_show_old_redirect %}
+						<input type="hidden" name="socnetauth2_facebook_redirect_type" value="new"  >
+						{% endif %}
+						<div>	
+							<input type="text" class="form-control" disabled value="{{ facebook_redirect_url_new }}">
+						</div>
+						<div>{{ entry_redirect_url_facebook_notice }}</div>
+					</td>
+					<td width=20%> 
+						<a onclick="copyToClipboard('{{ facebook_redirect_url_new }}');"
+							class="btn btn-primary">{{ text_copy }}</a>
+					</td>
+					
+				</tr>
+					 {% if is_show_old_redirect %}
+				<tr>
+					<td>
+						<input type="radio" name="socnetauth2_facebook_redirect_type" value="old"
+							{% if socnetauth2_facebook_redirect_type == 'old' %} checked {% endif %}
+							id="socnetauth2_facebook_redirect_type_old"
+						><label for="socnetauth2_facebook_redirect_type_old"
+						>{{ entry_redirect_url_old }}</label>
+					</td>
+					<td>
+						<div>	
+							<input type="text" class="form-control" disabled value="{{ facebook_redirect_url_old }}">
+						</div> 
+					</td>
+					<td> 
+						<a onclick="copyToClipboard('{{ facebook_redirect_url_old }}');"
+							class="btn btn-primary">{{ text_copy }}</a>
+					</td>
+					
+				</tr>
+					 {% endif %}
+				</table> 
+			</div>
+        </div>
+		
+		
+		{# end 0305 #}
+		
+		<table id="facebook_req" class="table table-bordered table-hover">
+          <thead>
+            <tr>
+              <td class="left">{{ col_domain }}</td>
+              <td class="left">{{ entry_facebook_appid }}</td>
+              <td class="left">{{ entry_facebook_appsecret }}</td>
+              <td></td>
+            </tr>
+          </thead>
+          <tbody id="facebook_req-row">
+            <tr>
+              <td class="left">
+				  {{ text_default_domain }}
+			  </td>
+              <td class="left">
+				<input type="text" class="form-control" name="socnetauth2_facebook_appid"  
+				value="{{ socnetauth2_facebook_appid }}" />
+			  </td>
+              <td class="left">
+				<input type="text" class="form-control" 
+				name="socnetauth2_facebook_appsecret"  
+				value="{{ socnetauth2_facebook_appsecret }}" />
+			  </td>
+			  <td></td>
+			</tr>
+          {% set facebook_req_row = 0 %}
+          {% for req in socnetauth2_facebook_req %}
+          <tbody id="facebook_req-row{{ facebook_req_row }}">
+            <tr>
+              <td class="left">
+				<input type="text" class="form-control" name="socnetauth2_facebook_req[{{ facebook_req_row }}][domain]"  
+				value="{{ req['domain'] }}" />
+			  </td>
+              <td class="left">
+				<input type="text" class="form-control" 
+				name="socnetauth2_facebook_req[{{ facebook_req_row }}][appid]"  
+				value="{{ req['appid'] }}" />
+			  </td>
+              <td class="left">
+				<input type="text" class="form-control" 
+				name="socnetauth2_facebook_req[{{ facebook_req_row }}][appsecret]"  
+				value="{{ req['appsecret'] }}" />
+			  </td>
+			  <td><a onclick="$('#facebook_req-row{{ facebook_req_row }}').remove();" class="btn btn-primary">{{ button_remove }}</a></td>
+			</tr> 
+          </tbody>
+          {% set facebook_req_row = facebook_req_row + 1 %}
+          {% endfor %}
+          <tfoot>
+            <tr>
+              <td colspan="3"></td>
+              <td class="left"><a onclick="addfacebookReq();" class="btn btn-primary"
+			  >{{ button_add }}</a></td>
+            </tr>
+          </tfoot>
+        </table>
+		<script>
+		var facebook_req_row = {{ facebook_req_row }};
+		
+		function addfacebookReq()
+		{
+			html = '';
+			
+			html += '<tbody id="facebook_req-row'+facebook_req_row+'">';
+			html += '<tr>';
+			html += '<td class="left">';
+			html += '<input type="text" class="form-control" name="socnetauth2_facebook_req['+facebook_req_row+'][domain]"   />';
+			html += '</td>';
+			html += '<td class="left">';
+			html += '<input type="text" class="form-control" ';
+			html += ' name="socnetauth2_facebook_req['+facebook_req_row+'][appid]"  />';
+			html += '</td>';
+			html += '<td class="left">';
+			html += '<input type="text" class="form-control" ';
+			html += 'name="socnetauth2_facebook_req['+facebook_req_row+'][appsecret]"   />';
+			html += '</td>';
+			html += '<td class="left"><a onclick="$(\'#facebook_req-row'+facebook_req_row+'\').remove();" class="btn btn-primary">{{ button_remove }}</a></td>';
+			html += '</tr> ';
+			html += '</tbody>';
+			
+			
+			$('#facebook_req tfoot').before(html);
+			
+			facebook_req_row++;
+		}
+		</script>
+		</div>
+	  </div>
+	  <div id="tab-twitter" class="tab-pane">
+	  <p>Инструкция по интергации с Twitter по ссылке:<br>
+		<a href="https://ocart.ru/socnetauth2/twitter" target=_blank
+		>https://ocart.ru/socnetauth2/twitter</a>
+		</p>
+		 <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_twitter_status }}
+			</label>
+            <div class="col-sm-10">
+				
+				<select name="socnetauth2_twitter_status" class="form-control">
+                    {% if socnetauth2_twitter_status %}
+					<option value="1" selected="selected">{{ text_enabled }}</option>
+					<option value="0" >{{ text_disabled }}</option>
+                  {% else %}
+					<option value="1">{{ text_enabled }}</option>
+					<option value="0" selected="selected" >{{ text_disabled }}</option>
+                  {% endif %}
+                </select>
+			</div>
+        </div>
+		{#  start r3 #}
+		 <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_debug }}
+			</label>
+            <div class="col-sm-10">
+				<select name="socnetauth2_twitter_debug" class="form-control">
+                    {% if socnetauth2_twitter_debug %}
+					<option value="1" selected="selected">{{ text_enabled }}</option>
+					<option value="0" >{{ text_disabled }}</option>
+                  {% else %}
+					<option value="1">{{ text_enabled }}</option>
+					<option value="0" selected="selected" >{{ text_disabled }}</option>
+                  {% endif %}
+                </select>
+				<div>{{ text_debug_notice }}</div>
+			</div>
+        </div>
+		{#  end r3 #}
+		
+		<div class="form-group">
+			<label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_socnet_title }}
+			</label>
+			<div class="col-sm-10">
+				{% for language in languages %}
+					<p>
+					<input type="text"  class="form-control" 
+						name="socnetauth2_twitter_title[{{ language['language_id'] }}]" 
+						value="{{ socnetauth2_twitter_title[ language['language_id'] ] }}" >&nbsp;<img 
+						src="{{ language['image'] }}" title="{{ language['name'] }}" align="top" />
+					</p>
+				{% endfor %}
+			</div>
+		</div>
+		
+		
+		 <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_twitter_agent}}
+			</label>
+            <div class="col-sm-10">
+				<select name="socnetauth2_twitter_agent" class="form-control"
+				onchange="if( this.value == 'extension' ) { $('#block_twitter_agent_extension').show(); $('#block_twitter_agent_notice').show(); } else { $('#block_twitter_agent_extension').hide(); $('#block_twitter_agent_notice').hide(); }"
+				>
+					<option value="extension" 
+					{% if socnetauth2_twitter_agent == 'extension' %}
+						selected="extension"
+					  {% endif %}
+					>{{ entry_twitter_agent_extension}}</option>
+					<option value="loginza" 
+					{% if socnetauth2_twitter_agent == 'loginza' %}
+						selected="loginza"
+					  {% endif %}
+					>{{ entry_twitter_agent_loginza}}</option>
+                </select>
+				<div
+				id="block_twitter_agent_notice"
+					{% if socnetauth2_twitter_agent == 'loginza' %}
+					style="display: none;" {% endif %}
+				>{{ entry_twitter_agent_notice }}</div>
+			</div>
+        </div> 
+	  <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_twitter_customer_group_id }}
+			</label>
+            <div class="col-sm-10">
+				<select name="socnetauth2_twitter_customer_group_id" class="form-control" >
+                    {% for customer_group in customer_groups %}
+                    {% if customer_group['customer_group_id'] == socnetauth2_twitter_customer_group_id %}
+                    <option value="{{ customer_group['customer_group_id'] }}" selected="selected">{{ customer_group['name'] }}</option>
+                    {% else %}
+                    <option value="{{ customer_group['customer_group_id'] }}">{{ customer_group['name'] }}</option>
+                    {% endif %}
+                    {% endfor %}
+                  </select>
+			</div>
+        </div>
+		
+		<div id="block_twitter_agent_extension"
+		{% if socnetauth2_twitter_agent == 'loginza'  %} style="display: none;" {% endif %}
+		> 
+		
+		{# start 0305 #}
+		 <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_redirect_url_twitter }}
+			</label>
+            <div class="col-sm-10"> 
+				<table class="table table-bordered table-hover">
+				<tr>
+					 {% if is_show_old_redirect %}
+					<td width=20%>
+						<input type="radio" name="socnetauth2_twitter_redirect_type" value="new"
+							{% if socnetauth2_twitter_redirect_type == 'new' %} checked {% endif %}
+							id="socnetauth2_twitter_redirect_type_new"
+						><label for="socnetauth2_twitter_redirect_type_new"
+						>{{ entry_redirect_url_new }}</label>
+					</td>
+					 {% endif %}
+					<td>
+						{% if not is_show_old_redirect %}
+						<input type="hidden" name="socnetauth2_twitter_redirect_type" value="new"  >
+						{% endif %}
+						<div>	
+							<input type="text" class="form-control" disabled value="{{ twitter_redirect_url_new }}">
+						</div>
+						<div>{{ entry_redirect_url_twitter_notice }}</div>
+					</td>
+					<td width=20%> 
+						<a onclick="copyToClipboard('{{ twitter_redirect_url_new }}');"
+							class="btn btn-primary">{{ text_copy }}</a>
+					</td>
+					
+				</tr>
+					 {% if is_show_old_redirect %}
+				<tr>
+					<td>
+						<input type="radio" name="socnetauth2_twitter_redirect_type" value="old"
+							{% if socnetauth2_twitter_redirect_type == 'old' %} checked {% endif %}
+							id="socnetauth2_twitter_redirect_type_old"
+						><label for="socnetauth2_twitter_redirect_type_old"
+						>{{ entry_redirect_url_old }}</label>
+					</td>
+					<td>
+						<div>	
+							<input type="text" class="form-control" disabled value="{{ twitter_redirect_url_old }}">
+						</div> 
+					</td>
+					<td> 
+						<a onclick="copyToClipboard('{{ twitter_redirect_url_old }}');"
+							class="btn btn-primary">{{ text_copy }}</a>
+					</td>
+					
+				</tr>
+					 {% endif %}
+				</table> 
+			</div>
+        </div>
+		
+		
+		{# end 0305 #}
+		<table id="twitter_req" class="table table-bordered table-hover">
+          <thead>
+            <tr>
+              <td class="left">{{ col_domain }}</td>
+              <td class="left">{{ entry_twitter_consumer_key }}</td>
+              <td class="left">{{ entry_twitter_consumer_secret }}</td>
+              <td></td>
+            </tr>
+          </thead>
+          <tbody id="twitter_req-row">
+            <tr>
+              <td class="left">
+				  {{ text_default_domain }}
+			  </td>
+              <td class="left">
+				<input type="text" class="form-control" name="socnetauth2_twitter_consumer_key"  
+				value="{{ socnetauth2_twitter_consumer_key }}" />
+			  </td>
+              <td class="left">
+				<input type="text" class="form-control" 
+				name="socnetauth2_twitter_consumer_secret"  
+				value="{{ socnetauth2_twitter_consumer_secret }}" />
+			  </td>
+			  <td></td>
+			</tr>
+          {% set twitter_req_row = 0 %}
+		  {% for req in socnetauth2_twitter_req %}
+          <tbody id="twitter_req-row{{ twitter_req_row }}">
+            <tr>
+              <td class="left">
+				<input type="text" class="form-control" name="socnetauth2_twitter_req[{{ twitter_req_row }}][domain]"  
+				value="{{ req['domain'] }}" />
+			  </td>
+              <td class="left">
+				<input type="text" class="form-control" 
+				name="socnetauth2_twitter_req[{{ twitter_req_row }}][consumer_key]"  
+				value="{{ req['consumer_key'] }}" />
+			  </td>
+              <td class="left">
+				<input type="text" class="form-control" 
+				name="socnetauth2_twitter_req[{{ twitter_req_row }}][consumer_secret]"  
+				value="{{ req['consumer_secret'] }}" />
+			  </td>
+			  <td><a onclick="$('#twitter_req-row{{ twitter_req_row }}').remove();" class="btn btn-primary">{{ button_remove }}</a></td>
+			</tr> 
+          </tbody>
+          {% set twitter_req_row = twitter_req_row + 1 %}
+          {% endfor %}
+          <tfoot>
+            <tr>
+              <td colspan="3"></td>
+              <td class="left"><a onclick="addtwitterReq();" class="btn btn-primary"
+			  >{{ button_add }}</a></td>
+            </tr>
+          </tfoot>
+        </table>
+		<script>
+		var twitter_req_row = {{ twitter_req_row }};
+		
+		function addtwitterReq()
+		{
+			html = '';
+			
+			html += '<tbody id="twitter_req-row'+twitter_req_row+'">';
+			html += '<tr>';
+			html += '<td class="left">';
+			html += '<input type="text" class="form-control" name="socnetauth2_twitter_req['+twitter_req_row+'][domain]"   />';
+			html += '</td>';
+			html += '<td class="left">';
+			html += '<input type="text" class="form-control" ';
+			html += ' name="socnetauth2_twitter_req['+twitter_req_row+'][consumer_key]"  />';
+			html += '</td>';
+			html += '<td class="left">';
+			html += '<input type="text" class="form-control" ';
+			html += 'name="socnetauth2_twitter_req['+twitter_req_row+'][consumer_secret]"   />';
+			html += '</td>';
+			html += '<td class="left"><a onclick="$(\'#twitter_req-row'+twitter_req_row+'\').remove();" class="btn btn-primary">{{ button_remove }}</a></td>';
+			html += '</tr> ';
+			html += '</tbody>';
+			
+			
+			$('#twitter_req tfoot').before(html);
+			
+			twitter_req_row++;
+		}
+		</script>
+		</div>
+		
+		
+	  </div>
+	  <div id="tab-odnoklassniki" class="tab-pane">
+	  <p>Инструкция по интергации с Одноклассники по ссылке:<br>
+		<a href="https://ocart.ru/socnetauth2/odnoklassniki" target=_blank
+		>https://ocart.ru/socnetauth2/odnoklassniki</a>
+		</p>
+		 <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_odnoklassniki_status }}
+			</label>
+            <div class="col-sm-10">
+			
+				<select name="socnetauth2_odnoklassniki_status" class="form-control">
+                    {% if socnetauth2_odnoklassniki_status %}
+					<option value="1" selected="selected">{{ text_enabled }}</option>
+					<option value="0" >{{ text_disabled }}</option>
+                  {% else %}
+					<option value="1">{{ text_enabled }}</option>
+					<option value="0" selected="selected" >{{ text_disabled }}</option>
+                  {% endif %}
+                </select>
+			</div>
+        </div>
+		{#  start r3 #}
+		 <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_debug }}
+			</label>
+            <div class="col-sm-10">
+				<select name="socnetauth2_odnoklassniki_debug" class="form-control">
+                    {% if socnetauth2_odnoklassniki_debug %}
+					<option value="1" selected="selected">{{ text_enabled }}</option>
+					<option value="0" >{{ text_disabled }}</option>
+                  {% else %}
+					<option value="1">{{ text_enabled }}</option>
+					<option value="0" selected="selected" >{{ text_disabled }}</option>
+                  {% endif %}
+                </select>
+				<div>{{ text_debug_notice }}</div>
+			</div>
+        </div>
+		{#  end r3 #}
+		
+		<div class="form-group">
+			<label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_socnet_title }}
+			</label>
+			<div class="col-sm-10">
+				{% for language in languages %}
+					<p>
+					<input type="text"  class="form-control" 
+						name="socnetauth2_odnoklassniki_title[{{ language['language_id'] }}]" 
+						value="{{ socnetauth2_odnoklassniki_title[ language['language_id'] ] }}" >&nbsp;<img 
+						src="{{ language['image'] }}" title="{{ language['name'] }}" align="top" />
+					</p>
+				{% endfor %}
+			</div>
+		</div>
+		
+		 <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_odnoklassniki_agent}}
+			</label>
+            <div class="col-sm-10">
+				<select name="socnetauth2_odnoklassniki_agent" class="form-control"
+				onchange="if( this.value == 'extension' ) { $('#block_odnoklassniki_agent_extension').show(); $('#block_odnoklassniki_agent_notice').show(); } else { $('#block_odnoklassniki_agent_extension').hide(); $('#block_odnoklassniki_agent_notice').hide(); }"
+				>
+					<option value="extension" 
+					{% if socnetauth2_odnoklassniki_agent == 'extension' %}
+						selected="extension"
+					  {% endif %}
+					>{{ entry_odnoklassniki_agent_extension}}</option>
+					<option value="loginza" 
+					{% if socnetauth2_odnoklassniki_agent == 'loginza' %}
+						selected="loginza"
+					  {% endif %}
+					>{{ entry_odnoklassniki_agent_loginza}}</option>
+                </select>
+				<div
+				id="block_odnoklassniki_agent_notice"
+					{% if socnetauth2_odnoklassniki_agent == 'loginza' %}
+		style="display: none;" {% endif %}
+				>{{ entry_odnoklassniki_agent_notice }}</div>
+			</div>
+        </div> 
+	  <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_odnoklassniki_customer_group_id }}
+			</label>
+            <div class="col-sm-10">
+				<select name="socnetauth2_odnoklassniki_customer_group_id" class="form-control" >
+                    {% for customer_group in customer_groups %}
+                    {% if customer_group['customer_group_id'] == socnetauth2_odnoklassniki_customer_group_id %}
+                    <option value="{{ customer_group['customer_group_id'] }}" selected="selected">{{ customer_group['name'] }}</option>
+                    {% else %}
+                    <option value="{{ customer_group['customer_group_id'] }}">{{ customer_group['name'] }}</option>
+                    {% endif %}
+                    {% endfor %}
+                  </select>
+			</div>
+        </div>
+		
+		<div id="block_odnoklassniki_agent_extension"
+		{% if socnetauth2_odnoklassniki_agent == 'loginza'  %} style="display: none;" {% endif %}
+		> 
+		
+		{# start 0305 #}
+		 <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_redirect_url_odnoklassniki }}
+			</label>
+            <div class="col-sm-10"> 
+				<table class="table table-bordered table-hover">
+				<tr>
+					 {% if is_show_old_redirect %}
+					<td width=20%>
+						<input type="radio" name="socnetauth2_odnoklassniki_redirect_type" value="new"
+							{% if socnetauth2_odnoklassniki_redirect_type == 'new' %} checked {% endif %}
+							id="socnetauth2_odnoklassniki_redirect_type_new"
+						><label for="socnetauth2_odnoklassniki_redirect_type_new"
+						>{{ entry_redirect_url_new }}</label>
+					</td>
+					 {% endif %}
+					<td>
+						{% if not is_show_old_redirect %}
+						<input type="hidden" name="socnetauth2_odnoklassniki_redirect_type" value="new"  >
+						{% endif %}
+						<div>	
+							<input type="text" class="form-control" disabled value="{{ odnoklassniki_redirect_url_new }}">
+						</div>
+						<div>{{ entry_redirect_url_odnoklassniki_notice }}</div>
+					</td>
+					<td width=20%> 
+						<a onclick="copyToClipboard('{{ odnoklassniki_redirect_url_new }}');"
+							class="btn btn-primary">{{ text_copy }}</a>
+					</td>
+					
+				</tr>
+					 {% if is_show_old_redirect %}
+				<tr>
+					<td>
+						<input type="radio" name="socnetauth2_odnoklassniki_redirect_type" value="old"
+							{% if socnetauth2_odnoklassniki_redirect_type == 'old' %} checked {% endif %}
+							id="socnetauth2_odnoklassniki_redirect_type_old"
+						><label for="socnetauth2_odnoklassniki_redirect_type_old"
+						>{{ entry_redirect_url_old }}</label>
+					</td>
+					<td>
+						<div>	
+							<input type="text" class="form-control" disabled value="{{ odnoklassniki_redirect_url_old }}">
+						</div> 
+					</td>
+					<td> 
+						<a onclick="copyToClipboard('{{ odnoklassniki_redirect_url_old }}');"
+							class="btn btn-primary">{{ text_copy }}</a>
+					</td>
+					
+				</tr>
+					 {% endif %}
+				</table> 
+			</div>
+        </div>
+		
+		
+		{# end 0305 #}
+		<table id="odnoklassniki_req" class="table table-bordered table-hover">
+          <thead>
+            <tr>
+              <td class="left">{{ col_domain }}</td>
+              <td class="left">{{ entry_odnoklassniki_application_id }}</td>
+              <td class="left">{{ entry_odnoklassniki_public_key }}</td>
+              <td class="left">{{ entry_odnoklassniki_secret_key }}</td>
+              <td></td>
+            </tr>
+          </thead>
+          <tbody id="odnoklassniki_req-row">
+            <tr>
+              <td class="left">
+				  {{ text_default_domain }}
+			  </td>
+              <td class="left">
+				<input type="text" class="form-control" name="socnetauth2_odnoklassniki_application_id"  
+				value="{{ socnetauth2_odnoklassniki_application_id }}" />
+			  </td>
+              <td class="left">
+				<input type="text" class="form-control" 
+				name="socnetauth2_odnoklassniki_public_key"  
+				value="{{ socnetauth2_odnoklassniki_public_key }}" />
+			  </td>
+              <td class="left">
+				<input type="text" class="form-control" 
+				name="socnetauth2_odnoklassniki_secret_key"  
+				value="{{ socnetauth2_odnoklassniki_secret_key }}" />
+			  </td>
+			  <td></td>
+			</tr>
+          {% set odnoklassniki_req_row = 0 %}
+		  {% for req in socnetauth2_odnoklassniki_req %}
+          <tbody id="odnoklassniki_req-row{{ odnoklassniki_req_row }}">
+            <tr>
+              <td class="left">
+				<input type="text" class="form-control" name="socnetauth2_odnoklassniki_req[{{ odnoklassniki_req_row }}][domain]"  
+				value="{{ req['domain'] }}" />
+			  </td>
+              <td class="left">
+				<input type="text" class="form-control" 
+				name="socnetauth2_odnoklassniki_req[{{ odnoklassniki_req_row }}][application_id]"  
+				value="{{ req['application_id'] }}" />
+			  </td>
+              <td class="left">
+				<input type="text" class="form-control" 
+				name="socnetauth2_odnoklassniki_req[{{ odnoklassniki_req_row }}][public_key]"  
+				value="{{ req['public_key'] }}" />
+			  </td>
+              <td class="left">
+				<input type="text" class="form-control" 
+				name="socnetauth2_odnoklassniki_req[{{ odnoklassniki_req_row }}][secret_key]"  
+				value="{{ req['secret_key'] }}" />
+			  </td>
+			  <td><a onclick="$('#odnoklassniki_req-row{{ odnoklassniki_req_row }}').remove();" class="btn btn-primary">{{ button_remove }}</a></td>
+			</tr> 
+          </tbody>
+          {% set odnoklassniki_req_row = odnoklassniki_req_row + 1 %}
+          {% endfor %}
+          <tfoot>
+            <tr>
+              <td colspan="4"></td>
+              <td class="left"><a onclick="addodnoklassnikiReq();" class="btn btn-primary"
+			  >{{ button_add }}</a></td>
+            </tr>
+          </tfoot>
+        </table>
+		<script>
+		var odnoklassniki_req_row = {{ odnoklassniki_req_row }};
+		
+		function addodnoklassnikiReq()
+		{
+			html = '';
+			
+			html += '<tbody id="odnoklassniki_req-row'+odnoklassniki_req_row+'">';
+			html += '<tr>';
+			html += '<td class="left">';
+			html += '<input type="text" class="form-control" name="socnetauth2_odnoklassniki_req['+odnoklassniki_req_row+'][domain]"   />';
+			html += '</td>';
+			html += '<td class="left">';
+			html += '<input type="text" class="form-control" ';
+			html += ' name="socnetauth2_odnoklassniki_req['+odnoklassniki_req_row+'][application_id]"  />';
+			html += '</td>';
+			html += '<td class="left">';
+			html += '<input type="text" class="form-control" ';
+			html += 'name="socnetauth2_odnoklassniki_req['+odnoklassniki_req_row+'][public_key]"   />';
+			html += '</td>';
+			html += '<td class="left">';
+			html += '<input type="text" class="form-control" ';
+			html += 'name="socnetauth2_odnoklassniki_req['+odnoklassniki_req_row+'][secret_key]"   />';
+			html += '</td>';
+			html += '<td class="left"><a onclick="$(\'#odnoklassniki_req-row'+odnoklassniki_req_row+'\').remove();" class="btn btn-primary">{{ button_remove }}</a></td>';
+			html += '</tr> ';
+			html += '</tbody>';
+			
+			
+			$('#odnoklassniki_req tfoot').before(html);
+			
+			odnoklassniki_req_row++;
+		}
+		</script>
+		</div>
+	  </div>
+	  
+	  
+	  
+	  {#  start metka: a1 #}
+	  <div id="tab-gmail" class="tab-pane">
+	  <p>Инструкция по интергации с Gmail.com по ссылке:<br>
+		<a href="https://ocart.ru/socnetauth2/gmail" target=_blank
+		>https://ocart.ru/socnetauth2/gmail</a>
+		</p>
+		 <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_gmail_status }}
+			</label>
+            <div class="col-sm-10">
+			  <select name="socnetauth2_gmail_status" class="form-control">
+                    {% if socnetauth2_gmail_status %}
+					<option value="1" selected="selected">{{ text_enabled }}</option>
+					<option value="0" >{{ text_disabled }}</option>
+                  {% else %}
+					<option value="1">{{ text_enabled }}</option>
+					<option value="0" selected="selected" >{{ text_disabled }}</option>
+                  {% endif %}
+                </select>
+			</div>
+        </div>
+		{#  start r3 #}
+		 <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_debug }}
+			</label>
+            <div class="col-sm-10">
+				<select name="socnetauth2_gmail_debug" class="form-control">
+                    {% if socnetauth2_gmail_debug %}
+					<option value="1" selected="selected">{{ text_enabled }}</option>
+					<option value="0" >{{ text_disabled }}</option>
+                  {% else %}
+					<option value="1">{{ text_enabled }}</option>
+					<option value="0" selected="selected" >{{ text_disabled }}</option>
+                  {% endif %}
+                </select>
+				<div>{{ text_debug_notice }}</div>
+			</div>
+        </div>
+		{#  end r3 #}
+		
+		<div class="form-group">
+			<label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_socnet_title }}
+			</label>
+			<div class="col-sm-10">
+				{% for language in languages %}
+					<p>
+					<input type="text"  class="form-control" 
+						name="socnetauth2_gmail_title[{{ language['language_id'] }}]" 
+						value="{{ socnetauth2_gmail_title[ language['language_id'] ] }}" >&nbsp;<img 
+						src="{{ language['image'] }}" title="{{ language['name'] }}" align="top" />
+					</p>
+				{% endfor %}
+			</div>
+		</div>
+		
+		
+		 <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_gmail_agent}}
+			</label>
+            <div class="col-sm-10">
+				<select name="socnetauth2_gmail_agent" class="form-control"
+				onchange="if( this.value == 'extension' ) { $('#block_gmail_agent_extension').show(); } else { $('#block_gmail_agent_extension').hide(); }"
+				>
+					<option value="extension" 
+					{% if socnetauth2_gmail_agent == 'extension' %}
+						selected="extension"
+					  {% endif %}
+					>{{ entry_gmail_agent_extension}}</option>
+					<option value="loginza" 
+					{% if socnetauth2_gmail_agent == 'loginza' %}
+						selected="loginza"
+					  {% endif %}
+					>{{ entry_gmail_agent_loginza}}</option>
+                </select>
+				<div>{{ entry_gmail_agent_notice }}</div>
+			</div>
+        </div>
+		 
+	  <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_gmail_customer_group_id }}
+			</label>
+            <div class="col-sm-10">
+				<select name="socnetauth2_gmail_customer_group_id" class="form-control" >
+                    {% for customer_group in customer_groups %}
+                    {% if customer_group['customer_group_id'] == socnetauth2_gmail_customer_group_id %}
+                    <option value="{{ customer_group['customer_group_id'] }}" selected="selected">{{ customer_group['name'] }}</option>
+                    {% else %}
+                    <option value="{{ customer_group['customer_group_id'] }}">{{ customer_group['name'] }}</option>
+                    {% endif %}
+                    {% endfor %}
+                  </select>
+			</div>
+        </div>
+		
+		<div id="block_gmail_agent_extension"
+		{% if socnetauth2_gmail_agent == 'loginza'  %} style="display: none;" {% endif %}
+		> 
+		
+		{# start 0305 #}
+		 <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_redirect_url_gmail }}
+			</label>
+            <div class="col-sm-10"> 
+				<table class="table table-bordered table-hover">
+				<tr>
+					 {% if is_show_old_redirect %}
+					<td width=20%>
+						<input type="radio" name="socnetauth2_gmail_redirect_type" value="new"
+							{% if socnetauth2_gmail_redirect_type == 'new' %} checked {% endif %}
+							id="socnetauth2_gmail_redirect_type_new"
+						><label for="socnetauth2_gmail_redirect_type_new"
+						>{{ entry_redirect_url_new }}</label>
+					</td>
+					 {% endif %}
+					<td>
+						{% if not is_show_old_redirect %}
+						<input type="hidden" name="socnetauth2_gmail_redirect_type" value="new"  >
+						{% endif %}
+						<div>	
+							<input type="text" class="form-control" disabled value="{{ gmail_redirect_url_new }}">
+						</div>
+						<div>{{ entry_redirect_url_gmail_notice }}</div>
+					</td>
+					<td width=20%> 
+						<a onclick="copyToClipboard('{{ gmail_redirect_url_new }}');"
+							class="btn btn-primary">{{ text_copy }}</a>
+					</td>
+					
+				</tr>
+					 {% if is_show_old_redirect %}
+				<tr>
+					<td>
+						<input type="radio" name="socnetauth2_gmail_redirect_type" value="old"
+							{% if socnetauth2_gmail_redirect_type == 'old' %} checked {% endif %}
+							id="socnetauth2_gmail_redirect_type_old"
+						><label for="socnetauth2_gmail_redirect_type_old"
+						>{{ entry_redirect_url_old }}</label>
+					</td>
+					<td>
+						<div>	
+							<input type="text" class="form-control" disabled value="{{ gmail_redirect_url_old }}">
+						</div> 
+					</td>
+					<td> 
+						<a onclick="copyToClipboard('{{ gmail_redirect_url_old }}');"
+							class="btn btn-primary">{{ text_copy }}</a>
+					</td>
+					
+				</tr>
+					 {% endif %}
+				</table> 
+			</div>
+        </div>
+		
+		{# end 0305 #}
+		<table id="gmail_req" class="table table-bordered table-hover">
+          <thead>
+            <tr>
+              <td class="left">{{ col_domain }}</td>
+              <td class="left">{{ entry_gmail_client_id }}</td>
+              <td class="left">{{ entry_gmail_client_secret }}</td>
+              <td></td>
+            </tr>
+          </thead>
+          <tbody id="gmail_req-row">
+            <tr>
+              <td class="left">
+				  {{ text_default_domain }}
+			  </td>
+              <td class="left">
+				<input type="text" class="form-control" name="socnetauth2_gmail_client_id"  
+				value="{{ socnetauth2_gmail_client_id }}" />
+			  </td>
+              <td class="left">
+				<input type="text" class="form-control" 
+				name="socnetauth2_gmail_client_secret"  
+				value="{{ socnetauth2_gmail_client_secret }}" />
+			  </td>
+			  <td></td>
+			</tr>
+          {% set gmail_req_row = 0 %}
+		  {% for req in socnetauth2_gmail_req %}
+          <tbody id="gmail_req-row{{ gmail_req_row }}">
+            <tr>
+              <td class="left">
+				<input type="text" class="form-control" name="socnetauth2_gmail_req[{{ gmail_req_row }}][domain]"  
+				value="{{ req['domain'] }}" />
+			  </td>
+              <td class="left">
+				<input type="text" class="form-control" 
+				name="socnetauth2_gmail_req[{{ gmail_req_row }}][client_id]"  
+				value="{{ req['client_id'] }}" />
+			  </td>
+              <td class="left">
+				<input type="text" class="form-control" 
+				name="socnetauth2_gmail_req[{{ gmail_req_row }}][client_secret]"  
+				value="{{ req['client_secret'] }}" />
+			  </td>
+			  <td><a onclick="$('#gmail_req-row{{ gmail_req_row }}').remove();" class="btn btn-primary">{{ button_remove }}</a></td>
+			</tr> 
+          </tbody>
+          {% set gmail_req_row = gmail_req_row + 1 %}
+          {% endfor %}
+          <tfoot>
+            <tr>
+              <td colspan="3"></td>
+              <td class="left"><a onclick="addgmailReq();" class="btn btn-primary"
+			  >{{ button_add }}</a></td>
+            </tr>
+          </tfoot>
+        </table>
+		<script>
+		var gmail_req_row = {{ gmail_req_row }};
+		
+		function addgmailReq()
+		{
+			html = '';
+			
+			html += '<tbody id="gmail_req-row'+gmail_req_row+'">';
+			html += '<tr>';
+			html += '<td class="left">';
+			html += '<input type="text" class="form-control" name="socnetauth2_gmail_req['+gmail_req_row+'][domain]"   />';
+			html += '</td>';
+			html += '<td class="left">';
+			html += '<input type="text" class="form-control" ';
+			html += ' name="socnetauth2_gmail_req['+gmail_req_row+'][client_id]"  />';
+			html += '</td>';
+			html += '<td class="left">';
+			html += '<input type="text" class="form-control" ';
+			html += 'name="socnetauth2_gmail_req['+gmail_req_row+'][client_secret]"   />';
+			html += '</td>';
+			html += '<td class="left"><a onclick="$(\'#gmail_req-row'+gmail_req_row+'\').remove();" class="btn btn-primary">{{ button_remove }}</a></td>';
+			html += '</tr> ';
+			html += '</tbody>';
+			
+			
+			$('#gmail_req tfoot').before(html);
+			
+			gmail_req_row++;
+		}
+		</script>
+		</div>
+	  </div>
+	  
+	  
+	  <div id="tab-mailru" class="tab-pane">
+	  <p>Инструкция по интергации с Mail.ru по ссылке:<br>
+		<a href="https://ocart.ru/socnetauth2/mailru" target=_blank
+		>https://ocart.ru/socnetauth2/mailru</a>
+		</p>
+	  <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_mailru_status }}
+			</label>
+            <div class="col-sm-10">
+			  <select name="socnetauth2_mailru_status" class="form-control">
+                    {% if socnetauth2_mailru_status %}
+					<option value="1" selected="selected">{{ text_enabled }}</option>
+					<option value="0" >{{ text_disabled }}</option>
+                  {% else %}
+					<option value="1">{{ text_enabled }}</option>
+					<option value="0" selected="selected" >{{ text_disabled }}</option>
+                  {% endif %}
+                </select>
+			</div>
+        </div>
+		{#  start r3 #}
+		 <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_debug }}
+			</label>
+            <div class="col-sm-10">
+				<select name="socnetauth2_mailru_debug" class="form-control">
+                    {% if socnetauth2_mailru_debug %}
+					<option value="1" selected="selected">{{ text_enabled }}</option>
+					<option value="0" >{{ text_disabled }}</option>
+                  {% else %}
+					<option value="1">{{ text_enabled }}</option>
+					<option value="0" selected="selected" >{{ text_disabled }}</option>
+                  {% endif %}
+                </select>
+				<div>{{ text_debug_notice }}</div>
+			</div>
+        </div>
+		{#  end r3 #}
+		
+		<div class="form-group">
+			<label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_socnet_title }}
+			</label>
+			<div class="col-sm-10">
+				{% for language in languages %}
+					<p>
+					<input type="text"  class="form-control" 
+						name="socnetauth2_mailru_title[{{ language['language_id'] }}]" 
+						value="{{ socnetauth2_mailru_title[ language['language_id'] ] }}" >&nbsp;<img 
+						src="{{ language['image'] }}" title="{{ language['name'] }}" align="top" />
+					</p>
+				{% endfor %}
+			</div>
+		</div>
+		
+		 <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_mailru_agent}}
+			</label>
+            <div class="col-sm-10">
+				<select name="socnetauth2_mailru_agent" class="form-control"
+				onchange="if( this.value == 'extension' ) { $('#block_mailru_agent_extension').show(); } else { $('#block_mailru_agent_extension').hide(); }"
+				>
+					<option value="extension" 
+					{% if socnetauth2_mailru_agent == 'extension' %}
+						selected="extension"
+					  {% endif %}
+					>{{ entry_mailru_agent_extension}}</option>
+					<option value="loginza" 
+					{% if socnetauth2_mailru_agent == 'loginza' %}
+						selected="loginza"
+					  {% endif %}
+					>{{ entry_mailru_agent_loginza}}</option>
+                </select>
+				<div>{{ entry_mailru_agent_notice }}</div>
+			</div>
+        </div> 
+	  <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_mailru_customer_group_id }}
+			</label>
+            <div class="col-sm-10">
+				<select name="socnetauth2_mailru_customer_group_id" class="form-control" >
+                    {% for customer_group in customer_groups %}
+                    {% if customer_group['customer_group_id'] == socnetauth2_mailru_customer_group_id %}
+                    <option value="{{ customer_group['customer_group_id'] }}" selected="selected">{{ customer_group['name'] }}</option>
+                    {% else %}
+                    <option value="{{ customer_group['customer_group_id'] }}">{{ customer_group['name'] }}</option>
+                    {% endif %}
+                    {% endfor %}
+                  </select>
+			</div>
+        </div>
+		<div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_mailru_api_version }}
+			</label>
+            <div class="col-sm-10">
+				<select name="socnetauth2_mailru_api_version" class="form-control" >
+					<option value="new" 
+					{% if socnetauth2_mailru_api_version == 'new' %} 
+						selected="new"
+					  {% endif %}
+					>{{ entry_mailru_api_version_new }}</option>
+					<option value="old" 
+					{% if socnetauth2_mailru_api_version == 'old' %}  
+						selected="old"
+					  {% endif %}
+					>{{ entry_mailru_api_version_old }}</option>
+                  </select>
+				  <div>{{ entry_mailru_api_version_notice }}</div>
+			</div>
+        </div>
+		<div id="block_mailru_agent_extension"
+		{% if socnetauth2_mailru_agent == 'loginza'  %} style="display: none;" {% endif %}
+		> 
+		
+		{# start 0305 #}
+		 <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_redirect_url_mailru }}
+			</label>
+            <div class="col-sm-10"> 
+				<table class="table table-bordered table-hover">
+				<tr>
+					 {% if is_show_old_redirect %}
+					<td width=20%>
+						<input type="radio" name="socnetauth2_mailru_redirect_type" value="new"
+							{% if socnetauth2_mailru_redirect_type == 'new' %} checked {% endif %}
+							id="socnetauth2_mailru_redirect_type_new"
+						><label for="socnetauth2_mailru_redirect_type_new"
+						>{{ entry_redirect_url_new }}</label>
+					</td>
+					 {% endif %}
+					<td>
+						{% if not is_show_old_redirect %}
+						<input type="hidden" name="socnetauth2_mailru_redirect_type" value="new"  >
+						{% endif %}
+						<div>	
+							<input type="text" class="form-control" disabled value="{{ mailru_redirect_url_new }}">
+						</div>
+						<div>{{ entry_redirect_url_mailru_notice }}</div>
+					</td>
+					<td width=20%> 
+						<a onclick="copyToClipboard('{{ mailru_redirect_url_new }}');"
+							class="btn btn-primary">{{ text_copy }}</a>
+					</td>
+					
+				</tr>
+					 {% if is_show_old_redirect %}
+				<tr>
+					<td>
+						<input type="radio" name="socnetauth2_mailru_redirect_type" value="old"
+							{% if socnetauth2_mailru_redirect_type == 'old' %} checked {% endif %}
+							id="socnetauth2_mailru_redirect_type_old"
+						><label for="socnetauth2_mailru_redirect_type_old"
+						>{{ entry_redirect_url_old }}</label>
+					</td>
+					<td>
+						<div>	
+							<input type="text" class="form-control" disabled value="{{ mailru_redirect_url_old }}">
+						</div> 
+					</td>
+					<td> 
+						<a onclick="copyToClipboard('{{ mailru_redirect_url_old }}');"
+							class="btn btn-primary">{{ text_copy }}</a>
+					</td>
+					
+				</tr>
+					 {% endif %}
+				</table> 
+			</div>
+        </div>
+		
+		
+		{# end 0305 #}
+		<table id="mailru_req" class="table table-bordered table-hover">
+          <thead>
+            <tr>
+              <td class="left">{{ col_domain }}</td>
+              <td class="left">{{ entry_mailru_id }}</td>
+              <td class="left">{{ entry_mailru_private }}</td>
+              <td class="left">{{ entry_mailru_secret }}</td>
+              <td></td>
+            </tr>
+          </thead>
+          <tbody id="mailru_req-row">
+            <tr>
+              <td class="left">
+				  {{ text_default_domain }}
+			  </td>
+              <td class="left">
+				<input type="text" class="form-control" name="socnetauth2_mailru_id"  
+				value="{{ socnetauth2_mailru_id }}" />
+			  </td>
+              <td class="left">
+				<input type="text" class="form-control" 
+				name="socnetauth2_mailru_private"  
+				value="{{ socnetauth2_mailru_private }}" />
+			  </td>
+              <td class="left">
+				<input type="text" class="form-control" 
+				name="socnetauth2_mailru_secret"  
+				value="{{ socnetauth2_mailru_secret }}" />
+			  </td>
+			  <td></td>
+			</tr>
+          {% set mailru_req_row = 0 %}
+		  {% for req in socnetauth2_mailru_req %}
+          <tbody id="mailru_req-row{{ mailru_req_row }}">
+            <tr>
+              <td class="left">
+				<input type="text" class="form-control" name="socnetauth2_mailru_req[{{ mailru_req_row }}][domain]"  
+				value="{{ req['domain'] }}" />
+			  </td>
+              <td class="left">
+				<input type="text" class="form-control" 
+				name="socnetauth2_mailru_req[{{ mailru_req_row }}][mailru_id]"  
+				value="{{ req['mailru_id'] }}" />
+			  </td>
+              <td class="left">
+				<input type="text" class="form-control" 
+				name="socnetauth2_mailru_req[{{ mailru_req_row }}][mailru_private]"  
+				value="{{ req['mailru_private'] }}" />
+			  </td>
+              <td class="left">
+				<input type="text" class="form-control" 
+				name="socnetauth2_mailru_req[{{ mailru_req_row }}][mailru_secret]"  
+				value="{{ req['mailru_secret'] }}" />
+			  </td>
+			  <td><a onclick="$('#mailru_req-row{{ mailru_req_row }}').remove();" class="btn btn-primary">{{ button_remove }}</a></td>
+			</tr> 
+          </tbody>
+          {% set mailru_req_row = mailru_req_row + 1 %}
+          {% endfor %}
+          <tfoot>
+            <tr>
+              <td colspan="4"></td>
+              <td class="left"><a onclick="addmailruReq();" class="btn btn-primary"
+			  >{{ button_add }}</a></td>
+            </tr>
+          </tfoot>
+        </table>
+		<script>
+		var mailru_req_row = {{ mailru_req_row }};
+		
+		function addmailruReq()
+		{
+			html = '';
+			
+			html += '<tbody id="mailru_req-row'+mailru_req_row+'">';
+			html += '<tr>';
+			html += '<td class="left">';
+			html += '<input type="text" class="form-control" name="socnetauth2_mailru_req['+mailru_req_row+'][domain]"   />';
+			html += '</td>';
+			html += '<td class="left">';
+			html += '<input type="text" class="form-control" ';
+			html += ' name="socnetauth2_mailru_req['+mailru_req_row+'][mailru_id]"  />';
+			html += '</td>';
+			html += '<td class="left">';
+			html += '<input type="text" class="form-control" ';
+			html += 'name="socnetauth2_mailru_req['+mailru_req_row+'][mailru_private]"   />';
+			html += '</td>';
+			html += '<td class="left">';
+			html += '<input type="text" class="form-control" ';
+			html += 'name="socnetauth2_mailru_req['+mailru_req_row+'][mailru_secret]"   />';
+			html += '</td>';
+			html += '<td class="left"><a onclick="$(\'#mailru_req-row'+mailru_req_row+'\').remove();" class="btn btn-primary">{{ button_remove }}</a></td>';
+			html += '</tr> ';
+			html += '</tbody>';
+			
+			
+			$('#mailru_req tfoot').before(html);
+			
+			mailru_req_row++;
+		}
+		</script>
+		</div>
+		
+	  </div>
+	  {#  end metka: a1 #}
+	  
+	{#  start 1811 #}
+	  <div id="tab-yandex" class="tab-pane">
+	  <p>Инструкция по интергации с Яндексом по ссылке:<br>
+		<a href="https://ocart.ru/socnetauth2/yandex" target=_blank
+		>https://ocart.ru/socnetauth2/yandex</a>
+		</p>
+	  <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_yandex_status }}
+			</label>
+            <div class="col-sm-10">
+			  <select name="socnetauth2_yandex_status" class="form-control">
+                    {% if socnetauth2_yandex_status %}
+					<option value="1" selected="selected">{{ text_enabled }}</option>
+					<option value="0" >{{ text_disabled }}</option>
+                  {% else %}
+					<option value="1">{{ text_enabled }}</option>
+					<option value="0" selected="selected" >{{ text_disabled }}</option>
+                  {% endif %}
+                </select>
+			</div>
+        </div>
+		 <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_debug }}
+			</label>
+            <div class="col-sm-10">
+				<select name="socnetauth2_yandex_debug" class="form-control">
+                    {% if socnetauth2_yandex_debug %}
+					<option value="1" selected="selected">{{ text_enabled }}</option>
+					<option value="0" >{{ text_disabled }}</option>
+                  {% else %}
+					<option value="1">{{ text_enabled }}</option>
+					<option value="0" selected="selected" >{{ text_disabled }}</option>
+                  {% endif %}
+                </select>
+				<div>{{ text_debug_notice }}</div>
+			</div>
+        </div>
+		
+		<div class="form-group">
+			<label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_socnet_title }}
+			</label>
+			<div class="col-sm-10">
+				{% for language in languages %}
+					<p>
+					<input type="text"  class="form-control" 
+						name="socnetauth2_yandex_title[{{ language['language_id'] }}]" 
+						value="{{ socnetauth2_yandex_title[ language['language_id'] ] }}" >&nbsp;<img 
+						src="{{ language['image'] }}" title="{{ language['name'] }}" align="top" />
+					</p>
+				{% endfor %}
+			</div>
+		</div>
+		
+		
+		 <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_yandex_agent}}
+			</label>
+            <div class="col-sm-10">
+				<select name="socnetauth2_yandex_agent" class="form-control"
+				onchange="if( this.value == 'extension' ) { $('.block_yandex_agent_extension').show(); } else { $('.block_yandex_agent_extension').hide(); }"
+				>
+					<option value="extension" 
+					{% if socnetauth2_yandex_agent == 'extension' %}
+						selected="extension"
+					  {% endif %}
+					>{{ entry_yandex_agent_extension}}</option>
+					<option value="loginza" 
+					{% if socnetauth2_yandex_agent == 'loginza' %}
+						selected="loginza"
+					  {% endif %}
+					>{{ entry_yandex_agent_loginza}}</option>
+                </select>
+				<div>{{ entry_yandex_agent_notice }}</div>
+			</div>
+        </div>
+		
+		<div id="block_yandex_agent_extension"
+					{% if socnetauth2_yandex_agent == 'loginza' %}
+					style="display: none;" {% endif %}
+		>
+		 
+	    <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_yandex_rights }}
+			</label>
+            <div class="col-sm-10">
+			   <div><input type="checkbox" name="socnetauth2_yandex_rights_email"
+							 
+			   value="1" {% if socnetauth2_yandex_rights_email  %} checked {% endif %} 
+			   id="socnetauth2_yandex_rights_email"
+			   ><label for="socnetauth2_yandex_rights_email"
+			   >{{ entry_yandex_rights_email }}</label></div>
+			   
+			   <div><input type="checkbox" name="socnetauth2_yandex_rights_info"
+			   value="1" 
+			   {% if socnetauth2_yandex_rights_info  %}checked {% endif %} 
+			   id="socnetauth2_yandex_rights_info"
+			   ><label for="socnetauth2_yandex_rights_info"
+			   >{{ entry_yandex_rights_info }}</label></div>
+			</div>
+        </div>
+		
+		
+		</div>
+		
+	  <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_yandex_customer_group_id }}
+			</label>
+            <div class="col-sm-10">
+				<select name="socnetauth2_yandex_customer_group_id" class="form-control" >
+                    {% for customer_group in customer_groups %}
+                    {% if customer_group['customer_group_id'] == socnetauth2_yandex_customer_group_id %}
+                    <option value="{{ customer_group['customer_group_id'] }}" selected="selected">{{ customer_group['name'] }}</option>
+                    {% else %}
+                    <option value="{{ customer_group['customer_group_id'] }}">{{ customer_group['name'] }}</option>
+                    {% endif %}
+                    {% endfor %}
+                  </select>
+			</div>
+        </div>
+		<div class="block_yandex_agent_extension"
+		{% if socnetauth2_yandex_agent == 'loginza'  %} style="display: none;" {% endif %}
+		> 
+		
+		{# start 0305 #}
+		 <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_redirect_url_yandex }}
+			</label>
+            <div class="col-sm-10"> 
+				<table class="table table-bordered table-hover">
+				<tr>
+					 {% if is_show_old_redirect %}
+					<td width=20%>
+						<input type="radio" name="socnetauth2_yandex_redirect_type" value="new"
+							{% if socnetauth2_yandex_redirect_type == 'new' %} checked {% endif %}
+							id="socnetauth2_yandex_redirect_type_new"
+						><label for="socnetauth2_yandex_redirect_type_new"
+						>{{ entry_redirect_url_new }}</label>
+					</td>
+					 {% endif %}
+					<td>
+						{% if not is_show_old_redirect %}
+						<input type="hidden" name="socnetauth2_yandex_redirect_type" value="new"  >
+						{% endif %}
+						<div>	
+							<input type="text" class="form-control" disabled value="{{ yandex_redirect_url_new }}">
+						</div>
+						<div>{{ entry_redirect_url_yandex_notice }}</div>
+					</td>
+					<td width=20%> 
+						<a onclick="copyToClipboard('{{ yandex_redirect_url_new }}');"
+							class="btn btn-primary">{{ text_copy }}</a>
+					</td>
+					
+				</tr>
+					 {% if is_show_old_redirect %}
+				<tr>
+					<td>
+						<input type="radio" name="socnetauth2_yandex_redirect_type" value="old"
+							{% if socnetauth2_yandex_redirect_type == 'old' %} checked {% endif %}
+							id="socnetauth2_yandex_redirect_type_old"
+						><label for="socnetauth2_yandex_redirect_type_old"
+						>{{ entry_redirect_url_old }}</label>
+					</td>
+					<td>
+						<div>	
+							<input type="text" class="form-control" disabled value="{{ yandex_redirect_url_old }}">
+						</div> 
+					</td>
+					<td> 
+						<a onclick="copyToClipboard('{{ yandex_redirect_url_old }}');"
+							class="btn btn-primary">{{ text_copy }}</a>
+					</td>
+					
+				</tr>
+					 {% endif %}
+				</table> 
+			</div>
+        </div>
+		
+		
+		{# end 0305 #}
+		<table id="yandex_req" class="table table-bordered table-hover">
+          <thead>
+            <tr>
+              <td class="left">{{ col_domain }}</td>
+              <td class="left">{{ entry_yandex_client_id }}</td>
+              <td class="left">{{ entry_yandex_client_secret }}</td>
+              <td></td>
+            </tr>
+          </thead>
+          <tbody id="yandex_req-row">
+            <tr>
+              <td class="left">
+				  {{ text_default_domain }}
+			  </td>
+              <td class="left">
+				<input type="text" class="form-control" name="socnetauth2_yandex_client_id"  
+				value="{{ socnetauth2_yandex_client_id }}" />
+			  </td>
+              <td class="left">
+				<input type="text" class="form-control" 
+				name="socnetauth2_yandex_client_secret"  
+				value="{{ socnetauth2_yandex_client_secret }}" />
+			  </td>
+			  <td></td>
+			</tr>
+          {% set yandex_req_row = 0 %}
+		  {% for req in socnetauth2_yandex_req %}
+          <tbody id="yandex_req-row{{ yandex_req_row }}">
+            <tr>
+              <td class="left">
+				<input type="text" class="form-control" name="socnetauth2_yandex_req[{{ yandex_req_row }}][domain]"  
+				value="{{ req['domain'] }}" />
+			  </td>
+              <td class="left">
+				<input type="text" class="form-control" 
+				name="socnetauth2_yandex_req[{{ yandex_req_row }}][client_id]"  
+				value="{{ req['client_id'] }}" />
+			  </td>
+              <td class="left">
+				<input type="text" class="form-control" 
+				name="socnetauth2_yandex_req[{{ yandex_req_row }}][client_secret]"  
+				value="{{ req['client_secret'] }}" />
+			  </td>
+			  <td><a onclick="$('#yandex_req-row{{ yandex_req_row }}').remove();" class="btn btn-primary">{{ button_remove }}</a></td>
+			</tr> 
+          </tbody>
+          {% set yandex_req_row = yandex_req_row + 1 %}
+          {% endfor %}
+          <tfoot>
+            <tr>
+              <td colspan="3"></td>
+              <td class="left"><a onclick="addyandexReq();" class="btn btn-primary"
+			  >{{ button_add }}</a></td>
+            </tr>
+          </tfoot>
+        </table>
+		<script>
+		var yandex_req_row = {{ yandex_req_row }};
+		
+		function addyandexReq()
+		{
+			html = '';
+			
+			html += '<tbody id="yandex_req-row'+yandex_req_row+'">';
+			html += '<tr>';
+			html += '<td class="left">';
+			html += '<input type="text" class="form-control" name="socnetauth2_yandex_req['+yandex_req_row+'][domain]"   />';
+			html += '</td>';
+			html += '<td class="left">';
+			html += '<input type="text" class="form-control" ';
+			html += ' name="socnetauth2_yandex_req['+yandex_req_row+'][client_id]"  />';
+			html += '</td>';
+			html += '<td class="left">';
+			html += '<input type="text" class="form-control" ';
+			html += 'name="socnetauth2_yandex_req['+yandex_req_row+'][client_secret]"   />';
+			html += '</td>';
+			html += '<td class="left"><a onclick="$(\'#yandex_req-row'+yandex_req_row+'\').remove();" class="btn btn-primary">{{ button_remove }}</a></td>';
+			html += '</tr> ';
+			html += '</tbody>';
+			
+			
+			$('#yandex_req tfoot').before(html);
+			
+			yandex_req_row++;
+		}
+		</script>
+		</div>
+	  </div>
+	
+
+	  <div id="tab-steam" class="tab-pane">
+	  <p>Инструкция по интергации со Steam по ссылке:<br>
+		<a href="https://ocart.ru/socnetauth2/steam" target=_blank
+		>https://ocart.ru/socnetauth2/steam</a>
+		</p>
+	  <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_steam_status }}
+			</label>
+            <div class="col-sm-10">
+			  <select name="socnetauth2_steam_status" class="form-control"> 
+                    {% if socnetauth2_steam_status %}
+					<option value="1" selected="selected">{{ text_enabled }}</option>
+					<option value="0" >{{ text_disabled }}</option>
+                  {% else %}
+					<option value="1">{{ text_enabled }}</option>
+					<option value="0" selected="selected" >{{ text_disabled }}</option>
+                  {% endif %}
+                </select>
+			</div>
+        </div>
+		{#  start r3 #}
+		 <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_debug }}
+			</label>
+            <div class="col-sm-10">
+				<select name="socnetauth2_steam_debug" class="form-control"> 
+                    {% if socnetauth2_steam_debug %}
+					<option value="1" selected="selected">{{ text_enabled }}</option>
+					<option value="0" >{{ text_disabled }}</option>
+                  {% else %}
+					<option value="1">{{ text_enabled }}</option>
+					<option value="0" selected="selected" >{{ text_disabled }}</option>
+                  {% endif %}
+                </select>
+				<div>{{ text_debug_notice }}</div>
+			</div>
+        </div>
+		
+		<div class="form-group">
+			<label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_socnet_title }}
+			</label>
+			<div class="col-sm-10">
+				{% for language in languages %}
+					<p>
+					<input type="text"  class="form-control" 
+						name="socnetauth2_steam_title[{{ language['language_id'] }}]" 
+						value="{{ socnetauth2_steam_title[ language['language_id'] ] }}" >&nbsp;<img 
+						src="{{ language['image'] }}" title="{{ language['name'] }}" align="top" />
+					</p>
+				{% endfor %}
+			</div>
+		</div>
+		
+		
+		 <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_steam_agent}}
+			</label>
+            <div class="col-sm-10">
+				<select name="socnetauth2_steam_agent" class="form-control"
+				onchange="if( this.value == 'extension' ) { $('#block_steam_agent_extension').show(); } else { $('#block_steam_agent_extension').hide(); }"
+				>
+					<option value="extension" 
+					{% if socnetauth2_steam_agent == 'extension' %}
+						selected="extension"
+					  {% endif %}
+					>{{ entry_steam_agent_extension}}</option>
+					<option value="loginza" 
+					{% if socnetauth2_steam_agent == 'loginza' %}
+						selected="loginza"
+					  {% endif %}
+					>{{ entry_steam_agent_loginza}}</option>
+                </select>
+				<div>{{ entry_steam_agent_notice }}</div>
+			</div>
+        </div> 
+	  <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_steam_customer_group_id }}
+			</label>
+            <div class="col-sm-10">
+				<select name="socnetauth2_steam_customer_group_id" class="form-control" >
+                    {% for customer_group in customer_groups %}
+                    {% if customer_group['customer_group_id'] ==  socnetauth2_steam_customer_group_id %}
+                    <option value="{{ customer_group['customer_group_id'] }}" selected="selected">{{ customer_group['name'] }}</option>
+                    {% else %}
+                    <option value="{{ customer_group['customer_group_id'] }}">{{ customer_group['name'] }}</option>
+                    {% endif %}
+                    {% endfor %}
+                  </select>
+			</div>
+        </div>
+		
+		<div id="block_steam_agent_extension"
+		{% if socnetauth2_steam_agent == 'loginza'  %} style="display: none;" {% endif %}
+		> 
+		
+		{# start 0305 #}
+		 <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_redirect_url_steam }}
+			</label>
+            <div class="col-sm-10"> 
+				<table class="table table-bordered table-hover">
+				<tr>
+					 {% if is_show_old_redirect %}
+					<td width=20%>
+						<input type="radio" name="socnetauth2_steam_redirect_type" value="new"
+							{% if socnetauth2_steam_redirect_type == 'new' %} checked {% endif %}
+							id="socnetauth2_steam_redirect_type_new"
+						><label for="socnetauth2_steam_redirect_type_new"
+						>{{ entry_redirect_url_new }}</label>
+					</td>
+					 {% endif %}
+					<td>
+						{% if not is_show_old_redirect %}
+						<input type="hidden" name="socnetauth2_steam_redirect_type" value="new"  >
+						{% endif %}
+						<div>	
+							<input type="text" class="form-control" disabled value="{{ steam_redirect_url_new }}">
+						</div>
+						<div>{{ entry_redirect_url_steam_notice }}</div>
+					</td>
+					<td width=20%> 
+						<a onclick="copyToClipboard('{{ steam_redirect_url_new }}');"
+							class="btn btn-primary">{{ text_copy }}</a>
+					</td>
+					
+				</tr>
+					 {% if is_show_old_redirect %}
+				<tr>
+					<td>
+						<input type="radio" name="socnetauth2_steam_redirect_type" value="old"
+							{% if socnetauth2_steam_redirect_type == 'old' %} checked {% endif %}
+							id="socnetauth2_steam_redirect_type_old"
+						><label for="socnetauth2_steam_redirect_type_old"
+						>{{ entry_redirect_url_old }}</label>
+					</td>
+					<td>
+						<div>	
+							<input type="text" class="form-control" disabled value="{{ steam_redirect_url_old }}">
+						</div> 
+					</td>
+					<td> 
+						<a onclick="copyToClipboard('{{ steam_redirect_url_old }}');"
+							class="btn btn-primary">{{ text_copy }}</a>
+					</td>
+					
+				</tr>
+					 {% endif %}
+				</table> 
+			</div>
+        </div>
+		
+		{# end 0305 #}
+		<table id="steam_req" class="table table-bordered table-hover">
+          <thead>
+            <tr>
+              <td class="left">{{ col_domain }}</td>
+              <td class="left">{{ entry_steam_api_key }}</td>
+              <td></td>
+            </tr>
+          </thead>
+          <tbody id="steam_req-row">
+            <tr>
+              <td class="left">
+				  {{ text_default_domain }}
+			  </td>
+              <td class="left">
+				<input type="text" class="form-control" name="socnetauth2_steam_api_key"  
+				value="{{ socnetauth2_steam_api_key }}" />
+			  </td>
+			  <td></td>
+			</tr>
+          {% set steam_req_row = 0 %}
+		  {% for req in socnetauth2_steam_req %}
+          <tbody id="steam_req-row{{ steam_req_row }}">
+            <tr>
+              <td class="left">
+				<input type="text" class="form-control" name="socnetauth2_steam_req[{{ steam_req_row }}][domain]"  
+				value="{{ req['domain'] }}" />
+			  </td>
+              <td class="left">
+				<input type="text" class="form-control" 
+				name="socnetauth2_steam_req[{{ steam_req_row }}][api_key]"  
+				value="{{ req['api_key'] }}" />
+			  </td>
+			  <td><a onclick="$('#steam_req-row{{ steam_req_row }}').remove();" class="btn btn-primary">{{ button_remove }}</a></td>
+			</tr> 
+          </tbody>
+          {% set steam_req_row = steam_req_row + 1 %}
+          {% endfor %}
+          <tfoot>
+            <tr>
+              <td colspan="2"></td>
+              <td class="left"><a onclick="addsteamReq();" class="btn btn-primary"
+			  >{{ button_add }}</a></td>
+            </tr>
+          </tfoot>
+        </table>
+		<script>
+		var steam_req_row = {{ steam_req_row }};
+		
+		function addsteamReq()
+		{
+			html = '';
+			
+			html += '<tbody id="steam_req-row'+steam_req_row+'">';
+			html += '<tr>';
+			html += '<td class="left">';
+			html += '<input type="text" class="form-control" name="socnetauth2_steam_req['+steam_req_row+'][domain]"   />';
+			html += '</td>';
+			html += '<td class="left">';
+			html += '<input type="text" class="form-control" ';
+			html += ' name="socnetauth2_steam_req['+steam_req_row+'][api_key]"  />';
+			html += '</td>';
+			html += '<td class="left"><a onclick="$(\'#steam_req-row'+steam_req_row+'\').remove();" class="btn btn-primary">{{ button_remove }}</a></td>';
+			html += '</tr> ';
+			html += '</tbody>';
+			
+			$('#steam_req tfoot').before(html);
+			
+			steam_req_row++;
+		}
+		</script>
+		</div>
+	  </div>
+	
+	  
+	  <div id="tab-telegram" class="tab-pane">
+	  <input type="hidden" name="socnetauth2_telegram_agent" 
+	  value="extension">
+	  <p>Инструкция по интергации с Телеграм по ссылке:<br>
+		<a href="https://ocart.ru/socnetauth2/telegram" target=_blank
+		>https://ocart.ru/socnetauth2/telegram</a>
+		</p>
+		 <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_telegram_status }}
+			</label>
+            <div class="col-sm-10">
+			  <select name="socnetauth2_telegram_status" class="form-control"> 
+				  {% if socnetauth2_telegram_status %}
+					<option value="1" selected="selected">{{ text_enabled }}</option>
+					<option value="0" >{{ text_disabled }}</option>
+                  {% else %}
+					<option value="1">{{ text_enabled }}</option>
+					<option value="0" selected="selected" >{{ text_disabled }}</option>
+                  {% endif %}
+                </select>
+			</div>
+        </div>
+		 <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_debug }}
+			</label>
+            <div class="col-sm-10">
+				<select name="socnetauth2_telegram_debug" class="form-control">
+				  {% if socnetauth2_telegram_debug %} 
+					<option value="1" selected="selected">{{ text_enabled }}</option>
+					<option value="0" >{{ text_disabled }}</option>
+                  {% else %}
+					<option value="1">{{ text_enabled }}</option>
+					<option value="0" selected="selected" >{{ text_disabled }}</option>
+                  {% endif %}
+                </select>
+				<div>{{ text_debug_notice }}</div>
+			</div>
+        </div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_socnet_title }}
+			</label>
+			<div class="col-sm-10">
+				{% for language in languages %} 
+					<p>
+					<input type="text"  class="form-control" 
+						name="socnetauth2_telegram_title[{{ language['language_id'] }}]" 
+						value="{{ socnetauth2_telegram_title[ language['language_id'] ] }}" >&nbsp;<img 
+						src="{{ language['image'] }}" title="{{ language['name'] }}" align="top" />
+					</p>
+				{% endfor %}
+			</div>
+		</div>
+		
+	  <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_telegram_customer_group_id }}
+			</label>
+            <div class="col-sm-10">
+				<select name="socnetauth2_telegram_customer_group_id" class="form-control" >
+					{% for customer_group in customer_groups %}  
+                    {% if customer_group['customer_group_id'] == socnetauth2_telegram_customer_group_id %} 
+                    <option value="{{ customer_group['customer_group_id'] }}" selected="selected">{{ customer_group['name'] }}</option>
+                    {% else %}
+                    <option value="{{ customer_group['customer_group_id'] }}">{{ customer_group['name'] }}</option>
+                    {% endif %}
+                    {% endfor %}
+                  </select>
+			</div>
+        </div>
+		
+		
+		 <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_redirect_url_telegram }}
+			</label>
+            <div class="col-sm-10"> 
+				<table class="table table-bordered table-hover">
+				<tr>
+					<td>
+						<div>	
+							<input type="text" class="form-control" disabled value="{{ telegram_redirect_url_new }}">
+						</div>
+						<div>{{ entry_redirect_url_telegram_notice }}</div>
+					</td>
+					<td width=20%> 
+						<a onclick="copyToClipboard('{{ telegram_redirect_url_new }}');"
+							class="btn btn-primary">{{ text_copy }}</a>
+					</td>
+					
+				</tr>
+				</table> 
+			</div>
+        </div> 
+		
+		<table id="telegram_req" class="table table-bordered table-hover">
+          <thead>
+            <tr>
+              <td class="left">{{ col_domain }}</td>
+              <td class="left">{{ entry_telegram_bot_username }}</td>
+              <td class="left">{{ entry_telegram_bot_token }}</td>
+              <td></td>
+            </tr>
+          </thead>
+          <tbody id="telegram_req-row">
+            <tr>
+              <td class="left">
+				  {{ text_default_domain }}
+			  </td>
+              <td class="left">
+				<input type="text" class="form-control" name="socnetauth2_telegram_bot_username"  
+				value="{{ socnetauth2_telegram_bot_username }}" />
+			  </td>
+              <td class="left">
+				<input type="text" class="form-control" 
+				name="socnetauth2_telegram_bot_token"  
+				value="{{ socnetauth2_telegram_bot_token }}" />
+			  </td>
+			  <td></td>
+			</tr>
+          </tbody>
+          {% set telegram_req_row = 0 %}
+		  {% for req in socnetauth2_telegram_req %}   
+          <tbody id="telegram_req-row{{ telegram_req_row }}">
+            <tr>
+              <td class="left">
+				<input type="text" class="form-control" name="socnetauth2_telegram_req[{{ telegram_req_row }}][domain]"  
+				value="{{ req['domain'] }}" />
+			  </td>
+              <td class="left">
+				<input type="text" class="form-control" 
+				name="socnetauth2_telegram_req[{{ telegram_req_row }}][bot_username]"  
+				value="{{ req['bot_username'] }}" />
+			  </td>
+              <td class="left">
+				<input type="text" class="form-control" 
+				name="socnetauth2_telegram_req[{{ telegram_req_row }}][bot_token]"  
+				value="{{ req['bot_token'] }}" />
+			  </td>
+			  <td><a onclick="$('#telegram_req-row{{ telegram_req_row }}').remove();" class="btn btn-primary">{{ button_remove }}</a></td>
+			</tr> 
+          </tbody>
+		  {% set telegram_req_row = telegram_req_row + 1 %}
+          {% endfor %}
+          <tfoot>
+            <tr>
+              <td colspan="3"></td>
+              <td class="left"><a onclick="addTelegramReq();" class="btn btn-primary"
+			  >{{ button_add }}</a></td>
+            </tr>
+          </tfoot>
+        </table>
+		<script>
+		var telegram_req_row = {{ telegram_req_row }};
+		
+		function addTelegramReq()
+		{
+			html = '';
+			
+			html += '<tbody id="telegram_req-row'+telegram_req_row+'">';
+			html += '<tr>';
+			html += '<td class="left">';
+			html += '<input type="text" class="form-control" name="socnetauth2_telegram_req['+telegram_req_row+'][domain]"   />';
+			html += '</td>';
+			html += '<td class="left">';
+			html += '<input type="text" class="form-control" ';
+			html += ' name="socnetauth2_telegram_req['+telegram_req_row+'][bot_username]"  />';
+			html += '</td>';
+			html += '<td class="left">';
+			html += '<input type="text" class="form-control" ';
+			html += 'name="socnetauth2_telegram_req['+telegram_req_row+'][bot_token]"   />';
+			html += '</td>';
+			html += '<td class="left"><a onclick="$(\'#telegram_req-row'+telegram_req_row+'\').remove();" class="btn btn-primary">{{ button_remove }}</a></td>';
+			html += '</tr> ';
+			html += '</tbody>';
+			
+			
+			$('#telegram_req tfoot').before(html);
+			
+			telegram_req_row++;
+		}
+		</script>
+	  </div>
+	  
+	  <div id="tab-tinkoff" class="tab-pane">
+	  <input type="hidden" name="socnetauth2_tinkoff_agent" 
+	  value="extension">
+	  <p>Инструкция по интергации с Tinkoff ID по ссылке:<br>
+		<a href="https://ocart.ru/socnetauth2/tinkoff" target=_blank
+		>https://ocart.ru/socnetauth2/tinkoff</a>
+		</p>
+		 <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_tinkoff_status }}
+			</label>
+            <div class="col-sm-10">
+			  <select name="socnetauth2_tinkoff_status" class="form-control"> 
+				  {% if socnetauth2_tinkoff_status %}
+					<option value="1" selected="selected">{{ text_enabled }}</option>
+					<option value="0" >{{ text_disabled }}</option>
+                  {% else %}
+					<option value="1">{{ text_enabled }}</option>
+					<option value="0" selected="selected" >{{ text_disabled }}</option>
+                  {% endif %}
+                </select>
+			</div>
+        </div> 
+		 <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_debug }}
+			</label>
+            <div class="col-sm-10">
+				<select name="socnetauth2_tinkoff_debug" class="form-control">
+				  {% if socnetauth2_tinkoff_debug %}
+					<option value="1" selected="selected">{{ text_enabled }}</option>
+					<option value="0" >{{ text_disabled }}</option>
+                  {% else %}
+					<option value="1">{{ text_enabled }}</option>
+					<option value="0" selected="selected" >{{ text_disabled }}</option>
+                  {% endif %}
+                </select>
+				<div>{{ text_debug_notice }}</div>
+			</div>
+        </div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_socnet_title }}
+			</label>
+			<div class="col-sm-10">
+				
+				{% for language in languages %}
+				<p>
+				<input type="text"  class="form-control"  name="socnetauth2_tinkoff_title[{{ language['language_id'] }}]" 
+				value="{{ socnetauth2_tinkoff_title[ language['language_id'] ] }}" >&nbsp;<img 
+				src="{{ language['image'] }}" title="{{ language['name'] }}" align="top" />
+				</p>
+				{% endfor %}
+				
+			</div>
+		</div>
+		
+	  <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_tinkoff_customer_group_id }}
+			</label>
+            <div class="col-sm-10">
+				<select name="socnetauth2_tinkoff_customer_group_id" class="form-control" > 
+                    {% for customer_group in customer_groups %}
+                    {% if customer_group['customer_group_id'] == socnetauth2_tinkoff_customer_group_id %}
+                    <option value="{{ customer_group['customer_group_id'] }}" selected="selected">{{ customer_group['name'] }}</option>
+                    {% else %}
+                    <option value="{{ customer_group['customer_group_id'] }}">{{ customer_group['name'] }}</option>
+                    {% endif %}
+                    {% endfor %} 
+                  </select>
+			</div>
+        </div>
+		
+		
+		 <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_redirect_url_tinkoff }}
+			</label>
+            <div class="col-sm-10"> 
+				<table class="table table-bordered table-hover">
+				<tr>
+					<td>
+						<div>	
+							<input type="text" class="form-control" disabled value="{{ tinkoff_redirect_url_new }}">
+						</div>
+						<div>{{ entry_redirect_url_tinkoff_notice }}</div>
+					</td>
+					<td width=20%> 
+						<a onclick="copyToClipboard('{{ tinkoff_redirect_url_new }}');"
+							class="btn btn-primary">{{ text_copy }}</a>
+					</td>
+					
+				</tr>
+				</table> 
+			</div>
+        </div> 
+		
+		<table id="tinkoff_req" class="table table-bordered table-hover">
+          <thead>
+            <tr>
+              <td class="left">{{ col_domain }}</td>
+              <td class="left">{{ entry_tinkoff_client_id }}</td>
+              <td class="left">{{ entry_tinkoff_client_secret }}</td>
+              <td></td>
+            </tr>
+          </thead>
+          <tbody id="tinkoff_req-row">
+            <tr>
+              <td class="left">
+				  {{ text_default_domain }}
+			  </td>
+              <td class="left">
+				<input type="text" class="form-control" name="socnetauth2_tinkoff_client_id"  
+				value="{{ socnetauth2_tinkoff_client_id }}" />
+			  </td>
+              <td class="left">
+				<input type="text" class="form-control" 
+				name="socnetauth2_tinkoff_client_secret"  
+				value="{{ socnetauth2_tinkoff_client_secret }}" />
+			  </td>
+			  <td></td>
+			</tr>
+          </tbody>
+		  {% set tinkoff_req_row = 0 %}
+		  {% for req in socnetauth2_tinkoff_req %} 
+          <tbody id="tinkoff_req-row{{ tinkoff_req_row }}">
+            <tr>
+              <td class="left">
+				<input type="text" class="form-control" name="socnetauth2_tinkoff_req[{{ tinkoff_req_row}}][domain]"  
+				value="{{ req['domain'] }}" />
+			  </td>
+              <td class="left">
+				<input type="text" class="form-control" 
+				name="socnetauth2_tinkoff_req[{{ tinkoff_req_row}}][bot_username]"  
+				value="{{ req['bot_username'] }}" />
+			  </td>
+              <td class="left">
+				<input type="text" class="form-control" 
+				name="socnetauth2_tinkoff_req[{{ tinkoff_req_row}}][bot_token]"  
+				value="{{ req['bot_token'] }}" />
+			  </td>
+			  <td><a onclick="$('#tinkoff_req-row{{ tinkoff_req_row}}').remove();" class="btn btn-primary">{{ button_remove }}</a></td>
+			</tr> 
+          </tbody>
+		  {% set tinkoff_req_row = tinkoff_req_row + 1 %}
+          {% endfor %}
+          <tfoot>
+            <tr>
+              <td colspan="3"></td>
+              <td class="left"><a onclick="addTinkoffReq();" class="btn btn-primary"
+			  >{{ button_add }}</a></td>
+            </tr>
+          </tfoot>
+        </table>
+		<script>
+		var tinkoff_req_row = {{ tinkoff_req_row }};
+		
+		function addTinkoffReq()
+		{
+			html = '';
+			
+			html += '<tbody id="tinkoff_req-row'+tinkoff_req_row+'">';
+			html += '<tr>';
+			html += '<td class="left">';
+			html += '<input type="text" class="form-control" name="socnetauth2_tinkoff_req['+tinkoff_req_row+'][domain]"   />';
+			html += '</td>';
+			html += '<td class="left">';
+			html += '<input type="text" class="form-control" ';
+			html += ' name="socnetauth2_tinkoff_req['+tinkoff_req_row+'][client_id]"  />';
+			html += '</td>';
+			html += '<td class="left">';
+			html += '<input type="text" class="form-control" ';
+			html += 'name="socnetauth2_tinkoff_req['+tinkoff_req_row+'][client_secret]"   />';
+			html += '</td>';
+			html += '<td class="left"><a onclick="$(\'#tinkoff_req-row'+tinkoff_req_row+'\').remove();" class="btn btn-primary">{{ button_remove }}</a></td>';
+			html += '</tr> ';
+			html += '</tbody>';
+			
+			
+			$('#tinkoff_req tfoot').before(html);
+			
+			tinkoff_req_row++;
+		}
+		</script>
+	  </div>
+	  <div id="tab-dobor" class="tab-pane">
+	  
+        <p><b>{{ entry_confirm_data }}</b></p>
+		
+		<div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_dobortype }}
+			</label>
+            <div class="col-sm-10">
+			
+				<select  class="form-control" name="socnetauth2_dobortype">
+					<option value="one"
+                    {% if socnetauth2_dobortype == 'one' %}selected {% endif %}
+					>{{ entry_dobortype_one }}</option>
+					<option value="every"
+                    {% if socnetauth2_dobortype == 'every' %} selected {% endif %}
+					>{{ entry_dobortype_every }}</option>
+				</select>
+			</div>
+        </div>
+		
+		
+		<div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_dobor_pages }}
+			</label>
+            <div class="col-sm-10">
+				<table >  
+					<tr>
+						<td >{{ entry_redirect_url_account }}</td>
+						<td style="padding-left: 10px;"><select  class="form-control" 
+							name="socnetauth2_dobor_page_account"
+							>
+								<option value="1"
+									{% if socnetauth2_dobor_page_account %} selected {% endif %}
+								>{{ text_enabled }}</option>
+								<option value="0"
+									{% if socnetauth2_dobor_page_account %}{% else %} selected {% endif %}
+								>{{ text_disabled }}</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td >{{ entry_redirect_url_reg }}</td>
+						<td style="padding-left: 10px;" ><select  class="form-control" 
+							name="socnetauth2_dobor_page_reg"
+							>
+								<option value="1"
+									{% if socnetauth2_dobor_page_reg %} selected {% endif %}
+								>{{ text_enabled }}</option>
+								<option value="0"
+									{% if socnetauth2_dobor_page_reg %} {% else %} selected {% endif %}
+								>{{ text_disabled }}</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td >{{ entry_redirect_url_checkout }}</td>
+						<td  style="padding-left: 10px;"><select  class="form-control" 
+							name="socnetauth2_dobor_page_checkout"
+							>
+								<option value="1"
+									{% if socnetauth2_dobor_page_checkout %} selected {% endif %}
+								>{{ text_enabled }}</option>
+								<option value="0"
+									{% if socnetauth2_dobor_page_checkout %} {% else %}  selected {% endif %}
+								>{{ text_disabled }}</option>
+							</select>
+						</td>
+					</tr>
+				</table>
+			</div>
+        </div>
+		
+		<div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_is_close_disabled }}
+			</label>
+            <div class="col-sm-10" style="padding: 20px;">
+				<input type="checkbox" class="form-control" 
+				name="socnetauth2_is_close_disabled"  
+				value="1" 
+			   {% if socnetauth2_is_close_disabled  %} checked {% endif %}
+				/>
+			</div>
+        </div>
+		
+		<div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_confirm_firstname }}
+			</label>
+            <div class="col-sm-10">
+			<select  class="form-control" name="socnetauth2_confirm_firstname_status">
+                    {% if socnetauth2_confirm_firstname_status == 1 %}
+					<option value="0">{{ text_confirm_disable }}</option>
+					<option value="1" selected="selected" >{{ text_confirm_none }}</option>
+					<option value="2" >{{ text_confirm_allways }}</option>
+					{% elseif socnetauth2_confirm_firstname_status == 2 %}
+					<option value="0">{{ text_confirm_disable }}</option>
+					<option value="1" >{{ text_confirm_none }}</option>
+					<option value="2" selected="selected" >{{ text_confirm_allways }}</option>
+				  {% else %}
+					<option value="0" selected="selected">{{ text_confirm_disable }}</option>
+					<option value="1">{{ text_confirm_none }}</option>
+					<option value="2">{{ text_confirm_allways }}</option>
+				  {% endif %}
+                </select>
+				<input type="checkbox" name="socnetauth2_confirm_firstname_required" value="1"
+				id="socnetauth2_confirm_firstname_required"
+			   {% if socnetauth2_confirm_firstname_required  %}
+				checked
+				{% endif %}
+				><label for="socnetauth2_confirm_firstname_required">{{ text_required }}</label>
+				
+				<input type="checkbox" name="socnetauth2_confirm_firstname_hideifhas" value="1"
+				id="socnetauth2_confirm_firstname_hideifhas"
+				 {% if socnetauth2_confirm_firstname_hideifhas  %}
+				checked
+				{% endif %}
+				><label for="socnetauth2_confirm_firstname_hideifhas"
+				>{{ text_hideifhas }}</label>
+				
+			</div>
+        </div>
+		
+		<div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_confirm_lastname }}
+			</label>
+            <div class="col-sm-10">
+			<select  class="form-control" name="socnetauth2_confirm_lastname_status">
+					{% if socnetauth2_confirm_lastname_status == 1 %}
+					<option value="0">{{ text_confirm_disable }}</option>
+					<option value="1" selected="selected" >{{ text_confirm_none }}</option>
+					<option value="2" >{{ text_confirm_allways }}</option>
+					{% elseif socnetauth2_confirm_lastname_status == 2 %}
+					<option value="0">{{ text_confirm_disable }}</option>
+					<option value="1" >{{ text_confirm_none }}</option>
+					<option value="2" selected="selected" >{{ text_confirm_allways }}</option>
+				  {% else %}
+					<option value="0" selected="selected">{{ text_confirm_disable }}</option>
+					<option value="1">{{ text_confirm_none }}</option>
+					<option value="2">{{ text_confirm_allways }}</option>
+				  {% endif %}
+                 </select>
+				<input type="checkbox" name="socnetauth2_confirm_lastname_required" value="1"
+				id="socnetauth2_confirm_lastname_required"
+			   {% if socnetauth2_confirm_lastname_required  %}
+				checked
+				{% endif %}
+				><label for="socnetauth2_confirm_lastname_required">{{ text_required }}</label>
+				
+				
+				<input type="checkbox" name="socnetauth2_confirm_lastname_hideifhas" value="1"
+				id="socnetauth2_confirm_lastname_hideifhas"
+				 {% if socnetauth2_confirm_lastname_hideifhas  %}
+				checked
+				{% endif %}
+				><label for="socnetauth2_confirm_lastname_hideifhas"
+				>{{ text_hideifhas }}</label>
+				
+			</div>
+        </div>
+		
+		<div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_confirm_email }}
+			</label>
+            <div class="col-sm-10">
+			<select  class="form-control" name="socnetauth2_confirm_email_status">
+					{% if socnetauth2_confirm_email_status == 1 %}
+					<option value="0">{{ text_confirm_disable }}</option>
+					<option value="1" selected="selected" >{{ text_confirm_none }}</option>
+					<option value="2" >{{ text_confirm_allways }}</option>
+					{% elseif socnetauth2_confirm_email_status == 2 %}
+					<option value="0">{{ text_confirm_disable }}</option>
+					<option value="1" >{{ text_confirm_none }}</option>
+					<option value="2" selected="selected" >{{ text_confirm_allways }}</option>
+				  {% else %}
+					<option value="0" selected="selected">{{ text_confirm_disable }}</option>
+					<option value="1">{{ text_confirm_none }}</option>
+					<option value="2">{{ text_confirm_allways }}</option>
+				  {% endif %}
+                </select>
+				<input type="checkbox" name="socnetauth2_confirm_email_required" value="1"
+				id="socnetauth2_confirm_email_required"
+			   {% if socnetauth2_confirm_email_required  %}
+				checked
+				{% endif %}
+				><label for="socnetauth2_confirm_email_required">{{ text_required }}</label>
+				<input type="checkbox" name="socnetauth2_confirm_email_hideifhas" value="1"
+				id="socnetauth2_confirm_email_hideifhas"
+				 {% if socnetauth2_confirm_email_hideifhas  %}
+				checked
+				{% endif %}
+				><label for="socnetauth2_confirm_email_hideifhas"
+				>{{ text_hideifhas }}</label>
+				
+			</div>
+        </div>
+		
+		<div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_confirm_phone }}
+			</label>
+            <div class="col-sm-10">
+			<select  class="form-control" name="socnetauth2_confirm_telephone_status">
+                 {% if socnetauth2_confirm_telephone_status == 1  %}
+					<option value="0">{{ text_confirm_disable }}</option>
+					<option value="1" selected="selected" >{{ text_confirm_none }}</option>
+					<option value="2" >{{ text_confirm_allways }}</option>
+                  {% elseif socnetauth2_confirm_telephone_status == 2  %}
+					<option value="0">{{ text_confirm_disable }}</option>
+					<option value="1" >{{ text_confirm_none }}</option>
+					<option value="2" selected="selected" >{{ text_confirm_allways }}</option>
+				  {% else %}
+					<option value="0" selected="selected">{{ text_confirm_disable }}</option>
+					<option value="1">{{ text_confirm_none }}</option>
+					<option value="2">{{ text_confirm_allways }}</option>
+				  {% endif %}
+                 </select>
+				<input type="checkbox" name="socnetauth2_confirm_telephone_required" value="1"
+				id="socnetauth2_confirm_telephone_required"
+			   {% if socnetauth2_confirm_telephone_required  %}
+				checked
+				{% endif %}
+				><label for="socnetauth2_confirm_telephone_required">{{ text_required }}</label>
+				
+				<input type="checkbox" name="socnetauth2_confirm_telephone_hideifhas" value="1"
+				id="socnetauth2_confirm_telephone_hideifhas"
+				 {% if socnetauth2_confirm_telephone_hideifhas  %}
+				checked
+				{% endif %}
+				><label for="socnetauth2_confirm_telephone_hideifhas"
+				>{{ text_hideifhas }}</label>
+			</div>
+        </div>
+		
+		{#  start 1409 #}
+		<div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_telephone_mask }}
+			</label>
+            <div class="col-sm-10">
+				<input type="text"  class="form-control"
+				name="socnetauth2_telephone_mask" 
+				value="{{ socnetauth2_telephone_mask }}" >
+				<div>{{ entry_telephone_mask_notice }}</div>
+			</div>
+        </div>
+		{#  end 1409 #}
+		<div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_confirm_company }}
+			</label>
+            <div class="col-sm-10">
+			<select  class="form-control" name="socnetauth2_confirm_company_status">
+                 {% if socnetauth2_confirm_company_status == 1  %}
+					<option value="0">{{ text_confirm_disable }}</option>
+					<option value="1" selected="selected" >{{ text_confirm_none }}</option>
+					<option value="2" >{{ text_confirm_allways }}</option>
+                  {% elseif socnetauth2_confirm_company_status == 2  %}
+					<option value="0">{{ text_confirm_disable }}</option>
+					<option value="1" >{{ text_confirm_none }}</option>
+					<option value="2" selected="selected" >{{ text_confirm_allways }}</option>
+				  {% else %}
+					<option value="0" selected="selected">{{ text_confirm_disable }}</option>
+					<option value="1">{{ text_confirm_none }}</option>
+					<option value="2">{{ text_confirm_allways }}</option>
+				  {% endif %}
+                 </select>
+				<input type="checkbox" name="socnetauth2_confirm_company_required" value="1"
+				id="socnetauth2_confirm_company_required"
+			   {% if socnetauth2_confirm_company_required  %}
+				checked
+				{% endif %}
+				><label for="socnetauth2_confirm_company_required">{{ text_required }}</label>
+				
+				<input type="checkbox" name="socnetauth2_confirm_company_hideifhas" value="1"
+				id="socnetauth2_confirm_company_hideifhas"
+				 {% if socnetauth2_confirm_company_hideifhas  %}
+				checked
+				{% endif %}
+				><label for="socnetauth2_confirm_company_hideifhas"
+				>{{ text_hideifhas }}</label>
+			</div>
+        </div>
+		
+		<div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_confirm_username }}
+			</label>
+            <div class="col-sm-10">
+			<select  class="form-control" name="socnetauth2_confirm_username_status"> 
+				{% if socnetauth2_confirm_username_status == 1 %}
+					<option value="0">{{ text_confirm_disable }}</option>
+					<option value="1" selected="selected" >{{ text_confirm_none }}</option>
+					<option value="2" >{{ text_confirm_allways }}</option>
+                  {% elseif socnetauth2_confirm_username_status == 2  %} 
+					<option value="0">{{ text_confirm_disable }}</option>
+					<option value="1" >{{ text_confirm_none }}</option>
+					<option value="2" selected="selected" >{{ text_confirm_allways }}</option>
+				  {% else %}
+					<option value="0" selected="selected">{{ text_confirm_disable }}</option>
+					<option value="1">{{ text_confirm_none }}</option>
+					<option value="2">{{ text_confirm_allways }}</option>
+				  {% endif %}
+                 </select>
+				<input type="checkbox" name="socnetauth2_confirm_username_required" value="1"
+				id="socnetauth2_confirm_username_required"
+				{% if socnetauth2_confirm_username_required %} 
+				checked
+				{% endif %}
+				><label for="socnetauth2_confirm_username_required">{{ text_required }}</label>
+				 
+				<input type="checkbox" name="socnetauth2_confirm_username_hideifhas" value="1"
+				id="socnetauth2_confirm_username_hideifhas"
+				{% if socnetauth2_confirm_username_hideifhas %}  
+				checked
+				{% endif %}
+				><label for="socnetauth2_confirm_username_hideifhas">{{ text_hideifhas }}</label> 
+				
+			</div>
+        </div>
+		<div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_confirm_postcode }}
+			</label>
+            <div class="col-sm-10">
+			<select  class="form-control" name="socnetauth2_confirm_postcode_status">
+                 {% if socnetauth2_confirm_postcode_status == 1  %}
+					<option value="0">{{ text_confirm_disable }}</option>
+					<option value="1" selected="selected" >{{ text_confirm_none }}</option>
+					<option value="2" >{{ text_confirm_allways }}</option>
+                  {% elseif socnetauth2_confirm_postcode_status == 2  %}
+					<option value="0">{{ text_confirm_disable }}</option>
+					<option value="1" >{{ text_confirm_none }}</option>
+					<option value="2" selected="selected" >{{ text_confirm_allways }}</option>
+				  {% else %}
+					<option value="0" selected="selected">{{ text_confirm_disable }}</option>
+					<option value="1">{{ text_confirm_none }}</option>
+					<option value="2">{{ text_confirm_allways }}</option>
+				  {% endif %}
+                 </select>
+				<input type="checkbox" name="socnetauth2_confirm_postcode_required" value="1"
+				id="socnetauth2_confirm_postcode_required"
+			   {% if socnetauth2_confirm_postcode_required  %}
+				checked
+				{% endif %}
+				><label for="socnetauth2_confirm_postcode_required">{{ text_required }}</label>
+				
+				
+				<input type="checkbox" name="socnetauth2_confirm_postcode_hideifhas" value="1"
+				id="socnetauth2_confirm_postcode_hideifhas"
+				 {% if socnetauth2_confirm_postcode_hideifhas  %}
+				checked
+				{% endif %}
+				><label for="socnetauth2_confirm_postcode_hideifhas"
+				>{{ text_hideifhas }}</label>
+			</div>
+        </div>
+		
+		<div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_confirm_country }}
+			</label>
+            <div class="col-sm-10">
+			<select  class="form-control" name="socnetauth2_confirm_country_status">
+                 {% if socnetauth2_confirm_country_status == 1  %}
+					<option value="0">{{ text_confirm_disable }}</option>
+					<option value="1" selected="selected" >{{ text_confirm_none }}</option>
+					<option value="2" >{{ text_confirm_allways }}</option>
+                  {% elseif socnetauth2_confirm_country_status == 2  %}
+					<option value="0">{{ text_confirm_disable }}</option>
+					<option value="1" >{{ text_confirm_none }}</option>
+					<option value="2" selected="selected" >{{ text_confirm_allways }}</option>
+				  {% else %}
+					<option value="0" selected="selected">{{ text_confirm_disable }}</option>
+					<option value="1">{{ text_confirm_none }}</option>
+					<option value="2">{{ text_confirm_allways }}</option>
+				  {% endif %}
+                 </select>
+				<input type="checkbox" name="socnetauth2_confirm_country_required" value="1"
+				id="socnetauth2_confirm_country_required"
+			   {% if socnetauth2_confirm_country_required  %}
+				checked
+				{% endif %}
+				><label for="socnetauth2_confirm_country_required">{{ text_required }}</label>
+				
+				<input type="checkbox" name="socnetauth2_confirm_country_hideifhas" value="1"
+				id="socnetauth2_confirm_country_hideifhas"
+				 {% if socnetauth2_confirm_country_hideifhas  %}
+				checked
+				{% endif %}
+				><label for="socnetauth2_confirm_country_hideifhas"
+				>{{ text_hideifhas }}</label>
+			</div>
+        </div>
+		
+		<div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_confirm_zone }}
+			</label>
+            <div class="col-sm-10">
+			<select  class="form-control" name="socnetauth2_confirm_zone_status">
+                 {% if socnetauth2_confirm_zone_status == 1  %}
+					<option value="0">{{ text_confirm_disable }}</option>
+					<option value="1" selected="selected" >{{ text_confirm_none }}</option>
+					<option value="2" >{{ text_confirm_allways }}</option>
+                  {% elseif socnetauth2_confirm_zone_status == 2  %}
+					<option value="0">{{ text_confirm_disable }}</option>
+					<option value="1" >{{ text_confirm_none }}</option>
+					<option value="2" selected="selected" >{{ text_confirm_allways }}</option>
+				  {% else %}
+					<option value="0" selected="selected">{{ text_confirm_disable }}</option>
+					<option value="1">{{ text_confirm_none }}</option>
+					<option value="2">{{ text_confirm_allways }}</option>
+				  {% endif %}
+                 </select>
+				<input type="checkbox" name="socnetauth2_confirm_zone_required" value="1"
+				id="socnetauth2_confirm_zone_required"
+			   {% if socnetauth2_confirm_zone_required  %}
+				checked
+				{% endif %}
+				><label for="socnetauth2_confirm_zone_required">{{ text_required }}</label>
+				
+				<input type="checkbox" name="socnetauth2_confirm_zone_hideifhas" value="1"
+				id="socnetauth2_confirm_zone_hideifhas"
+				 {% if socnetauth2_confirm_zone_hideifhas  %}
+				checked
+				{% endif %}
+				><label for="socnetauth2_confirm_zone_hideifhas"
+				>{{ text_hideifhas }}</label>
+			</div>
+        </div>
+		
+		<div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_confirm_city }}
+			</label>
+            <div class="col-sm-10">
+			<select  class="form-control" name="socnetauth2_confirm_city_status">
+                 {% if socnetauth2_confirm_city_status == 1  %}
+					<option value="0">{{ text_confirm_disable }}</option>
+					<option value="1" selected="selected" >{{ text_confirm_none }}</option>
+					<option value="2" >{{ text_confirm_allways }}</option>
+                  {% elseif socnetauth2_confirm_city_status == 2  %}
+					<option value="0">{{ text_confirm_disable }}</option>
+					<option value="1" >{{ text_confirm_none }}</option>
+					<option value="2" selected="selected" >{{ text_confirm_allways }}</option>
+				  {% else %}
+					<option value="0" selected="selected">{{ text_confirm_disable }}</option>
+					<option value="1">{{ text_confirm_none }}</option>
+					<option value="2">{{ text_confirm_allways }}</option>
+				  {% endif %}
+                 </select>
+				<input type="checkbox" name="socnetauth2_confirm_city_required" value="1"
+				id="socnetauth2_confirm_city_required"
+			   {% if socnetauth2_confirm_city_required  %}
+				checked
+				{% endif %}
+				><label for="socnetauth2_confirm_city_required">{{ text_required }}</label>
+				
+				<input type="checkbox" name="socnetauth2_confirm_city_hideifhas" value="1"
+				id="socnetauth2_confirm_city_hideifhas"
+				 {% if socnetauth2_confirm_city_hideifhas  %}
+				checked
+				{% endif %}
+				><label for="socnetauth2_confirm_city_hideifhas"
+				>{{ text_hideifhas }}</label>
+			</div>
+        </div>
+		
+		<div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_confirm_address_1 }}
+			</label>
+            <div class="col-sm-10">
+			<select  class="form-control" name="socnetauth2_confirm_address_1_status">
+                 {% if socnetauth2_confirm_address_1_status == 1  %}
+					<option value="0">{{ text_confirm_disable }}</option>
+					<option value="1" selected="selected" >{{ text_confirm_none }}</option>
+					<option value="2" >{{ text_confirm_allways }}</option>
+                  {% elseif socnetauth2_confirm_address_1_status == 2  %}
+					<option value="0">{{ text_confirm_disable }}</option>
+					<option value="1" >{{ text_confirm_none }}</option>
+					<option value="2" selected="selected" >{{ text_confirm_allways }}</option>
+				  {% else %}
+					<option value="0" selected="selected">{{ text_confirm_disable }}</option>
+					<option value="1">{{ text_confirm_none }}</option>
+					<option value="2">{{ text_confirm_allways }}</option>
+				  {% endif %}
+                 </select>
+				<input type="checkbox" name="socnetauth2_confirm_address_1_required" value="1"
+				id="socnetauth2_confirm_address_1_required"
+			   {% if socnetauth2_confirm_address_1_required  %}
+				checked
+				{% endif %}
+				><label for="socnetauth2_confirm_address_1_required">{{ text_required }}</label>
+				
+				<input type="checkbox" name="socnetauth2_confirm_address_1_hideifhas" value="1"
+				id="socnetauth2_confirm_address_1_hideifhas"
+				 {% if socnetauth2_confirm_address_1_hideifhas  %}
+				checked
+				{% endif %}
+				><label for="socnetauth2_confirm_address_1_hideifhas"
+				>{{ text_hideifhas }}</label>
+			</div>
+        </div>
+		
+		{#  start 0102 #}
+		<div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_confirm_group }}
+			</label>
+            <div class="col-sm-10">
+				<select  class="form-control" name="socnetauth2_confirm_group_status">
+                 {% if socnetauth2_confirm_group_status == 1  %}
+					<option value="0">{{ text_disabled }}</option>
+					<option value="1" selected="selected" >{{ text_enabled }}</option>
+				  {% else %}
+					<option value="0" selected="selected" >{{ text_disabled }}</option>
+					<option value="1">{{ text_enabled }}</option>
+				  
+				  {% endif %}
+                 </select>
+				<input type="checkbox" name="socnetauth2_confirm_group_required" value="1"
+				id="socnetauth2_confirm_group_required"
+			   {% if socnetauth2_confirm_group_required  %}
+				checked
+				{% endif %}
+				><label for="socnetauth2_confirm_group_required">{{ text_required }}</label>
+				
+				<input type="checkbox" name="socnetauth2_confirm_group_hideifhas" value="1"
+				id="socnetauth2_confirm_group_hideifhas"
+				 {% if socnetauth2_confirm_group_hideifhas  %}
+				checked
+				{% endif %}
+				><label for="socnetauth2_confirm_group_hideifhas"
+				>{{ text_hideifhas }}</label>
+			</div>
+        </div>
+		{#  end 0102 #}
+		
+		{#  start 1303 #}
+		<div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_agree }}
+			</label>
+            <div class="col-sm-10">
+				<select  class="form-control" name="socnetauth2_confirm_agree_status">
+					<option value="0">{{ entry_agree_no }}</option>
+					
+                 {% for inf in informations %}
+					<option value="{{ inf['information_id'] }}" 
+					{% if inf['information_id'] == socnetauth2_confirm_agree_status %} 
+					selected="selected" {% endif %}
+					>{{ inf['title'] }}</option>
+				  {% endfor %}
+                 </select>
+				<input type="checkbox" name="socnetauth2_confirm_agree_required" value="1"
+				id="socnetauth2_confirm_agree_required"
+			   {% if socnetauth2_confirm_agree_required  %}
+				checked
+				{% endif %}
+				><label for="socnetauth2_confirm_agree_required">{{ text_required }}</label>
+			</div>
+        </div>
+		{#  end 1303 #}
+		<div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_agree2 }}
+			</label>
+            <div class="col-sm-10">
+				<select  class="form-control" name="socnetauth2_confirm_agree2_status">
+					<option value="0">{{ entry_agree_no }}</option>
+                 {% for inf in informations %}
+					<option value="{{ inf['information_id'] }}" 
+					
+					{% if inf['information_id'] == socnetauth2_confirm_agree2_status %}  
+					 selected="selected" {% endif %}
+					>{{ inf['title'] }}</option>
+				  {% endfor %}
+                 </select>
+				<input type="checkbox" name="socnetauth2_confirm_agree2_required" value="1"
+				id="socnetauth2_confirm_agree2_required"
+			   {% if socnetauth2_confirm_agree2_required  %} 
+				checked
+				{% endif %}
+				><label for="socnetauth2_confirm_agree2_required">{{ text_required  }}</label>
+			</div>
+        </div>
+		
+		<div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_agree3 }}
+			</label>
+            <div class="col-sm-10">
+				<select  class="form-control" name="socnetauth2_confirm_agree3_status">
+					<option value="0">{{ entry_agree_no }}</option>
+					
+                 {% for inf in informations %}
+					<option value="{{ inf['information_id'] }}" 
+					{% if inf['information_id'] == socnetauth2_confirm_agree3_status %}  
+					  selected="selected" {% endif %}
+					>{{ inf['title'] }}</option>
+				  {% endfor %}
+                 </select>
+				<input type="checkbox" name="socnetauth2_confirm_agree3_required" value="1"
+				id="socnetauth2_confirm_agree3_required"
+			   {% if socnetauth2_confirm_agree3_required  %}  
+				checked
+				{% endif %}
+				><label for="socnetauth2_confirm_agree3_required">{{ text_required }}</label>
+			</div>
+        </div>
+		
+		<div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_confirm_newsletter }}
+			</label>
+            <div class="col-sm-10">
+				<select  class="form-control" name="socnetauth2_confirm_newsletter">
+					{% if socnetauth2_confirm_newsletter %}
+					<option value="0">{{ text_disabled }}</option>
+					<option value="1" selected="selected" >{{ text_enabled }}</option>
+				    {% else %}
+					<option value="0" selected="selected" >{{ text_disabled }}</option>
+					<option value="1">{{ text_enabled }}</option>
+					{% endif %}
+                 </select>
+			</div>
+        </div>
+		
+	  </div>
+	  <!-- /////////////////////////////////////////////////////////////////////////////// -->
+	  <div id="tab-widget" class="tab-pane">
+	  
+		<div class="form-group">
+            <label class="col-sm-2 control-label" for="input-access-secret">
+				{{ entry_widget_name }}
+			</label>
+            <div class="col-sm-10">
+			
+	  		{% for language in languages %}
+			<p>
+			<input type="text"  class="form-control"  name="socnetauth2_widget_name[{{ language['language_id'] }}]" 
+			value="{{ socnetauth2_widget_name[ language['language_id'] ] }}" >&nbsp;<img 
+			src="{{ language['image'] }}" title="{{ language['name'] }}" align="top" />
+			</p>
+			{% endfor %}
+			</div>
+        </div>
+		
+	  </div>
+	  <!-- /////////////////////////////////////////////////////////////////////////////// -->
+	  
+	  <div id="tab-design" class="tab-pane">
+		<div class="row">
+		
+			<div class="col-sm-2">
+				<ul class="nav nav-pills nav-stacked">
+					<li {% if tab2 == 'general' %}class="active" {% endif %} style="cursor: pointer;">
+						<a onclick="$('#hiddentab2').val('general'); $('.design_options').hide(); $('#tab-design-general').show();" data-toggle="tab" 
+						aria-expanded="true"> {{ tab_design_general }}</a>
+					</li>
+					<li  {% if tab2 == 'account' %}class="active" {% endif %} style="cursor: pointer;">
+						<a onclick="$('#hiddentab2').val('account'); $('.design_options').hide(); $('#tab-design-account').show();" data-toggle="tab" 
+						aria-expanded="true"> {{ tab_design_account }}</a>
+					</li>
+					<li  {% if tab2 == 'checkout' %}class="active" {% endif %} style="cursor: pointer;">
+						<a onclick="$('#hiddentab2').val('checkout'); $('.design_options').hide(); $('#tab-design-checkout').show();" data-toggle="tab" 
+						aria-expanded="true"> {{ tab_design_checkout }}</a>
+					</li>
+					<li  {% if tab2 == 'reg' %}class="active" {% endif %} style="cursor: pointer;">
+						<a onclick="$('#hiddentab2').val('reg'); $('.design_options').hide(); $('#tab-design-reg').show();"
+						data-toggle="tab" 
+						aria-expanded="true">{{ tab_design_reg }}</a>
+					</li>
+					<li  {% if tab2 == 'icons' %}class="active" {% endif %} style="cursor: pointer; display: none;">
+						<a onclick="$('#hiddentab2').val('icons'); $('.design_options').hide(); $('#tab-design-icons').show();"
+						data-toggle="tab" 
+						aria-expanded="true">{{ tab_design_icons }}</a>
+					</li>
+					
+					<li  {% if tab2 == 'widget' %}class="active" {% endif %} style="cursor: pointer;">
+						<a onclick="$('#hiddentab2').val('widget'); $('.design_options').hide(); $('#tab-design-widget').show();"
+						data-toggle="tab" 
+						aria-expanded="true">{{ tab_design_widget }}</a>
+					</li>
+					
+					<li  {% if tab2 == 'popup' %}class="active" {% endif %} style="cursor: pointer;">
+						<a onclick="$('#hiddentab2').val('popup'); $('.design_options').hide(); $('#tab-design-popup').show();"
+						data-toggle="tab" 
+						aria-expanded="true">{{ tab_design_popup }}</a>
+					</li>
+					
+					<li  {% if tab2 == 'confirm' %}class="active" {% endif %} style="cursor: pointer;">
+						<a onclick="$('#hiddentab2').val('confirm'); $('.design_options').hide(); $('#tab-design-confirm').show();"
+						data-toggle="tab" 
+						aria-expanded="true">{{ tab_design_confirm }}</a>
+					</li>
+					
+				</ul>
+			</div>
+			<div class="col-sm-10">
+			
+				<div id="tab-design-general" class="design_options"
+				 {% if tab2 != 'general' %} style="display: none;" {% endif %}
+				>
+					<h2>{{ tab_design_general }}</h2>
+					
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="input-access-secret">
+							{{ entry_design_notice }}
+						</label>
+						<div class="col-sm-10">
+							{{ entry_design_notice_text }}
+						</div>
+					</div>
+					
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="input-access-secret">
+							{{ entry_design_general_css }}
+						</label>
+						<div class="col-sm-10">
+							<textarea class="form-control" rows=10
+							name="socnetauth2_design_general_css"
+							>{{ socnetauth2_design_general_css }}</textarea>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="input-access-secret">
+							{{ entry_telegram_html }}
+						</label>
+						<div class="col-sm-10">
+							<textarea class="form-control" rows=3
+							name="socnetauth2_telegram_html"
+							>{{ socnetauth2_telegram_html }}</textarea>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="input-access-secret">
+							{{ entry_telegram_code }}
+						</label>
+						<div class="col-sm-10"> 
+							<textarea class="form-control" rows=3 
+							name="socnetauth2_telegram_code"
+							>{{ socnetauth2_telegram_code }}</textarea>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="input-access-secret">
+							{{ entry_socnets_icons }}
+						</label>
+						<div class="col-sm-10">
+							<style>
+							.table_icons { border-top: 1px #ccc solid; border-left: 1px #ccc solid; width: 100%; }
+							.table_icons td { padding: 10px; border-bottom: 1px #ccc solid; border-right: 1px #ccc solid;  }
+							</style>
+							<table class="table_icons">
+								<tr>
+									<td><b>{{ entry_socnets_icons_name }}</td>
+									<td><b>{{ entry_socnets_icons_sort_order }}</td>
+									<td><b>{{ entry_socnets_icons_image }}</td>
+								</tr>
+								{% for key,item in socnetauth2_socnets_icons %} 
+								<tr>
+									<td>{{ item['name'] }}</td>
+									<td><input type="text" name="socnetauth2_socnets_icons[{{ item['key'] }}][sort_order]" 
+										 class="form-control" value="{{ item['sort_order'] }}" /></td>
+									<td>
+										<div id="icon_{{ item['key'] }}" >
+											
+											<a href=""  
+												id="thumb_{{ item['key'] }}" 
+												data-toggle="image" 
+												class="img-thumbnail"
+											><img src="{{ item['thumb'] }}" 
+											alt="" title="" 
+											data-placeholder="{{ item['thumb'] }}" 
+											></a>
+											
+											<input type="hidden" 
+											name="socnetauth2_socnets_icons[{{ item['key'] }}][image]" 
+											id="image_{{ item['key'] }}"
+											value="{{ item['image'] }}">
+											
+										</div>
+									</td>
+								</tr>
+								{% endfor %}
+							</table>
+						</div>
+					</div>
+					
+					
+				</div>
+			
+				<div id="tab-design-account" class="design_options"
+				 {% if tab2 != 'account' %} style="display: none;" {% endif %}>
+					<h2>{{ tab_design_account }}</h2>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="input-access-secret">
+							{{ entry_status }}
+						</label>
+						<div class="col-sm-10">
+							<select name="socnetauth2_design_account_status" class="form-control" >
+							  {% if socnetauth2_design_account_status %}
+								<option value="1" selected="selected">{{ text_enabled }}</option>
+								<option value="0" >{{ text_disabled }}</option>
+							  {% else %}
+								<option value="1">{{ text_enabled }}</option>
+								<option value="0" selected="selected" >{{ text_disabled }}</option>
+							  {% endif %}
+							</select>
+						</div>
+					</div>
+					<div class="form-group" style="display: none;">
+						<label class="col-sm-2 control-label" for="input-access-secret">
+							{{ entry_design_html }}
+						</label>
+						<div class="col-sm-7">
+							<textarea class="form-control" rows=3
+							name="socnetauth2_design_account_html"
+							>{{ socnetauth2_design_account_html }}</textarea>
+						</div>
+						<label class="col-sm-3">
+							{{ entry_design_html_tags }}
+						</label>
+					</div>
+					<div id="block_account_bline"
+						{% if socnetauth2_account_format == 'bline' %}{% else %} style="display: none;" {% endif %} 
+					>
+						<div class="form-group">  
+							<label class="col-sm-2 control-label" for="input-access-secret">
+								{{ entry_design_html }}
+							</label>
+							<div class="col-sm-7">
+								<textarea class="form-control" rows=3
+								name="socnetauth2_design_account_bline_html"
+								>{{ socnetauth2_design_account_bline_html }}</textarea>
+							</div>
+							<label class="col-sm-3">
+								{{ entry_design_html_tags }}
+							</label>
+						</div> 
+						<div class="form-group">  
+							<label class="col-sm-2 control-label" for="input-access-secret">
+								{{ entry_design_row_html }}
+							</label>
+							<div class="col-sm-7">
+								<textarea class="form-control" rows=3
+								name="socnetauth2_design_account_bline_row_html"
+								>{{ socnetauth2_design_account_bline_row_html }}</textarea>
+							</div>
+							<label class="col-sm-3">
+								{{ entry_design_html_row_tags }}
+							</label>
+						</div> 
+					</div>
+					<div id="block_account_kvadrat"
+						{% if socnetauth2_account_format == 'kvadrat' %}{% else %} style="display: none;" {% endif %}  
+					>
+						<div class="form-group">  
+							<label class="col-sm-2 control-label" for="input-access-secret">
+								{{ entry_design_html }}
+							</label>
+							<div class="col-sm-7">
+								<textarea class="form-control" rows=3
+								name="socnetauth2_design_account_kvadrat_html"
+								>{{ socnetauth2_design_account_kvadrat_html }}</textarea>
+							</div>
+							<label class="col-sm-3">
+								{{ entry_design_html_tags }}
+							</label>
+						</div> 
+						<div class="form-group">  
+							<label class="col-sm-2 control-label" for="input-access-secret">
+								{{ entry_design_row_html }}
+							</label>
+							<div class="col-sm-7">
+								<textarea class="form-control" rows=3
+								name="socnetauth2_design_account_kvadrat_row_html"
+								>{{ socnetauth2_design_account_kvadrat_row_html }}</textarea>
+							</div>
+							<label class="col-sm-3">
+								{{ entry_design_html_row_tags }}
+							</label>
+						</div> 
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="input-access-secret">
+							{{ entry_design_css }}
+						</label>
+						<div class="col-sm-10">
+							<textarea class="form-control" rows=3
+							name="socnetauth2_design_account_css"
+							>{{ socnetauth2_design_account_css }}</textarea>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="input-access-secret">
+							{{ entry_design_header }}
+						</label>
+						<div class="col-sm-10">
+							{% for language in languages %}
+							<p>
+								<input type="text"  class="form-control" 
+								name="socnetauth2_design_account_header[{{ language['language_id'] }}]" 
+								value="{{ socnetauth2_design_account_header[ language['language_id'] ] }}" 
+								>&nbsp;<img 
+								src="{{ language['image'] }}" align="top" />
+							</p>
+							{% endfor %}
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label" >
+							{{ entry_account_imagesize }}
+						</label>
+						<div class="col-sm-10"> 
+							  <div class="row">
+								<div class="col-sm-6">
+								  <input type="text" name="socnetauth2_account_imagesize_width" value="{{ socnetauth2_account_imagesize_width }}" 
+								    class="form-control">
+								</div>
+								<div class="col-sm-6">
+								  <input type="text" name="socnetauth2_account_imagesize_height" value="{{ socnetauth2_account_imagesize_height }}" 
+								  class="form-control">
+								</div>
+							  </div> 
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="input-access-secret">
+							{{ entry_design_format }}
+						</label>
+						<div class="col-sm-10">
+							<table class="format_table" cellpadding=0 cellspacing=0 width=100%>
+							<tr>
+								<td width=50%><input type="radio" name="socnetauth2_account_format" value="bline"
+								 {% if socnetauth2_account_format == 'bline' %} 
+								 checked  
+								 {% endif %}  
+								onclick="showHideDesignBlock('bline', 'account');"
+								id="socnetauth2_account_format_bline"
+								><label for="socnetauth2_account_format_bline">{{ text_format_bline }}</label></td>
+								
+								<td width=50%><input type="radio" name="socnetauth2_account_format" value="kvadrat"
+								{% if socnetauth2_account_format == 'kvadrat' %} 
+								 checked  
+								 {% endif %}  
+								 
+								id="socnetauth2_account_format_kvadrat"
+								onclick="showHideDesignBlock('kvadrat', 'account');"
+								><label for="socnetauth2_account_format_kvadrat"
+								>{{ text_format_kvadrat }}</label></td> 
+								 
+								</td>
+							</tr>
+							<tr>
+								<td valign=top><img src="view/image/socnetauth2/bline.png" style="border: 1px #ededed solid;"></td>
+								<td valign=top><img src="view/image/socnetauth2/kvadrat.png" style="border: 1px #ededed solid;"></td>
+							</tr>
+							
+							</table>
+						</div>
+					</div>
+					
+					
+				</div>
+				<div id="tab-design-checkout" class="design_options"
+				 {% if tab2 != 'checkout' %} style="display: none;" {% endif %}>
+					
+					<h2>{{ tab_design_checkout }}</h2>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="input-access-secret">
+							{{ entry_status }}
+						</label>
+						<div class="col-sm-10">
+							<select name="socnetauth2_design_checkout_status" class="form-control" >
+							  {% if socnetauth2_design_checkout_status %}
+								<option value="1" selected="selected">{{ text_enabled }}</option>
+								<option value="0" >{{ text_disabled }}</option>
+							  {% else %}
+								<option value="1">{{ text_enabled }}</option>
+								<option value="0" selected="selected" >{{ text_disabled }}</option>
+							  {% endif %}
+							</select>
+						</div>
+					</div>
+					<div class="form-group" style="display: none;">
+						<label class="col-sm-2 control-label" for="input-access-secret">
+							{{ entry_design_html }}
+						</label>
+						<div class="col-sm-7">
+							<textarea class="form-control" rows=3
+							name="socnetauth2_design_checkout_html"
+							>{{ socnetauth2_design_checkout_html }}</textarea>
+						</div>
+						<label class="col-sm-3">
+							{{ entry_design_html_tags }}
+						</label>
+					</div>
+					
+					<div id="block_checkout_bline"
+						{% if socnetauth2_checkout_format == 'bline' %} {% else %} style="display: none;" 
+								 {% endif %}   
+					>
+						<div class="form-group">  
+							<label class="col-sm-2 control-label" for="input-access-secret">
+								{{ entry_design_html }}
+							</label>
+							<div class="col-sm-7">
+								<textarea class="form-control" rows=3
+								name="socnetauth2_design_checkout_bline_html"
+								>{{ socnetauth2_design_checkout_bline_html }}</textarea>
+							</div>
+							<label class="col-sm-3">
+								{{ entry_design_html_tags }}
+							</label>
+						</div> 
+						<div class="form-group">  
+							<label class="col-sm-2 control-label" for="input-access-secret">
+								{{ entry_design_row_html }}
+							</label>
+							<div class="col-sm-7">
+								<textarea class="form-control" rows=3
+								name="socnetauth2_design_checkout_bline_row_html"
+								>{{ socnetauth2_design_checkout_bline_row_html }}</textarea>
+							</div>
+							<label class="col-sm-3">
+								{{ entry_design_html_row_tags }}
+							</label>
+						</div> 
+					</div>
+					<div id="block_checkout_kvadrat" 
+						{% if socnetauth2_checkout_format == 'kvadrat' %} {% else %} style="display: none;" 
+								 {% endif %}   
+					>
+						<div class="form-group">  
+							<label class="col-sm-2 control-label" for="input-access-secret">
+								{{ entry_design_html }}
+							</label>
+							<div class="col-sm-7">
+								<textarea class="form-control" rows=3
+								name="socnetauth2_design_checkout_kvadrat_html"
+								>{{ socnetauth2_design_checkout_kvadrat_html }}</textarea>
+							</div>
+							<label class="col-sm-3">
+								{{ entry_design_html_tags }}
+							</label>
+						</div> 
+						<div class="form-group">  
+							<label class="col-sm-2 control-label" for="input-access-secret">
+								{{ entry_design_row_html }}
+							</label>
+							<div class="col-sm-7">
+								<textarea class="form-control" rows=3
+								name="socnetauth2_design_checkout_kvadrat_row_html"
+								>{{ socnetauth2_design_checkout_kvadrat_row_html }}</textarea>
+							</div>
+							<label class="col-sm-3">
+								{{ entry_design_html_row_tags }}
+							</label>
+						</div> 
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="input-access-secret">
+							{{ entry_design_css }}
+						</label>
+						<div class="col-sm-10">
+							<textarea class="form-control" rows=3
+							name="socnetauth2_design_checkout_css"
+							>{{ socnetauth2_design_checkout_css }}</textarea>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="input-access-secret">
+							{{ entry_design_header }}
+						</label>
+						<div class="col-sm-10">
+							{% for language in languages %}
+							<p>
+								<input type="text"  class="form-control" 
+								name="socnetauth2_design_checkout_header[{{ language['language_id'] }}]" 
+								value="{{ socnetauth2_design_checkout_header[ language['language_id'] ] }}" >&nbsp;<img 
+								src="{{ language['image'] }}" title="{{ language['name'] }}" align="top" />
+							</p>
+							{% endfor %}
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label" >
+							{{ entry_checkout_imagesize }}
+						</label>
+						<div class="col-sm-10"> 
+							  <div class="row">
+								<div class="col-sm-6">
+								  <input type="text" name="socnetauth2_checkout_imagesize_width" value="{{ socnetauth2_checkout_imagesize_width }}" 
+								    class="form-control">
+								</div>
+								<div class="col-sm-6">
+								  <input type="text" name="socnetauth2_checkout_imagesize_height" value="{{ socnetauth2_checkout_imagesize_height }}" 
+								  class="form-control">
+								</div>
+							  </div> 
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="input-access-secret">
+							{{ entry_design_format }}
+						</label>
+						<div class="col-sm-10">
+							
+							<table class="format_table" cellpadding=0 cellspacing=0 width=100%>
+							<tr>
+								
+								<td width=50%><input type="radio" name="socnetauth2_checkout_format" value="bline" 
+								{% if socnetauth2_checkout_format == 'bline' %} checked {% endif %} 
+								id="socnetauth2_checkout_format_bline"
+								onclick="showHideDesignBlock('bline', 'checkout');"
+								><label for="socnetauth2_checkout_format_bline">{{ text_format_bline }}</label></td>
+								
+								<td width=50%><input type="radio" name="socnetauth2_checkout_format" value="kvadrat"
+								onclick="showHideDesignBlock('kvadrat', 'checkout');"
+								{% if socnetauth2_checkout_format == 'kvadrat' %} checked {% endif %} 
+								id="socnetauth2_checkout_format_kvadrat"
+								><label for="socnetauth2_checkout_format_kvadrat"
+								>{{ text_format_kvadrat }}</label></td>
+							</tr>
+							<tr>
+								<td valign=top><img src="view/image/socnetauth2/bline.png" style="border: 1px #ededed solid;"></td>
+								<td valign=top><img src="view/image/socnetauth2/kvadrat.png" style="border: 1px #ededed solid;"></td>
+							</tr>
+							
+							</table>
+						</div>
+					</div>
+					
+					
+				</div>
+				<div id="tab-design-reg" class="design_options"
+				{% if tab2 != 'reg' %} style="display: none;" {% endif %}>
+					<h2>{{ tab_design_reg }}</h2>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="input-access-secret">
+							{{ entry_status }}
+						</label>
+						<div class="col-sm-10">
+							<select name="socnetauth2_design_reg_status" class="form-control" >
+							  {% if socnetauth2_design_reg_status %}
+								<option value="1" selected="selected">{{ text_enabled }}</option>
+								<option value="0" >{{ text_disabled }}</option>
+							  {% else %}
+								<option value="1">{{ text_enabled }}</option>
+								<option value="0" selected="selected" >{{ text_disabled }}</option>
+							  {% endif %}
+							</select>
+						</div>
+					</div>
+					<div class="form-group" style="display: none;" >
+						<label class="col-sm-2 control-label" for="input-access-secret">
+							{{ entry_design_html }}
+						</label>
+						<div class="col-sm-7">
+							<textarea class="form-control" rows=3
+							name="socnetauth2_design_reg_html"
+							>{{ socnetauth2_design_reg_html }}</textarea>
+						</div>
+						<label class="col-sm-3">
+							{{ entry_design_html_tags }}
+						</label>
+					</div>
+					<div id="block_reg_bline" 
+						{% if socnetauth2_reg_format == 'bline' %} {% else %} style="display: none;" 
+								 {% endif %}   
+					>
+						<div class="form-group">  
+							<label class="col-sm-2 control-label" for="input-access-secret">
+								{{ entry_design_html }}
+							</label>
+							<div class="col-sm-7">
+								<textarea class="form-control" rows=3
+								name="socnetauth2_design_reg_bline_html"
+								>{{ socnetauth2_design_reg_bline_html }}</textarea>
+							</div>
+							<label class="col-sm-3">
+								{{ entry_design_html_tags }}
+							</label>
+						</div> 
+						<div class="form-group">  
+							<label class="col-sm-2 control-label" for="input-access-secret">
+								{{ entry_design_row_html }}
+							</label>
+							<div class="col-sm-7">
+								<textarea class="form-control" rows=3
+								name="socnetauth2_design_reg_bline_row_html"
+								>{{ socnetauth2_design_reg_bline_row_html }}</textarea>
+							</div>
+							<label class="col-sm-3">
+								{{ entry_design_html_row_tags }}
+							</label>
+						</div> 
+					</div>
+					<div id="block_reg_kvadrat" 
+						{% if socnetauth2_reg_format == 'kvadrat' %} {% else %} style="display: none;" 
+								 {% endif %}   
+					>
+						<div class="form-group">  
+							<label class="col-sm-2 control-label" for="input-access-secret">
+								{{ entry_design_html }}
+							</label>
+							<div class="col-sm-7">
+								<textarea class="form-control" rows=3
+								name="socnetauth2_design_reg_kvadrat_html"
+								>{{ socnetauth2_design_reg_kvadrat_html }}</textarea>
+							</div>
+							<label class="col-sm-3">
+								{{ entry_design_html_tags }}
+							</label>
+						</div> 
+						<div class="form-group">  
+							<label class="col-sm-2 control-label" for="input-access-secret">
+								{{ entry_design_row_html }}
+							</label>
+							<div class="col-sm-7">
+								<textarea class="form-control" rows=3
+								name="socnetauth2_design_reg_kvadrat_row_html"
+								>{{ socnetauth2_design_reg_kvadrat_row_html }}</textarea>
+							</div>
+							<label class="col-sm-3">
+								{{ entry_design_html_row_tags }}
+							</label>
+						</div> 
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="input-access-secret">
+							{{ entry_design_css }}
+						</label>
+						<div class="col-sm-10">
+							<textarea class="form-control" rows=3
+							name="socnetauth2_design_reg_css"
+							>{{ socnetauth2_design_reg_css }}</textarea>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="input-access-secret">
+							{{ entry_design_header }}
+						</label>
+						<div class="col-sm-10">
+							{% for language in languages %}
+							<p>
+								<input type="text"  class="form-control" 
+								name="socnetauth2_design_reg_header[{{ language['language_id'] }}]" 
+								value="{{ socnetauth2_design_reg_header[ language['language_id'] ] }}" >&nbsp;<img 
+								src="{{ language['image'] }}" title="{{ language['name'] }}" align="top" />
+							</p>
+							{% endfor %}
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label" >
+							{{ entry_reg_imagesize }}
+						</label>
+						<div class="col-sm-10"> 
+							  <div class="row">
+								<div class="col-sm-6">
+								  <input type="text" name="socnetauth2_reg_imagesize_width" value="{{ socnetauth2_reg_imagesize_width }}" 
+								    class="form-control">
+								</div>
+								<div class="col-sm-6">
+								  <input type="text" name="socnetauth2_reg_imagesize_height" value="{{ socnetauth2_reg_imagesize_height }}" 
+								  class="form-control">
+								</div>
+							  </div> 
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="input-access-secret">
+							{{ entry_design_format }}
+						</label>
+						<div class="col-sm-10">
+							
+							<table class="format_table" cellpadding=0 cellspacing=0 width=100%>
+							<tr>
+								
+								<td width=50%><input type="radio" name="socnetauth2_reg_format" value="bline"
+								{% if socnetauth2_reg_format == 'bline' %} checked {% endif %}  
+								onclick="showHideDesignBlock('bline', 'reg');"
+								id="socnetauth2_reg_format_bline"
+								><label for="socnetauth2_reg_format_bline">{{ text_format_bline }}</label></td>
+								
+								<td width=50%><input type="radio" name="socnetauth2_reg_format" value="kvadrat"
+								{% if socnetauth2_reg_format == 'kvadrat' %} checked {% endif %} 
+								onclick="showHideDesignBlock('kvadrat', 'reg');"
+								id="socnetauth2_reg_format_kvadrat"
+								><label for="socnetauth2_reg_format_kvadrat"
+								>{{ text_format_kvadrat }}</label></td>
+								
+							</tr>
+							<tr>
+								<td valign=top><img src="view/image/socnetauth2/bline.png" style="border: 1px #ededed solid;"></td>
+								<td valign=top><img src="view/image/socnetauth2/kvadrat.png" style="border: 1px #ededed solid;"></td>
+							</tr>
+							
+							</table>
+						</div>
+					</div>
+					
+				</div>
+				<div id="tab-design-icons" class="design_options"
+				{% if tab2 != 'icons' %} style="display: none;" {% endif %}>
+					<h2>{{ tab_design_icons }}</h2>
+					<div>{{ text_count_icons }} <select id="count_icons"
+					onchange="$('.count_icons_blocks').hide(); $('#count_icons_block'+this.value).show();"
+					>
+					{% for i in range(1, 9) %}
+						<option value="{{ i }}"
+						{% if i == count_icons %} selected {% endif %}
+						>{{ i }}</option>
+					{% endfor %}
+					</select> {{ text_current_count_icons }}{{ count_icons }}</div><br>
+					<div>{{ text_count_icons_notice }}</div>
+					
+					{% for i in range(1, 9) %}
+					<div id="count_icons_block{{ i }}" class="count_icons_blocks"
+					{% if i!=count_icons %} style="display: none;" {% endif %}
+					>
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="input-access-secret">
+							{{ entry_bline_html[i] }}
+						</label>
+						<div class="col-sm-10">
+							<textarea class="form-control" rows={{ i+6 }}
+							name="socnetauth2_bline_html[{{ i }}]"
+							>{{ socnetauth2_bline_html[i] }}</textarea>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="input-access-secret">
+							{{ entry_lline_html[i] }}
+						</label>
+						<div class="col-sm-10">
+							<textarea class="form-control" rows={{ i+6 }}
+							name="socnetauth2_lline_html[{{ i }}]"
+							>{{ socnetauth2_lline_html[i] }}</textarea>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="input-access-secret">
+							{{ entry_kvadrat_html[i] }}
+						</label>
+						<div class="col-sm-10">
+							<textarea class="form-control" rows={{ i+6 }}
+							name="socnetauth2_kvadrat_html[{{ i }}]"
+							>{{ socnetauth2_kvadrat_html[i] }}</textarea>
+						</div>
+					</div>
+					</div>
+					
+					{% endfor %}
+				</div>
+				
+				<div id="tab-design-widget" class="design_options"
+				{% if tab2 != 'widget' %} style="display: none;" {% endif %}>
+					<h2>{{ tab_design_widget }}</h2>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="input-access-secret">
+							{{ entry_widget_notice }}
+						</label>
+						<div class="col-sm-10">
+							{{ entry_widget_notice_text }} 
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="input-access-secret">
+							{{ entry_status }}
+						</label>
+						<div class="col-sm-10">
+							<select name="socnetauth2_design_widget_status" class="form-control" >
+							 {% if socnetauth2_design_widget_status %}
+								<option value="1" selected="selected">{{ text_enabled }}</option>
+								<option value="0" >{{ text_disabled }}</option>
+							  {% else %}
+								<option value="1">{{ text_enabled }}</option>
+								<option value="0" selected="selected" >{{ text_disabled }}</option>
+							  {% endif %}
+							</select>
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="input-access-secret">
+							{{ entry_widget_after }}
+						</label>
+						<div class="col-sm-10">
+							<select  class="form-control" name="socnetauth2_widget_after">
+								<option value="hide"
+								{% if socnetauth2_widget_after=='hide' %} selected {% endif %}
+								>{{ text_widget_after_hide }}</option>
+								<option value="show"
+								{% if socnetauth2_widget_after=='show' %} selected {% endif %}
+								>{{ text_widget_after_show }}</option>
+							</select>
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="input-access-secret">
+							{{ entry_design_widget_name }}
+						</label>
+						<div class="col-sm-10">
+							{% for language in languages %}
+							<p>
+								<input type="text"  class="form-control" 
+								name="socnetauth2_widget_name[{{ language['language_id'] }}]" 
+								value="{{ socnetauth2_widget_name[ language['language_id'] ] }}" >&nbsp;<img 
+								src="{{ language['image'] }}" title="{{ language['name'] }}" align="top" />
+							</p>
+							{% endfor %}
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label" >
+							{{ entry_reg_imagesize }}
+						</label>
+						<div class="col-sm-10"> 
+							  <div class="row">
+								<div class="col-sm-6">
+								  <input type="text" name="socnetauth2_widget_imagesize_width" value="{{ socnetauth2_widget_imagesize_width }}" 
+								    class="form-control">
+								</div>
+								<div class="col-sm-6">
+								  <input type="text" name="socnetauth2_widget_imagesize_height" value="{{ socnetauth2_widget_imagesize_height }}" 
+								  class="form-control">
+								</div>
+							  </div> 
+						</div>
+					</div>
+					
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="input-access-secret">
+							{{ entry_design_header }}
+						</label>
+						<div class="col-sm-10">
+							{% for language in languages %}
+							<p>
+								<input type="text"  class="form-control" 
+								name="socnetauth2_design_widget_header[{{ language['language_id'] }}]" 
+								value="{{ socnetauth2_design_widget_header[ language['language_id'] ] }}" 
+								>&nbsp;<img 
+								src="{{ language['image'] }}" align="top" />
+							</p>
+							{% endfor %}
+						</div>
+					</div>
+					 
+					<div id="block_widget_bline" 
+						{% if socnetauth2_widget_format == 'bline' %} {% else %} style="display: none;" 
+								 {% endif %}   
+					>
+						<div class="form-group">  
+							<label class="col-sm-2 control-label" for="input-access-secret">
+								{{ entry_design_html }}
+							</label>
+							<div class="col-sm-7">
+								<textarea class="form-control" rows=3
+								name="socnetauth2_design_widget_bline_html"
+								>{{ socnetauth2_design_widget_bline_html }}</textarea>
+							</div>
+							<label class="col-sm-3">
+								{{ entry_design_html_tags }}
+							</label>
+						</div> 
+						<div class="form-group">  
+							<label class="col-sm-2 control-label" for="input-access-secret">
+								{{ entry_design_row_html }}
+							</label>
+							<div class="col-sm-7">
+								<textarea class="form-control" rows=3
+								name="socnetauth2_design_widget_bline_row_html"
+								>{{ socnetauth2_design_widget_bline_row_html }}</textarea>
+							</div>
+							<label class="col-sm-3">
+								{{ entry_design_html_row_tags }}
+							</label>
+						</div> 
+					
+					</div>
+					<div id="block_widget_kvadrat" 
+						{% if socnetauth2_widget_format == 'kvadrat' %} {% else %} style="display: none;" 
+								 {% endif %}   
+					>
+					
+						<div class="form-group">  
+							<label class="col-sm-2 control-label" for="input-access-secret">
+								{{ entry_design_html }}
+							</label>
+							<div class="col-sm-7">
+								<textarea class="form-control" rows=3
+								name="socnetauth2_design_widget_kvadrat_html"
+								>{{ socnetauth2_design_widget_kvadrat_html }}</textarea>
+							</div>
+							<label class="col-sm-3">
+								{{ entry_design_html_tags }}
+							</label>
+						</div> 
+						<div class="form-group">  
+							<label class="col-sm-2 control-label" for="input-access-secret">
+								{{ entry_design_row_html }}
+							</label>
+							<div class="col-sm-7">
+								<textarea class="form-control" rows=3
+								name="socnetauth2_design_widget_kvadrat_row_html"
+								>{{ socnetauth2_design_widget_kvadrat_row_html }}</textarea>
+							</div>
+							<label class="col-sm-3">
+								{{ entry_design_html_row_tags }}
+							</label>
+						</div> 
+					
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="input-access-secret">
+							{{ entry_design_css }}
+						</label>
+						<div class="col-sm-10">
+							<textarea class="form-control" rows=3
+							name="socnetauth2_design_widget_css"
+							>{{ socnetauth2_design_widget_css }}</textarea>
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="input-access-secret">
+							{{ entry_widget_css_socnetauthbox }}
+						</label>
+						<div class="col-sm-10">
+							<textarea class="form-control" rows=3
+							name="socnetauth2_widget_css_socnetauthbox"
+							>{{ socnetauth2_widget_css_socnetauthbox }}</textarea>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="input-access-secret">
+							{{ entry_widget_css_socnetauthbox_socnetauthhead }}
+						</label>
+						<div class="col-sm-10">
+							<textarea class="form-control" rows=3
+							name="socnetauth2_widget_css_socnetauthbox_socnetauthhead"
+							>{{ socnetauth2_widget_css_socnetauthbox_socnetauthhead }}</textarea>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="input-access-secret">
+							{{ entry_widget_css_socnetauthbox_h3 }}
+						</label>
+						<div class="col-sm-10">
+							<textarea class="form-control" rows=3
+							name="socnetauth2_widget_css_socnetauthbox_h3"
+							>{{ socnetauth2_widget_css_socnetauthbox_h3 }}</textarea>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="input-access-secret">
+							{{ entry_widget_css_socnetauthbox_socnetauthbody }}
+						</label>
+						<div class="col-sm-10">
+							<textarea class="form-control" rows=3
+							name="socnetauth2_widget_css_socnetauthbox_socnetauthbody"
+							>{{ socnetauth2_widget_css_socnetauthbox_socnetauthbody }}</textarea>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="input-access-secret">
+							{{ entry_widget_css_socnetauthbox_socnetauthform }}
+						</label>
+						<div class="col-sm-10">
+							<textarea class="form-control" rows=3
+							name="socnetauth2_widget_css_socnetauthbox_socnetauthform"
+							>{{ socnetauth2_widget_css_socnetauthbox_socnetauthform }}</textarea>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="input-access-secret">
+							{{ entry_widget_css_socnetauthbox_socnetauthform_td }}
+						</label>
+						<div class="col-sm-10">
+							<textarea class="form-control" rows=3
+							name="socnetauth2_widget_css_socnetauthbox_socnetauthform_td"
+							>{{ socnetauth2_widget_css_socnetauthbox_socnetauthform_td }}</textarea>
+						</div>
+					</div> 
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="input-access-secret">
+							{{ entry_design_widget_format }}
+						</label>
+						<div class="col-sm-10">
+							
+							<table class="format_table" cellpadding=0 cellspacing=0 width=100%>
+							<tr>
+									
+								<td width=33%><input type="radio" name="socnetauth2_widget_format"
+								onclick="showHideDesignBlock('bline', 'widget');"
+								value="bline"
+								{% if socnetauth2_widget_format == 'bline' %} checked {% endif %}
+								id="socnetauth2_widget_format_bline"
+								><label for="socnetauth2_widget_format_bline">{{ text_format_bline }}</label></td>
+								 
+								<td width=33%><input type="radio" name="socnetauth2_widget_format" 
+								onclick="showHideDesignBlock('kvadrat', 'widget');"
+								value="kvadrat"
+								{% if socnetauth2_widget_format == 'kvadrat' %} checked {% endif %} 
+								id="socnetauth2_widget_format_kvadrat"
+								><label for="socnetauth2_widget_format_kvadrat"
+								>{{ text_format_kvadrat }}</label></td>
+							</tr>
+							<tr>
+								<td valign=top><img src="view/image/socnetauth2/bline.png" style="border: 1px #ededed solid;"></td>
+								<td valign=top><img src="view/image/socnetauth2/kvadrat.png" style="border: 1px #ededed solid;"></td>
+							</tr>
+							</table>
+						</div>
+					</div>
+					
+					
+				</div>
+				
+				<div id="tab-design-popup" class="design_options"
+				{% if tab2 != 'popup' %} style="display: none;" {% endif %}>
+					<h2>{{ tab_design_popup }}</h2>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="input-access-secret">
+							{{ entry_popup_notice }}
+						</label>
+						<div class="col-sm-10">
+							{{ entry_popup_notice_text }} 
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="input-access-secret">
+							{{ entry_mobile_control }}
+						</label>
+						<div class="col-sm-10">
+							<select name="socnetauth2_mobile_control" class="form-control" >
+							  {% if socnetauth2_mobile_control %}
+								<option value="1" selected="selected">{{ text_enabled }}</option>
+								<option value="0" >{{ text_disabled }}</option>
+							  {% else %}
+								<option value="1">{{ text_enabled }}</option>
+								<option value="0" selected="selected" >{{ text_disabled }}</option>
+							  {% endif %}
+							</select>
+						</div>
+					</div>
+				</div>
+				
+				<div id="tab-design-confirm" class="design_options"
+				{% if tab2 != 'confirm' %} style="display: none;" {% endif %}>
+				
+					<h2>{{ tab_design_confirm }}</h2>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="input-access-secret">
+							{{ entry_is_noiframe }}
+						</label>
+						<div class="col-sm-10">
+							<select name="socnetauth2_is_noiframe" class="form-control" >
+							  {% if socnetauth2_is_noiframe %}
+								<option value="1" selected="selected">{{ text_enabled }}</option>
+								<option value="0" >{{ text_disabled }}</option>
+							  {% else %}
+								<option value="1">{{ text_enabled }}</option>
+								<option value="0" selected="selected" >{{ text_disabled }}</option>
+							  {% endif %}
+							</select>
+							<div>{{ entry_is_noiframe_notice }}</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	  </div>
+	  
+	  
+	  
+	  
+	  <div id="tab-support" class="tab-pane">
+	  
+			
+			{{ text_contact }}
+	  </div>
+      </form>
+    </div>
+  </div>
+</div>
+	  
+	<script>
+		function set_tab()
+		{
+			if( $('#link-tab-general').attr('aria-expanded') == 'true' )
+			{
+				document.getElementById('hiddentab').value = 'link-tab-general';
+			}
+			
+			if( $('#link-tab-vkontakte').attr('aria-expanded') == 'true' )
+			{
+				document.getElementById('hiddentab').value = 'link-tab-vkontakte';
+			}
+			
+			if( $('#link-tab-facebook').attr('aria-expanded') == 'true' )
+			{
+				document.getElementById('hiddentab').value = 'link-tab-facebook';
+			}
+			
+			if( $('#link-tab-twitter').attr('aria-expanded') == 'true' )
+			{
+				document.getElementById('hiddentab').value = 'link-tab-twitter';
+			}
+			
+			if( $('#link-tab-odnoklassniki').attr('aria-expanded') == 'true' )
+			{
+				document.getElementById('hiddentab').value = 'link-tab-odnoklassniki';
+			}
+			
+			if( $('#link-tab-dobor').attr('aria-expanded') == 'true' )
+			{
+				document.getElementById('hiddentab').value = 'link-tab-dobor';
+			}
+			
+			if( $('#link-tab-widget').attr('aria-expanded') == 'true' )
+			{
+				document.getElementById('hiddentab').value = 'link-tab-widget';
+			}
+			
+			if( $('#link-tab-popup').attr('aria-expanded') == 'true' )
+			{
+				document.getElementById('hiddentab').value = 'link-tab-popup';
+			}
+			
+			if( $('#link-tab-design').attr('aria-expanded') == 'true' )
+			{
+				document.getElementById('hiddentab').value = 'link-tab-design';
+			}
+			
+			if( $('#link-tab-support').attr('aria-expanded') == 'true' )
+			{
+				document.getElementById('hiddentab').value = 'link-tab-support';
+			}
+			
+			/* start metka: a1 */
+			if( $('#link-tab-gmail').attr('aria-expanded') == 'true' )
+			{
+				document.getElementById('hiddentab').value = 'link-tab-gmail';
+			}
+			
+			if( $('#link-tab-mailru').attr('aria-expanded') == 'true' )
+			{
+				document.getElementById('hiddentab').value = 'link-tab-mailru';
+			}
+			
+			if( $('#link-tab-steam').attr('aria-expanded') == 'true' )
+			{
+				document.getElementById('hiddentab').value = 'link-tab-steam';
+			}
+			if( $('#link-tab-yandex').attr('aria-expanded') == 'true' )
+			{
+				document.getElementById('hiddentab').value = 'link-tab-yandex';
+			}
+			
+			if( $('#link-tab-telegram').attr('aria-expanded') == 'true' )
+			{
+				document.getElementById('hiddentab').value = 'link-tab-telegram';
+			}
+			
+			if( $('#link-tab-tinkoff').attr('aria-expanded') == 'true' )
+			{
+				document.getElementById('hiddentab').value = 'link-tab-tinkoff';
+			}
+		}
+		
+		$('#{{ tab }}').click();
+		
+
+
+	function showHideDesignBlock(format, str) // 'bline', 'account'
+	{
+		if( format == 'bline' )
+		{	
+			$('#block_'+str+'_bline').show();
+			$('#block_'+str+'_kvadrat').hide();
+		}
+		else
+		{
+			$('#block_'+str+'_bline').hide();
+			$('#block_'+str+'_kvadrat').show();
+		}
+		
+	}
+	
+	/* start 0305 */
+		function copyToClipboard(text) {
+			var $temp = $("<input>")
+			$("body").append($temp);
+			$temp.val(text).select();
+			document.execCommand("copy");
+			$temp.remove();
+		}
+	/* end 0305 */	
+	</script>
+{{ footer }}

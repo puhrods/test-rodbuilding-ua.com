@@ -1,0 +1,2211 @@
+{{ header }}{{ column_left }}
+<div id="content" class="orderpro-content">
+	<div class="page-header">
+		<div class="container-fluid">
+		  <div class="pull-right">
+			<div class="buttons">
+				{% if is_admin %}
+				<a href="{{ setting }}" data-toggle="tooltip" title="{{ button_setting_tooltip }}" class="btn btn-default btn-sm"><span class="hidden-sm hidden-xs">{{ button_setting }}</span><i class="fa fa-cog hidden-lg hidden-md" aria-hidden="true"></i></a>
+				<span class="term-button">|</span>
+				{% if order_id %}
+					{% if export_order %}<a href="{{ export_order }}" data-toggle="tooltip" title="{{ button_export_tooltip }}" class="btn btn-info btn-sm"><span class="hidden-sm hidden-xs">{{ button_export }}</span><i class="fa fa-table hidden-lg hidden-md" aria-hidden="true"></i></a>{% endif %}
+					<a onclick="window.open('{{ invoice }}&order_id={{ order_id }}');" data-toggle="tooltip" title="{{ button_invoce_tooltip }}" class="btn btn-primary btn-sm"><span class="hidden-sm hidden-xs">{{ button_invoce }}</span><i class="fa fa-print hidden-lg hidden-md" aria-hidden="true"></i></a>
+					{% if clone_order %}<a onclick="clone_order();" data-toggle="tooltip" title="{{ button_clone_tooltip }}" class="btn btn-primary btn-sm"><span class="hidden-sm hidden-xs">{{ button_clone }}</span><i class="fa fa-copy hidden-lg hidden-md" aria-hidden="true"></i></a>{% endif %}
+					<span class="term-button">|</span>
+				{% endif %}
+				<a onclick="apple_order();" data-toggle="tooltip" title="{{ button_apply_tooltip }}" class="btn btn-primary btn-sm"><span class="hidden-sm hidden-xs">{{ button_apply }}</span><i class="fa fa-save hidden-lg hidden-md" aria-hidden="true"></i></a>
+				<a onclick="save_order();" data-toggle="tooltip" title="{{ button_save_tooltip }}" class="btn btn-success btn-sm"><span class="hidden-sm hidden-xs">{{ button_save }}</span><i class="fa fa-save hidden-lg hidden-md" aria-hidden="true"></i></a>
+				{% endif %}
+				<a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel_tooltip }}" class="btn btn-danger btn-sm"><span class="hidden-sm hidden-xs">{{ button_cancel }}</span><i class="fa fa-reply hidden-lg hidden-md" aria-hidden="true"></i></a>
+			</div>
+		  </div>
+		  <h1>{{ heading_title }}</h1>
+		  <ul class="breadcrumb">
+			{% for breadcrumb in breadcrumbs %}
+			<li><a href="{{ breadcrumb['href'] }}">{{ breadcrumb['text'] }}</a></li>
+			{% endfor %}
+		  </ul>
+		</div>
+	</div>
+	<div id="notifications"></div>
+	<div class="container-fluid">
+    {% if success %}
+		<div class="alert alert-success"><i class="fa fa-check-circle"></i> {{ success }}<button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button></div>
+    {% endif %}
+	
+	{% if error_error %}
+		{% for alert in error_error %}<div class="alert alert-danger"><i class="fa fa-check-circle"></i> {{ alert }}</div>{% endfor %}
+	{% endif %}
+	{% if error_warning %}
+		{% for alert in error_warning %}<div class="alert alert-warning"><i class="fa fa-check-circle"></i> {{ alert }}</div>{% endfor %}
+	{% endif %}
+	{% if error_info %}
+		{% for alert in error_info %}<div class="alert alert-info"><i class="fa fa-check-circle"></i> {{ alert }}</div>{% endfor %}
+	{% endif %}
+	<div class="panel panel-default">
+	
+	<div class="panel-heading">
+		<h3 class="panel-title"><i class="fa fa-pencil"></i> {{ order_number }}</h3>
+	</div>
+	
+	<div class="panel-body content">
+		<form action="{{ action }}" method="post" enctype="multipart/form-data" id="order_form" class="order-form-all">
+		<ul class="nav nav-tabs">
+			{% if not orderpro_notabs_mode %}
+				<li class="active"><a href="#tab-order" data-toggle="tab">{{ tab_order }}</a></li>
+				<li><a href="#tab-history" data-toggle="tab">{{ tab_order_history }}</a></li>
+				<li><a href="#tab-total" data-toggle="tab">{{ tab_total }}</a></li>
+			{% else %}
+				<li class="active"><a href="#tab-allorder" data-toggle="tab">{{ tab_order }}</a></li>
+			{% endif %}
+		</ul>
+	
+		<div class="tab-content">
+			{% if orderpro_notabs_mode %}
+			<div id="tab-allorder" class="tab-pane active">
+			{% endif %}
+			<div id="tab-order"{% if not orderpro_notabs_mode %} class="tab-pane active"{% endif %}>
+				<div class="top-order">
+					<div class="row">
+						<div class="col-md-3 col-xs-4">
+						{% if customer_id %}
+							<a class="btn btn-default btn-sm" role="button">{{ text_account_exist }}</a>
+						{% else %}
+							<div class="btn-group btn-group-sm">
+								<a id="button-registered" class="btn btn-primary" role="button">{{ button_create_account }}</a>
+								<a tabindex="0" class="btn btn-primary btn-popover" data-placement="right" title="{{ help_registered_head }}" data-content="{{ help_registered }}" role="button"><i class="fa fa-question-circle fa-lg" aria-hidden="true"></i></a>
+							</div>
+						{% endif %}
+						</div>
+						<div class="col-md-3 col-xs-8 pull-right">
+							<div class="input-group input-group-sm">
+								<span class="input-group-addon"><span class="dop-title hidden-md">{{ entry_order_status }}</span><i class="fa fa-check-circle hidden-lg hidden-sm hidden-xs"></i></span>
+								<select id="order_status_id" name="order_status_id" class="form-control">
+								{% for order_status in order_statuses %}
+									{% if order_status['order_status_id'] == order_status_id %}
+									<option value="{{ order_status['order_status_id'] }}" selected="selected">{{ order_status['name'] }}</option>
+									{% else %}
+									<option value="{{ order_status['order_status_id'] }}">{{ order_status['name'] }}</option>
+									{% endif %}
+								{% endfor %}
+								</select>
+								<span class="input-group-addon span-popover" data-placement="left" title="{{ help_order_status_head }}" data-content="{{ help_order_status }}"><i class="fa fa-question-circle fa-lg fa-danger" aria-hidden="true"></i></span>
+							</div>
+						</div>
+						<div class="col-md-2 col-xs-4">
+							<div class="input-group input-group-sm">
+								<span class="input-group-addon"><span class="dop-title hidden-md hidden-xs">{{ text_store }}</span><i class="fa fa-home hidden-lg hidden-sm" aria-hidden="true"></i></span>
+								<select name="store_id" class="form-control">
+								<option value="0">{{ text_default }}</option>
+								{% for store in stores %}
+									{% if store['store_id'] == store_id %}
+									<option value="{{ store['store_id'] }}" selected="selected">{{ store['name'] }}</option>
+									{% else %}
+									<option value="{{ store['store_id'] }}">{{ store['name'] }}</option>
+									{% endif %}
+								{% endfor %}
+								</select>
+							</div>
+						</div>
+						<div class="col-md-2 col-xs-4">
+							<div class="input-group input-group-sm">
+								<span class="input-group-addon"><span class="dop-title hidden-md hidden-xs">{{ text_currency }}</span><i class="fa fa-usd hidden-lg hidden-sm" aria-hidden="true"></i></span>
+								<select name="currency_code" class="form-control">
+								{% for currency in currencies %}
+									{% if currency_code == currency['code'] %}
+									<option value="{{ currency['code'] }}" selected="selected">{{ currency['title'] }}</option>
+									{% else %}
+									<option value="{{ currency['code'] }}">{{ currency['title'] }}</option>
+									{% endif %}
+								{% endfor %}
+								</select>
+							</div>
+						</div>
+						<div class="col-md-2 col-xs-4">
+							<div class="input-group input-group-sm">
+								<span class="input-group-addon"><span class="dop-title hidden-md hidden-xs">{{ text_language }}</span><i class="fa fa-globe hidden-lg hidden-sm" aria-hidden="true"></i></span>
+								<select name="language" class="form-control">
+								{% for language in languages %}
+									{% if admin_language == language['code'] %}
+									<option value="{{ language['code'] }}" selected="selected">{{ language['name'] }}</option>
+									{% else %}
+									<option value="{{ language['code'] }}">{{ language['name'] }}</option>
+									{% endif %}
+								{% endfor %}
+								</select>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="middle-order">
+					<div class="row">
+						<div class="col-xs-6">
+							<div class="left-order">
+								<h4>{{ text_customer }}</h4>
+								<div class="row">
+									<div class="col-sm-8 col-xs-12">
+										<div class="form-group">
+											<label>{{ entry_customer }}<span class="help">{{ help_autocomplite }}</span>{% if show_similar and similar_customer_id %}<span class="similar"><a onclick="getsimilar('customer_id');" role="button">({{ similar_customer_id }})</a><a tabindex="0" class="btn-popover" title="" data-content="{{ help_similar }}" role="button"><i class="fa fa-question-circle" aria-hidden="true"></i></a></span>{% endif %}</label>
+											<input type="text" name="customer" class="form-control" value="{{ customer }}" />
+											<input type="hidden" name="customer_id" value="{{ customer_id }}" />
+											<input type="hidden" name="customer_group_id" value="{{ customer_group_id }}" />
+											<input type="hidden" name="invoice_no" value="{{ invoice_no }}" />
+											<input type="hidden" name="date_added" value="{{ date_added }}" />
+											<input type="hidden" name="ip" value="{{ ip }}" />
+											<input type="hidden" name="clone" id="clone" value="{{ clone }}" />
+											<input type="hidden" name="order_id" value="{{ order_id }}" />
+											<input type="hidden" name="temp_order_id" value="{{ temp_order_id }}" />
+										</div>
+									</div>
+									<div class="col-sm-4 col-xs-12"></div>
+								</div>
+								<div class="row">
+									<div class="col-sm-7 col-xs-12">
+										<div class="form-group">
+											<label>{{ entry_firstname }}</label>
+											<input type="text" name="firstname" class="form-control" value="{{ firstname }}" />
+										</div>
+									</div>
+									<div class="col-sm-5 col-xs-12">
+										<div class="form-group">
+											<label>{{ entry_lastname }}{% if show_similar and similar_lastname %}<span class="similar"><a onclick="getsimilar('lastname');" role="button">({{ similar_lastname }})</a><a tabindex="0" class="btn-popover" title="" data-content="{{ help_similar }}" role="button"><i class="fa fa-question-circle" aria-hidden="true"></i></a></span>{% endif %}</label>
+											<input type="text" name="lastname" class="form-control" value="{{ lastname }}" />
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-4 col-xs-6">
+										<div class="form-group">
+											<label>{{ entry_email }}{% if show_similar and similar_email %}<span class="similar"><a onclick="getsimilar('email');" role="button">({{ similar_email }})</a><a tabindex="0" class="btn-popover" title="" data-content="{{ help_similar }}" role="button"><i class="fa fa-question-circle" aria-hidden="true"></i></a></span>{% endif %}</label>
+											<input type="text" name="email" class="form-control" value="{{ email }}" />
+										</div>
+									</div>
+									<div class="col-md-4 col-xs-6">
+										<div class="form-group">
+											<label>{{ entry_telephone }}{% if show_similar and similar_telephone %}<span class="similar"><a onclick="getsimilar('telephone');" role="button">({{ similar_telephone }})</a><a tabindex="0" class="btn-popover" title="" data-content="{{ help_similar }}" role="button"><i class="fa fa-question-circle" aria-hidden="true"></i></a></span>{% endif %}</label>
+											<input type="text" name="telephone" class="form-control" value="{{ telephone }}" />
+										</div>
+									</div>
+									<div class="col-md-4 col-xs-6">
+										<div class="form-group">
+											<label>{{ entry_fax }}{% if show_similar and similar_fax %}<span class="similar"><a onclick="getsimilar('fax');" role="button">({{ similar_fax }})</a><a tabindex="0" class="btn-popover" title="" data-content="{{ help_similar }}" role="button"><i class="fa fa-question-circle" aria-hidden="true"></i></a></span>{% endif %}</label>
+											<input type="text" name="fax" class="form-control" value="{{ fax }}" />
+										</div>
+									</div>
+									
+									<div class="col-md-4 col-xs-6 pull-right">
+										<div class="form-group">
+											<label>{{ entry_company }}{% if show_similar and similar_company %}<span class="similar"><a onclick="getsimilar('company');" role="button">({{ similar_company }})</a><a tabindex="0" class="btn-popover" title="" data-content="{{ help_similar }}" role="button"><i class="fa fa-question-circle" aria-hidden="true"></i></a></span>{% endif %}</label>
+											<input type="text" name="payment_company" class="form-control" value="{{ payment_company }}" />
+										</div>
+									</div>
+									<div class="col-md-8 col-xs-12">
+										<div class="form-group">
+											<label>{{ entry_comment_customer }}</label>
+											<textarea name="comment" class="form-control" style="{% if comment %}border:1px solid #FF7C61;{% endif %}">{{ comment }}</textarea>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-xs-6">
+							<div class="right-order">
+								<h4>{{ text_shipping }}</h4>
+								<div class="row">
+									<div class="col-sm-8 col-xs-12">
+										<div class="form-group">
+											<label>{{ entry_address }}</label>
+											<select name="shipping_address" class="form-control">
+											<option value="0">{{ text_none }}</option>
+											{% for address in addresses %}
+												<option value="{{ address['address_id'] }}">{{ address['firstname'] }} {{ address['lastname'] }}, {{ address['zone'] }}, {{ address['city'] }}, {{ address['address_1'] }}</option>
+											{% endfor %}
+											</select>
+										</div>
+									</div>
+									<div class="col-sm-4 col-xs-12"></div>
+								</div>
+								<div class="row">
+									<div class="col-sm-7 col-xs-12">
+										<div class="form-group">
+											<label>{{ entry_firstname }}</label>
+											<input type="text" name="shipping_firstname" class="form-control" value="{{ shipping_firstname }}" />
+										</div>
+									</div>
+									<div class="col-sm-5 col-xs-12">
+										<div class="form-group">
+											<label>{{ entry_lastname }}</label>
+											<input type="text" name="shipping_lastname" class="form-control" value="{{ shipping_lastname }}" />
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-5 col-sm-6 col-xs-6">
+										<div class="form-group">
+											<label>{{ entry_country }}</label>
+											<select name="shipping_country_id" class="form-control">
+											<option value="0">{{ text_select }}</option>
+											{% for country in countries %}
+												{% if country['country_id'] == shipping_country_id %}
+												<option value="{{ country['country_id'] }}" selected="selected">{{ country['name'] }}</option>
+												{% else %}
+												<option value="{{ country['country_id'] }}">{{ country['name'] }}</option>
+												{% endif %}
+											{% endfor %}
+											</select>
+										</div>
+									</div>
+									<div class="col-md-4 col-sm-6 col-xs-6">
+										<div class="form-group">
+											<label>{{ entry_zone }}</label>
+											<select name="shipping_zone_id" class="form-control"></select>
+										</div>
+									</div>
+									<div class="col-md-3 col-sm-5 col-xs-5 pull-right">
+										<div class="form-group">
+											<label>{{ entry_postcode }}</label>
+											<input type="text" name="shipping_postcode" class="form-control" value="{{ shipping_postcode }}" />
+										</div>
+									</div>
+									
+									<div class="col-md-5 col-sm-7 col-xs-7">
+										<div class="form-group">
+											<label>{{ entry_city }}</label>
+											<input type="text" name="shipping_city" class="form-control" value="{{ shipping_city }}" />
+										</div>
+									</div>
+									<div class="col-md-4 col-sm-7 col-xs-7">
+										<div class="form-group">
+											<label>{{ entry_address_1 }}</label>
+											<input type="text" name="shipping_address_1" class="form-control" value="{{ shipping_address_1 }}" />
+										</div>
+									</div>
+									<div class="col-md-3 col-sm-5 col-xs-5 pull-right">
+										<div class="form-group">
+											<label>{{ entry_address_2 }}</label>
+											<input type="text" name="shipping_address_2" class="form-control" value="{{ shipping_address_2 }}" />
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="bottom-order">
+					{% if custom_fields %}
+						{% include "/sale/orderpro/order_csfield.twig" %}
+					{% endif %}
+					<div id="simplefield">
+						<div id="simple_custblock"></div>
+						<div id="simple_payblock"></div>
+						<div id="simple_shipblock"></div>
+					</div>
+				</div>
+			</div>
+
+			<div id="tab-payment" style="display:none;">
+				<table class="form order-payment">
+					<tbody>
+						<tr>
+							<td><input type="text" name="payment_firstname" value="{{ payment_firstname }}" /></td>
+							<td><input type="text" name="payment_lastname" value="{{ payment_lastname }}" /></td>
+							<td><input type="text" name="payment_address_1" value="{{ payment_address_1 }}" /></td>
+							<td><input type="text" name="payment_address_2" value="{{ payment_address_2 }}" /></td>
+							<td><input type="text" name="payment_city" value="{{ payment_city }}" /></td>
+							<td><input type="text" name="payment_postcode" value="{{ payment_postcode }}" /></td>
+							<td><input type="text" name="payment_country_id" value="{{ payment_country_id }}" /></td>
+							<td><input type="text" name="payment_zone_id" value="{{ payment_zone_id }}" /></td>
+							<td><input type="text" name="shipping_company" value="{{ shipping_company }}" /></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+			{% if orderpro_notabs_mode %}
+			<div class="terminator"></div>
+			{% endif %}
+
+			<div id="tab-history"{% if not orderpro_notabs_mode %} class="tab-pane"{% endif %}>
+				<div class="mode-history">
+					<div class="row" id="order-history">
+						{% if order_id %}
+						<div class="col-lg-5 col-md-5 col-sm-12">
+							<div class="form-group">
+								<label for="horder_status_id">{{ entry_order_status }}</label>
+								<select id="horder_status_id" name="history_order_status_id" class="form-control input-sm">
+								{% for order_status in order_statuses %}
+									{% if order_status['order_status_id'] == order_status_id %}
+									<option value="{{ order_status['order_status_id'] }}" selected="selected">{{ order_status['name'] }}</option>
+									{% else %}
+									<option value="{{ order_status['order_status_id'] }}">{{ order_status['name'] }}</option>
+									{% endif %}
+								{% endfor %}
+								</select>
+							</div>
+							<div class="row checkbox-history">
+								<div class="col-xs-6">
+									<div class="checkbox">
+										<label><input type="checkbox" name="notify" value="1" />{{ entry_notify }}</label>
+									</div>
+									<div class="checkbox hide-notify">
+										<label class="label-popover" title="" data-content="{{ help_notify_products }}"><input type="checkbox" name="notify_products" value="1" />{{ entry_notify_products }}</label>
+									</div>
+								</div>
+								<div class="col-xs-6">
+									<div class="checkbox">
+										<label><input type="checkbox" name="notify_admin" value="1" />{{ entry_notify_admin }}</label>
+									</div>
+									<div class="checkbox hide-notify-admin">
+										<label class="label-popover" data-placement="left" title="" data-content="{{ help_notify_products }}"><input type="checkbox" name="notify_admin_products" value="1" />{{ entry_notify_products }}</label>
+									</div>
+								</div>
+							</div>
+							<span class="history-berth"></span>
+						</div>
+	
+						<div class="col-lg-6 col-md-5 col-sm-9">
+							<div class="form-group">
+								<label>{{ entry_comment }}</label>
+								<textarea name="admin_comment" class="form-control" rows="4"></textarea>
+							</div>
+						</div>
+	
+						<div class="col-lg-1 col-md-2 col-sm-3 text-center" style="padding-left:0;">
+							<a id="button-history" class="btn btn-primary btn-sm" role="button">{{ button_add_history }}</a>
+						</div>
+						{% else %}
+						<div class="col-sm-12 text-center" style="padding: 0 0 10px;">{{ text_neworder_history }}</div>
+						{% endif %}
+					</div>
+				</div>
+				<div id="history"></div>
+			</div>
+	
+			{% if orderpro_notabs_mode %}
+			<div class="terminator"></div>
+			{% endif %}
+	
+			<div id="tab-total"{% if not orderpro_notabs_mode %} class="tab-pane"{% endif %}>
+				{% set cart_colspan = 11 %}
+				{% set tline_colspan = 3 %}
+				{% if show_pid %}{% set hide_pid = '' %}{% else %}{% set hide_pid = ' style="display:none;"' %}{% set cart_colspan = cart_colspan - 1 %}{% endif %}
+				{% if show_image %}{% set hide_image = '' %}{% else %}{% set hide_image = ' style="display:none;"' %}{% set cart_colspan = cart_colspan - 1 %}{% endif %}
+				{% if show_model %}{% set hide_model = '' %}{% else %}{% set hide_model = ' style="display:none;"' %}{% set cart_colspan = cart_colspan - 1 %}{% endif %}
+				{% if show_sku %}{% set hide_sku = '' %}{% else %}{% set hide_sku = ' style="display:none;"' %}{% set cart_colspan = cart_colspan - 1 %}{% endif %}
+				{% if show_upc %}{% set hide_upc = '' %}{% else %}{% set hide_upc = ' style="display:none;"' %}{% set cart_colspan = cart_colspan - 1 %}{% endif %}
+				{% if show_ean %}{% set hide_ean = '' %}{% else %}{% set hide_ean = ' style="display:none;"' %}{% set cart_colspan = cart_colspan - 1 %}{% endif %}
+				{% if show_jan %}{% set hide_jan = '' %}{% else %}{% set hide_jan = ' style="display:none;"' %}{% set cart_colspan = cart_colspan - 1 %}{% endif %}
+				{% if show_isbn %}{% set hide_isbn = '' %}{% else %}{% set hide_isbn = ' style="display:none;"' %}{% set cart_colspan = cart_colspan - 1 %}{% endif %}
+				{% if show_mpn %}{% set hide_mpn = '' %}{% else %}{% set hide_mpn = ' style="display:none;"' %}{% set cart_colspan = cart_colspan - 1 %}{% endif %}
+				{% if show_location %}{% set hide_location = '' %}{% else %}{% set hide_location = ' style="display:none;"' %}{% set cart_colspan = cart_colspan - 1 %}{% endif %}
+				{% if customer_id and reward_status %}{% set hide_reward = '' %}{% else %}{% set hide_reward = ' style="display:none;"' %}{% endif %}
+				{% if show_weight %}{% set hide_weight = '' %}{% else %}{% set hide_weight = ' style="display:none;"' %}{% endif %}
+				{% if show_discount %}{% set hide_discount = '' %}{% else %}{% set hide_discount = ' style="display:none;"' %}{% endif %}
+				{% if show_realqty %}{% set hide_realqty = '' %}{% else %}{% set hide_realqty = ' style="display:none;"' %}{% set tline_colspan = tline_colspan - 1 %}{% endif %}
+				{% if show_nowprice %}{% set hide_nowprice = '' %}{% else %}{% set hide_nowprice = ' style="display:none;"' %}{% set tline_colspan = tline_colspan - 1 %}{% endif %}
+				<table id="product" class="list order-products">
+					<thead>
+						<tr>
+						    <td class="column-pid"{{ hide_pid }}>{{ column_pid }}</td>
+							<td class="column-image"{{ hide_image }}>{{ column_image }}</td>
+							<td class="column-product">{{ column_product }}<span class="help">{{ help_autocomplite }}</span></td>
+							<td class="column-model"{{ hide_model }}>{{ column_model }}<span class="help">{{ help_autocomplite }}</span></td>
+							<td class="column-sku"{{ hide_sku }}>{{ column_sku }}<span class="help">{{ help_autocomplite }}</span></td>
+							<td class="column-upc"{{ hide_upc }}>{{ column_upc }}<span class="help">{{ help_autocomplite }}</span></td>
+							<td class="column-ean"{{ hide_ean }}>{{ column_ean }}<span class="help">{{ help_autocomplite }}</span></td>
+							<td class="column-jan"{{ hide_jan }}>{{ column_jan }}<span class="help">{{ help_autocomplite }}</span></td>
+							<td class="column-isbn"{{ hide_isbn }}>{{ column_isbn }}<span class="help">{{ help_autocomplite }}</span></td>
+							<td class="column-mpn"{{ hide_mpn }}>{{ column_mpn }}<span class="help">{{ help_autocomplite }}</span></td>
+							<td class="column-location"{{ hide_location }}>{{ column_location }}<span class="help">{{ help_autocomplite }}</span></td>
+							<td class="column-weight"{{ hide_weight }}>{{ column_weight }}<span class="help">{{ help_weight }}</span></td>
+							<td class="column-quantity">{{ column_quantity }}<span class="help">{{ help_qty }}</span></td>
+							<td class="column-realquantity"{{ hide_realqty }}>{{ column_realquantity }}<span class="help">{{ help_stock }}</span></td>
+							<td class="column-price">{{ column_price }}<span class="help">{{ help_price }}</span><img src="view/image/orderpro/delete16.png" id="empty-prices" data-toggle="tooltip" alt="" title="{{ help_empty_prices }}" /></td>
+							<td class="column-now_price"{{ hide_nowprice }}>{{ column_now_price }}<span class="help">{{ help_now_price }}</span></td>
+							<td class="column-total">{{ column_total }}</td>
+							<td class="column-discount"{{ hide_discount }}>{{ column_discount }}<img src="view/image/orderpro/delete16.png" id="empty-discounts" data-toggle="tooltip" alt="" title="{{ help_empty_discounts }}" /></td>
+							<td class="column-reward"{{ hide_reward }}><span class="visible-lg">{{ column_reward }}</span><span class="hidden-lg">{{ column_reward_short }}</span></td>
+							<td class="column-action"></td>
+						</tr>
+					</thead>
+	
+					{% set product_row = 0 %}
+					<input type="hidden" name="old_products" value="{{ old_products }}" />
+					{% for order_product in order_products %}
+					<tbody id="product-row{{ product_row }}">
+						{% if order_product['status'] == '0' %}
+							{% set name_class = ' item-off' %}
+						{% elseif order_product['status'] == '33' %}
+							{% set name_class = ' item-del' %}
+						{% else %}
+							{% set name_class = '' %}
+						{% endif %}
+						<tr class="product-line{{ name_class }}">
+							<td class="center"{{ hide_pid }}><input type="text" name="order_product[{{ product_row }}][product_id]" value="{{ order_product['product_id'] }}" class="form-control input-pid" readonly="readonly" /></td>
+							<td class="center"{{ hide_image }}>
+								<div class="product-image" id="image_{{ product_row }}">
+									<a href="{{ order_product['href'] }}" target="_blank"><img src="{{ order_product['image'] }}" alt="{{ order_product['name'] }}" /></a>
+									{% if order_product['popap'] %}<span id="popap_{{ product_row }}" class="product-popap" data-popap="{{ order_product['popap'] }}"></span>{% endif %}
+								</div>
+							</td>
+							<td class="center">
+								<input type="text" name="order_product[{{ product_row }}][name]" value="{{ order_product['name'] }}" class="form-control input-name{% if order_product['discount_amount'] > 0 %} has-amount{% endif %}" />
+								<input type="hidden" name="order_product[{{ product_row }}][order_product_id]" value="{{ order_product['order_product_id'] }}" />
+								<input type="hidden" name="order_product[{{ product_row }}][tax]" value="{{ order_product['tax'] }}" />
+								<input type="hidden" name="order_product[{{ product_row }}][status]" value="{{ order_product['status'] }}" />
+								<div id="product_options{{ product_row }}" class="product_options">
+								{% if order_product['option'] %}
+									<div class="poptions">
+									{% for option in order_product['option'] %}
+										{% if (option['type'] == 'select') or (option['type'] == 'radio') or (option['type'] == 'image') %}
+										<div class="form-group option">
+											<label>{% if option['required'] %}<span class="required">*</span>{% endif %}{{ option['name'] }}</label>
+											<select name="order_product[{{ product_row }}][option][{{ option['product_option_id'] }}]" class="form-control">
+												{% if not option['required'] %}<option value="">{{ text_select }}</option>{% endif %}
+												{% for option_value in option['option_value'] %}
+													{% if order_product['order_option'][option['product_option_id']][option_value['product_option_value_id']] is defined %}
+														<option value="{{ option_value['product_option_value_id'] }}" selected="selected">{{ option_value['name'] }}{% if option_value['price'] %} ({{ option_value['price_prefix'] }}{{ option_value['price'] }}){% endif %}</option>
+													{% else %}
+														<option value="{{ option_value['product_option_value_id'] }}">{{ option_value['name'] }}{% if option_value['price'] %} ({{ option_value['price_prefix'] }}{{ option_value['price'] }}){% endif %}</option>
+													{% endif %}
+												{% endfor %}
+											</select>
+											{% if option['alarm'] %}
+												<span class="text-danger">{{ text_alarm_options }}</span>
+											{% endif %}
+										</div>
+										{% endif %}
+										{% if option['type'] == 'checkbox' %}
+										<div class="form-group">
+											<label>{% if option['required'] %}<span class="required">*</span>{% endif %}{{ option['name'] }}</label>
+											{% for option_value in option['option_value'] %}
+											<div class="checkbox">
+												{% if order_product['order_option'][option['product_option_id']][option_value['product_option_value_id']] is defined %}
+												<label><input type="checkbox" name="order_product[{{ product_row }}][option][{{ option['product_option_id'] }}][]" value="{{ option_value['product_option_value_id'] }}" checked="checked" />{{ option_value['name'] }}{% if option_value['price'] %} ({{ option_value['price_prefix'] }}{{ option_value['price'] }}){% endif %}</label>
+												{% else %}
+												<label><input type="checkbox" name="order_product[{{ product_row }}][option][{{ option['product_option_id'] }}][]" value="{{ option_value['product_option_value_id'] }}" />{{ option_value['name'] }}{% if option_value['price'] %} ({{ option_value['price_prefix'] }}{{ option_value['price'] }}){% endif %}</label>
+												{% endif %}
+											</div>
+											{% endfor %}
+											{% if option['alarm'] %}
+												<span class="text-danger">{{ text_alarm_options }}</span>
+											{% endif %}
+										</div>
+										{% endif %}
+										{% if option['type'] == 'text' %}
+										<div class="form-group">
+											<label>{% if option['required'] %}<span class="required">*</span>{% endif %}{{ option['name'] }}</label>
+											<input type="text" name="order_product[{{ product_row }}][option][{{ option['product_option_id'] }}]" class="form-control" value="{{ option['option_value'] }}" />
+											{% if option['alarm'] %}
+												<span class="text-danger">{{ text_alarm_options }}</span>
+											{% endif %}
+										</div>
+										{% endif %}
+										{% if option['type'] == 'textarea' %}
+										<div class="form-group">
+											<label>{% if option['required'] %}<span class="required">*</span>{% endif %}{{ option['name'] }}</label>
+											<textarea name="order_product[{{ product_row }}][option][{{ option['product_option_id'] }}]" rows="2" class="form-control">{{ option['option_value'] }}</textarea>
+											{% if option['alarm'] %}
+												<span class="text-danger">{{ text_alarm_options }}</span>
+											{% endif %}
+										</div>
+										{% endif %}
+										{% if option['type'] == 'file' %}
+										<div class="form-group">
+											<label>{% if option['required'] %}<span class="required">*</span>{% endif %}{{ option['name'] }}</label>
+											<div class="btn-group btn-group-sm upfile-block">
+												<a id="file-link-{{ option['product_option_id'] }}-{{ product_row }}" class="btn btn-default file-link" data-toggle="tooltip" title="{{ text_download }}"{% if option['href'] %} href="{{ option['href'] }}"{% endif %}>{{ option['option_filename'] }}</a>
+												<input type="hidden" name="order_product[{{ product_row }}][option][{{ option['product_option_id'] }}]" value="{{ option['option_value'] }}" />
+												<a id="button-upload-{{ option['product_option_id'] }}-{{ product_row }}" class="btn btn-primary" data-toggle="tooltip" title="{{ text_upload }}"><i class="fa fa-upload"></i></a>
+											</div>
+											{% if option['alarm'] %}
+												<span class="text-danger">{{ text_alarm_options }}</span>
+											{% endif %}
+										</div>
+										{% endif %}
+										{% if option['type'] == 'date' %}
+										<div class="form-group">
+											<label>{% if option['required'] %}<span class="required">*</span>{% endif %}{{ option['name'] }}</label>
+											<div class="input-group input-group-sm date">
+												<input type="text" name="order_product[{{ product_row }}][option][{{ option['product_option_id'] }}]" class="form-control" value="{{ option['option_value'] }}" data-date-format="YYYY-MM-DD" />
+												<span class="input-group-btn"><a class="btn btn-default" role="button"><i class="fa fa-calendar"></i></a></span>
+											</div>
+											{% if option['alarm'] %}
+												<span class="text-danger">{{ text_alarm_options }}</span>
+											{% endif %}
+										</div>
+										{% endif %}
+										{% if option['type'] == 'datetime' %}
+										<div class="form-group">
+											<label>{% if option['required'] %}<span class="required">*</span>{% endif %}{{ option['name'] }}</label>
+											<div class="input-group input-group-sm datetime">
+												<input type="text" name="order_product[{{ product_row }}][option][{{ option['product_option_id'] }}]" class="form-control" value="{{ option['option_value'] }}" data-date-format="YYYY-MM-DD HH:mm" />
+												<span class="input-group-btn"><a class="btn btn-default" role="button"><i class="fa fa-calendar"></i></a></span>
+											</div>
+											{% if option['alarm'] %}
+												<span class="text-danger">{{ text_alarm_options }}</span>
+											{% endif %}
+										</div>
+										{% endif %}
+										{% if option['type'] == 'time' %}
+										<div class="form-group">
+											<label>{% if option['required'] %}<span class="required">*</span>{% endif %}{{ option['name'] }}</label>
+											<div class="input-group input-group-sm time">
+												<input type="text" name="order_product[{{ product_row }}][option][{{ option['product_option_id'] }}]" class="form-control" value="{{ option['option_value'] }}" data-date-format="HH:mm" />
+												<span class="input-group-btn"><a class="btn btn-default" role="button"><i class="fa fa-calendar"></i></a></span>
+											</div>
+											{% if option['alarm'] %}
+												<span class="text-danger">{{ text_alarm_options }}</span>
+											{% endif %}
+										</div>
+										{% endif %}
+									{% endfor %}
+									</div>
+								{% endif %}
+								{% if order_product['info_option'] is not empty %}
+									<div class="info-options span-popover{% if order_product['alarm_options'] %} alarm{% endif %}" data-placement="right" data-html="true" title="{{ text_order_options }}" data-content="{{ order_product['info_option'] }}"><i class="fa fa-2x fa-exclamation-circle"></i></div>
+								{% endif %}
+								</div>
+							</td>
+							<td class="center"{{ hide_model }}><input type="text" name="order_product[{{ product_row }}][model]" value="{{ order_product['model'] }}" class="form-control input-model" /></td>
+							<td class="center"{{ hide_sku }}><input type="text" name="order_product[{{ product_row }}][sku]" value="{{ order_product['sku'] }}" class="form-control input-sku" /></td>
+							<td class="center"{{ hide_upc }}><input type="text" name="order_product[{{ product_row }}][upc]" value="{{ order_product['upc'] }}" class="form-control input-upc" /></td>
+							<td class="center"{{ hide_ean }}><input type="text" name="order_product[{{ product_row }}][ean]" value="{{ order_product['ean'] }}" class="form-control input-ean" /></td>
+							<td class="center"{{ hide_jan }}><input type="text" name="order_product[{{ product_row }}][jan]" value="{{ order_product['jan'] }}" class="form-control input-jan" /></td>
+							<td class="center"{{ hide_isbn }}><input type="text" name="order_product[{{ product_row }}][isbn]" value="{{ order_product['isbn'] }}" class="form-control input-isbn" /></td>
+							<td class="center"{{ hide_mpn }}><input type="text" name="order_product[{{ product_row }}][mpn]" value="{{ order_product['mpn'] }}" class="form-control input-mpn" /></td>
+							<td class="center"{{ hide_location }}><input type="text" name="order_product[{{ product_row }}][location]" value="{{ order_product['location'] }}" class="form-control input-location" /></td>
+							<td class="right product-weight"{{ hide_weight }}><input type="text" name="order_product[{{ product_row }}][weight]" value="{{ order_product['weight'] }}" readonly="readonly" /></td>
+							<td class="center product-quantity"><input type="text" name="order_product[{{ product_row }}][quantity]" value="{{ order_product['quantity'] }}" class="form-control" /></td>
+							<td class="center"{{ hide_realqty }}><span id="realquantity_{{ product_row }}">{{ order_product['realquantity'] }}</span></td>
+							<td class="right product-price"><div class="input-group input-group-sm">
+								<input type="text" name="order_product[{{ product_row }}][price]" value="{{ order_product['price'] }}" class="form-control input-price" />
+								<span class="input-group-addon price-empty" data-toggle="tooltip" title="{{ help_empty_price }}"></span></div>
+							</td>
+							<td class="right now_price"{{ hide_nowprice }}>
+								<span id="now_price_{{ product_row }}">{{ order_product['now_price'] }}</span>
+								<span id="now_special_{{ product_row }}" style="color:red;">{{ order_product['now_special'] }}</span>
+								<span id="now_discount_{{ product_row }}" style="color:blue;">{{ order_product['now_discount_qty'] }}/{{ order_product['now_discount'] }}</span>
+							</td>
+							<td class="right product-total"><input type="text" name="order_product[{{ product_row }}][total]" value="{{ order_product['total'] }}" readonly="readonly" /></td>
+							<td class="right product-discount"{{ hide_discount }}>
+								<div class="input-group input-group-sm">
+									<input type="text" name="order_product[{{ product_row }}][discount_amount]" value="{{ order_product['discount_amount'] }}" class="form-control input-amount{% if order_product['discount_amount'] > 0 %} has-amount{% endif %}" />
+									<select name="order_product[{{ product_row }}][discount_type]" class="form-control{% if order_product['discount_amount'] > 0 %} has-amount{% endif %}">
+										{% if order_product['discount_type'] == 'S' %}
+											<option value="S" selected="selected">S</option>
+											<option value="P">%</option>
+										{% else %}
+											<option value="P" selected="selected">%</option>
+											<option value="S">S</option>
+										{% endif %}
+									</select><span class="input-group-addon amount-empty" data-toggle="tooltip" title="{{ help_empty_discount }}"></span>
+								</div>
+							</td>
+							<td class="right product-reward"{{ hide_reward }}><input type="text" name="order_product[{{ product_row }}][reward]" value="{{ order_product['reward'] }}" readonly="readonly" /></td>
+							<td class="center premove"><a onclick="$('#product-row{{ product_row }}').remove();" class="btn btn-danger btn-sm" role="button"><i class="fa fa-minus-circle"></i></a></td>
+						</tr>
+					</tbody>
+					{% set product_row = product_row + 1 %}
+					{% endfor %}
+					<tfoot>
+						<tr class="total-line">
+							<td class="left cart-colspan" colspan="{{ cart_colspan }}"></td>
+							<td class="right cart-weight"{{ hide_weight }}><input type="text" id="weight_cart" value="{{ weight_cart }}" readonly="readonly" /></td>
+							<td class="right cart-items"><input type="text" id="items_cart" value="{{ items_cart }}" readonly="readonly" /></td>
+							<td class="left" colspan="{{ tline_colspan }}"></td>
+							<td class="right cart-total"><input type="text" id="total_cart" value="{{ total_cart }}" readonly="readonly" /></td>
+							<td class="right cart-discount"{{ hide_discount }}><input type="text" id="discount_cart" value="{{ discount_cart }}" readonly="readonly" /></td>
+							<td class="right cart-reward"{{ hide_reward }}><input type="text" id="reward_cart" value="{{ reward_cart }}" readonly="readonly" /></td>
+							<td class="center cart-add"><a onclick="addProduct();" class="btn btn-primary btn-sm" role="button"><i class="fa fa-plus-circle"></i></a></td>
+						</tr>
+					</tfoot>
+				</table>
+	
+				{% if customer_id and reward_status %}
+				<div id="order-reward">
+					<div class="reward-blocks">
+						<div class="row">
+							<div class="col-md-3 col-xs-6">
+								<div class="input-group input-group-sm">
+									<span class="input-group-addon dop-title">{{ entry_reward_total }}</span>
+									<span class="input-group-addon form-control" id="reward-total"><span class="rtotal">{{ reward_total }}</span>/<span class="ptotal">{{ reward_possibly }}</span></span>
+								</div>
+							</div>
+							<div class="col-md-3 col-xs-6">
+								<div class="input-group input-group-sm">
+									<span class="input-group-addon dop-title">{{ entry_reward_recived }}</span>
+									<span class="input-group-addon form-control" id="reward-recived">{{ reward_recived }}</span>
+									<div class="input-group-btn">
+										<a id="reward-remove" class="btn btn-danger" role="button"><i class="fa fa-minus-circle fa-lg"></i></a>
+									</div>
+									<span class="input-group-addon span-popover" data-placement="left" title="{{ help_reward_removed_head }}" data-content="{{ help_reward_removed }}"><i class="fa fa-question-circle fa-lg fa-primary" aria-hidden="true"></i></span>
+								</div>
+							</div>
+							<div class="col-md-3 col-xs-6">
+								<div class="input-group input-group-sm">
+									<span class="input-group-addon dop-title">{{ entry_reward }}</span>
+									<input type="text" name="reward_cart" class="form-control" value="{{ reward_cart }}" />
+									<div class="input-group-btn">
+										<a id="reward-add" class="btn btn-success" role="button"><i class="fa fa-plus-circle fa-lg"></i></a>
+									</div>
+									<span class="input-group-addon span-popover" data-placement="left" title="{{ help_reward_add_head }}" data-content="{{ help_reward_add }}"><i class="fa fa-question-circle fa-lg fa-primary" aria-hidden="true"></i></span>
+								</div>
+							</div>
+							<div class="col-md-3 col-xs-6">
+								<div class="input-group input-group-sm">
+									<span class="input-group-addon dop-title">{{ entry_reward_use }}</span>
+									<input type="text" name="reward_use" class="form-control" value="{{ reward_use }}" />
+									<span class="input-group-addon" id="rewards-available"><span class="reward-use"></span></span>
+									<span class="input-group-addon span-popover" data-placement="left" title="" data-content="{{ help_reward_use }}"><i class="fa fa-question-circle fa-lg fa-danger" aria-hidden="true"></i></span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				{% endif %}
+	
+				{% if coupon_status or voucher_status or (order_id and (show_affiliate or affiliate)) %}
+				<div id="order-dops">
+					<div class="dop-blocks">
+						<div class="row">
+							<div class="col-md-3 col-xs-6">
+							{% if coupon_status %}
+								<div class="input-group input-group-sm">
+									<span class="input-group-addon dop-title">{{ entry_coupon }}</span>
+									<input type="text" name="coupon_code" class="form-control" placeholder="(autocomplete)" value="{{ coupon_code }}" />
+									<span class="input-group-addon span-popover" data-placement="left" title="{{ help_coupon_head }}" data-content="{{ help_coupon }}"><i class="fa fa-question-circle fa-lg fa-primary" aria-hidden="true"></i></span>
+									<span class="input-group-addon span-popover" data-placement="left" title="" data-content="{{ help_coupon_use }}"><i class="fa fa-question-circle fa-lg fa-danger" aria-hidden="true"></i></span>
+								</div>
+							{% endif %}
+							</div>
+							<div class="col-md-4 col-xs-6">
+							{% if voucher_status %}
+								<div class="input-group input-group-sm">
+									<span class="input-group-addon dop-title">{{ entry_voucher }}</span>
+									<input type="text" name="voucher_code" class="form-control" placeholder="(autocomplete)" value="{{ voucher_code }}" />
+									<span class="input-group-addon span-popover" data-placement="left" title="{{ help_voucher_head }}" data-content="{{ help_voucher }}"><i class="fa fa-question-circle fa-lg fa-primary" aria-hidden="true"></i></span>
+									<span class="input-group-addon span-popover" data-placement="left" title="" data-content="{{ help_voucher_use }}"><i class="fa fa-question-circle fa-lg fa-danger" aria-hidden="true"></i></span>
+								</div>
+							{% endif %}
+							</div>
+							<div class="col-md-5 col-xs-12">
+							{% if order_id and (show_affiliate or affiliate) %}
+								<div class="input-group input-group-sm">
+									<span class="input-group-addon dop-title">{{ entry_affiliate }}</span>
+									<input type="text" name="affiliate" class="form-control" placeholder="(autocomplete)" value="{{ affiliate }}" />
+									<input type="hidden" name="affiliate_id" value="{{ affiliate_id }}" />
+									<input type="hidden" name="commission" value="{{ commission }}" />
+									<div class="input-group-btn commission-add"{% if commission_total %} style="display:none;"{% endif %}>
+										<a id="commission_add" title="" class="btn btn-success" role="button"><i class="fa fa-plus-circle fa-lg"></i></a>
+									</div>
+									<span class="input-group-addon span-popover commission-add" data-placement="left" title="{{ help_commission_add_head }}" data-content="{{ help_commission_add }}"{% if commission_total %} style="display:none;"{% endif %}><i class="fa fa-question-circle fa-lg fa-primary" aria-hidden="true"></i></span>
+									<div class="input-group-btn commission-remove"{% if not commission_total %} style="display:none;"{% endif %}>
+										<a id="commission_remove" title="" class="btn btn-danger" role="button"><i class="fa fa-minus-circle fa-lg"></i></a>
+									</div>
+									<span class="input-group-addon span-popover commission-remove" data-placement="left" title="{{ help_commission_add_head }}" data-content="{{ help_commission_remove_head }}"{% if not commission_total %} style="display:none;"{% endif %}><i class="fa fa-question-circle fa-lg fa-primary" aria-hidden="true"></i></span>
+									<span class="input-group-addon commission-value">{{ commission_order }}</span>
+								</div>
+							{% endif %}
+							</div>
+						</div>
+					</div>
+				</div>
+				{% endif %}
+	
+				<div id="payment_shipping">
+					<div class="payship-blocks">
+						<div class="row">
+							<div class="col-md-5 col-sm-5 col-xs-6">
+								<div class="input-group input-group-sm">
+									<span class="input-group-addon"><span class="dop-title hidden-xs">{{ entry_payment }}</span><i class="fa fa-credit-card hidden-lg hidden-md hidden-sm" aria-hidden="true"></i></span>
+									<input type="hidden" name="payment_method" value="{{ payment_method }}" />
+									<input type="hidden" name="payment_code" value="{{ payment_code }}" />
+									<select name="payments" class="form-control">
+									<option value="">{{ text_select }}</option>
+									{% if payment_code %}
+										<option value="{{ payment_code }}" selected="selected">{{ payment_method }}</option>
+									{% endif %}
+									</select>
+								</div>
+								<div class="input-group input-group-sm">
+									<span class="input-group-addon"><span class="dop-title hidden-xs">{{ entry_now_payment }}</span><i class="fa fa-credit-card hidden-lg hidden-md hidden-sm" aria-hidden="true"></i></span>
+									<span class="input-group-addon form-control" id="now_payment_method">{{ payment_method }}</span>
+								</div>
+							</div>
+							<div class="col-md-5 col-sm-5 col-xs-6 pull-right">
+								<div class="input-group input-group-sm">
+									<span class="input-group-addon"><span class="dop-title hidden-xs">{{ entry_shipping }}</span><i class="fa fa-truck hidden-lg hidden-md hidden-sm"></i></span>
+									<input type="hidden" name="shipping_method" value="{{ shipping_method }}" />
+									<input type="hidden" name="shipping_code" value="{{ shipping_code }}" />
+									<select name="shippings" class="form-control">
+									<option value="">{{ text_select }}</option>
+									{% if shipping_code %}
+										<option value="{{ shipping_code }}" selected="selected">{{ shipping_method }}</option>
+									{% endif %}
+									</select>
+								</div>
+								<div class="input-group input-group-sm">
+									<span class="input-group-addon"><span class="dop-title hidden-xs">{{ entry_now_shipping }}</span><i class="fa fa-truck hidden-lg hidden-md hidden-sm"></i></span>
+									<span class="input-group-addon form-control" id="now_shipping_method">{{ shipping_method }}</span>
+								</div>
+							</div>
+							<div class="col-md-2 col-sm-2 col-xs-12 pull-right text-center">
+								<div class="btn-group btn-group-sm">
+									<a onclick="getMethods();" class="btn btn-primary" role="button"><span class="hidden-sm">{{ button_getmethods }}</span><i class="fa fa-refresh hidden-lg hidden-md hidden-xs"></i></a>
+									<a tabindex="0" class="btn btn-primary btn-popover" data-placement="right" title="{{ help_getmethods_head }}" data-content="{{ help_getmethods }}" role="button"><i class="fa fa-question-circle fa-lg" aria-hidden="true"></i></a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+	
+				<div id="total" class="table-responsive">
+					<table class="table">
+						<thead>
+							<tr>
+								<td class="text-center total-title">{{ column_desc }}</td>
+								<td class="text-center total-value">{{ column_cost }}</td>
+								<td class="text-center total-text">{{ column_total }}</td>
+								<td class="text-center total-nocalc">
+									<span class="hidden-sm hidden-xs" style="margin-right:3px;">{{ column_nocalc }}</span>
+									<a tabindex="0" class="btn btn-primary btn-xs btn-popover" data-placement="left" title="{{ help_nocalc_head }}" data-content="{{ help_nocalc }}" role="button"><i class="fa fa-question-circle" aria-hidden="true"></i></a>
+								</td>
+								<td class="text-center total-sort">{{ column_sort }}</td>
+								<td class="total-delete"></td>
+							</tr>
+						</thead>
+						<tbody>
+						{% set total_row = 0 %}
+						{% for order_total in order_totals %}
+							<tr id="total-row{{ total_row }}">
+								<td>
+									<input type="hidden" name="order_total[{{ total_row }}][order_total_id]" value="{{ order_total['order_total_id'] }}" />
+									<input type="hidden" name="order_total[{{ total_row }}][code]" value="{{ order_total['code'] }}" />
+									<input type="text" name="order_total[{{ total_row }}][title]" class="form-control input-total-title" value="{{ order_total['title'] }}" />
+								</td>
+								<td class="text-right">
+									<input type="hidden" name="order_total[{{ total_row }}][text]" value="{{ order_total['text'] }}" />
+									{% if order_total['code'] == 'sub_total' or order_total['code'] == 'total' %}
+										<input type="hidden" name="order_total[{{ total_row }}][value]" value="{{ order_total['value'] }}" />
+									{% else %}
+										<input type="text" name="order_total[{{ total_row }}][value]" class="form-control input-total-value" value="{{ order_total['value'] }}" />
+									{% endif %}
+								</td>
+								<td class="text-right order-total-value">{{ order_total['text'] }}</td>
+								<td class="text-center">
+									{% if order_total['code'] == 'shipping' %}
+										<input class="no_calc" type="checkbox" name="{{ order_total['code'] }}" value="0" checked="checked" />
+									{% elseif ('correct,' in order_total['code']) or (order_total['code'] == 'discount') %}
+										<input class="no_calc" type="checkbox" name="{{ order_total['code'] }}" value="0" disabled="disabled" />
+									{% else %}
+										<input class="no_calc" type="checkbox" name="{{ order_total['code'] }}" value="0" />
+									{% endif %}
+								</td>
+								<td class="text-center">
+									{% if ('correct,' in order_total['code']) or (order_total['code'] == 'discount') %}
+										<input type="text" name="order_total[{{ total_row }}][sort_order]" class="form-control input-total-sort" value="{{ order_total['sort_order'] }}" readonly="readonly" />
+									{% else %}
+										<input type="text" name="order_total[{{ total_row }}][sort_order]" class="form-control input-total-sort" value="{{ order_total['sort_order'] }}" />
+									{% endif %}
+								</td>
+								<td class="text-right">
+									<a onclick="$('#total-row{{ total_row }}').remove();" class="btn btn-danger btn-sm" role="button">{{ button_remove }}</a>
+								</td>
+							</tr>
+						{% set total_row = total_row + 1 %}
+						{% endfor %}
+						</tbody>
+						{% if is_admin %}
+						<tfoot>
+							<tr><td class="left message" colspan="6"></td></tr>
+							<tr class="actions-buttons">
+								<td></td>
+								<td class="text-right" colspan="2">
+									<div class="btn-group btn-group-sm">
+										<a onclick="addCorrect();" class="btn btn-primary" role="button">{{ button_correct }}</a>
+										<a tabindex="0" class="btn btn-primary btn-popover" data-placement="left" title="{{ help_correct_head }}" data-content="{{ help_correct }}" role="button"><i class="fa fa-question-circle" aria-hidden="true"></i></a>
+									</div>
+								</td>
+								<td class="text-right" colspan="2">
+									<div class="btn-group btn-group-sm">
+										<a onclick="addDiscount();" class="btn btn-primary" role="button">{{ button_discount }}</a>
+										<a tabindex="0" class="btn btn-primary btn-popover" data-placement="left" title="{{ help_discount_head }}" data-content="{{ help_discount }}" role="button"><i class="fa fa-question-circle" aria-hidden="true"></i></a>
+									</div>
+								</td>
+								<td class="text-right">
+									<div class="btn-group btn-group-sm">
+									{% if not status_del_warning %}
+										<a id="recalc-button" onclick="recalculate();" class="btn btn-success" role="button">{{ button_recalculate }}</a>
+										<a tabindex="0" class="btn btn-success btn-popover" data-placement="left" title="{{ help_recalculate_head }}" data-content="{{ help_recalculate }}" role="button"><i class="fa fa-question-circle" aria-hidden="true"></i></a>
+									{% else %}
+										<a id="recalc-button" class="btn btn-default" role="button">{{ button_recalculate }}</a>
+										<a tabindex="0" class="btn btn-danger btn-popover" data-placement="left" title="{{ help_recalculate_head }}" data-content="{{ help_recalculate_bad }}" role="button"><i class="fa fa-question-circle" aria-hidden="true"></i></a>
+									{% endif %}
+									</div>
+								</td>
+							</tr>
+						</tfoot>
+						{% endif %}
+					</table>
+				</div>
+				{% if is_admin %}
+				<div class="bottom-buttons">
+					<div class="pull-left version"><a href="https://opencart-group.ru/orderpro_v2" target="_blank">{{ orderpro_version }}</a></div>
+					<div class="pull-right buttons">
+						<a href="{{ setting }}" data-toggle="tooltip" title="{{ button_setting_tooltip }}" class="btn btn-default btn-sm"><i class="fa fa-cog" aria-hidden="true"></i></a>
+						<span class="term-button">|</span>
+						{% if order_id %}
+							{% if export_order %}<a href="{{ export_order }}" data-toggle="tooltip" title="{{ button_export_tooltip }}" class="btn btn-info btn-sm"><i class="fa fa-table" aria-hidden="true"></i></a>{% endif %}
+							<a onclick="window.open('{{ invoice }}&order_id={{ order_id }}');" data-toggle="tooltip" title="{{ button_invoce_tooltip }}" class="btn btn-primary btn-sm"><i class="fa fa-print" aria-hidden="true"></i></a>
+							{% if clone_order %}<a onclick="clone_order();" data-toggle="tooltip" title="{{ button_clone_tooltip }}" class="btn btn-primary btn-sm"><i class="fa fa-copy" aria-hidden="true"></i></a>{% endif %}
+							<span class="term-button">|</span>
+						{% endif %}
+						<a onclick="apple_order();" data-toggle="tooltip" title="{{ button_apply_tooltip }}" class="btn btn-primary btn-sm"><i class="fa fa-save" aria-hidden="true"></i></a>
+						<a onclick="save_order();" data-toggle="tooltip" title="{{ button_save_tooltip }}" class="btn btn-success btn-sm"><i class="fa fa-save" aria-hidden="true"></i></a>
+						<a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel_tooltip }}" class="btn btn-danger btn-sm"><i class="fa fa-reply" aria-hidden="true"></i></a>
+					</div>
+				</div>
+				{% endif %}
+			</div>
+	
+			{% if orderpro_notabs_mode %}
+			</div>
+			{% endif %}
+	
+		</div>
+		<span class="end-form"></span>
+		</form>
+	</div>
+	
+	</div>
+	</div>
+{% if show_model or show_sku or show_upc or show_ean or show_jan or show_isbn or show_mpn or show_location or show_image %}
+<style>@media (max-width:1199px) {td.column-product{width:400px;min-width:150px;}}</style>
+{% endif %}
+<div id="similar_block"></div>
+<div id="shoverlay"><img src="view/image/orderpro/load-line.gif" alt="" /></div>
+<script type="text/javascript"><!--
+if ($(window).width() < 1400) {
+	$('#column-left').removeClass('active');
+	$('#button-menu').removeClass('hidden-lg').removeClass('hidden-md');
+}
+if ($('#product .info-options.alarm').length > 0) {
+	$('#content.orderpro-content > .container-fluid').prepend('<div class="alert alert-warning"><i class="fa fa-check-circle"></i> {{ error_order_options }}</div>');
+}
+$('#product .info-options.alarm').each(function(index, element) {
+	$(element).parent().find('.poptions').addClass('alarm');
+});
+$('#product').on('click', '.product-popap', function() {
+	var imgsrc = $(this).attr('data-popap');
+	$.colorbox({
+		maxWidth: "85%",
+		maxHeight: "85%",
+		href: imgsrc
+	});
+});
+$('input[name=\'firstname\']').blur(function() {
+	var firstname = $('input[name=\'firstname\']').val();
+	var shipping_firstname = $('input[name=\'shipping_firstname\']').val();
+	$('input[name=\'payment_firstname\']').val(firstname);
+	if ((shipping_firstname.length < 1) || (shipping_firstname == '{{ text_noname }}')) {
+	   $('input[name=\'shipping_firstname\']').val(firstname);
+	}
+});
+$('input[name=\'lastname\']').blur(function() {
+	var lastname = $('input[name=\'lastname\']').val();
+	var shipping_lastname = $('input[name=\'shipping_lastname\']').val();
+	$('input[name=\'payment_lastname\']').val(lastname);
+	if (shipping_lastname.length < 1) {
+	   $('input[name=\'shipping_lastname\']').val(lastname);
+	}
+});
+$('input[name=\'payment_company\']').blur(function() {
+	var payment_company = $('input[name=\'payment_company\']').val();
+	$('input[name=\'shipping_company\']').val(payment_company);
+});
+$('input[name=\'shipping_address_1\']').blur(function() {
+	var shipping_address_1 = $('input[name=\'shipping_address_1\']').val();
+	$('input[name=\'payment_address_1\']').val(shipping_address_1);
+});
+$('input[name=\'shipping_address_2\']').blur(function() {
+	var shipping_address_2 = $('input[name=\'shipping_address_2\']').val();
+	$('input[name=\'payment_address_2\']').val(shipping_address_2);
+});
+$('input[name=\'shipping_city\']').blur(function() {
+	var shipping_city = $('input[name=\'shipping_city\']').val();
+	$('input[name=\'payment_city\']').val(shipping_city);
+});
+$('input[name=\'shipping_postcode\']').blur(function() {
+	var shipping_postcode = $('input[name=\'shipping_postcode\']').val();
+	$('input[name=\'payment_postcode\']').val(shipping_postcode);
+});
+
+$('#button-registered').on('click', function() {
+	$.ajax({
+		url: 'index.php?route=sale/orderpro/createCustomer&user_token={{ user_token }}',
+		type: 'post',
+		data: $('#tab-payment :input, #tab-order :input'),
+		dataType: 'json',
+		beforeSend: function() {
+			$('#notifications').empty();
+		},
+		success: function(json) {
+			if (json['error_warning']) {
+				var html = '';
+				$.each(json['error_warning'], function(key, item) {
+					html += '<div class="alert alert-danger"><i class="fa fa-check-circle"></i> ' + item + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button></div>';
+				});
+				$('#notifications').append(html);
+			}
+			if (json['success']) {
+				$('#notifications').append('<div class="alert alert-success"><i class="fa fa-check-circle"></i> ' + json['success'] + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button></div>');
+				setTimeout (function() {$('#notifications .alert-success').fadeOut('slow', function() {$(this).remove();});}, 3000);
+	
+				$('#button-registered').removeClass('btn-primary').addClass('btn-default').removeAttr('id');
+				$('input[name=\'customer_id\']').val(json['customer_id']);
+			}
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+});
+
+var shipping_zone_id = '{{ shipping_zone_id }}';
+
+$('select[name=\'shipping_zone_id\']').on('change', function() {
+	$('input[name=\'payment_zone_id\']').val(this.value);
+});
+
+$('select[name=\'shipping_country_id\']').on('change', function() {
+	$('input[name=\'payment_country_id\']').val(this.value);
+	if (this.value) {
+		$.ajax({
+			url: 'index.php?route=sale/orderpro/country&user_token={{ user_token }}&country_id=' + this.value,
+			dataType: 'json',
+			beforeSend: function() {
+				$('select[name=\'shipping_country_id\']').css('opacity', '0.5');
+			},
+			complete: function() {
+				$('select[name=\'shipping_country_id\']').css('opacity', '1');
+			},
+			success: function(json) {
+				if (json['postcode_required'] == '1') {}
+				
+				html = '<option value="0">{{ text_select }}</option>';
+				
+				if (json != '' && json['zone'] != '') {
+					for (i = 0; i < json['zone'].length; i++) {
+						html += '<option value="' + json['zone'][i]['zone_id'] + '"';
+						
+						if (json['zone'][i]['zone_id'] == shipping_zone_id) {
+							html += ' selected="selected"';
+						}
+		
+						html += '>' + json['zone'][i]['name'] + '</option>';
+					}
+				} else {
+					html += '<option value="0" selected="selected">{{ text_none }}</option>';
+				}
+				
+				$('select[name=\'shipping_zone_id\']').html(html);
+				$('select[name=\'shipping_zone_id\']').trigger('change');
+			},
+			error: function(xhr, ajaxOptions, thrownError) {
+				alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+			}
+		});
+	} else {
+		html = '<option value="0" selected="selected">{{ text_none }}</option>';
+	
+		$('select[name=\'shipping_zone_id\']').html(html);
+		$('select[name=\'shipping_zone_id\']').trigger('change');
+	}
+});
+
+$('select[name=\'shipping_country_id\']').trigger('change');
+
+$('select[name=\'shipping_address\']').on('change', function() {
+	$.ajax({
+		url: 'index.php?route=sale/orderpro/customerAddress&user_token={{ user_token }}&address_id=' + this.value,
+		dataType: 'json',
+		success: function(json) {
+			if (json != '') {
+				$('input[name=\'shipping_firstname\']').val(json['firstname']);
+				$('input[name=\'shipping_lastname\']').val(json['lastname']);
+				$('input[name=\'shipping_company\']').val(json['company']);
+				$('input[name=\'shipping_address_1\']').val(json['address_1']);
+				$('input[name=\'shipping_address_2\']').val(json['address_2']);
+				$('input[name=\'shipping_city\']').val(json['city']);
+				$('input[name=\'shipping_postcode\']').val(json['postcode']);
+				$('select[name=\'shipping_country_id\']').val(json['country_id']);
+				
+				shipping_zone_id = json['zone_id'];
+				
+				$('select[name=\'shipping_country_id\']').trigger('change');
+
+				$('input[name=\'payment_firstname\']').val(json['firstname']);
+				$('input[name=\'payment_lastname\']').val(json['lastname']);
+				$('input[name=\'payment_company\']').val(json['company']);
+				$('input[name=\'payment_address_1\']').val(json['address_1']);
+				$('input[name=\'payment_address_2\']').val(json['address_2']);
+				$('input[name=\'payment_city\']').val(json['city']);
+				$('input[name=\'payment_postcode\']').val(json['postcode']);
+				$('input[name=\'payment_country_id\']').val(json['country_id']);
+				$('input[name=\'payment_zone_id\']').val(json['zone_id']);
+				
+				for (i in json['custom_field']) {
+					$('#csfield-shipping select[name=\'shipping_custom_field[' + i + ']\']').val(json['custom_field'][i]);
+					$('#csfield-shipping textarea[name=\'shipping_custom_field[' + i + ']\']').val(json['custom_field'][i]);
+					$('#csfield-shipping input[name^=\'shipping_custom_field[' + i + ']\'][type=\'text\']').val(json['custom_field'][i]);
+					if (json['custom_field'][i] != '') {
+						$('#csfield-shipping a#file-link-' + i).empty().attr('href', 'index.php?route=sale/orderpro/download&user_token={{ user_token }}&code=' + json['custom_field'][i]).append('Скачать файл').show('fast');
+					}
+					$('#csfield-shipping input[name^=\'shipping_custom_field[' + i + ']\'][type=\'hidden\']').val(json['custom_field'][i]);
+					$('#csfield-shipping input[name^=\'shipping_custom_field[' + i + ']\'][type=\'radio\'][value=\'' + json['custom_field'][i] + '\']').prop('checked', true);
+					$('#csfield-shipping input[name^=\'shipping_custom_field[' + i + ']\'][type=\'checkbox\'][value=\'' + json['custom_field'][i] + '\']').prop('checked', true);
+
+					if (json['custom_field'][i] instanceof Array) {
+						for (j = 0; j < json['custom_field'][i].length; j++) {
+							$('#csfield-shipping input[name^=\'shipping_custom_field[' + i + ']\'][type=\'checkbox\'][value=\'' + json['custom_field'][i][j] + '\']').prop('checked', true);
+						}
+					}
+				}
+			}
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});	
+});
+//--></script>
+<script type="text/javascript"><!--
+$('input[name=\'coupon_code\']').autocomplete({
+	delay: 500,
+	'source': function(request, response) {
+		if(request.length >= 1) {
+		$.ajax({
+			url: 'index.php?route=sale/orderpro/couponAutocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request),
+			dataType: 'json',
+			success: function(json) {
+				response($.map(json, function(item) {
+					return {
+						label: item['name'],
+						value: item['code']
+					}
+				}));
+			}
+		});
+		}
+	},
+	'select': function(item) {
+		$(this).val(item['value']);
+	}
+});
+
+$('input[name=\'voucher_code\']').autocomplete({
+	delay: 500,
+	'source': function(request, response) {
+		if(request.length >= 1) {
+		$.ajax({
+			url: 'index.php?route=sale/orderpro/voucherAutocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request),
+			dataType: 'json',
+			success: function(json) {
+				response($.map(json, function(item) {
+					return {
+						label: item['name'],
+						value: item['code']
+					}
+				}));
+			}
+		});
+		}
+	},
+	'select': function(item) {
+		$(this).val(item['value']);
+	}
+});
+
+$('input[name=\'customer\']').autocomplete({
+	delay: 500,
+	'source': function(request, response) {
+		if(request.length >= 1) {
+			$.ajax({
+				url: 'index.php?route=sale/orderpro/customerAutocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request),
+				dataType: 'json',
+				success: function(json) {
+					response($.map(json, function(item) {
+					return {
+						category: item['customer_group'],
+						label: item['name'],
+						value: item['customer_id'],
+						customer_group_id: item['customer_group_id'],
+						firstname: item['firstname'],
+						lastname: item['lastname'],
+						email: item['email'],
+						telephone: item['telephone'],
+						fax: item['fax'],
+						custom_field: item['custom_field'],
+						address: item['address']
+						}
+					}));
+				}
+			});
+		}
+	},
+	'select': function(item) {
+		$('input[name=\'customer\']').val(item['label']);
+		$('input[name=\'customer_id\']').val(item['value']);
+		$('input[name=\'firstname\']').val(item['firstname']);
+		$('input[name=\'lastname\']').val(item['lastname']);
+		$('input[name=\'email\']').val(item['email']);
+		$('input[name=\'telephone\']').val(item['telephone']);
+		$('input[name=\'fax\']').val(item['fax']);
+	
+		for (i in item.custom_field) {
+			$('#csfield-account select[name=\'custom_field[' + i + ']\']').val(item.custom_field[i]);
+			$('#csfield-account textarea[name=\'custom_field[' + i + ']\']').val(item.custom_field[i]);
+			$('#csfield-account input[name^=\'custom_field[' + i + ']\'][type=\'text\']').val(item.custom_field[i]);
+			if (item.custom_field[i] != '') {
+				$('#csfield-account a#file-link-' + i).empty().attr('href', 'index.php?route=sale/orderpro/download&user_token={{ user_token }}&code=' + item.custom_field[i]).append('Скачать файл').show('fast');
+			}
+			$('#csfield-account input[name^=\'custom_field[' + i + ']\'][type=\'hidden\']').val(item.custom_field[i]);
+			$('#csfield-account input[name^=\'custom_field[' + i + ']\'][type=\'radio\'][value=\'' + item.custom_field[i] + '\']').prop('checked', true);
+	
+			if (item.custom_field[i] instanceof Array) {
+				for (j = 0; j < item.custom_field[i].length; j++) {
+					$('#csfield-account input[name^=\'custom_field[' + i + ']\'][type=\'checkbox\'][value=\'' + item.custom_field[i][j] + '\']').prop('checked', true);
+				}
+			}
+		}
+	
+		html = '<option value="0">{{ text_none }}</option>'; 
+	
+		for (i in  item['address']) {
+			html += '<option value="' + item['address'][i]['address_id'] + '">' + item['address'][i]['firstname'] + ' ' + item['address'][i]['lastname'] + ', ' + item['address'][i]['address_1'] + ', ' + item['address'][i]['city'] + ', ' + item['address'][i]['zone'] + '</option>';
+		}
+	
+		$('select[name=\'shipping_address\']').html(html);
+	
+		$('input[name=\'customer_group_id\']').val(item['customer_group_id']);
+		controlReward();
+	}
+});
+
+$('input[name=\'affiliate\']').autocomplete({
+	delay: 500,
+	'source': function(request, response) {
+		if(request.length >= 1) {
+		$.ajax({
+			url: 'index.php?route=marketing/affiliate/autocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request),
+			dataType: 'json',
+			success: function(json) {
+				response($.map(json, function(item) {
+					return {
+						label: item['name'],
+						value: item['affiliate_id']
+					}
+				}));
+			}
+		});
+		}
+	},
+	'select': function(item) {
+		$('input[name=\'affiliate\']').val(item['label']);
+		$('input[name=\'affiliate_id\']').val(item['value']);
+	}
+});
+//--></script>
+<script type="text/javascript"><!--
+var product_row = {{ product_row }};
+
+function addProduct() {
+	html='<tbody id="product-row'+product_row+'">';
+	html+=' <tr class="product-line">';
+	html+='  <td class="center"{{ hide_pid }}><input type="text" name="order_product['+product_row+'][product_id]" class="form-control input-pid-'+product_row+'" value="" /></td>';
+	html+='  <td class="center"{{ hide_image }}><div class="product-image" id="image_'+product_row+'"></div></td>';
+	html+='  <td class="center"><input type="text" name="order_product['+product_row+'][name]" value="" class="form-control input-name" /><input type="hidden" name="order_product['+product_row+'][order_product_id]" value="" /><input type="hidden" name="order_product['+product_row+'][tax]" value="" /><input type="hidden" name="order_product['+product_row+'][status]" value="" /><div id="product_options'+product_row+'"></div></td>';
+	html+='  <td class="center"{{ hide_model }}><input type="text" name="order_product['+product_row+'][model]" value="" class="form-control input-model" /></td>';
+	html+='  <td class="center"{{ hide_sku }}><input type="text" name="order_product['+product_row+'][sku]" value="" class="form-control input-sku" /></td>';
+	html+='  <td class="center"{{ hide_upc }}><input type="text" name="order_product['+product_row+'][upc]" value="" class="form-control input-upc" /></td>';
+	html+='  <td class="center"{{ hide_ean }}><input type="text" name="order_product['+product_row+'][ean]" value="" class="form-control input-ean" /></td>';
+	html+='  <td class="center"{{ hide_jan }}><input type="text" name="order_product['+product_row+'][jan]" value="" class="form-control input-jan" /></td>';
+	html+='  <td class="center"{{ hide_isbn }}><input type="text" name="order_product['+product_row+'][isbn]" value="" class="form-control input-isbn" /></td>';
+	html+='  <td class="center"{{ hide_mpn }}><input type="text" name="order_product['+product_row+'][mpn]" value="" class="form-control input-mpn" /></td>';
+	html+='  <td class="center"{{ hide_location }}><input type="text" name="order_product['+product_row+'][location]" value="" class="form-control input-location" /></td>';
+	html+='  <td class="right product-weight"{{ hide_weight }}><input type="text" name="order_product['+product_row+'][weight]" value="" readonly="readonly" /></td>';
+	html+='  <td class="center product-quantity"><input type="text" name="order_product['+product_row+'][quantity]" class="form-control" value="1" /></td>';
+	html+='  <td class="center"{{ hide_realqty }}><span id="realquantity_'+product_row+'"></span></td>';
+	html+='  <td class="right product-price"><div class="input-group input-group-sm"><input type="text" name="order_product['+product_row+'][price]" value="" class="form-control input-price" /><span class="input-group-addon price-empty"></span></div></td>';
+	html+='  <td class="right now_price"{{ hide_nowprice }}><span id="now_price_'+product_row+'"></span><span id="now_special_'+product_row+'" style="color:red;"></span><span id="now_discount_'+product_row+'" style="color:blue;"></span></td>';
+	html+='  <td class="right product-total"><input type="text" name="order_product['+product_row+'][total]" value="" readonly="readonly" /></td>';
+	html+='  <td class="right product-discount"{{ hide_discount }}><div class="input-group input-group-sm"><input type="text" name="order_product['+product_row+'][discount_amount]" value="" class="form-control input-amount" /> ';
+	html+='   <select name="order_product['+product_row+'][discount_type]" class="form-control">';
+	html+='    <option value="P" selected="selected">%</option>';
+	html+='    <option value="S">S</option>';
+	html+='   </select><span class="input-group-addon amount-empty"></span></div></td>';
+	html+='  <td class="right product-reward"{{ hide_reward }}><input type="text" id="reward_'+product_row+'" name="order_product['+product_row+'][reward]" value="" readonly="readonly" /></td>';
+	html+='  <td class="center premove"><a onclick="$(\'#product-row'+product_row+'\').remove();" class="btn btn-danger btn-sm" role="button"><i class="fa fa-minus-circle"></i></a></td>';
+	html+=' </tr>';
+	html+='</tbody>';
+	
+	$("#product tfoot").before(html);
+	
+	product_autocomplete(product_row);
+	product_row++;
+}
+
+function product_autocomplete(product_row) {
+	var reqname = '{{ orderpro_autocomplete_type }}';
+	var cr_group_id = $('input[name=\'customer_group_id\']').val();
+	$('#product input.input-pid-' + product_row + ', input[name=\'order_product[' + product_row + '][name]\'], input[name=\'order_product[' + product_row + '][model]\'], input[name=\'order_product[' + product_row + '][sku]\'], input[name=\'order_product[' + product_row + '][upc]\'], input[name=\'order_product[' + 
+	product_row + '][ean]\'], input[name=\'order_product[' + product_row + '][jan]\'], input[name=\'order_product[' + product_row + '][isbn]\'], input[name=\'order_product[' + product_row + '][mpn]\'], input[name=\'order_product[' + product_row + '][location]\']').autocomplete({
+		delay: 500,
+		'source': function(request, response) {
+			var requested = $(this).attr('class');
+			$.ajax({
+				url: 'index.php?route=sale/orderpro/productAutocomplete&user_token={{ user_token }}',
+				dataType: 'json',
+                data: {
+					filter_pid: $('input[name=\'order_product[' + product_row + '][product_id]\']').val(),
+                    filter_name: $('input[name=\'order_product[' + product_row + '][name]\']').val(),
+                    filter_model: $('input[name=\'order_product[' + product_row + '][model]\']').val(),
+					filter_sku: $('input[name=\'order_product[' + product_row + '][sku]\']').val(),
+					filter_upc: $('input[name=\'order_product[' + product_row + '][upc]\']').val(),
+					filter_ean: $('input[name=\'order_product[' + product_row + '][ean]\']').val(),
+					filter_jan: $('input[name=\'order_product[' + product_row + '][jan]\']').val(),
+					filter_isbn: $('input[name=\'order_product[' + product_row + '][isbn]\']').val(),
+					filter_mpn: $('input[name=\'order_product[' + product_row + '][mpn]\']').val(),
+					filter_location: $('input[name=\'order_product[' + product_row + '][location]\']').val()
+                },
+				success: function(data) {
+					response($.map(data, function(item) {
+						if (reqname) {
+							var requested_label = item['name'];
+						} else {
+							if(requested.indexOf('input-model') != -1){
+								var requested_label = item['model'];
+							} else if(requested.indexOf('input-sku') != -1){
+								var requested_label = item['sku'];
+							} else if(requested.indexOf('input-upc') != -1){
+								var requested_label = item['upc'];
+							} else if(requested.indexOf('input-ean') != -1){
+								var requested_label = item['ean'];
+							} else if(requested.indexOf('input-jan') != -1){
+								var requested_label = item['jan'];
+							} else if(requested.indexOf('input-isbn') != -1){
+								var requested_label = item['isbn'];
+							} else if(requested.indexOf('input-mpn') != -1){
+								var requested_label = item['mpn'];
+							} else if(requested.indexOf('input-location') != -1){
+								var requested_label = item['location'];
+							} else {
+								var requested_label = item['name'];
+							}
+						}
+						return {
+							label: requested_label,
+                            name: item['name'],
+							value: item['product_id'],
+							model: item['model'],
+							sku: item['sku'],
+							upc: item['upc'],
+							ean: item['ean'],
+							jan: item['jan'],
+							isbn: item['isbn'],
+							mpn: item['mpn'],
+							location: item['location']
+						}
+					}));
+				}
+			});
+		},
+		'complete': function() {},
+		'select': function(item) {
+			$.ajax({
+				url: 'index.php?route=sale/orderpro/getToProduct&product_id=' + item['value'] + '&customer_group_id=' + cr_group_id + '&user_token={{ user_token }}',
+				dataType: 'json',
+				success: function(json) {
+				if (json != '') {
+					$('input[name=\'order_product[' + product_row + '][product_id]\']').val(json.product_id).attr('readonly', 'readonly').removeClass('input-pid-' + product_row).addClass('input-pid');
+					$('input[name=\'order_product[' + product_row + '][name]\']').val(json.name);
+					$('input[name=\'order_product[' + product_row + '][model]\']').val(json.model);
+					$('input[name=\'order_product[' + product_row + '][sku]\']').val(json.sku);
+					$('input[name=\'order_product[' + product_row + '][upc]\']').val(json.upc);
+					$('input[name=\'order_product[' + product_row + '][ean]\']').val(json.ean);
+					$('input[name=\'order_product[' + product_row + '][jan]\']').val(json.jan);
+					$('input[name=\'order_product[' + product_row + '][isbn]\']').val(json.isbn);
+					$('input[name=\'order_product[' + product_row + '][mpn]\']').val(json.mpn);
+					$('input[name=\'order_product[' + product_row + '][location]\']').val(json.location);
+					$('input[name=\'order_product[' + product_row + '][weight]\']').val(json.weight);
+					$('#now_price_' + product_row).html(json.price);
+					$('#now_special_' + product_row).html(json.special);
+					$('#now_discount_' + product_row).html(json.discount_qty + '/' + json.discount);
+					$('#realquantity_' + product_row).html(json.quantity);
+					$('#image_' + product_row).html('<a href="'+ json.href +'" target="_blank"><img src="'+ json.image +'" alt="'+ json.name +'"></a>');
+					if (json.popap) {
+						$('#image_' + product_row).append('<span id="popap_'+ product_row +'"></span>');
+						$('#popap_' + product_row).addClass('product-popap').attr('data-popap', json.popap);
+					}
+					$('input[name=\'order_product[' + product_row + '][reward]\']').val(json.reward);
+					$('input[name=\'order_product[' + product_row + '][status]\']').val(json.status);
+	
+					if (json.option != '') {
+						html = '<div class="poptions">';
+			
+						for (i = 0; i < json.option.length; i++) {
+							option = json.option[i];
+	
+							if (option['type'] == 'select' || option['type'] == 'radio' || option['type'] == 'image') {
+								html += '<div class="form-group option"><label>';
+	
+								if (option['required'] == '1') {
+									html += '<span class="required">*</span>';
+								}
+	
+								html += option['name'] + '</label>';
+								html += '<select name="order_product[' + product_row + '][option][' + option['product_option_id'] + ']" class="form-control">';
+	
+								if (option['required'] == '0') {
+									html += '<option value="">{{ text_select }}</option>';
+								}
+	
+								for (j = 0; j < option['product_option_value'].length; j++) {
+									option_value = option['product_option_value'][j];
+	
+									html += '<option value="' + option_value['product_option_value_id'] + '">' + option_value['name'];
+	
+									if (option_value['price']) {
+										html += ' (' + option_value['price_prefix'] + option_value['price'] + ')';
+									}
+	
+									html += '</option>';
+								}
+	
+								html += '</select>';
+								html += '</div>';
+							}
+	
+							if (option['type'] == 'checkbox') {
+								html += '<div class="form-group"><label>';
+	
+								if (option['required'] == '1') {
+									html += '<span class="required">*</span>';
+								}
+	
+								html += option['name'] + '</label>';
+	
+								for (j = 0; j < option['product_option_value'].length; j++) {
+									option_value = option['product_option_value'][j];
+	
+									html += '<div class="checkbox"><label>';
+									html += '<input type="checkbox" name="order_product[' + product_row + '][option][' + option['product_option_id'] + '][]" value="' + option_value['product_option_value_id'] + '" />';
+									html += option_value['name'];
+	
+									if (option_value['price']) {
+										html += ' (' + option_value['price_prefix'] + option_value['price'] + ')';
+									}
+	
+									html += '</label>';
+									html += '</div>';
+								}
+	
+								html += '</div>';
+							}
+	
+							if (option['type'] == 'text') {
+								html += '<div class="form-group"><label>';
+	
+								if (option['required'] == '1') {
+									html += '<span class="required">*</span>';
+								}
+	
+								html += option['name'] + '</label>';
+								html += '<input type="text" name="order_product[' + product_row + '][option][' + option['product_option_id'] + ']" class="form-control" value="' + option['value'] + '" />';
+								html += '</div>';
+							}
+	
+							if (option['type'] == 'textarea') {
+								html += '<div class="form-group"><label>';
+	
+								if (option['required'] == '1') {
+									html += '<span class="required">*</span>';
+								}
+	
+								html += option['name'] + '</label>';
+								html += '<textarea name="order_product[' + product_row + '][option][' + option['product_option_id'] + ']" class="form-control" rows="2">' + option['value'] + '</textarea>';
+								html += '</div>';
+							}
+	
+							if (option['type'] == 'file') {
+								html += '<div class="form-group"><label>';
+	
+								if (option['required'] == '1') {
+									html += '<span class="required">*</span>';
+								}
+	
+								html += option['name'] + '</label>';
+								html += '<div class="btn-group btn-group-sm upfile-block">';
+								html += '<a id="file-link-' + option['product_option_id'] + '-' + product_row + '" class="btn btn-default file-link" title="{{ text_download }}"></a>';
+								html += '<input type="hidden" name="order_product[' + product_row + '][option][' + option['product_option_id'] + ']" value="' + option['value'] + '" />';
+								html += '<a id="button-upload-' + option['product_option_id'] + '-' + product_row + '" class="btn btn-primary" title="{{ text_upload }}"><i class="fa fa-upload"></i></a>';
+								html += '</div></div>';
+							}
+	
+							if (option['type'] == 'date') {
+								html += '<div class="form-group"><label>';
+	
+								if (option['required'] == '1') {
+									html += '<span class="required">*</span>';
+								}
+	
+								html += option['name'] + '</label>';
+								html += '<div class="input-group input-group-sm date">';
+								html += '<input type="text" name="order_product[' + product_row + '][option][' + option['product_option_id'] + ']" class="form-control" value="' + option['value'] + '" data-date-format="YYYY-MM-DD" />';
+								html += '<span class="input-group-btn"><a class="btn btn-default" role="button"><i class="fa fa-calendar"></i></a></span>';
+								html += '</div></div>';
+							}
+	
+							if (option['type'] == 'datetime') {
+								html += '<div class="form-group"><label>';
+	
+								if (option['required'] == '1') {
+									html += '<span class="required">*</span>';
+								}
+	
+								html += option['name'] + '</label>';
+								html += '<div class="input-group input-group-sm datetime">';
+								html += '<input type="text" name="order_product[' + product_row + '][option][' + option['product_option_id'] + ']" class="form-control" value="' + option['value'] + '" data-date-format="YYYY-MM-DD HH:mm" />';
+								html += '<span class="input-group-btn"><a class="btn btn-default" role="button"><i class="fa fa-calendar"></i></a></span>';
+								html += '</div></div>';
+							}
+	
+							if (option['type'] == 'time') {
+								html += '<div class="form-group"><label>';
+								
+								if (option['required'] == '1') {
+									html += '<span class="required">*</span>';
+								}
+	
+								html += option['name'] + '</label>';
+								html += '<div class="input-group input-group-sm time">';
+								html += '<input type="text" name="order_product[' + product_row + '][option][' + option['product_option_id'] + ']" class="form-control" value="' + option['value'] + '" data-date-format="HH:mm" />';
+								html += '<span class="input-group-btn"><a class="btn btn-default" role="button"><i class="fa fa-calendar"></i></a></span>';
+								html += '</div></div>';
+							}
+						}
+	
+						html += '</div>';
+	
+						$('#product_options' + product_row).empty().append(html);
+	
+						$('#product_options' + product_row + ' .date').datetimepicker({pickTime: false});
+						$('#product_options' + product_row + ' .datetime').datetimepicker({pickDate: true, pickTime: true});
+						$('#product_options' + product_row + ' .time').datetimepicker({pickDate: false});
+	
+					} else {
+						$('#product_options' + product_row).empty();
+					}
+					controlReward();
+				}
+				}
+			});
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+}
+
+$('#product tbody').each(function(index, element) {
+	product_autocomplete(index);
+});
+//--></script>
+<script type="text/javascript"><!--
+var old_order_status_id = '{{ order_status_id }}';
+var order_id = '{{ order_id }}';
+
+{% if order_id %}
+$('select[id=\'order_status_id\']').on('change', function() {
+	var new_order_status_id = this.value;
+	
+	if (old_order_status_id != new_order_status_id) {
+		$.ajax({
+			url: 'index.php?route=sale/orderpro/history&user_token={{ user_token }}&order_id={{ order_id }}',
+			type: 'post',
+			dataType: 'html',
+			data: 'order_status_id=' + new_order_status_id + '&notify=0&comment=',
+			beforeSend: function() {
+				$('#notifications').empty();
+			},
+			success: function(html) {
+				$('#history').html(html);
+				$('textarea[name=\'admin_comment\']').val('');
+				$('select[id=\'horder_status_id\']').val(new_order_status_id);
+	
+				$('#notifications').append('<div class="alert alert-success"><i class="fa fa-check-circle"></i> {{ success_order_history }}</div>');
+				setTimeout(function() {$('#notifications .alert-success').fadeOut('slow', function() {$(this).remove();});}, 3000);
+	
+				old_order_status_id = new_order_status_id;
+				controlReward();
+			},
+			error: function(xhr, ajaxOptions, thrownError) {
+				alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+			}
+		});
+	}
+});
+{% endif %}
+
+function escapeHTML(str) {
+    return String(str).replace(/&(?!\w+;)/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+var norecalc = ['shipping'];
+
+$(document).delegate('#total .no_calc', 'click', function() {
+	var ttype = $(this).attr('name');
+	
+	if ($(this).prop('checked')) {
+		$("#total input[name=" + ttype +"]").prop('checked', true);
+	
+		if ($.inArray(ttype, norecalc) == -1) {
+			norecalc.push(ttype);
+		}
+	} else {
+		$("#total input[name=" + ttype +"]").prop('checked', false);
+		norecalc.splice($.inArray(ttype, norecalc), 1);
+	}
+});
+
+var total_row = '{{ total_row }}';
+
+function recalculate() {
+	$('#total .no_calc').each(function () {
+		if (this.checked) {$(this).val('1');}
+	});
+	$("#shoverlay").show();
+	$.ajax({
+		url: '{{ store_url }}index.php?route=checkout/recalculate&user_token={{ user_token }}&order_id={{ order_id ? order_id : temp_order_id }}',
+		type: 'post',
+		dataType: 'json',
+		data: $('#tab-order :input, #tab-payment :input, #product :checked, #product input:hidden, #product input:text, #product .option :input, #product .product-discount :input, #order-reward :input, #order-dops :input, #payment_shipping :input, #total :input'),
+		beforeSend: function() {
+			$('#content .alert-success').remove();
+			$('#total td.message').empty();
+		},
+		complete: function() {
+			$('#shoverlay').hide();
+		},
+		success: function(json) {
+			$('.autocomplete div').remove();
+	
+			if (!json['error']) {
+				var total_row = 0;
+				var button_remove = '{{ button_remove }}';
+				var html = '';
+	
+				$.each(json['order_total'], function(key, value) {
+					html += ' <tr id="total-row' + total_row + '">';
+					html += '  <td>';
+					html += '    <input type="hidden" name="order_total[' + total_row + '][order_total_id]" value="0" />';
+					html += '    <input type="hidden" name="order_total[' + total_row + '][code]" value="' + value.code + '" />';
+					html += '    <input type="text" name="order_total[' + total_row + '][title]" class="form-control input-total-title" value="' + escapeHTML(value.title) + '" />';
+					html += '  </td>';
+					html += '  <td class="text-right">';
+					html += '    <input type="hidden" name="order_total[' + total_row + '][text]" value="' + escapeHTML(value.text) + '" />';
+					if (value.correct) { value.code = 'correct'; }
+					if (value.discount) { value.code = 'discount'; }
+					if ((value.code == 'sub_total') || (value.code == 'total')) {
+						html += '   <input type="hidden" name="order_total[' + total_row + '][value]" value="' + value.value + '" />';
+					} else {
+						html += '   <input type="text" name="order_total[' + total_row + '][value]" class="form-control input-total-value" value="' + value.value + '" />';
+					}
+					html += '  </td>';
+					html += '  <td class="text-right order-total-value">' + escapeHTML(value.text) + '</td>';
+					html += '  <td class="text-center">';
+					if ((value.code == 'discount') || (value.code == 'correct')) {
+						html += '   <input class="no_calc" type="checkbox" name="' + value.code + '" value="0" disabled="disabled" />';
+					} else {
+						html += '   <input class="no_calc" type="checkbox" name="' + value.code + '" value="0" />';
+					}
+					html += '  </td>';
+					html += '  <td class="text-center">';
+					if ((value.code == 'discount') || (value.code == 'correct')) {
+						html += '   <input type="text" name="order_total[' + total_row + '][sort_order]" class="form-control input-total-sort" value="' + value.sort_order + '" readonly="readonly" />';
+					} else {
+						html += '   <input type="text" name="order_total[' + total_row + '][sort_order]" class="form-control input-total-sort" value="' + value.sort_order + '" />';
+					}
+					html += '  </td>';
+					html += '  <td class="text-right">';
+					html += '    <a class="btn btn-danger btn-sm" onclick="$(\'#total-row' + total_row + '\').remove();" role="button">' + button_remove + '</a>';
+					html += '  </td>';
+					html += ' </tr>';
+	
+					total_row++;
+				});
+	
+				$('#total').unbind();
+				$('#total tbody').html(html);
+	
+				$('#total .no_calc').each(function () {
+					if ($.inArray($(this).attr('name'), norecalc) != -1) {
+						$(this).prop('checked', true);
+					}
+				});
+	
+				if (json['commission'] != '') {
+					$('input[name=\'commission\']').val(json['commission'].value);
+					$('#order-dops .commission-value').html(json['commission'].text);
+				}
+	
+				$.each(json['del_product_rows'], function(key, prod_row) {
+					$('#product-row' + prod_row).remove();
+				});
+	
+				$.each(json['order_product'], function(prod_row, value) {
+					if (value.dtext) {
+						var name_value = $('input[name=\'order_product[' + prod_row + '][name]\']');
+						var name_explode = $(name_value).val().split(' |');
+                        $(name_value).val(name_explode[0] + '{{ text_discount }} ' + value.dtext).addClass('has-amount');
+						$('#product-row' + prod_row + ' .product-discount .form-control').addClass('has-amount');
+					} else {
+						$('input[name=\'order_product[' + prod_row + '][name]\']').val(value.name).removeClass('has-amount');
+						$('#product-row' + prod_row + ' .product-discount .form-control').removeClass('has-amount');
+					}
+	
+					$('input[name=\'order_product[' + prod_row + '][quantity]\']').val(value.quantity);
+					$('input[name=\'order_product[' + prod_row + '][tax]\']').val(value.tax);
+					$('input[name=\'order_product[' + prod_row + '][total]\']').val(value.total);
+					$('input[name=\'order_product[' + prod_row + '][price]\']').val(value.price);
+					$('input[name=\'order_product[' + prod_row + '][reward]\']').val(value.reward);
+					$('input[name=\'order_product[' + prod_row + '][weight]\']').val(value.weight);
+					$('input[name=\'order_product[' + prod_row + '][discount_amount]\']').val(value.damount);
+				});
+	
+				$('#weight_cart').val(json['weight_cart']);
+				$('#items_cart').val(json['items_cart']);
+				$('#total_cart').val(json['total_cart']);
+				$('#discount_cart').val(json['discount_cart']);
+				$('#reward_cart').val(json['reward_cart']);
+				$('input[name=\'reward_cart\']').val(json['reward_cart']);
+	
+				if (json['warning_reward']) {
+					$('#rewards-available').addClass('danger');
+					$('#rewards-available .reward-use').html('Max: '+ json['warning_reward']);
+				}
+	
+				if (json['warning']) {
+					var html = '';
+					$.each(json['warning'], function(key, value) {
+						html += '<div class="alert alert-warning"><i class="fa fa-check-circle"></i> ' + value + '</div>';
+					});
+	
+					$('#total td.message').append(html);
+				}
+	
+				$('#total .btn-popover').popover({
+					trigger: "hover"
+				});
+	
+				if ($('input[name=\'customer_id\']').val() != ''){
+					controlReward();
+				}
+	
+			} else {
+				var html = '';
+				$.each(json['error'], function(key, value) {
+					html += '<div class="alert alert-danger"><i class="fa fa-check-circle"></i> ' + value + '</div>';
+				});
+	
+				$('#total td.message').append(html);
+			}
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			console.log(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+			alert('Recalculate Error!');
+		}
+	});
+}
+
+function controlReward() {
+	var customer_id = $('input[name=\'customer_id\']').val();
+	var customer_group_id = $('input[name=\'customer_group_id\']').val();
+	$.ajax({
+		url: '{{ store_url }}index.php?route=checkout/recalculate/controlReward&user_token={{ user_token }}&order_id={{ order_id ? order_id : temp_order_id }}&customer_id=' + encodeURIComponent(customer_id) + '&customer_group_id=' + encodeURIComponent(customer_group_id),
+		type: 'post',
+		dataType: 'json',
+		data: $('#product :checked, #product input:hidden, #product input:text, #product .option :input'),
+		success: function(json) {
+			var reward_use = Number($('input[name=\'reward_use\']').val());
+	
+			if (reward_use <= json.reward_possibly) {
+				$('#rewards-available').removeClass('danger');
+				$('#rewards-available .reward-use').html('Max: '+ json.reward_possibly);
+			} else {
+				$('#rewards-available').addClass('danger');
+				$('#rewards-available .reward-use').html('Max: '+ json.reward_possibly);
+				$('input[name=\'reward_use\']').val(json.reward_possibly);
+			}
+	
+			$('#reward-total span.rtotal').html(json.reward_total);
+			$('#reward-total span.ptotal').html(json.reward_possibly);
+			$('#reward-recived').html(json.reward_recived);
+			$('input[name=\'reward_cart\']').val(json.reward_cart);
+		}
+	});
+}
+
+$('input[name=\'reward_use\']').blur(function () {
+    controlReward();
+});
+
+function getMethods() {
+	$.ajax({
+		url: '{{ store_url }}index.php?route=checkout/recalculate/getMethods&user_token={{ user_token }}',
+		type: 'post',
+		data: $('#tab-order :input, #tab-payment :input, #product :checked, #product input:hidden, #product input:text, #product .option :input, #product .product-discount :input, #order-reward :input, #order-dops :input, #payment_shipping :input, #total :input'),
+		dataType: 'json',	
+		beforeSend: function() {
+			$('#payment_shipping select[name=\'shippings\'], #payment_shipping select[name=\'payments\']').css('opacity', '0.4');
+			$('#total td.message').empty();
+		},
+		complete: function() {
+			$('#payment_shipping select[name=\'shippings\'], #payment_shipping select[name=\'payments\']').css('opacity', '1');
+		},
+		success: function(json) {
+			if (json['error']) {
+				var html = '';
+				$.each(json['error'], function(key, value) {
+					html += '<div class="alert alert-danger"><i class="fa fa-check-circle"></i> ' + value + '</div>';
+				});
+	
+				$('#total td.message').append(html);
+			}
+	
+			if (json['warning']) {
+				var html = '';
+				$.each(json['warning'], function(key, value) {
+					html += '<div class="alert alert-warning"><i class="fa fa-check-circle"></i> ' + value + '</div>';
+				});
+	
+				$('#total td.message').append(html);
+			}
+	
+			if (json['shipping_method']) {
+				html = '<option value="">{{ text_select }}</option>';
+	
+				for (i in json['shipping_method']) {
+					html += '<optgroup label="' + json['shipping_method'][i]['title'] + '">';
+	
+					for (j in json['shipping_method'][i]['quote']) {
+						if (json['shipping_method'][i]['quote'][j]['code'] == $('#payment_shipping input[name=\'shipping_code\']').val()) {
+							if (!json['shipping_method'][i]['error']) {
+								html += '<option value="' + json['shipping_method'][i]['quote'][j]['code'] + '" selected="selected">' + json['shipping_method'][i]['quote'][j]['title'] + '</option>';
+							} else {
+								html += '<option style="color:#676;" value="' + json['shipping_method'][i]['quote'][j]['code'] + '" selected="selected">' + json['shipping_method'][i]['quote'][j]['title'] + ' ' + json['shipping_method'][i]['error'] + '</option>';
+							}
+						} else {
+							if (!json['shipping_method'][i]['error']) {
+								html += '<option value="' + json['shipping_method'][i]['quote'][j]['code'] + '">' + json['shipping_method'][i]['quote'][j]['title'] + '</option>';
+							} else {
+								html += '<option style="color:#676;" value="' + json['shipping_method'][i]['quote'][j]['code'] + '">' + json['shipping_method'][i]['quote'][j]['title'] + ' ' + json['shipping_method'][i]['error'] + '</option>';
+							}
+						}
+					}
+	
+					html += '</optgroup>';
+				}
+	
+				$('#payment_shipping select[name=\'shippings\']').html(html);
+			}
+	
+			if (json['payment_method']) {
+				html = '<option value="">{{ text_select }}</option>';
+	
+				for (i in json['payment_method']) {
+					if (json['payment_method'][i]['code'] == $('#payment_shipping input[name=\'payment_code\']').val()) {
+						if (!json['payment_method'][i]['error']) {
+							html += '<option value="' + json['payment_method'][i]['code'] + '" selected="selected">' + json['payment_method'][i]['title'] + '</option>';
+						} else {
+							html += '<option style="color:#676;" value="' + json['payment_method'][i]['code'] + '" selected="selected">' + json['payment_method'][i]['title'] + ' ' + json['payment_method'][i]['error'] + '</option>';
+						}
+					} else {
+						if (!json['payment_method'][i]['error']) {
+							html += '<option value="' + json['payment_method'][i]['code'] + '">' + json['payment_method'][i]['title'] + '</option>';
+						} else {
+							html += '<option style="color:#676;" value="' + json['payment_method'][i]['code'] + '">' + json['payment_method'][i]['title'] + ' ' + json['payment_method'][i]['error'] + '</option>';
+						}
+					}
+				}
+	
+				$('#payment_shipping select[name=\'payments\']').html(html);
+			}
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			console.log(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+}
+
+var regex2 = '{{ error_method_available }}';
+
+$('select[name=\'payments\']').on('change', function() {
+	if (this.value) {
+		$('input[name=\'payment_method\']').val($('select[name=\'payments\'] option:selected').text().replace(regex2, ''));
+		$('#now_payment_method').empty().append($('select[name=\'payments\'] option:selected').text().replace(regex2, ''));
+	} else {
+		$('input[name=\'payment_method\']').val('');
+		$('#now_payment_method').empty();
+	}
+	
+	$('input[name=\'payment_code\']').val(this.value);
+});
+
+$('select[name=\'shippings\']').on('change', function() {
+	if (this.value) {
+		$('input[name=\'shipping_method\']').val($('select[name=\'shippings\'] option:selected').text().replace(regex2, ''));
+		$('#now_shipping_method').empty().append($('select[name=\'shippings\'] option:selected').text().replace(regex2, ''));
+	} else {
+		$('input[name=\'shipping_method\']').val('');
+		$('#now_shipping_method').empty();
+	}
+	
+	$('input[name=\'shipping_code\']').val(this.value);
+});
+
+$(document).ready(function() {
+	setTimeout (function() {controlReward();}, 500);
+	setTimeout (function() {getMethods();}, 1000);
+});
+
+function addTotal(type, title) {
+	html = '';
+	html += ' <tr id="total-row' + total_row + '">';
+	html += '  <td>';
+	html += '   <input type="hidden" name="order_total[' + total_row + '][code]" value="' + type + '" />';
+	html += '   <input type="text" name="order_total[' + total_row + '][title]" class="form-control input-total-title" value="' + title + '" />';
+	html += '  </td>';
+	html += '  <td class="text-right">';
+	html += '   <input type="text" name="order_total[' + total_row + '][value]" class="form-control input-total-value" value="" />';
+	html += '  </td>';
+	html += '  <td>';
+	html += '   <input type="hidden" name="order_total[' + total_row + '][text]" value="" />';
+	html += '  </td>';
+	if (type == 'correct') {
+		html += '  <td class="text-center" colspan="2">';
+		html += '   <div class="form-group correct-tax"><label>{{ entry_tax }}</label>';
+		html += '   <select name="order_total[' + total_row + '][tax_class_id]" class="form-control">';
+		html += '    <option value="0">{{ text_none }}</option>';
+		{% for tax_class in tax_classes %}
+		html += '    <option value="{{ tax_class['tax_class_id'] }}">{{ tax_class['title'] }}</option>';
+		{% endfor %}
+		html += '   </select><input type="hidden" name="order_total[' + total_row + '][sort_order]" value="" /></div>';
+		html += '  </td>';						
+	} else {
+		html += '  <td></td>';
+		html += '  <td>';
+		html += '   <input type="hidden" name="order_total[' + total_row + '][sort_order]" value="2" />';
+		html += '  </td>';
+	}
+	html += '  <td class="text-right">';
+	html += '   <a class="btn btn-danger btn-sm" onclick="$(\'#total-row' + total_row + '\').remove();" role="button">{{ button_remove }}</a>';
+	html += '  </td>';
+	html += ' </tr>';
+	
+	total_row++;
+	$('#total tbody').append(html);
+}
+
+function addDiscount() {
+    addTotal('discount', '{{ entry_discount }}');
+}
+
+function addCorrect() {
+    addTotal('correct', '{{ entry_correct }}');
+}
+{% if clone_order %}
+function clone_order() {
+    $('#clone').val('1');
+	$('#order_form').submit();
+}
+{% endif %}
+function apple_order() {
+	$('#order_form').attr('action', $('#order_form').attr('action') + '&reopen=1');
+	$('#order_form').submit();
+}
+function save_order() {
+	$('#order_form').submit();
+}
+
+{% if customer_id and reward_status %}
+$('#reward-add').on('click', function() {
+	$('#notifications').empty();
+	$.ajax({
+		url: 'index.php?route=sale/orderpro/addReward&user_token={{ user_token }}&order_id={{ order_id ? order_id : temp_order_id }}',
+		type: 'post',
+		dataType: 'json',
+		data: $('#tab-order :input, #order-reward :input'),
+		success: function(json) {
+			if (json.error) {
+				$('#notifications').append('<div class="alert alert-danger"><i class="fa fa-check-circle"></i> ' + json.error + '</div>');
+				setTimeout (function() {$('#notifications .alert-danger').fadeOut('slow', function() {$(this).remove();});}, 4000);
+			}
+			if (json.success) {
+				$('#reward-recived').html(json.reward_total);
+				$('#notifications').append('<div class="alert alert-success"><i class="fa fa-check-circle"></i> ' + json.success + '</div>');
+				setTimeout (function() {$('#notifications .alert-success').fadeOut('slow', function() {$(this).remove();});}, 3000);
+				controlReward();
+			}
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+});
+
+$('#reward-remove').on('click', function() {
+	$('#notifications').empty();
+	$.ajax({
+		url: 'index.php?route=sale/orderpro/removeReward&user_token={{ user_token }}&order_id={{ order_id ? order_id : temp_order_id }}',
+		dataType: 'json',
+		success: function(json) {
+			if (json.error) {
+				$('#notifications').append('<div class="alert alert-danger"><i class="fa fa-check-circle"></i> ' + json.error + '</div>');
+				setTimeout (function() {$('#notifications .alert-danger').fadeOut('slow', function() {$(this).remove();});}, 4000);
+			}
+			if (json.success) {
+                $('#reward-recived').html('0');
+				$('#notifications').append('<div class="alert alert-success"><i class="fa fa-check-circle"></i> ' + json.success + '</div>');
+				setTimeout (function() {$('#notifications .alert-success').fadeOut('slow', function() {$(this).remove();});}, 3000);
+                controlReward();
+			}
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+});
+{% endif %}
+{% if order_id %}
+$('#commission_add').on('click', function() {
+	$('#notifications').empty();
+	$.ajax({
+		url: 'index.php?route=sale/orderpro/addCommission&user_token={{ user_token }}&order_id={{ order_id }}',
+		dataType: 'json',
+		success: function(json) {
+			if (json.error) {
+				$('#notifications').append('<div class="alert alert-danger"><i class="fa fa-check-circle"></i> ' + json.error + '</div>');
+				setTimeout (function() {$('#notifications .alert-danger').fadeOut('slow', function() {$(this).remove();});}, 4000);
+			}
+			if (json.success) {
+				$('#notifications').append('<div class="alert alert-success"><i class="fa fa-check-circle"></i> ' + json.success + '</div>');
+				setTimeout (function() {$('#notifications .alert-success').fadeOut('slow', function() {$(this).remove();});}, 3000);
+				$('#order-dops .commission-add').fadeOut();
+				$('#order-dops .commission-remove').fadeIn();
+			}
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+});
+
+$('#commission_remove').on('click', function() {
+	$('#notifications').empty();
+	$.ajax({
+		url: 'index.php?route=sale/orderpro/removeCommission&user_token={{ user_token }}&order_id={{ order_id }}',
+		dataType: 'json',
+		success: function(json) {
+			if (json.error) {
+				$('#notifications').append('<div class="alert alert-danger"><i class="fa fa-check-circle"></i> ' + json.error + '</div>');
+				setTimeout (function() {$('#notifications .alert-danger').fadeOut('slow', function() {$(this).remove();});}, 4000);
+			}
+			if (json.success) {
+				$('#notifications').append('<div class="alert alert-success"><i class="fa fa-check-circle"></i> ' + json.success + '</div>');
+				setTimeout (function() {$('#notifications .alert-success').fadeOut('slow', function() {$(this).remove();});}, 3000);
+				$('#order-dops .commission-remove').fadeOut();
+				$('#order-dops .commission-add').fadeIn();
+			}
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+});
+
+$('#history').load('index.php?route=sale/orderpro/history&user_token={{ user_token }}&order_id={{ order_id }}');
+
+$('#history').on('click', '.pagination a', function(e) {
+	e.preventDefault();
+	$('#history').load(this.href);
+});
+
+$('#button-history').on('click', function() {
+	var new_hstatus_order_id = $('select[id=\'horder_status_id\']').val();
+	$.ajax({
+		url: 'index.php?route=sale/orderpro/history&user_token={{ user_token }}&order_id={{ order_id }}',
+		type: 'post',
+		dataType: 'html',
+		data: $('#order-history :input').serialize(),
+		beforeSend: function() {
+			$('#button-history').hide();
+			$('#button-history').after('<div class="attention"><img src="view/image/orderpro/loading.gif" alt="" /></div>');
+		},
+		complete: function() {
+			$('#order-history .attention').remove();
+			$('#button-history').show();
+			$('#order-history :input').prop('checked', false);
+		},
+		success: function(html) {
+			$('#history').html(html);
+			$('textarea[name=\'admin_comment\']').val('');
+			$('select[id=\'order_status_id\']').val(new_hstatus_order_id);
+			old_order_status_id = new_hstatus_order_id;
+			controlReward();
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+});
+{% endif %}
+//--></script>
+<script type="text/javascript"><!--
+function decodeEntities(input) {
+  var y = document.createElement('textarea');
+  y.innerHTML = input;
+  return y.value;
+}
+	
+$('#content').delegate('a[id^=\'button-upload\'], a[id^=\'button-custom-field\'], a[id^=\'button-payment-custom-field\'], a[id^=\'button-shipping-custom-field\']', 'click', function() {
+	var node = this;
+	$('#form-upload').remove();
+	$('body').prepend('<form enctype="multipart/form-data" id="form-upload" style="display: none;"><input type="file" name="file" /></form>');
+	$('#form-upload input[name=\'file\']').trigger('click');
+	
+	if (typeof(timer) != 'undefined') {
+    	clearInterval(timer);
+	}
+	
+	timer = setInterval(function() {
+		if ($('#form-upload input[name=\'file\']').val() != '') {
+			clearInterval(timer);
+			$.ajax({
+				url: 'index.php?route=sale/orderpro/upload&user_token={{ user_token }}&order_id={{ order_id }}',
+				type: 'post',
+				dataType: 'json',
+				data: new FormData($('#form-upload')[0]),
+				cache: false,
+				contentType: false,
+				processData: false,
+				beforeSend: function() {
+					$('#notifications').empty();
+					$(node).children('.fa').addClass('fa-cog fa-spin');
+				},
+				complete: function() {
+					$(node).children('.fa').removeClass('fa-cog fa-spin');
+				},
+				success: function(json) {
+					$(node).parent().parent().find('.text-danger').remove();
+	
+					if (json['error']) {
+						$(node).parent().after('<div class="text-danger">' + json['error'] + '</div>');
+						$('#notifications').append('<div class="alert alert-danger"><i class="fa fa-check-circle"></i> ' + json['error'] + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button></div>');
+						setTimeout (function() {$('#notifications .alert-danger').fadeOut('slow', function() {$(this).remove();});}, 4000);
+					}
+	
+					if (json['success']) {
+						$('#notifications').append('<div class="alert alert-success"><i class="fa fa-check-circle"></i> ' + json['success'] + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button></div>');
+						setTimeout (function() {$('#notifications .alert-success').fadeOut('slow', function() {$(this).remove();});}, 3000);
+	
+						if (json['filename'] && json['href']) {
+							$(node).parent().find('a[id^=\'file-link\']').empty().attr('href', decodeEntities(json['href'])).append(json['filename']).show('fast');
+						}
+						if (json['code']) {
+							$(node).parent().find('input[type=\'hidden\']').val(json['code']);
+						}
+					}
+				},
+				error: function(xhr, ajaxOptions, thrownError) {
+					alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+				}
+			});
+		}
+	}, 500);
+});
+
+function getsimilar(pole) {
+	$('#similar_modal').remove();
+	$('#similar_block').load('index.php?route=sale/orderpro/getsimilar&order_id={{ order_id }}&pole='+ pole +'&user_token={{ user_token }}', function() {
+		$('#similar_modal').modal('show');
+	});
+}
+
+$('#empty-prices').on('click', function() {
+    $('#product .product-price input').val('');
+});
+
+$('#product').on('click', '.price-empty', function() {
+    $(this).parent().find('.input-price').val('');
+});
+
+$('#empty-discounts').on('click', function() {
+    $('#product .product-discount input').val('').removeClass('has-amount');
+	$('#product .product-discount select').val('P').removeClass('has-amount');
+});
+
+$('#product').on('click', '.amount-empty', function() {
+    $(this).parent().find('input.input-amount').val('').removeClass('has-amount');
+	$(this).parent().find('select.form-control').val('P').removeClass('has-amount');
+});
+
+$('.date').datetimepicker({
+	pickTime: false
+});
+
+$('.datetime').datetimepicker({
+	pickDate: true,
+	pickTime: true
+});
+
+$('.time').datetimepicker({
+	pickDate: false
+});
+
+$('.btn-popover').popover({
+	trigger: "hover"
+});
+$('.label-popover').popover({
+	trigger: "hover"
+});
+$('.span-popover').popover({
+	trigger: "hover"
+});
+
+$('#order-history input[name=\'notify\']').on('click', function() {
+	if ($(this).prop('checked')) {
+		$('.checkbox-history .hide-notify').fadeIn('slow');
+	} else {
+		$('#order-history input[name=\'notify_products\']').prop('checked', false);
+		$('.checkbox-history .hide-notify').fadeOut('slow');
+	}
+});
+$('#order-history input[name=\'notify_admin\']').on('click', function() {
+	if ($(this).prop('checked')) {
+		$('.checkbox-history .hide-notify-admin').fadeIn('slow');
+	} else {
+		$('#order-history input[name=\'notify_admin_products\']').prop('checked', false);
+		$('.checkbox-history .hide-notify-admin').fadeOut('slow');
+	}
+});
+{% if error_license %}
+$('#content.orderpro-content a.btn').each(function(index, element) {
+	$(element).removeAttr('onclick').off('click').removeClass('btn-primary').removeClass('btn-success').removeClass('btn-danger').addClass('btn-default');
+});
+{% endif %}
+//--></script>
+</div>{{ footer }}

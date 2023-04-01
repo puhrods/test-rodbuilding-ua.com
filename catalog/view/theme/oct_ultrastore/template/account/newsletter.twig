@@ -1,0 +1,57 @@
+{{ header }}
+<div id="account-newsletter" class="container">
+	{{ oct_breadcrumbs }}
+	<div class="row">
+		<div class="col-lg-12">
+			<h1 class="us-main-shop-title">{{ heading_title }}</h1>
+		</div>
+	</div>
+	<div class="content-top-box">{{ content_top }}</div>
+	<div class="row">
+		{{ column_left }}
+		{% if column_left and column_right %}
+		{% set class = 'col-sm-6' %}
+		{% elseif column_left or column_right %}
+		{% set class = 'col-sm-9' %}
+		{% else %}
+		{% set class = 'col-sm-12' %}
+		{% endif %}
+		<div id="content" class="{{ class }}">
+			<div class="us-content">
+				<form action="{{ action }}" method="post" enctype="multipart/form-data" class="form-horizontal">
+					<fieldset>
+						<div class="us-content-title">{{ entry_newsletter }}</div>
+						<div class="us-form-check-group-acc">
+							{% if newsletter %}
+							<div class="form-check form-check-inline">
+								<input type="radio" name="newsletter" id="CheckYes" class="form-check-input" value="1" checked="checked" />
+								<label class="radio-inline" for="CheckYes">{{ text_yes }}</label>
+							</div>
+							<div class="form-check form-check-inline">
+								<input type="radio" name="newsletter" id="CheckNo" class="form-check-input" value="0" />
+								<label class="radio-inline" for="CheckNo">{{ text_no }}</label>
+							</div>
+							{% else %}
+							<div class="form-check form-check-inline">
+								<input type="radio" name="newsletter" id="CheckYes" class="form-check-input" value="1" />
+								<label class="radio-inline" for="CheckYes">{{ text_yes }}</label>
+							</div>
+							<div class="form-check form-check-inline">
+								<input type="radio" name="newsletter" id="CheckNo" class="form-check-input" value="0" checked="checked" />
+								<label class="radio-inline" for="CheckNo">{{ text_no }}</label>
+							</div>
+							{% endif %}
+						</div>
+					</fieldset>
+					<div class="btn-group d-flex justify-content-between">
+						<a href="{{ back }}" class="us-module-btn">{{ button_back }}</a>
+						<input type="submit" value="{{ button_continue }}" class="us-module-btn us-module-btn-green" />
+					</div>
+				</form>
+			</div>
+		</div>
+		{{ column_right }}
+	</div>
+	{{ content_bottom }}
+</div>
+{{ footer }}

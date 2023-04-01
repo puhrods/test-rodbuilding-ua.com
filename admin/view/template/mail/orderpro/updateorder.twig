@@ -1,0 +1,160 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>{{ title }}</title>
+<style media="print" type="text/css">.noprint {display: none;}</style>
+</head>
+<body style="font-family: Arial, Helvetica, sans-serif;font-size:13px;color:#000000;background:#FFFFFF;">
+<div style="min-width:600px;max-width:960px;padding:10px;box-sizing:border-box;border:1px solid #ddd;box-shadow:0px 1px 5px rgba(85, 85, 85, 0.5);">
+<table style="border-collapse:collapse;width:100%;margin-bottom:20px;">
+	<tr>
+		<td valign="middle" width="50%">
+			<a href="{{ store_url }}" title="{{ store_name }}"><img style="border:none;" src="{{ logo }}" alt="{{ store_name }}" /></a>
+		</td>
+		<td valign="middle" width="50%" style="padding-left:30px;">
+			<b>{{ store_name }}</b><br />
+			<b>{{ text_address }}</b>{{ store_address }}<br />
+			<b>{{ text_telephone }}</b>{{ store_telephone }}<br />
+			{% if store_fax %}
+				<b>{{ text_fax }}</b>{{ store_fax }}<br />
+			{% endif %}
+			<b>{{ text_email }}</b>{{ store_email }}<br />
+			<b>{{ text_url }}</b>{{ store_url }}
+		</td>
+	</tr>
+</table>
+<table style="border-collapse:collapse;width:100%;margin-bottom:20px;border-top:1px solid #CDDDDD;border-right:1px solid #CDDDDD;">
+	<tr>
+		<td style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;background:#E7EFEF;" width="24%"><b>{{ text_order_id }}</b></td>
+		<td style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;">{{ order_id }}</td>
+	</tr>
+	<tr>
+		<td style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;background:#E7EFEF;" width="24%"><b>{{ text_date_added }}</b></td>
+		<td style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;">{{ date_added }}</td>
+	</tr>
+	<tr>
+		<td style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;background:#E7EFEF;" width="24%"><b>{{ text_date_modified }}</b></td>
+		<td style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;">{{ date_modified }}</td>
+	</tr>
+{% if order_status %}
+	<tr>
+		<td style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;background:#E7EFEF;" width="24%"><b>{{ text_order_status }}</b></td>
+		<td style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;">{{ order_status }}</td>
+	</tr>
+{% endif %}
+</table>
+{% if admin_comment %}
+<table style="border-collapse:collapse;width:100%;margin-bottom:20px;border-top:1px solid #CDDDDD;border-right:1px solid #CDDDDD;">
+	<tr>
+		<td style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;background:#E7EFEF;"><b>{{ text_admin_comment }}</b></td>
+	<tr>
+	</tr>
+		<td style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;">{{ admin_comment }}</td>
+	</tr>
+</table>
+{% endif %}
+{% if link %}
+<table style="border-collapse:collapse;width:100%;margin-bottom:20px;border-top:1px solid #CDDDDD;border-right:1px solid #CDDDDD;">
+	<tr>
+		<td style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;background:#E7EFEF;"><b>{{ text_link }}</b></td>
+	<tr>
+	</tr>
+		<td style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;"><a href="{{ link }}">{{ text_account }}</a></td>
+	</tr>
+</table>
+{% endif %}
+{% if download %}
+<table style="border-collapse:collapse;width:100%;margin-bottom:20px;border-top:1px solid #CDDDDD;border-right:1px solid #CDDDDD;">
+	<tr>
+		<td style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;background:#E7EFEF;"><b>{{ text_download }}</b></td>
+	<tr>
+	</tr>
+		<td style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;"><a href="{{ download }}">{{ download }}</a></td>
+	</tr>
+</table>
+{% endif %}
+{% if comment %}
+<table style="border-collapse:collapse;width:100%;margin-bottom:20px;border-top:1px solid #CDDDDD;border-right:1px solid #CDDDDD;">
+	<tr>
+		<td style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;background:#E7EFEF;"><b>{{ text_order_comment }}</b></td>
+	<tr>
+	</tr>
+		<td style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;">{{ comment }}</td>
+	</tr>
+</table>
+{% endif %}
+{% if products %}
+{% set voucher_colspan = 1 %}
+{% set total_colspan = 3 %}
+{% if show_pid %}{% set voucher_colspan = voucher_colspan + 1 %}{% set total_colspan = total_colspan + 1 %}{% endif %}
+{% if show_image %}{% set voucher_colspan = voucher_colspan + 1 %}{% set total_colspan = total_colspan + 1 %}{% endif %}
+{% if show_model %}{% set voucher_colspan = voucher_colspan + 1 %}{% set total_colspan = total_colspan + 1 %}{% endif %}
+{% if show_sku %}{% set voucher_colspan = voucher_colspan + 1 %}{% set total_colspan = total_colspan + 1 %}{% endif %}
+{% if show_upc %}{% set voucher_colspan = voucher_colspan + 1 %}{% set total_colspan = total_colspan + 1 %}{% endif %}
+{% if show_ean %}{% set voucher_colspan = voucher_colspan + 1 %}{% set total_colspan = total_colspan + 1 %}{% endif %}
+{% if show_jan %}{% set voucher_colspan = voucher_colspan + 1 %}{% set total_colspan = total_colspan + 1 %}{% endif %}
+{% if show_isbn %}{% set voucher_colspan = voucher_colspan + 1 %}{% set total_colspan = total_colspan + 1 %}{% endif %}
+{% if show_mpn %}{% set voucher_colspan = voucher_colspan + 1 %}{% set total_colspan = total_colspan + 1 %}{% endif %}
+{% if show_location %}{% set voucher_colspan = voucher_colspan + 1 %}{% set total_colspan = total_colspan + 1 %}{% endif %}
+{% if show_weight %}{% set voucher_colspan = voucher_colspan + 1 %}{% set total_colspan = total_colspan + 1 %}{% endif %}
+	<table style="border-collapse:collapse;width:100%;margin-bottom:20px;border-top:1px solid #CDDDDD;border-right:1px solid #CDDDDD;">
+		<tr>
+			{% if show_pid %}<td valign="middle" align="center" style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;background:#E7EFEF;width:50px;"><b>{{ column_pid }}</b></td>{% endif %}
+			{% if show_image %}<td valign="middle" align="center" style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;background:#E7EFEF;width:65px;"><b>{{ column_image }}</b></td>{% endif %}
+			<td valign="middle" align="center" style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;background:#E7EFEF;"><b>{{ column_product }}</b></td>
+			{% if show_model %}<td valign="middle" align="center" style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;background:#E7EFEF;width:100px;"><b>{{ column_model }}</b></td>{% endif %}
+			{% if show_sku %}<td valign="middle" align="center" style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;background:#E7EFEF;width:100px;"><b>{{ column_sku }}</b></td>{% endif %}
+			{% if show_upc %}<td valign="middle" align="center" style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;background:#E7EFEF;width:100px;"><b>{{ column_upc }}</b></td>{% endif %}
+			{% if show_ean %}<td valign="middle" align="center" style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;background:#E7EFEF;width:100px;"><b>{{ column_ean }}</b></td>{% endif %}
+			{% if show_jan %}<td valign="middle" align="center" style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;background:#E7EFEF;width:100px;"><b>{{ column_jan }}</b></td>{% endif %}
+			{% if show_isbn %}<td valign="middle" align="center" style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;background:#E7EFEF;width:100px;"><b>{{ column_isbn }}</b></td>{% endif %}
+			{% if show_mpn %}<td valign="middle" align="center" style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;background:#E7EFEF;width:100px;"><b>{{ column_mpn }}</b></td>{% endif %}
+			{% if show_location %}<td valign="middle" align="center" style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;background:#E7EFEF;width:100px;"><b>{{ column_location }}</b></td>{% endif %}
+			{% if show_weight %}<td valign="middle" align="center" style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;background:#E7EFEF;width:60px;white-space:nowrap;"><b>{{ column_weight }}</b></td>{% endif %}
+			<td valign="middle" align="center" style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;background:#E7EFEF;width:45px;"><b>{{ column_quantity }}</b></td>
+			<td valign="middle" align="center" style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;background:#E7EFEF;width:70px;"><b>{{ column_price }}</b></td>
+			<td valign="middle" align="center" style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;background:#E7EFEF;width:80px;"><b>{{ column_total }}</b></td>
+		</tr>
+		{% for product in products %}
+		<tr>
+			{% if show_pid %}<td style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;" align="center">{{ product['product_id'] }}</td>{% endif %}
+			{% if show_image %}<td style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;" align="center"><img src="{{ product['img'] }}" alt="" /></td>{% endif %}
+			<td style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;">{{ product['name'] }}
+				{% for option in product['option'] %}
+					<br />&nbsp;<small> - {{ option['name'] }}: {{ option['value'] }}</small>
+				{% endfor %}</td>
+			{% if show_model %}<td style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;">{{ product['model'] }}</td>{% endif %}
+			{% if show_sku %}<td style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;">{{ product['sku'] }}</td>{% endif %}
+			{% if show_upc %}<td style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;">{{ product['upc'] }}</td>{% endif %}
+			{% if show_ean %}<td style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;">{{ product['ean'] }}</td>{% endif %}
+			{% if show_jan %}<td style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;">{{ product['jan'] }}</td>{% endif %}
+			{% if show_isbn %}<td style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;">{{ product['isbn'] }}</td>{% endif %}
+			{% if show_mpn %}<td style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;">{{ product['mpn'] }}</td>{% endif %}
+			{% if show_location %}<td style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;">{{ product['location'] }}</td>{% endif %}
+			{% if show_weight %}<td style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;white-space:nowrap;" align="right">{{ product['weight'] }}</td>{% endif %}
+			<td style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;" align="center">{{ product['quantity'] }}</td>
+			<td style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;white-space:nowrap;" align="right">{{ product['price'] }}</td>
+			<td style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;white-space:nowrap;" align="right">{{ product['total'] }}</td>
+		</tr>
+		{% endfor %}
+		{% for voucher in vouchers %}
+		<tr>
+			<td style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;" align="left" colspan="{{ voucher_colspan }}">{{ voucher['description'] }}</td>
+			<td style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;" align="right">1</td>
+			<td style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;white-space:nowrap;" align="right">{{ voucher['amount'] }}</td>
+			<td style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;white-space:nowrap;" align="right">{{ voucher['amount'] }}</td>
+		</tr>
+		{% endfor %}
+		{% for total in totals %}
+		<tr>
+			<td style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;" align="right" colspan="{{ total_colspan }}"><b>{{ total['title'] }}:</b></td>
+			<td style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;white-space:nowrap;" align="right">{{ total['text'] }}</td>
+		</tr>
+		{% endfor %}
+	</table>
+{% endif %}
+<p style="margin-top:0px;margin-bottom:20px;">{{ text_footer }}</p>
+</div>
+</body>
+</html>

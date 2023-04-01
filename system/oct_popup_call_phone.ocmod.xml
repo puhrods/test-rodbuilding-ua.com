@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+	<code>oct_popup_call_phone</code>
+	<name>Octemplates - PopUP Call Phone</name>
+	<version>1.0.0</version>
+	<author>Octemplates</author>
+	<link>http://octemplates.net/</link>
+	<file path="catalog/controller/common/header.php">
+    	<operation error="skip">
+			<search><![CDATA[public function index() {]]></search>
+			<add position="after"><![CDATA[
+			$data['oct_popup_call_phone_status'] = $this->config->get('oct_popup_call_phone_status');
+			]]></add>
+    	</operation>
+    </file>
+</modification>

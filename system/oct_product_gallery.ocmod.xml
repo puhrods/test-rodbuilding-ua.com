@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+	<code>oct_product_gallery</code>
+	<name>Octemplates - Product Gallery</name>
+	<version>1.0.0</version>
+	<author>Octemplates</author>
+	<link>https://octemplates.net/</link>
+	<file path="catalog/controller/product/product.php">
+    	<operation error="skip">
+			<search><![CDATA[public function review() {]]></search>
+			<add position="before"><![CDATA[
+			public function octGallery() {
+				$data['oct_ultrastore_data'] = $oct_ultrastore_data = $this->config->get('theme_oct_ultrastore_data');
+
+				if ((isset($oct_ultrastore_data['product_gallery']) && $oct_ultrastore_data['product_gallery']) && (isset($this->request->post['product_id']) && !empty($this->request->post['product_id'])) && isset($this->request->server['HTTP_X_REQUESTED_WITH']) && !empty($this->request->server['HTTP_X_REQUESTED_WITH']) && strtolower($this->request->server['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+					$this->load->model('catalog/product');
+
+					if (isset($this->request->post['product_id']) && !empty($this->request->post['product_id'])) {
+			            $data['product_id'] = $product_id = (int) $this->request->post['product_id'];
+			        } else {
+			            $data['product_id'] = $product_id = 0;
+			        }
+
+					if (isset($this->request->post['goto']) && !empty($this->request->post['goto'])) {
+			            $data['goto'] = (int)$this->request->post['goto'];
+			        } else {
+			            $data['goto'] = 0;
+			        }
+
+			        $product_info = $this->model_catalog_product->getProduct($product_id);
+
+					$data['oct_popup_purchase_status'] = false;
+
+			        if ($product_info) {
+						if ($product_info['quantity'] <= 0 && !$this->config->get('config_stock_checkout')) {
+							$data['oct_popup_purchase_status'] = false;
+						} elseif ($product_info['quantity'] <= 0 && $this->config->get('config_stock_checkout')) {
+							if ($this->config->get('config_checkout_guest') && $this->config->get('oct_popup_purchase_status')) {
+								$data['oct_popup_purchase_status'] = true;
+							}
+						} else {
+							if ($this->config->get('config_checkout_guest') && $this->config->get('oct_popup_purchase_status')) {
+								$data['oct_popup_purchase_status'] = true;
+							}
+						}
+
+				        $data['heading_title'] = $product_info['name'];
+
+				        $this->load->model('tool/image');
+
+						$data['images'] = [];
+
+						$results = $this->model_catalog_product->getProductImages($product_id);
+
+						if ($product_info['image']) {
+							$data['images'][0]['popup'] = $this->model_tool_image->resize($product_info['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_thumb_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_thumb_height'));
+						} else {
+							$data['images'][0]['popup'] = $this->model_tool_image->resize('no-thumb.png', $this->config->get('theme_' . $this->config->get('config_theme') . '_image_thumb_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_thumb_height'));
+						}
+
+						if ($product_info['image']) {
+							$data['images'][0]['thumb'] = $this->model_tool_image->resize($product_info['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_additional_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_additional_height'));
+						} else {
+							$data['images'][0]['thumb'] = $this->model_tool_image->resize('no-thumb.png', $this->config->get('theme_' . $this->config->get('config_theme') . '_image_additional_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_additional_height'));
+						}
+
+						foreach ($results as $result) {
+							$data['images'][] = array(
+								'popup' => $this->model_tool_image->resize($result['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_thumb_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_thumb_height')),
+								'thumb' => $this->model_tool_image->resize($result['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_additional_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_additional_height'))
+							);
+						}
+
+						if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
+							$data['price'] = $this->currency->format($this->tax->calculate($product_info['price'], $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+						} else {
+							$data['price'] = false;
+						}
+
+						if ((float)$product_info['special']) {
+							$data['special'] = $this->currency->format($this->tax->calculate($product_info['special'], $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+						} else {
+							$data['special'] = false;
+						}
+
+				        $this->response->setOutput($this->load->view('octemplates/module/oct_product_gallery', $data));
+			        } else {
+				        $this->response->redirect($this->url->link('error/not_found', '', true));
+			        }
+				} else {
+					$this->response->redirect($this->url->link('error/not_found', '', true));
+				}
+			}
+			]]></add>
+    	</operation>
+	</file>
+</modification>

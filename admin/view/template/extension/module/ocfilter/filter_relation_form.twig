@@ -1,0 +1,128 @@
+<div class="container-fluid">
+  <div class="form-horizontal">
+    {% if filters %}   
+    {% for filter in filters %}        
+    {% set class = 'form-group ocf-form-group-condensed' %}
+    
+    {% if not filter.status %}
+    {% set class = class ~ ' ocf-form-group-inactive' %}
+    {% endif %}
+    
+    {% if filter.selected %}
+    {% set class = class ~ ' ocf-form-group-selected' %}
+    {% endif %}   
+
+    {% if filter.type == 'slide' or filter.type == 'slide_dual' %}
+    {% set class = class ~ ' ocf-form-group-slider' %}
+    {% endif %} 
+
+    {% if filter.values_autocomplete %}
+    {% set class = class ~ ' ocf-form-group-autocomplete' %}
+    {% endif %}
+    
+    {% set class = class ~ ' ocf-form-group-source-' ~ filter.source_name %}
+    
+    <div class="{{ class }}" data-ocfilter-filter-key="{{ filter.filter_key }}" data-total-values="{{ filter.total_values }}">
+      {% if page %}
+      {% set class = 'col-xs-6 col-lg-4 control-label' %}
+      {% else %}
+      {% set class = 'col-xs-6 col-lg-5 control-label' %}
+      {% endif %}
+      <label class="{{ class }}">{{ filter.name }}</label>
+      
+      {% if page %}
+      <div class="col-xs-6 col-lg-2">
+        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+          {% if filter.selected_all %}
+          <label class="btn btn-default active" data-toggle="popover" data-trigger="hover" data-container="body" data-placement="top" data-content="{{ help_all }}"><input type="checkbox" name="ocfilter_filter[{{ filter.filter_key }}][]" value="0" checked="checked" autocomplete="off" /> {{ entry_all }}</label>
+          {% else %}
+          <label class="btn btn-default" data-toggle="popover" data-trigger="hover" data-container="body" data-placement="top" data-content="{{ help_all }}"><input type="checkbox" name="ocfilter_filter[{{ filter.filter_key }}][]" value="0" autocomplete="off" /> {{ entry_all }}</label>
+          {% endif %}  
+          {% if allow_group and filter.type != 'slide' and filter.type != 'slide_dual' %}
+          {% if filter.group %}
+          <label class="btn btn-default active" data-toggle="popover" data-trigger="hover" data-container="body" data-placement="top" data-content="{{ help_group }}"><input type="checkbox" name="ocfilter_filter[{{ filter.filter_key }}][]" value="group" checked="checked" autocomplete="off" /> {{ entry_group }}</label>
+          {% else %}
+          <label class="btn btn-default" data-toggle="popover" data-trigger="hover" data-container="body" data-placement="top" data-content="{{ help_group }}"><input type="checkbox" name="ocfilter_filter[{{ filter.filter_key }}][]" value="group" autocomplete="off" /> {{ entry_group }}</label>
+          {% endif %}            
+          {% endif %}
+        </div>     
+      </div>
+      {% endif %}
+
+      {% if page %}
+      {% set class = 'col-xs-12 col-lg-6' %}
+      {% else %}
+      {% set class = 'col-xs-6 col-lg-7' %}
+      {% endif %}
+      <div class="{{ class }}">
+        <div class="hidden-lg mt-2"></div>
+        {% if filter.type == 'slide' or filter.type == 'slide_dual' %}
+        <div class="input-group">
+          <div class="input-group-prepend ocf-relative">
+            <input type="number" name="ocfilter_filter[{{ filter.filter_key }}][min]" value="{{ filter.min }}" class="ocf-input-slide-value-min form-control{{ filter.selected_all ? ' disabled' : '' }}" {{ (filter.selected_all or filter.min|length < 1) ? 'disabled="disabled"' : '' }} />
+            <div class="ocf-input-placeholder"></div>
+          </div>
+          <span class="input-group-addon">&mdash;</span>
+          <div class="input-group-prepend ocf-relative">
+            <input type="number" name="ocfilter_filter[{{ filter.filter_key }}][max]" value="{{ filter.max }}" class="ocf-input-slide-value-max form-control{{ filter.selected_all ? ' disabled' : '' }}" {{ (filter.selected_all or filter.min|length < 1) ? 'disabled="disabled"' : '' }} />
+            <div class="ocf-input-placeholder"></div>
+          </div>
+          {% if filter.suffix %}
+          <span class="input-group-addon">{{ filter.suffix }}</span>
+          {% endif %}
+        </div>
+        {% else %}
+        {% if filter.values_autocomplete %}
+        
+        <div class="input-group">
+          <input type="text" name="filter_value_name" value="" placeholder="{{ entry_value_name }}" class="form-control" data-filter-key="{{ filter.filter_key }}" data-target="#value-relation-{{ filter.filter_key|replace({ '.': '-' }) }}" {{ filter.selected_all ? 'disabled="disabled"' : '' }} />
+          <div class="input-group-addon" data-toggle="tooltip" data-placement="top" title="{{ text_values_autocomplete }}">                    
+            <i class="fa fa-question-circle"></i>
+          </div>
+        </div> 
+
+        <div class="label-ocf-list{{ filter.selected_all ? ' disabled' : '' }}" id="value-relation-{{ filter.filter_key|replace({ '.': '-' }) }}">
+          {% for value in filter.values_selected %}         
+          <span class="label label-ocf-value remove-autocomplete-value" title="{{ value.name }}"><input type="hidden" name="ocfilter_filter[{{ filter.filter_key }}][]" value="{{ value.value_id }}" /> <span>{{ value.name }}</span> <i class="fa fa-times-circle"></i></span>
+          {% endfor %}
+        </div>
+        
+        {% elseif filter.values %}  
+        
+        <div class="dropdown ocf-product-values-dropdown">         
+          <button type="button" class="btn btn-light dropdown-toggle{{ filter.selected_all ? ' disabled' : '' }}" data-toggle="dropdown">
+            {% if filter.values_selected|length > 0 %}
+            <span class="dropdown-label label-selected" data-default="{{ text_select_product_value }}">
+              {% for value in filter.values_selected %} 
+              <span class="label label-ocf-value">{{ value.name }}</span>
+              {% endfor %}
+            </span> 
+            {% else %}
+            <span class="dropdown-label" data-default="{{ text_select_product_value }}">{{ text_select_product_value }}</span> 
+            {% endif %}        
+            <span class="fa fa-caret-down"></span>
+          </button>                 
+
+          <ul class="dropdown-menu ocf-filter-dm">
+            {% for value in filter.values %}
+            {% if value.selected %}
+            <li class="active"><label><input type="checkbox" name="ocfilter_filter[{{ filter.filter_key }}][]" value="{{ value.value_id }}" checked="checked" autocomplete="off" /> <span>{{ value.name }}{{ filter.suffix }}</span></label></li>
+            {% else %}
+            <li><label><input type="checkbox" name="ocfilter_filter[{{ filter.filter_key }}][]" value="{{ value.value_id }}" autocomplete="off" /> <span>{{ value.name }}{{ filter.suffix }}</span></label></li>
+            {% endif %}
+            {% endfor %}
+          </ul>
+        </div>
+        
+        {% else %}
+        <a href="{{ filter.href }}#tab-values" target="_blank">{{ text_add_filter_values }}</a>
+        {% endif %}
+        {% endif %}
+      </div>      
+    </div><!-- /.form-group -->
+    {% endfor %}
+    {% else %}
+    {{ text_filters_not_found }}
+    {% endif %}
+  </div>
+</div>

@@ -1,0 +1,38 @@
+#back-top, #us_fixed_contact_button, .us-fixed-contact-pulsation, .us-module-item:hover .us-module-cart-btn, .us-module-btn:hover, .us-module-btn-green, .us-footer-form-top-buttton, .oct-fixed-bar-link:hover, .oct-fixed-bar-quantity, .pagination li.active span, .pagination li a:hover, .us-product-btn-active, .us-product-btn:hover, .us-product-quantity-btn:hover, .us-categories-wall-item:hover hr, .compare-wishlist-btn:hover, .image-additional-box .slick-arrow:hover, #us_livesearch_close, .us-product-option .radio label.selected,.simplecheckout-cart-buttons .button,.simplecheckout-button-right .button,#simplecheckout_button_login, .us-news-stickers-date, .mobile-header-index, .us-form-check-group-acc input[type=radio]:checked + label:after, #us_info_mobile .dropdown-menu button.active-item:after, .oct-load-more-button {background:rgb(241, 113, 36);}
+nav .dropdown-menu button:hover, .user-dropdown-menu .us-dropdown-item:hover, .us-categories-wall-top-link:hover .us-categories-wall-title, .us-module-item:hover .us-module-title a, .us-module-buttons-link:hover i, .us-reviews-block:hover .us-reviews-block-title, .subcat-item:hover .subcat-item-title, .us-breadcrumb-item:last-child, .us-category-appearance-btn.active, .us-category-appearance-btn:hover, .us-product-advantages-item:hover .us-product-advantages-icon i, .us-breadcrumb-item a:hover, .us-column-link:hover, .us-blog-search-btn:hover, .us-blog-post-info-item i, .us-news-block:hover .us-news-block-title, .us-product-tags, .us-product-tags a, .us-categories-wall-link:hover, .us-manufacturer-title, .us-account-link.active, .us-account-link:hover, .us-footer-phone-btn[aria-expanded="true"], .header-dropdown-menu a:hover, .us-categories-toggle:hover {color:rgb(241, 113, 36);}
+.us-carousel-brands-box, .us-product-nav-item-active span:after, .us-product-nav-item span:hover:after, .us-page-main-title:after, .compare-wishlist-btn:hover, .us-form-check-group-acc input[type=radio]:checked + label:before, #us_info_mobile .dropdown-menu button.active-item::before {border-color:rgb(241, 113, 36);}
+body {background-color:rgb(242, 243, 245);}
+#top {background:#353e48;}
+.btn-link {color:rgb(0, 170, 203);}
+.btn-link:hover, .btn-link:focus {color:rgb(255, 255, 255);}
+.us-phone-link, .us-cart-link, .us-phone-link:hover, .us-cart-link:hover {color:rgb(241, 113, 36);}
+.top-phone-btn, .us-cart-text {color:#333333;}
+.menu-row {background-color:#353e48;}
+.oct-ultra-menu {background:rgb(241, 113, 36);}
+#oct-menu-box:hover .oct-ultra-menu {background-color:rgb(74, 86, 99);}
+.oct-ultra-menu {color:rgb(255, 255, 255);}
+.oct-menu-li {background:#ffffff;}
+.oct-menu-li:hover {background:#F7F7F7;}
+.oct-menu-li > a, .oct-menu-li > div > a {color:rgb(0, 170, 203);}
+.oct-menu-li:hover > a, .oct-menu-li:hover > div > a {color:rgb(241, 113, 36);}
+.menu-row {color:#E5E5E5;}
+.oct-mm-link:hover > a, .oct-mm-simple-link:hover > a {background:rgb(241, 113, 36);}
+.oct-mm-parent-title, .oct-mm-child a {color:#333333;}
+.oct-mm-child a:hover, .oct-mm-parent-link:hover .oct-mm-parent-title {color:rgb(241, 113, 36);}
+footer {background-color:#353e48;}
+.us-footer-subscribe-text-text, footer, .us-footer-text, .us-footer-form-bottom label, .us-footer-bottom-credits {color:rgb(0, 170, 203);}
+.us-footer-link, .us-footer-phone-btn, .us-footer-mail {color:rgb(0, 170, 203);}
+.us-footer-link:hover, .us-footer-phone-btn:hover, .us-footer-mail:hover {color:rgb(255, 255, 255);}
+.us-footer-form-top-input {background:#656c73;}
+.us-categories-box {background:#F3F5FB;}
+.us-categories-item {color:#666666;}
+.us-categories-item.active > span a, .us-categories-item a:hover {color:rgb(241, 113, 36);}
+.modal-header {background:rgb(0, 170, 203);}
+.modal-title {color:#ffffff;}
+button.us-close {background:rgba(0, 170, 203, 0.6);}
+button.us-close:hover {background:rgb(0, 170, 203);}
+.us-modal-close-icon {border-color:#ffffff!important;}
+@media screen and (max-width: 991px) {#top {background:#353e48;}}
+@media screen and (max-width: 991px) {.us-menu-mobile {background:rgb(241, 113, 36);}}
+.us-logo-img {max-width: 100%!important;}
+@media screen and (max-width: 767px) {.product-grid{width:50%;padding:0;}.product-grid .us-product-list-description{display:none;}.product-grid .us-module-title{font-size:12px;margin:10px 0;padding:0;}.product-grid .us-module-price>*{display: block;}.product-grid .us-module-item{padding:0 10px 52px;margin:0;height:100%;}.us-category-content .us-category-sort-block + .row{margin-bottom:30px;}.product-grid:nth-child(even) .us-module-item{border-left:0;}.product-grid .us-module-stickers-sticker{margin-bottom:6px;}}@media screen and (max-width: 320px) {.product-grid .us-module-cart-btn{margin:0 5px;}}

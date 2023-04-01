@@ -1,0 +1,198 @@
+{% if products %}
+	{% if position == 'column_left' or position == 'column_right' %}
+	<div  class="us-module-column-box">
+		<div class="panel-heading">{% if link is defined and link %}<a href="{{ link }}">{% endif %}{{ heading_title }}{% if link is defined and link %}</a>{% endif %}</div>
+		<div id="us-column-{{ module_name }}{{ module }}" class="d-flex us-module-column-box-content">
+			{% for product in products %}
+			<div class="us-module-item us-module-column-item us-item{% if not product.can_buy and product.oct_grayscale %} us-no-stock{% endif %}">
+				{% if product.oct_stickers is not empty %}
+				<div class="us-module-stickers">
+					{% if oct_sticker_you_save and product.you_save %}
+						<div class="us-module-stickers-sticker us-module-stickers-sticker-discount">{{ product.you_save }}</div>
+					{% endif %}
+					{% for key, oct_sticker in product.oct_stickers %}
+						{% if oct_sticker is not empty %}
+						<div class="us-module-stickers-sticker us-module-stickers-sticker-{{ key }}">
+							{{ oct_sticker }}
+						</div>
+						{% endif %}
+					{% endfor %}
+				</div>
+				{% endif %}
+				<ul class="us-module-buttons-list">
+					<li class="us-module-buttons-item">
+						<button type="button" onclick="wishlist.add('{{ product.product_id }}');" title="{{ button_wishlist }}" class="us-module-buttons-link us-module-buttons-wishlist"><i class="far fa-heart"></i></button>
+					</li>
+					<li class="us-module-buttons-item">
+						<button type="button" class="us-module-buttons-link us-module-buttons-compare" title="{{ button_compare }}" onclick="compare.add('{{ product.product_id }}');"><i class="fas fa-sliders-h"></i></button>
+					</li>
+					{% if oct_popup_view_status %}
+					<li class="us-module-buttons-item">
+						<button type="button" class="us-module-buttons-link us-module-buttons-quickview" title="{{ button_oct_popup_view }}" onclick="octPopUpView('{{ product.product_id }}')"><i class="far fa-eye"></i></button>
+					</li>
+					{% endif %}
+				</ul>
+				<div class="us-module-img">
+					<a href="{{ product.href }}" title="{{ product.name }}">
+						<img src="{{ product.thumb }}"{% if oct_lazyload %} data-srcset="{{ product.thumb }} 100w" srcset="{{ oct_lazy_image }} 100w" sizes="100vw"{% endif %} class="img-fluid{% if oct_lazyload %} oct-lazy{% endif %}" alt="{{ product.name }}" width="{{ product.width }}" height="{{ product.height }}" />
+					</a>
+				</div>
+				<div class="us-module-title us-module-column-title">
+					<a href="{{ product.href }}">{{ product.name }}</a>
+				</div>
+				{% if product.rating is not same as(false) %}
+				<div class="us-module-rating d-flex align-items-center justify-content-center">
+					<div class="us-module-rating-stars d-flex align-items-center">
+						{% for i in 1..5 %}
+						{% if product.rating < i %}
+						<span class="us-module-rating-star"></span>
+						{% else %}
+						<span class="us-module-rating-star us-module-rating-star-is"></span>
+						{% endif %}
+						{% endfor %}
+					</div>
+					<div class="us-module-reviews">
+						<i class="fas fa-comment">
+						<span>{{ product.reviews }}</span>
+						</i>
+					</div>
+				</div>
+				{% endif %}
+				{% if product.price %}
+				<div class="us-module-price">
+					{% if not product.special %}
+					<span class="us-module-price-actual">{{ product.price }}</span>
+					{% else %}
+					<span class="us-module-price-old">{{ product.price }}</span><span class="us-module-price-new">{{ product.special }}</span>
+					{% endif %}
+					{% if product.tax %}
+					<div class="price-tax">{{ text_tax }} {{ product.tax }}</div>
+					{% endif %}
+				</div>
+				{% endif %}
+				<a href="{% if product.can_buy is not empty %}javascript:void(0);{% else %}{{ product.href }}{% endif %}"{% if product.can_buy is not empty %} onclick="cart.add('{{ product.product_id }}');"{% endif %} class="us-module-cart-btn button-cart">{{ (product.stock and not product.can_buy) ? product.stock : button_cart }}</a>
+			</div>
+			{% endfor %}
+		</div>
+		<button type="button" id="us-{{ module_name }}-button-prev{{ module }}" class="us-column-module-btn us-column-module-prev" aria-label="Previous"><i class="fas fa-chevron-left"></i></button>
+		<button type="button" id="us-{{ module_name }}-button-next{{ module }}" class="us-column-module-btn us-column-module-next" aria-label="Next"><i class="fas fa-chevron-right"></i></button>
+		<script>
+			octShowColumnProducts("us-{{ module_name }}-button-prev{{ module }}", "us-{{ module_name }}-button-next{{ module }}", "us-column-{{ module_name }}{{ module }}");
+		</script>
+	</div>
+	{% else %}
+	<div class="row row-padding-top" {% if module_name == 'related-products' %}id="us-related-products-row"{% endif %}>
+		<div class="col-lg-12">
+			<div class="us-main-shop-title">{% if link is defined and link %}<a href="{{ link }}">{% endif %}{{ heading_title }}{% if link is defined and link %}</a>{% endif %}</div>
+		</div>
+	</div>
+	<div id="us-{{ module_name }}_{{ module }}" class="row us-module-row">
+		{% for product in products %}
+		<div class="col-6 col-lg-4 col-xl-3 us-item">
+			<div class="us-module-item d-flex flex-column{% if not product.can_buy and product.oct_grayscale %} us-no-stock{% endif %}">
+				{% if product.oct_stickers is not empty %}
+				<div class="us-module-stickers">
+					{% if oct_sticker_you_save and product.you_save %}
+						<div class="us-module-stickers-sticker us-module-stickers-sticker-discount">{{ product.you_save }}</div>
+					{% endif %}
+					{% for key, oct_sticker in product.oct_stickers %}
+						{% if oct_sticker is not empty %}
+						<div class="us-module-stickers-sticker us-module-stickers-sticker-{{ key }}">
+							{{ oct_sticker }}
+						</div>
+						{% endif %}
+					{% endfor %}
+				</div>
+				{% endif %}
+				<ul class="us-module-buttons-list">
+					<li class="us-module-buttons-item">
+						<button type="button" class="us-module-buttons-link us-module-buttons-wishlist" title="{{ button_wishlist }}" onclick="wishlist.add('{{ product.product_id }}');"><i class="far fa-heart"></i></button>
+					</li>
+					<li class="us-module-buttons-item">
+						<button type="button" class="us-module-buttons-link us-module-buttons-compare" title="{{ button_compare }}" onclick="compare.add('{{ product.product_id }}');"><i class="fas fa-sliders-h"></i></button>
+					</li>
+					{% if oct_popup_view_status %}
+					<li class="us-module-buttons-item">
+						<button type="button" class="us-module-buttons-link us-module-buttons-quickview" title="{{ button_oct_popup_view }}" onclick="octPopUpView('{{ product.product_id }}')"><i class="far fa-eye"></i></button>
+					</li>
+					{% endif %}
+				</ul>
+				<div class="us-module-img">
+					<a href="{{ product.href }}" title="{{ product.name }}">
+						<img src="{{ product.thumb }}"{% if oct_lazyload %} data-srcset="{{ product.thumb }} 100w" srcset="{{ oct_lazy_image }} 100w" sizes="100vw"{% endif %} class="img-fluid{% if oct_lazyload %} oct-lazy{% endif %}" alt="{{ product.name }}" width="{{ product.width }}" height="{{ product.height }}" />
+					</a>
+				</div>
+				<div class="us-module-title">
+					<a href="{{ product.href }}">{{ product.name }}</a>
+				</div>
+				{% if product.rating is not same as(false) %}
+				<div class="us-module-rating d-flex align-items-center justify-content-center">
+					<div class="us-module-rating-stars d-flex align-items-center">
+						{% for i in 1..5 %}
+						{% if product.rating < i %}
+						<span class="us-module-rating-star"></span>
+						{% else %}
+						<span class="us-module-rating-star us-module-rating-star-is"></span>
+						{% endif %}
+						{% endfor %}
+					</div>
+					<div class="us-module-reviews">
+						<i class="fas fa-comment">
+						<span>{{ product.reviews }}</span>
+						</i>
+					</div>
+				</div>
+				{% endif %}
+				{% if product.oct_atributes %}
+					<div class="us-category-attr-cont flex-grow-1">
+						{% for attribute in product.oct_atributes %}
+							<span class="us-category-attr-item">
+											<span>{{ attribute.name }}:</span> <span>{{ attribute.text }}</span>
+										</span>
+						{% endfor %}
+					</div>
+				{% endif %}
+				{% if product.price %}
+				<div class="us-module-price">
+					{% if not product.special %}
+					<span class="us-module-price-actual">{{ product.price }}</span>
+					{% else %}
+					<span class="us-module-price-old">{{ product.price }}</span><span class="us-module-price-new">{{ product.special }}</span>
+					{% endif %}
+					{% if product.tax %}
+					<div class="price-tax">{{ text_tax }} {{ product.tax }}</div>
+					{% endif %}
+				</div>
+				{% endif %}
+				{% if not product.quantity %}
+					<div class="us-product-category-quantity mt-auto">
+						<div class="btn-group us-product-quantity" role="group">
+							<button type="button" class="us-product-quantity-btn us-minus">-</button>
+							<input type="text" class="form-control" name="quantity" value="{{ product.minimum }}" aria-label="Quantity" />
+							<button type="button" class="us-product-quantity-btn us-plus">+</button>
+							<input type="hidden" name="product_id" value="{{ product.product_id }}" />
+							<input class="min-qty" type="hidden" value="{{ product.minimum }}" name="min_quantity">
+						</div>
+						<button class="us-module-cart-btn button-cart us-cat-button-cart">{{ (product.stock and not product.can_buy) ? product.stock : button_cart }}</button>
+					</div>
+				{% else %}
+					<button onclick="cart.add('{{ product.product_id }}');" class="us-module-cart-btn button-cart us-cat-button-cart">{{ (product.stock and not product.can_buy) ? product.stock : button_cart }}</button>
+				{% endif %}
+			</div>
+		</div>
+		{% endfor %}
+	</div>
+	{% if show_more is defined and show_more and show_type != 'width-infinity' %}
+		<div class="row oct-load-more">
+			<div class="col-12 text-center">
+				<div class="oct-load-more-button-wrapper">
+					<input type="hidden" id="more_{{ module_name }}_{{ module }}" name="more_{{ module_name }}_{{ module }}" value="{{ page }}">
+					<button id="btn_{{ module_name }}_{{ module }}" class="us-module-btn oct-load-more-button text-center" onclick="octShowMoreModule('{{ module_id }}', '{% if oct_lazyload is defined and oct_lazyload %}1{% else %}0{% endif %}', 'btn_{{ module_name }}_{{ module }}', 'us-{{ module_name }}_{{ module }}', 'more_{{ module_name }}_{{ module }}', '{{ oct_path }}');">
+						<i class="fas fa-long-arrow-alt-down"></i>{{ oct_show_more_btn }}
+					</button>
+				</div>
+			</div>
+		</div>
+	{% endif %}
+	{% endif %}
+{% endif %}

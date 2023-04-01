@@ -1,0 +1,46 @@
+<div id="us-shop-advantages-{{ module }}" class="row row-padding-top">
+	{% set key = 0 %}
+    {% for oct_benefit in oct_benefits %}
+    {% set key = key + 1 %}
+        {% if oct_benefit.title[language_id] is defined and oct_benefit.title[language_id] %}
+    	<div class="col-md-{% if oct_main_class %}{% if loop.last and (oct_class == 4 or oct_class == 12) %}12{% else %}6{% endif %}{% else %}6{% endif %} col-lg-{{ oct_class }} us-advantages-item">
+    		<div class="us-advantages-box d-flex align-items-center justify-content-start h-100" id="block-{{ module }}-{{ key }}">
+    			<div class="us-advantages-img">
+    				<i class="{{ oct_benefit.icon }}"></i>
+    			</div>
+    			<div class="us-advantages-cont">
+    				<div class="us-advantages-title">
+    					{% if oct_benefit.link[language_id] is defined and oct_benefit.link[language_id] %}
+                            <a href="{{ oct_benefit.link[language_id] }}">{{ oct_benefit.title[language_id] }}</a>
+    					{% else %}
+                            {{ oct_benefit.title[language_id] }}
+    					{% endif %}
+    				</div>
+                    {% if oct_benefit.text[language_id] is defined and oct_benefit.text[language_id] %}
+    				<p class="us-advantages-text">
+    					{{ oct_benefit.text[language_id] }}
+    				</p>
+                    {% endif %}
+    			</div>
+    		</div>
+    	</div>
+        <style>
+            {% if oct_benefit.color_icon %}
+            #block-{{ module }}-{{ key }} .us-advantages-img i {color: {{ oct_benefit.color_icon }};}
+            {% endif %}
+
+            {% if oct_benefit.color_title %}
+            #block-{{ module }}-{{ key }} .us-advantages-title {color: {{ oct_benefit.color_title }};}
+            {% endif %}
+
+            {% if oct_benefit.color_text %}
+            #block-{{ module }}-{{ key }} .us-advantages-text {color: {{ oct_benefit.color_text }};}
+            {% endif %}
+
+            {% if oct_benefit.color_fon_hover %}
+            #block-{{ module }}-{{ key }}.us-advantages-box:hover {border-color: {{ oct_benefit.color_fon_hover }};}
+            {% endif %}
+        </style>
+        {% endif %}
+    {% endfor %}
+</div>

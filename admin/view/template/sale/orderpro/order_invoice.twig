@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" dir="{{ direction }}" lang="{{ language }}" xml:lang="{{ language }}">
+<head>
+<title>{{ title }}</title>
+<base href="{{ base }}" />
+<link rel="stylesheet" type="text/css" href="view/stylesheet/invoiceproa.css" />
+<style media="print" type="text/css">* {-webkit-print-color-adjust: exact;} .noprint {display: none;}</style>
+</head>
+<body style="box-sizing:border-box;">
+<span class="noprint"><a class="print-button" href="javascript:window.print(); void 0;" title="Распечатать счет">Печать</a></span>
+{% set voucher_colspan = 12 %}
+{% set total_colspan = 14 %}
+{% if show_pid %}{% set hide_pid = '' %}{% else %}{% set hide_pid = ' class="hidden noprint"' %}{% set voucher_colspan = voucher_colspan - 1 %}{% set total_colspan = total_colspan - 1 %}{% endif %}
+{% if show_image %}{% set hide_image = '' %}{% else %}{% set hide_image = ' class="hidden noprint"' %}{% set voucher_colspan = voucher_colspan - 1 %}{% set total_colspan = total_colspan - 1 %}{% endif %}
+{% if show_model %}{% set hide_model = '' %}{% else %}{% set hide_model = ' class="hidden noprint"' %}{% set voucher_colspan = voucher_colspan - 1 %}{% set total_colspan = total_colspan - 1 %}{% endif %}
+{% if show_sku %}{% set hide_sku = '' %}{% else %}{% set hide_sku = ' class="hidden noprint"' %}{% set voucher_colspan = voucher_colspan - 1 %}{% set total_colspan = total_colspan - 1 %}{% endif %}
+{% if show_upc %}{% set hide_upc = '' %}{% else %}{% set hide_upc = ' class="hidden noprint"' %}{% set voucher_colspan = voucher_colspan - 1 %}{% set total_colspan = total_colspan - 1 %}{% endif %}
+{% if show_ean %}{% set hide_ean = '' %}{% else %}{% set hide_ean = ' class="hidden noprint"' %}{% set voucher_colspan = voucher_colspan - 1 %}{% set total_colspan = total_colspan - 1 %}{% endif %}
+{% if show_jan %}{% set hide_jan = '' %}{% else %}{% set hide_jan = ' class="hidden noprint"' %}{% set voucher_colspan = voucher_colspan - 1 %}{% set total_colspan = total_colspan - 1 %}{% endif %}
+{% if show_isbn %}{% set hide_isbn = '' %}{% else %}{% set hide_isbn = ' class="hidden noprint"' %}{% set voucher_colspan = voucher_colspan - 1 %}{% set total_colspan = total_colspan - 1 %}{% endif %}
+{% if show_mpn %}{% set hide_mpn = '' %}{% else %}{% set hide_mpn = ' class="hidden noprint"' %}{% set voucher_colspan = voucher_colspan - 1 %}{% set total_colspan = total_colspan - 1 %}{% endif %}
+{% if show_location %}{% set hide_location = '' %}{% else %}{% set hide_location = ' class="hidden noprint"' %}{% set voucher_colspan = voucher_colspan - 1 %}{% set total_colspan = total_colspan - 1 %}{% endif %}
+{% if show_weight %}{% set hide_weight = '' %}{% else %}{% set hide_weight = ' class="hidden noprint"' %}{% set voucher_colspan = voucher_colspan - 1 %}{% set total_colspan = total_colspan - 1 %}{% endif %}
+{% for order in orders %}
+<div class="body-list" style="page-break-after:always;width:990px;margin:auto;box-sizing:border-box;">
+	
+	<table class="store">
+		<tr>
+			<td valign="middle" width="50%">
+				<img src="{{ order['store_logo'] }}" alt="" />
+			</td>
+			<td valign="middle" width="50%" style="padding-left:30px;">
+				<b>{{ order['store_name'] }}</b><br />
+				<b>{{ order['text']['text_address'] }}</b>{{ order['store_address'] }}<br />
+				<b>{{ order['text']['text_telephone'] }}</b>{{ order['store_telephone'] }}<br />
+				{% if order['store_fax'] %}
+					<b>{{ order['text']['text_fax'] }}</b>{{ order['store_fax'] }}<br />
+				{% endif %}
+				<b>{{ order['text']['text_email'] }}</b>{{ order['store_email'] }}<br />
+				<b>{{ order['text']['text_url'] }}</b>{{ order['store_url'] }}
+			</td>
+		</tr>
+	</table>
+	
+	<table class="address">
+		<tr class="heading">
+			<td align="center" width="24%"><b>{{ order['text']['text_order'] }}</b></td>
+			<td align="center" width="36%"><b>{{ order['text']['text_to'] }}</b></td>
+			<td align="center" width="40%"><b>{{ order['text']['text_ship_to'] }}</b></td>
+		</tr>
+		<tr>
+			<td valign="top">
+				<b>{{ order['text']['text_order_id'] }}</b>{{ order['order_id'] }}			
+				<br /><b>{{ order['text']['text_date_added'] }}</b>{{ order['date_added'] }}
+			</td>
+			<td valign="top">
+				{{ order['payment_address'] }}<br/>
+				{{ order['email'] }}<br/>
+				{{ order['telephone'] }}<br/>
+				{% if order['company'] %}
+				<br/>
+				{{ order['text']['text_company'] }} {{ order['company'] }}
+				{% endif %}
+			</td>
+			<td valign="top">
+				{{ order['shipping_address'] }}
+			</td>
+		</tr>
+		<tr>
+			<td class="method"><b>{{ order['text']['text_payment_method'] }}</b></td><td colspan="2">{{ order['payment_method'] }}</td>
+		</tr>
+		{% if order['shipping_method'] %}
+		<tr>
+			<td class="method"><b>{{ order['text']['text_shipping_method'] }}</b></td><td colspan="2">{{ order['shipping_method'] }}</td>
+		</tr>
+		{% endif %}
+	</table>
+	
+	{% if order['comment'] %}
+	<table class="comment">
+		<tr>
+			<td class="method" width="24%"><b>{{ order['text']['text_comment_customer'] }}</b></td><td>{{ order['comment'] }}</td>
+		</tr>
+	</table>
+	{% endif %}
+	
+	<table class="product">
+		<tr class="heading">
+			<td align="center" style="width:55px;"{{ hide_pid }}><b>{{ order['text']['column_pid'] }}</b></td>
+			<td align="center" style="width:65px;"{{ hide_image }}><b>{{ order['text']['column_image'] }}</b></td>
+			<td align="center"><b>{{ order['text']['column_product'] }}</b></td>
+			<td align="center" style="width:120px;"{{ hide_model }}><b>{{ order['text']['column_model'] }}</b></td>
+			<td align="center" style="width:120px;"{{ hide_sku }}><b>{{ order['text']['column_sku'] }}</b></td>
+			<td align="center" style="width:100px;"{{ hide_upc }}><b>{{ order['text']['column_upc'] }}</b></td>
+			<td align="center" style="width:100px;"{{ hide_ean }}><b>{{ order['text']['column_ean'] }}</b></td>
+			<td align="center" style="width:100px;"{{ hide_jan }}><b>{{ order['text']['column_jan'] }}</b></td>
+			<td align="center" style="width:100px;"{{ hide_isbn }}><b>{{ order['text']['column_isbn'] }}</b></td>
+			<td align="center" style="width:100px;"{{ hide_mpn }}><b>{{ order['text']['column_mpn'] }}</b></td>
+			<td align="center" style="width:100px;"{{ hide_location }}><b>{{ order['text']['column_location'] }}</b></td>
+			<td align="center" style="width:60px;white-space:nowrap;"{{ hide_weight }}><b>{{ order['text']['column_weight'] }}</b></td>
+			<td align="center" style="width:55px;"><b>{{ order['text']['column_quantity'] }}</b></td>
+			<td align="center" style="width:70px;"><b>{{ order['text']['column_price'] }}</b></td>
+			<td align="center" style="width:80px;"><b>{{ order['text']['column_total'] }}</b></td>
+		</tr>
+		{% for product in order['product'] %}
+			<tr>
+				<td align="center" {{ hide_pid }}>{{ product['product_id'] }}</td>
+				<td align="center" {{ hide_image }}><img src="{{ product['img'] }}" alt="" /></td>
+				<td>{{ product['name'] }}
+					{% for option in product['option'] %}
+						<br />&nbsp;<small> - {{ option['name'] }}: {{ option['value'] }}</small>
+					{% endfor %}</td>
+				<td {{ hide_model }}>{{ product['model'] }}</td>
+				<td {{ hide_sku }}>{{ product['sku'] }}</td>
+				<td {{ hide_upc }}>{{ product['upc'] }}</td>
+				<td {{ hide_ean }}>{{ product['ean'] }}</td>
+				<td {{ hide_jan }}>{{ product['jan'] }}</td>
+				<td {{ hide_isbn }}>{{ product['isbn'] }}</td>
+				<td {{ hide_mpn }}>{{ product['mpn'] }}</td>
+				<td {{ hide_location }}>{{ product['location'] }}</td>
+				<td align="right" style="white-space:nowrap;"{{ hide_weight }}>{{ product['weight'] }}</td>
+				<td align="center">{{ product['quantity'] }}</td>
+				<td align="right" style="white-space:nowrap;">{{ product['price'] }}</td>
+				<td align="right" style="white-space:nowrap;">{{ product['total'] }}</td>
+			</tr>
+		{% endfor %}
+		{% for voucher in order['voucher'] %}
+			<tr>
+				<td align="left" colspan="{{ voucher_colspan }}">{{ voucher['description'] }}</td>
+				<td align="right">1</td>
+				<td align="right" style="white-space:nowrap;">{{ voucher['amount'] }}</td>
+				<td align="right" style="white-space:nowrap;">{{ voucher['amount'] }}</td>
+			</tr>
+		{% endfor %}
+		{% for total in order['total'] %}
+			<tr>
+				<td align="right" colspan="{{ total_colspan }}"><b>{{ total['title'] }}:</b></td>
+				<td align="right" style="white-space:nowrap;">{{ total['text'] }}</td>
+			</tr>
+		{% endfor %}
+	</table>
+</div>
+{% endfor %}
+</body>
+</html>

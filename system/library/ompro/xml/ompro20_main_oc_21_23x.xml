@@ -1,0 +1,664 @@
+<modification>
+    <name><![CDATA[<font color="#069">Order Manager PRO</font>]]> main 21_23x</name>
+	<code>ompro20_main_oc_21_23x</code>
+	<version>2.0.6</version>
+	<author>Konstantin Kornelyuk</author>
+	<link>https://opencartforum.com/user/28448-brest001/?tab=idm</link>
+
+	<!-- OMPro btn in header -->
+	<file path="admin/controller/common/header.php">
+		<operation error="skip">
+			<search><![CDATA[$data['logout']]]></search>
+			<add position="after"><![CDATA[
+			$data['ompro'] = $this->url->link('sale/ompro/orders', 'token=' . $this->session->data['token'], true);
+			if (!$this->user->hasPermission('modify', 'sale/ompro')) {
+				$data['ompro_setting'] = '';
+			} else {
+				$data['ompro_setting'] = $this->url->link('sale/ompro/admin', 'token=' . $this->session->data['token'], true);
+			}
+			]]></add>
+		</operation>
+	</file>
+	<file path="admin/view/template/common/header.tpl">
+		<operation error="skip">
+			<search><![CDATA[<ul class="nav pull-right">]]></search>
+			<add position="after"><![CDATA[
+	<li style="padding: 6px 10px 3px 10px;">
+		<div class="btn-group">
+			<a href="<?php echo $ompro; ?>" class="btn btn-default"><i class="fa fa-shopping-cart fa-lg" style="color: #3c8dbc;"></i>&nbsp;&nbsp;Order Manager PRO</a>
+			<?php if ($ompro_setting) { ?>
+			<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+				<span class="caret"></span>
+			</button>
+			<ul class="dropdown-menu dropdown-menu-right" role="menu">
+				<h6 class="dropdown-header">Order Manager PRO</h6>
+				<li><a href="<?php echo $ompro_setting; ?>"><i class="fa fa-cog"></i>&nbsp;&nbsp;  Settings</a></li>
+			</ul>
+			<?php } ?>
+		</div>
+	</li>
+		]]></add>
+		</operation>
+	</file>
+
+	
+	<!-- Field cost to purchase - library, catalog -->
+
+	<!-- OC 2.1.x -->
+	<file path="system/library/cart.php">
+		<operation error="skip">
+			<search><![CDATA[($price + $option_price),]]></search>
+			<add position="before"><![CDATA[					'cost'      => isset($product_query->row['cost']) ? $product_query->row['cost'] : 0,]]></add>
+		</operation>
+	</file>
+
+	<!-- OC 2.2.x  - 3.0.3.x -->
+	<file path="system/library/cart/cart.php">
+		<operation error="skip">
+			<search><![CDATA[($price + $option_price),]]></search>
+			<add position="before"><![CDATA[					'cost'      => isset($product_query->row['cost']) ? $product_query->row['cost'] : 0,]]></add>
+		</operation>
+	</file>
+
+	<!-- OC 2.1.x  - 3.0.3.x -->
+	<file path="catalog/controller/api/order.php">
+		<operation error="skip">
+			<search><![CDATA[$product['subtract'],]]></search>
+			<add position="after"><![CDATA[						'cost'      => isset($product['cost']) ? $product['cost'] : 0,]]></add>
+		</operation>
+	</file>
+
+	<file path="catalog/controller/checkout/confirm.php">
+		<operation error="skip">
+			<search><![CDATA[$order_data['products'][] = array(]]></search>
+			<add position="after"><![CDATA[					'cost'      => isset($product['cost']) ? $product['cost'] : 0,]]></add>
+		</operation>
+	</file>
+
+	<file path="catalog/model/checkout/order.php">
+		<operation error="skip">
+			<search><![CDATA[quantity = '" . (int)$product['quantity'] . "',]]></search>
+			<add position="replace"><![CDATA[quantity = '" . (int)$product['quantity'] . "', purchase = '" . (float)$product['cost'] . "', ]]></add>
+		</operation>
+	</file>
+
+	<!-- for Simple 4.9.x - 4.11.x && OC 2.1.x - 3.0.3.x -->
+	<file path="catalog/controller/checkout/simplecheckout.php">
+		<operation error="skip">
+			<search><![CDATA[$product['subtract'],]]></search>
+			<add position="after"><![CDATA[					'cost'      => isset($product['cost']) ? $product['cost'] : 0,]]></add>
+		</operation>
+	</file>
+
+
+	<!-- notification & history -->
+	<file path="catalog/model/checkout/order.php">
+		<operation error="skip">
+			<search><![CDATA[public function addOrder(]]></search>
+			<add position="after"><![CDATA[
+		// ompro ->
+		if (isset($this->session->data['api_id'])) {
+			$this->session->data['add_order_from_admin'] = true;
+		}
+		// -> ompro
+			]]></add>
+		</operation>
+		<operation error="skip">
+			<search><![CDATA[public function addOrderHistory(]]></search>
+			<add position="after"><![CDATA[
+		// ompro ->
+		if (!is_object($this->ompro)) {
+			$this->load->library('ompro/ompro');
+		}
+
+		if (isset($this->session->data['add_order_from_admin'])) {
+			$add_order_from_admin = true;
+			unset($this->session->data['add_order_from_admin']);
+		} else {
+			$add_order_from_admin = false;
+		}
+
+		if (!isset($this->session->data['ompro_data'])) {
+			$this->ompro->requestNotifyTarget();
+		}
+
+		$mail_target = $sms_target = $tlgrm_target = $attachments = array();
+		$user_id = $notify_sms = $notify_tlgrm = 0;  $file_name = '';
+
+		if (isset($this->session->data['ompro_data'])) {
+			foreach ($this->session->data['ompro_data'] as $k => $v) { ${$k} = $v; }
+		}
+		// -> ompro
+			]]></add>
+		</operation>
+
+		<operation error="skip">
+			<search><![CDATA[$order_info = $this->getOrder($order_id);]]></search>
+			<add position="after"><![CDATA[
+		// ompro ->
+		if (!$order_info) {
+			return false;
+		}
+		// -> ompro
+			]]></add>
+		</operation>
+
+		<operation error="skip">
+			<search><![CDATA[if (!$safe && !$override]]></search>
+			<add position="before"><![CDATA[
+			// OMPro ->
+			$order_language_id = isset($order_info['language_id']) && $order_info['language_id'] ? $order_info['language_id'] : $this->config->get('config_language_id');
+			$language_id = $this->config->get('config_language_id');
+			// <- OMPro
+			]]></add>
+		</operation>
+
+		<operation error="skip">
+			<search><![CDATA[if ($order_info['affiliate_id'] && $this->config->get('config_affiliate_auto')) {]]></search>
+			<add position="replace"><![CDATA[// OMPro ->
+				if ($order_info['affiliate_id'] && $this->config->get('config_affiliate_auto') && ($sms_target['transaction'] || $mail_target['transaction'] || $tlgrm_target['transaction'])) {
+
+					$all_orders_data = $this->ompro->getOrdersDataAll(array($order_id), $to_edit = false, $expert_link = false);
+					$affiliate_info = $this->ompro->getAffiliate($order_info['affiliate_id']);
+
+					if ($affiliate_info) {
+						$this->load->language('api/ompro');
+						$description = $this->language->get('text_order_id') . ' #' . $order_id;
+
+						if (!$this->ompro->getTotalTransactionsByOrderId($order_id)) {
+							$transaction_id = $this->ompro->addComission($order_info['affiliate_id'], $description, $order_info['commission'], $order_id);
+
+							if ($transaction_id) {
+								if ($mail_target['transaction']) {
+									$comment2 = nl2br($comment);
+									$template_info = $this->ompro->getTemplateTemplate('mail', $mail_target['transaction']);
+									$recipients = array();
+									$recipients[] = array(
+										'recipient_name' => '', 'email' => $affiliate_info['email']
+									);
+
+									$this->ompro->sendMail($order_id, $template_info, $language_id, $recipients, $all_orders_data, $comment2, $attachments);
+								}
+
+								if ($sms_target['transaction']) {
+									$template_info = $this->ompro->getTemplateTemplate('sms', $sms_target['transaction']);
+									$to = $affiliate_info['telephone'];
+									$copies = array();
+									$this->ompro->sendSms($order_id, $template_info, $language_id, $to, $copies, $all_orders_data, $comment);
+								}
+
+								if ($tlgrm_target['transaction']) {
+									$comment2 = nl2br($comment);
+									$template_info = $this->ompro->getTemplateTemplate('tlgrm', $tlgrm_target['transaction']);
+									$chat_ids = array();
+									if (isset($affiliate_info['telegram_id']) && $affiliate_info['telegram_id']) {
+										$chat_ids[] = $affiliate_info['telegram_id'];
+										$this->ompro->sendToTelegram($order_id, $template_info,  $chat_ids, $all_orders_data, $comment2);
+									}
+								}
+							}
+						}
+					}
+				} elseif ($order_info['affiliate_id'] && $this->config->get('config_affiliate_auto')) { // <- OMPro
+			]]></add>
+		</operation>
+
+		<operation error="skip">
+			<search><![CDATA[$this->db->query("INSERT INTO " . DB_PREFIX . "order_history]]></search>
+			<add position="before"><![CDATA[/*]]></add>
+		</operation>
+
+		<operation error="skip">
+			<search><![CDATA[$this->db->query("INSERT INTO " . DB_PREFIX . "order_history]]></search>
+			<add position="after"><![CDATA[
+*/
+			// OMPro ->
+			$all_orders_data = array();
+			if (($comment && isset($this->request->post['ompro_history'])) || !$order_info['order_status_id'] && $order_status_id && ($sms_target['new_order_customer'] || $mail_target['new_order_customer'] || $sms_target['new_order_manager'] || $mail_target['new_order_manager'] || $tlgrm_target['new_order_manager'] || $sms_target['new_order_courier'] || $mail_target['new_order_courier'] || $tlgrm_target['new_order_courier'] || $sms_target['new_order_admin'] || $mail_target['new_order_admin'] || $tlgrm_target['new_order_admin'])) {
+				$all_orders_data = $this->ompro->getOrdersDataAll(array($order_id), $to_edit = false, $expert_link = false);
+			}
+
+			if ($all_orders_data && $comment && isset($this->request->post['ompro_history'])) {
+				$comment = $this->ompro->replaceVarsOrderData($comment, $order_id, $all_orders_data, $template_info = array(), $order_language_id);
+
+				$attach = $this->ompro->attachToMail($all_orders_data, $comment);
+				$comment = $attach['message'];
+				$attachments = array_merge($attachments, $attach['attachments']);
+			}
+
+			if ($all_orders_data) {
+				$payment_status_id = $all_orders_data['orders'][$order_id]['order_info']['payment_status_id'];
+				$shipping_status_id = $all_orders_data['orders'][$order_id]['order_info']['shipping_status_id'];
+			} else {
+				$payment_status_id = $this->ompro->getOrderFieldValue($order_id, 'payment_status_id');
+				$shipping_status_id = $this->ompro->getOrderFieldValue($order_id, 'shipping_status_id');
+			}
+
+			$this->db->query("INSERT INTO " . DB_PREFIX . "order_history SET order_id = '" . (int)$order_id . "', user_id = '" . (int)$user_id . "', order_status_id = '" . (int)$order_status_id . "', payment_status_id = '" . (int)$payment_status_id . "', shipping_status_id = '" . (int)$shipping_status_id . "', notify = '" . (int)$notify . "', notify_sms = '" . (int)$notify_sms . "', notify_tlgrm = '" . (int)$notify_tlgrm . "', comment = '" . $this->db->escape($comment) . "', file_name = '" . $this->db->escape($file_name) . "', log = '', date_added = NOW()");
+			// <- OMPro
+			]]></add>
+		</operation>
+
+		<operation error="skip">
+			<search><![CDATA[if (!$order_info['order_status_id'] && $order_status_id) {]]></search>
+			<add position="replace"><![CDATA[
+			// OMPro ->
+			$system_customer_mail = true;
+			$system_admin_mail = true;
+			$system_admin_sms = true;
+
+			if ($all_orders_data && (!isset($this->session->data['api_id']) || $add_order_from_admin) && !$order_info['order_status_id'] && $order_status_id) {
+				if ($mail_target['new_order_customer']) {
+					$comment2 = nl2br($comment);
+					$template_info = $this->ompro->getTemplateTemplate('mail', $mail_target['new_order_customer']);
+					$recipients = array();
+					$recipients[] = array(
+						'recipient_name' => '', 'email' => $order_info['email']
+					);
+					$this->ompro->sendMail($order_id, $template_info, $order_language_id, $recipients, $all_orders_data, $comment2, $attachments);
+					$system_customer_mail = false;
+				}
+
+				if ($sms_target['new_order_customer']) {
+					$template_info = $this->ompro->getTemplateTemplate('sms', $sms_target['new_order_customer']);
+					$to = $order_info['telephone'];
+					$copies = array();
+					$this->ompro->sendSms($order_id, $template_info, $order_language_id, $to, $copies, $all_orders_data, $comment);
+				}
+
+				if ($tlgrm_target['new_order_customer']) {
+					$template_info = $this->ompro->getTemplateTemplate('tlgrm', $tlgrm_target['new_order_customer']);
+					$chat_ids = array();
+					if (isset($order_info['telegram_id']) && $order_info['telegram_id']) {
+						$chat_ids[] = $order_info['telegram_id'];
+						$this->ompro->sendToTelegram($order_id, $template_info,  $chat_ids, $all_orders_data, $comment);
+					}
+				}
+
+				if ($mail_target['new_order_admin']) {
+					$comment2 = nl2br($comment);
+					$template_info = $this->ompro->getTemplateTemplate('mail', $mail_target['new_order_admin']);
+					$emails = explode(',', $this->config->get('config_alert_email'));
+					$emails[] = $this->config->get('config_email');
+					$recipients = array();
+					foreach ($emails as $email) {
+						$email = trim($email);
+						if ($email !== '' && preg_match('/^[^@]+@.*.[a-z]{2,15}$/i', $email)) {
+							$recipients[] = array(
+								'recipient_name' => '', 'email' => $email
+							);
+						}
+					}
+					$this->ompro->sendMail($order_id, $template_info, $language_id, $recipients, $all_orders_data, $comment2, $attachments = array());
+					$system_admin_mail = false;
+				}
+
+				if ($sms_target['new_order_admin']) {
+					$template_info = $this->ompro->getTemplateTemplate('sms', $sms_target['new_order_admin']);
+					$to = $this->config->get('config_sms_to');
+					$copies = $this->config->get('config_sms_copy');
+					$this->ompro->sendSms($order_id, $template_info, $language_id, $to, $copies, $all_orders_data, $comment);
+					$system_admin_sms = false;
+				}
+
+				if ($tlgrm_target['new_order_admin']) {
+					$comment2 = nl2br($comment);
+					$template_info = $this->ompro->getTemplateTemplate('tlgrm', $tlgrm_target['new_order_admin']);
+					$chat_ids = array();
+					$chat_ids = explode(',', $this->ompro->getTelegramAdminIdes());
+					if (!empty($chat_ids)) {
+						$this->ompro->sendToTelegram($order_id, $template_info,  $chat_ids, $all_orders_data, $comment2);
+					}
+				}
+
+				$managers = array();
+				if ($mail_target['new_order_manager'] || $sms_target['new_order_manager'] || $tlgrm_target['new_order_manager']) {
+					$managers = $this->ompro->getTargetUsers($order_id, $all_orders_data, 'manager');
+				}
+
+				if ($mail_target['new_order_manager']) {
+					$comment2 = nl2br($comment);
+					$template_info = $this->ompro->getTemplateTemplate('mail', $mail_target['new_order_manager']);
+					$recipients = array();
+					foreach ($managers as $manager) {
+						$recipients[] = array(
+							'recipient_name' => $manager['firstname'] .' '. $manager['lastname'], 'email' => $manager['email']
+						);
+					}
+
+					$this->ompro->sendMail($order_id, $template_info, $language_id, $recipients, $all_orders_data, $comment2, $attachments);
+				}
+
+				if ($sms_target['new_order_manager']) {
+					$template_info = $this->ompro->getTemplateTemplate('sms', $sms_target['new_order_manager']);
+					$to = ''; $copies = array();
+					foreach ($managers as $manager) {
+						if (isset($manager['telephone']) && $manager['telephone'] !== '') {
+							if ($to == '') {
+								$to = $manager['telephone'];
+							} else {
+								$copies[] = $manager['telephone'];
+							}
+						}
+					}
+
+					$this->ompro->sendSms($order_id, $template_info, $language_id, $to, $copies, $all_orders_data, $comment);
+				}
+
+				if ($tlgrm_target['new_order_manager']) {
+					$comment2 = nl2br($comment);
+					$template_info = $this->ompro->getTemplateTemplate('tlgrm', $tlgrm_target['new_order_manager']);
+					$chat_ids = array();
+					foreach ($managers as $manager) {
+						if (isset($manager['telegram_id']) && $manager['telegram_id'] !== '') {
+							$chat_ids[] = $manager['telegram_id'];
+						}
+					}
+					if (!empty($chat_ids)) {
+						$this->ompro->sendToTelegram($order_id, $template_info,  $chat_ids, $all_orders_data, $comment2);
+					}
+				}
+
+				$couriers = array();
+				if ($mail_target['new_order_courier'] || $sms_target['new_order_courier'] || $tlgrm_target['new_order_courier']) {
+					$couriers = $this->ompro->getTargetUsers($order_id, $all_orders_data, 'courier');
+				}
+
+				if ($mail_target['new_order_courier']) {
+					$comment2 = nl2br($comment);
+					$template_info = $this->ompro->getTemplateTemplate('mail', $mail_target['new_order_courier']);
+					$recipients = array();
+					foreach ($couriers as $courier) {
+						$recipients[] = array(
+							'recipient_name' => $courier['firstname'] .' '. $courier['lastname'], 'email' => $courier['email']
+						);
+					}
+
+					$this->ompro->sendMail($order_id, $template_info, $language_id, $recipients, $all_orders_data, $comment2, $attachments);
+				}
+
+				if ($sms_target['new_order_courier']) {
+					$template_info = $this->ompro->getTemplateTemplate('sms', $sms_target['new_order_courier']);
+					$to = ''; $copies = array();
+					foreach ($couriers as $courier) {
+						if (isset($courier['telephone']) && $courier['telephone'] !== '') {
+							if ($to == '') {
+								$to = $courier['telephone'];
+							} else {
+								$copies[] = $courier['telephone'];
+							}
+						}
+					}
+
+					$this->ompro->sendSms($order_id, $template_info, $language_id, $to, $copies, $all_orders_data, $comment);
+				}
+
+				if ($tlgrm_target['new_order_courier']) {
+					$comment2 = nl2br($comment);
+					$template_info = $this->ompro->getTemplateTemplate('tlgrm', $tlgrm_target['new_order_courier']);
+					$chat_ids = array();
+					foreach ($couriers as $courier) {
+						if (isset($courier['telegram_id']) && $courier['telegram_id'] !== '') {
+							$chat_ids[] = $courier['telegram_id'];
+						}
+					}
+					if (!empty($chat_ids)) {
+						$this->ompro->sendToTelegram($order_id, $template_info,  $chat_ids, $all_orders_data, $comment2);
+					}
+				}
+			}
+
+			if (!$order_info['order_status_id'] && (!isset($this->session->data['api_id']) || $add_order_from_admin) && $order_status_id && ($system_customer_mail || $system_admin_mail || $system_admin_sms)) { // <- OMPro
+			]]></add>
+		</operation>
+
+		<operation error="skip">
+			<search index="0"><![CDATA[$mail->send();]]></search>
+			<add position="replace"><![CDATA[if ($system_customer_mail && !isset($this->session->data['api_id'])) { $mail->send(); }  // OMPro]]></add>
+		</operation>
+
+		<!-- OC21_22 -->
+		<operation error="skip">
+			<search><![CDATA[if ($this->config->get('config_order_mail')) {]]></search>
+			<add position="replace"><![CDATA[if ($system_admin_mail && !isset($this->session->data['api_id']) && $this->config->get('config_order_mail')) { // OMPro]]></add>
+		</operation>
+
+		<operation error="skip">
+			<search><![CDATA[if ($order_info['order_status_id'] && $order_status_id && $notify) {]]></search>
+			<add position="replace"><![CDATA[// OMPro
+			$system_status_mail = true;
+
+			if ($order_info['order_status_id'] && $order_status_id && ($notify && $mail_target['history']) || ($notify_sms && $sms_target['history']) || ($notify_tlgrm && $tlgrm_target['history'])) {
+
+				if (!$all_orders_data) {
+					$all_orders_data = $this->ompro->getOrdersDataAll(array($order_id), $to_edit = false, $expert_link = false);
+				}
+
+				if ($notify && $mail_target['history']) {
+					if (!isset($this->session->data['mail_history_template_info'])) {
+						$this->session->data['mail_history_template_info'] = $this->ompro->getTemplateTemplate('mail', $mail_target['history']);
+					}
+					$recipients = array();
+					$recipients[] = array(
+						'recipient_name' => '', 'email' => $order_info['email']
+					);
+					$this->ompro->sendMail($order_id, $this->session->data['mail_history_template_info'], $order_language_id, $recipients, $all_orders_data, $comment, $attachments);
+					$system_status_mail = false;
+				}
+
+				if ($notify_sms && $sms_target['history']) {
+					if (!isset($this->session->data['sms_history_template_info'])) {
+						$this->session->data['sms_history_template_info'] = $this->ompro->getTemplateTemplate('sms', $sms_target['history']);
+					}
+					$to = $order_info['telephone'];
+					$copies = array();
+					$this->ompro->sendSms($order_id, $this->session->data['sms_history_template_info'], $order_language_id, $to, $copies, $all_orders_data, $comment);
+				}
+
+				if ($notify_tlgrm && $tlgrm_target['history']) {
+					if (!isset($this->session->data['tlgrm_history_template_info'])) {
+						$this->session->data['tlgrm_history_template_info'] = $this->ompro->getTemplateTemplate('tlgrm', $tlgrm_target['history']);
+					}
+					$chat_ids = array();
+					if (isset($order_info['telegram_id']) && $order_info['telegram_id']) {
+						$chat_ids[] = $order_info['telegram_id'];
+						$this->ompro->sendToTelegram($order_id, $this->session->data['tlgrm_history_template_info'],  $chat_ids, $all_orders_data, $comment);
+					}
+				}
+			}
+
+			if ($system_status_mail && $order_info['order_status_id'] && $order_status_id && $notify) { // <- OMPro
+			]]></add>
+		</operation>
+
+		<!-- OC23 -->
+		<operation error="skip">
+			<search><![CDATA[if (in_array('order', (array)$this->config->get('config_mail_alert'))) {]]></search>
+			<add position="replace"><![CDATA[if ($system_admin_mail && !isset($this->session->data['api_id']) && in_array('order', (array)$this->config->get('config_mail_alert'))) { // OMPro]]></add>
+		</operation>
+
+		<!-- ocStore23 -->
+		<operation error="skip">
+			<search><![CDATA[if ($this->config->get('config_sms_alert')) {]]></search>
+			<add position="replace"><![CDATA[if ($system_admin_sms && !isset($this->session->data['api_id']) && $this->config->get('config_sms_alert')) { // OMPro]]></add>
+		</operation>
+
+	</file>
+
+
+	<!-- affiliate telegram_id -->
+	<file path="admin/controller/marketing/affiliate.php">
+		<operation error="skip">
+			<search><![CDATA[$data['entry_telephone']]]></search>
+			<add position="after"><![CDATA[
+		$data['entry_telegram_id'] = $this->language->get('entry_telegram_id');
+		$data['entry_telegram_id_help'] = $this->language->get('entry_telegram_id_help');
+
+			]]></add>
+		</operation>
+
+		<operation error="skip">
+			<search><![CDATA[if (isset($this->request->post['fax'])) {]]></search>
+			<add position="before"><![CDATA[
+		if (isset($this->request->post['telegram_id'])) {
+			$data['telegram_id'] = $this->request->post['telegram_id'];
+		} elseif (!empty($affiliate_info)) {
+			$data['telegram_id'] = $affiliate_info['telegram_id'];
+		} else {
+			$data['telegram_id'] = '';
+		}
+			]]></add>
+		</operation>
+	</file>
+
+	<file path="admin/model/marketing/affiliate.php">
+		<operation error="skip">
+			<search><![CDATA[telephone = '" . $this->db->escape($data['telephone']) . "',]]></search>
+			<add position="replace"><![CDATA[telephone = '" . $this->db->escape($data['telephone']) . "', telegram_id = '" . $this->db->escape($data['telegram_id']) . "', ]]></add>
+		</operation>
+	</file>
+
+	<file path="admin/language/{en-gb,english}marketing/affiliate.php">
+		<operation error="skip">
+			<search><![CDATA[?php]]></search>
+			<add position="after"><![CDATA[
+$_['entry_telegram_id'] = 'Telegram ID';
+$_['entry_telegram_id_help'] = '<a href="https://readd.org/telegram-user-id-chto-eto-zachem-eto-kak-uznat/" target="_blank">How get Telegram user ID</a>';
+			]]></add>
+		</operation>
+	</file>
+
+	<file path="admin/language/{ru-ru,russian}/marketing/affiliate.php">
+		<operation error="skip">
+			<search><![CDATA[?php]]></search>
+			<add position="after"><![CDATA[
+$_['entry_telegram_id'] = 'Telegram ID';
+$_['entry_telegram_id_help'] = '<a href="https://readd.org/telegram-user-id-chto-eto-zachem-eto-kak-uznat/" target="_blank">Как узнать Telegram ID</a>';
+			]]></add>
+		</operation>
+	</file>
+
+	<file path="admin/view/template/marketing/affiliate_form.tpl">
+		<operation error="skip">
+			<search><![CDATA[<div class="text-danger"><?php echo $error_telephone; ?></div>]]></search>
+			<add position="after" offset="3"><![CDATA[
+         <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-telegram_id"><?php echo $entry_telegram_id; ?><br><?php echo $entry_telegram_id_help; ?></label>
+            <div class="col-sm-10">
+              <input type="text" name="telegram_id" value="<?php echo $telegram_id; ?>" placeholder="<?php echo $entry_telegram_id; ?>" id="input-telegram_id" class="form-control" />
+            </div>
+          </div>
+			]]></add>
+		</operation>
+	</file>
+
+	<!-- user: telephone, telegram_id -->
+	<file path="admin/controller/user/user.php">
+		<operation error="skip">
+			<search><![CDATA[$data['entry_email']]]></search>
+			<add position="after"><![CDATA[
+		$data['entry_telephone'] = $this->language->get('entry_telephone');
+		$data['entry_telephone_help'] = $this->language->get('entry_telephone_help');
+		$data['entry_telegram_id'] = $this->language->get('entry_telegram_id');
+		$data['entry_telegram_id_help'] = $this->language->get('entry_telegram_id_help');
+
+			]]></add>
+		</operation>
+		<operation error="skip">
+			<search><![CDATA[if (isset($this->error['username'])) {]]></search>
+			<add position="before"><![CDATA[
+		if (isset($this->error['telephone'])) {
+			$data['error_telephone'] = $this->error['telephone'];
+		} else {
+			$data['error_telephone'] = '';
+		}
+			]]></add>
+		</operation>
+		<operation error="skip">
+			<search><![CDATA[if (isset($this->request->post['image'])) {]]></search>
+			<add position="before"><![CDATA[
+		if (isset($this->request->post['telephone'])) {
+			$data['telephone'] = $this->request->post['telephone'];
+		} elseif (!empty($user_info)) {
+			$data['telephone'] = $user_info['telephone'];
+		} else {
+			$data['telephone'] = '';
+		}
+
+		if (isset($this->request->post['telegram_id'])) {
+			$data['telegram_id'] = $this->request->post['telegram_id'];
+		} elseif (!empty($user_info)) {
+			$data['telegram_id'] = $user_info['telegram_id'];
+		} else {
+			$data['telegram_id'] = '';
+		}
+			]]></add>
+		</operation>
+		<operation error="skip">
+			<search><![CDATA[if ((utf8_strlen($this->request->post['username'])]]></search>
+			<add position="before"><![CDATA[
+		if ((utf8_strlen($this->request->post['telephone']) < 3) || (utf8_strlen($this->request->post['telephone']) > 32)) {
+			$this->error['telephone'] = $this->language->get('error_telephone');
+		}
+			]]></add>
+		</operation>
+	</file>
+
+	<file path="admin/model/user/user.php">
+		<operation error="skip">
+			<search><![CDATA[email = '" . $this->db->escape($data['email']) . "',]]></search>
+			<add position="replace"><![CDATA[email = '" . $this->db->escape($data['email']) . "', telephone = '" . $this->db->escape($data['telephone']) . "', telegram_id = '" . $this->db->escape($data['telegram_id']) . "',]]></add>
+		</operation>
+	</file>
+
+	<file path="admin/language/{en-gb,english}user/user.php">
+		<operation error="skip">
+			<search><![CDATA[?php]]></search>
+			<add position="after"><![CDATA[
+$_['entry_telephone'] = 'Telephone';
+$_['entry_telephone_help'] = 'In international format, numbers only 7926xxxxxxx';
+$_['error_telephone'] = 'Telephone must be between 3 and 32 characters!';
+$_['entry_telegram_id'] = 'Telegram ID';
+$_['entry_telegram_id_help'] = '<a href="https://readd.org/telegram-user-id-chto-eto-zachem-eto-kak-uznat/" target="_blank">How get Telegram user ID</a>';
+			]]></add>
+		</operation>
+	</file>
+
+	<file path="admin/language/{ru-ru,russian}/user/user.php">
+		<operation error="skip">
+			<search><![CDATA[?php]]></search>
+			<add position="after"><![CDATA[
+$_['entry_telephone'] = 'Телефон';
+$_['entry_telephone_help'] = 'В международном формате, только цифры 7926xxxxxxx';
+$_['error_telephone'] = 'Телефон должен быть от 3 до 32 символов!';
+$_['entry_telegram_id'] = 'Telegram ID';
+$_['entry_telegram_id_help'] = '<a href="https://readd.org/telegram-user-id-chto-eto-zachem-eto-kak-uznat/" target="_blank">Как узнать Telegram ID</a>';
+			]]></add>
+		</operation>
+	</file>
+
+	<file path="admin/view/template/user/user_form.tpl">
+		<operation error="skip">
+			<search><![CDATA[<label class="col-sm-2 control-label" for="input-image"><?php echo $entry_image; ?></label>]]></search>
+			<add position="before" offset="1"><![CDATA[
+         <div class="form-group required">
+            <label class="col-sm-2 control-label" for="input-telephone"><span data-toggle="tooltip" title="<?php echo $entry_telephone_help; ?>"><?php echo $entry_telephone; ?></span></label>
+            <div class="col-sm-10">
+              <input type="text" name="telephone" value="<?php echo $telephone; ?>" placeholder="<?php echo $entry_telephone; ?>" id="input-telephone" class="form-control" />
+              <?php if ($error_telephone) { ?>
+              <div class="text-danger"><?php echo $error_telephone; ?></div>
+              <?php } ?>
+            </div>
+          </div>
+         <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-telegram_id"><?php echo $entry_telegram_id; ?><br><?php echo $entry_telegram_id_help; ?></label>
+            <div class="col-sm-10">
+              <input type="text" name="telegram_id" value="<?php echo $telegram_id; ?>" placeholder="<?php echo $entry_telegram_id; ?>" id="input-telegram_id" class="form-control" />
+            </div>
+          </div>
+			]]></add>
+		</operation>
+
+	</file>
+
+</modification>

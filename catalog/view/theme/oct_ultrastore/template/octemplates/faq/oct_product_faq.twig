@@ -1,0 +1,139 @@
+{% if page == 1 %}
+<div class="us-product-tabs-questions" id="{{ oct_id_div }}">
+    {% if poup_is_not %}
+        <div class="us-product-tabs-questions-top">
+            {% if oct_faqs is empty %}
+                <p class="my-4">{{ text_faq_title }}</p>
+            {% endif %}
+            <button type="button" class="us-module-btn us-module-btn-green" data-toggle="modal" data-target="#us-popup-faq">{{ text_faq_button }}</button>
+            <div class="modal" id="us-popup-faq" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <div class="modal-title">{{ text_faq }}</div>
+                            <button type="button" class="us-close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true" class="us-modal-close-icon us-modal-close-left"></span>
+                                <span aria-hidden="true" class="us-modal-close-icon us-modal-close-right"></span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="fous-faq" enctype="multipart/form-data" method="post">
+                                <div class="pb-4">{{ text_faq_text }}</div>
+                                <div class="form-group-20">
+                                    <input type="text" name="name" class="form-control" id="faqInputName" placeholder="{{ entry_name }}">
+                                </div>
+                                <div class="form-group-20">
+                                    <textarea id="faqText" name="text" class="form-control" placeholder="{{ text_faq_textarea }}"></textarea>
+                                </div>
+                                <div class="form-group-20">
+                                    {{ captcha }}
+                                </div>
+                                <button type="button" id="button-oct_faq" class="us-module-btn us-module-btn-green">{{ button_continue }}</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    {% if oct_faqs %}
+        <div id="{{ oct_faqs_id }}">
+            {% for oct_faq in oct_faqs %}
+            <div class="us-product-tabs-questions-item">
+                <div class="us-product-tabs-questions-item-info d-flex justify-content-between d-md-block">
+                    <span class="us-product-tabs-questions-item-author">{{ text_faq_autor }}{{ oct_faq.author }}</span>
+                    <span class="us-product-tabs-questions-item-date">{{ oct_faq.date_added }}</span>
+                </div>
+                <div class="us-product-tabs-questions-item-text">
+                    <p>{{ oct_faq.text }}</p>
+                </div>
+                {% if oct_faq.answer is defined and oct_faq.answer %}
+                <div class="us-product-tabs-questions-item-answer">
+                    <div class="us-product-tabs-questions-item-answer-title">{{ text_faq_answer }}</div>
+                    <div class="us-product-tabs-questions-item-answer-text">
+                        <p>{{ oct_faq.answer }}</p>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+            <div class="text-right">{{ pagination }}</div>
+        </div>
+    {% endif %}
+</div>
+<script>
+$("#faqInputName, #faqText").on("change paste keyup", function() {
+  $(this).removeClass('error_style');
+});
+$('body').on('click', '#{{ oct_faqs_id }} .pagination a', function(e){
+    e.preventDefault();
+
+    $('#{{ oct_faqs_id }}').html();
+
+    $('#{{ oct_faqs_id }}').load(this.href);
+
+    scrollToElement('#product_questions');
+});
+
+$('#button-oct_faq').on('click', function() {
+	$.ajax({
+		url: 'index.php?route=octemplates/faq/oct_product_faq/write&faqp_id={{ product_id }}',
+		type: 'post',
+		dataType: 'json',
+		data: $("#fous-faq").serialize(),
+		beforeSend: function() {
+			$('#button-oct_faq').button('loading');
+            $('#us-popup-faq input, #us-popup-faq textarea').removeClass('error_style');
+		},
+		complete: function() {
+			$('#button-oct_faq').button('reset');
+		},
+		success: function(json) {
+            $('.alert-dismissible').remove();
+
+            if (json['error']) {
+                let errorOption = '';
+
+                $.each(json['error'], function(i, val) {
+                    $('#us-popup-faq [name="' + i + '"]').addClass('error_style');
+                    errorOption += '<div class="alert-text-item">' + val + '</div>';
+                });
+
+                usNotify('danger', errorOption);
+            }
+
+			if (json['success']) {
+                usNotify('success', json['success']);
+
+                $('#us-popup-faq').modal('hide');
+                $('#fous-faq input[name=\'name\']').val('');
+                $('#fous-faq textarea[name=\'text\']').val('');
+			}
+		}
+	});
+});
+</script>
+{% else %}
+{% if oct_faqs %}
+    {% for oct_faq in oct_faqs %}
+    <div class="us-product-tabs-questions-item">
+        <div class="us-product-tabs-questions-item-info d-flex justify-content-between d-md-block">
+            <span class="us-product-tabs-questions-item-author">{{ text_faq_autor }}{{ oct_faq.author }}</span>
+            <span class="us-product-tabs-questions-item-date">{{ oct_faq.date_added }}</span>
+        </div>
+        <div class="us-product-tabs-questions-item-text">
+            <p>{{ oct_faq.text }}</p>
+        </div>
+        {% if oct_faq.answer is defined and oct_faq.answer %}
+        <div class="us-product-tabs-questions-item-answer">
+            <div class="us-product-tabs-questions-item-answer-title">{{ text_faq_answer }}</div>
+            <div class="us-product-tabs-questions-item-answer-text">
+                <p>{{ oct_faq.answer }}</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+    <div class="text-right">{{ pagination }}</div>
+{% endif %}
+{% endif %}

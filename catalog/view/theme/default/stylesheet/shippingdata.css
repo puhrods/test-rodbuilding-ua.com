@@ -1,0 +1,27 @@
+ul.dropdown-address {
+  background-color: white;
+  border-radius: 5px;
+  box-shadow: 0px 10px 30px -10px #000000;
+  margin: 0;
+  max-height: 200px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0;
+  position: absolute !important;
+  z-index: 1000;
+}
+.dropdown-address li {
+  list-style-type: none;
+}
+.dropdown-address li:hover {
+  background-color: #229ac8;
+}
+.dropdown-address li a {
+  color: black;
+  display: block;
+  padding: 7px;
+  text-decoration: none;
+}
+.dropdown-address li a:hover {
+  color: white;
+}

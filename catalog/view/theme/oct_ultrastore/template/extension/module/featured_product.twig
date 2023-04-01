@@ -1,0 +1,60 @@
+{% if products %}
+<div class="row row-padding-top">
+	<div class="col-lg-12">
+		<div class="us-main-shop-title">{{ heading_title }}</div>
+	</div>
+</div>
+<div class="row">
+	{% for product in products %}
+	<div class="ocs-article-item col-sm-12 col-md-6 col-lg-4 col-xl-3">
+		<div class="us-module-item ocs-article-item d-flex flex-column">
+			{% if product.you_save %}
+	    	<div class="us-module-stickers">
+				<div class="us-module-stickers-sticker us-module-stickers-sticker-discount">{{ product.you_save }}</div>
+			</div>
+			{% endif %}
+			<ul class="us-module-buttons-list">
+				<li class="us-module-buttons-item">
+					<a href="javascript:void(0);" class="us-module-buttons-link us-module-buttons-wishlist" title="{{ button_wishlist }}" onclick="wishlist.add('{{ product.product_id }}');"><i class="far fa-heart"></i></a>
+				</li>
+				<li class="us-module-buttons-item">
+					<a href="javascript:void(0);" class="us-module-buttons-link us-module-buttons-compare" title="{{ button_compare }}" onclick="compare.add('{{ product.product_id }}');"><i class="fas fa-sliders-h"></i></a>
+				</li>
+			</ul>
+			<div class="us-module-img">
+				<a href="{{ product.href }}">
+				<img src="{{ product.thumb }}" alt="{{ product.name }}" title="{{ product.name }}" class="img-responsive" />
+				</a>
+			</div>
+			<div class="us-module-title flex-grow-1">
+				<a href="{{ product.href }}">{{ product.name }}</a>
+			</div>
+			<div class="us-module-rating d-flex align-items-center justify-content-center">
+				<div class="us-module-rating-stars d-flex align-items-center">
+					{% for i in 1..5 %}
+					{% if product.rating < i %}
+					<span class="us-module-rating-star"></span>
+					{% else %}
+					<span class="us-module-rating-star us-module-rating-star-is"></span>
+					{% endif %}
+					{% endfor %}
+				</div>
+			</div>
+			{% if product.price %}
+			<div class="us-module-price">
+				{% if not product.special %}
+				<span class="us-module-price-actual">{{ product.price }}</span>
+				{% else %}
+				<span class="us-module-price-old">{{ product.price }}</span><span class="us-module-price-new">{{ product.special }}</span>
+				{% endif %}
+				{% if product.tax %}
+				<div class="price-tax">{{ text_tax }} {{ product.tax }}</div>
+				{% endif %}
+			</div>
+			{% endif %}
+			<a href="javascript:void(0);" onclick="cart.add('{{ product.product_id }}');" class="us-module-cart-btn button-cart">{{ button_cart }}</a>
+		</div>
+	</div>
+	{% endfor %}
+</div>
+  {% endif %}

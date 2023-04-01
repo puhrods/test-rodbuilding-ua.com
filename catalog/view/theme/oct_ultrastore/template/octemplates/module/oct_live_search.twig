@@ -1,0 +1,39 @@
+{% if products is not empty %}
+	<div class="us-livesearch-list">
+		{% for product in products%}
+		    <div class="us-livesearch-list-item d-flex align-items-center mb-2 pb-2">
+		        <div class="us-livesearch-list-item-image mr-4">
+		            <a href="{{ product.href }} "><img src="{{ product.image }}" alt="{{ product.name }}" /></a>
+		        </div>
+		        <div class="us-livesearch-list-item-info">
+			        <div class="us-livesearch-list-item-name">
+			            <a href="{{ product.href }}">{{ product.name }}</a>
+			        </div>
+			        {% if price_setting %}
+			        <div class="us-livesearch-list-item-price d-flex align-items-center">
+			            {% if product.special %}
+			            <span class="us-price-new">{{ product.special }}</span>
+			             <span class="us-price-old">{{ product.price }}</span>
+			            {% else %}
+			            <span class="us-price-actual">{{ product.price }}</span>
+			            {% endif %}
+			        </div>
+			        {% endif %}
+			        {% if model_setting and product.model %}
+			        <div class="us-livesearch-list-item-model-sku">{{ oct_live_search_model }}<span class="us-product-info-code">{{ product.model }}</span></div>
+			        {% endif %}		        
+			        {% if sku_setting and product.sku %}
+			         <div class="us-livesearch-list-item-model-sku">{{ oct_live_search_sku }}<span class="us-product-info-code">{{ product.sku }}</span></div>
+			        {% endif %}
+			        <div class="us-livesearch-list-item-stock">
+			            <span class="{% if product.quantity <= 0 %}out-of-stock{% else %}in-stock{% endif %}">{{ product.stock }}</span>
+			        </div>
+		        </div>
+		    </div>
+		{% endfor %}
+	</div>	
+{% else %}
+	<div class="us-livesearch-list-mm" style="font-size: 14px; font-weight: 600; padding: 20px 15px; min-height: 60px;">
+		{{ oct_live_search_result_empty }}
+	</div>
+{% endif %}

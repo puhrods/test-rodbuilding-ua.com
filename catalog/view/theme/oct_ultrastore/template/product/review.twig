@@ -1,0 +1,46 @@
+{% if reviews %}
+{% for review in reviews %}
+<div class="us-review-item">
+	<div class="row">
+		<div class="col-md-3">
+			<div class="us-review-info">
+				<div class="us-review-icon">
+					<img src="catalog/view/theme/oct_ultrastore/img/sprite.svg#include--user-icon" alt="{{ review.author }}" width="50" height="50" />
+				</div>
+				<div class="us-review-name">{{ review.author }}</div>
+				<div class="us-review-date">{{ review.date_added }}</div>
+				<div class="us-rating-center d-flex align-items-center">
+					<div class="us-module-rating-stars d-flex align-items-center">
+					{% for i in 1..5 %}
+				      {% if review.rating < i %}
+				      <span class="us-module-rating-star"></span>
+				      {% else %}
+				      <span class="us-module-rating-star us-module-rating-star-is"></span>
+				      {% endif %}
+				    {% endfor %}
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-9">
+			<div class="us-product-review-block d-flex flex-column">
+				<div class="us-review-text">
+					<div class="us-review-text-main">{{ review.text }}</div>
+				</div>
+				{% if review.reply %}
+				<div class="us-admin-answer">
+					<div class="us-admin-answer-title">{{ oct_product_answer_admin }}</div>
+					<div class="us-review-text-main">
+						{{ review.reply }}
+					</div>
+				</div>
+				{% endif %}
+			</div>
+		</div>
+	</div>
+</div>
+{% endfor %}
+{{ pagination }}
+{% else %}
+<p class="no-product-reviews">{{ text_no_reviews }}</p>
+{% endif %}

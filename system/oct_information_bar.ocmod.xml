@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+	<code>oct_information_bar</code>
+	<name>Octemplates - Information Bar</name>
+	<version>1.0.0</version>
+	<author>Octemplates</author>
+	<link>https://octemplates.net/</link>
+	<file path="catalog/controller/common/header.php">
+		<operation error="skip">
+			<search><![CDATA[$this->load->language('common/header');]]></search>
+			<add position="after"><![CDATA[
+			$data['oct_info_bar_close'] = $this->language->get('oct_info_bar_close');
+			$data['oct_information_bar_more'] = $this->language->get('oct_policy_more');
+
+			$oct_information_bar_status = $this->config->get('oct_information_bar_status');
+			$oct_information_bar_data = $this->config->get('oct_information_bar_data');
+			$data['oct_information_bar_value'] = false;
+
+	        if (isset($oct_information_bar_data['value']) && $oct_information_bar_data['value'] && !empty($oct_information_bar_data['value']) && ($oct_information_bar_status && (!isset($this->request->cookie[$oct_information_bar_data['value']]) || !$this->request->cookie[$oct_information_bar_data['value']])) && $this->config->get('config_maintenance') == 0) {
+            	$data['oct_information_bar_value'] = $oct_information_bar_data['value'];
+				$data['oct_information_bar_day_now'] = date("Y-m-d H:i:s");
+
+				if (isset($oct_information_bar_data['module_text'][(int)$this->config->get('config_language_id')]) && !empty(strip_tags(html_entity_decode($oct_information_bar_data['module_text'][(int)$this->config->get('config_language_id')], ENT_QUOTES, 'UTF-8')))) {
+	                $data['text_oct_information_bar'] = strip_tags(html_entity_decode($oct_information_bar_data['module_text'][(int)$this->config->get('config_language_id')], ENT_QUOTES, 'UTF-8'), '<img><ul><li><b><strong><a><i><u><br></br><span><div>');
+
+	                if (isset($oct_information_bar_data['indormation_id']) && $oct_information_bar_data['indormation_id']) {
+	                    $data['text_oct_information_bar'] .= ' <a target="_blank" href="'. $this->url->link('information/information', 'information_id=' . $oct_information_bar_data['indormation_id']) . '">' . $data['oct_information_bar_more'] . '</a>';
+	                }
+
+	                if (isset($oct_information_bar_data['max_day']) && $oct_information_bar_data['max_day'] && !empty($oct_information_bar_data['max_day'])) {
+	                    $data['oct_info_max_day'] = (int)$oct_information_bar_data['max_day'];
+	                }
+	            }
+
+				$data['oct_information_bar_background']					= $oct_information_bar_data['background_bar'];
+            	$data['oct_information_bar_color_text']					= $oct_information_bar_data['color_text'];
+            	$data['oct_information_bar_color_url']					= $oct_information_bar_data['color_url'];
+            	$data['oct_information_bar_background_button']			= $oct_information_bar_data['background_button'];
+            	$data['oct_information_bar_background_button_hover']	= $oct_information_bar_data['background_button_hover'];
+            	$data['oct_information_bar_color_text_button']			= $oct_information_bar_data['color_text_button'];
+            	$data['oct_information_bar_color_text_button_hover']	= $oct_information_bar_data['color_text_button_hover'];
+        	}
+			]]></add>
+    	</operation>
+	</file>
+</modification>

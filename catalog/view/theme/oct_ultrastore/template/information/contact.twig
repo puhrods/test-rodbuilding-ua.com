@@ -1,0 +1,168 @@
+{{ header }}
+<div id="information-contact" class="container">
+	{{ oct_breadcrumbs }}
+	<div class="content-top-box">{{ content_top }}</div>
+	<main>
+		<div class="row">
+			<div class="col-lg-12">
+				<h1 class="us-main-shop-title">{{ heading_title }}</h1>
+			</div>
+		</div>
+		<div class="row">{{ column_left }}
+	    {% if column_left and column_right %}
+	    {% set class = 'col-sm-6' %}
+	    {% elseif column_left or column_right %}
+	    {% set class = 'col-sm-9' %}
+	    {% else %}
+	    {% set class = 'col-sm-12' %}
+	    {% endif %}
+	    <div id="content" class="{{ class }}">
+		    <div class="us-content">
+			    <div class="us-content-contact d-flex">
+			    	<div class="us-contact-form-box">
+			    		<form action="{{ action }}" method="post" enctype="multipart/form-data">
+				          <div class="form-group">
+				            <label for="input-name"><span class="required">*</span>{{ entry_name }}</label>
+				            {% if error_name %}
+				            <script>
+							usNotify('warning', '{{ error_name }}');
+							</script>
+				            {% endif %}
+				            <input type="text" name="name" value="{{ name }}" id="input-name" class="form-control" placeholder="{{ entry_name }}" />
+				          </div>
+				          <div class="form-group">
+				            <label for="input-email"><span class="required">*</span>{{ entry_email }}</label>
+				            {% if error_email %}
+				            <script>
+							usNotify('warning', '{{ error_email }}');
+							</script>
+				            {% endif %}
+				            <input type="email" name="email" value="{{ email }}" id="input-email" class="form-control" placeholder="{{ entry_email }}" />
+				          </div>
+				          <div class="form-group">
+				            <label for="input-enquiry"><span class="required">*</span>{{ entry_enquiry }}</label>
+				            {% if error_enquiry %}
+				            <script>
+							usNotify('warning', '{{ error_enquiry }}');
+							</script>
+				            {% endif %}
+				            <textarea name="enquiry" rows="10" id="input-enquiry" class="form-control" placeholder="{{ entry_enquiry }}">{{ enquiry }}</textarea>
+				          </div>
+				          {{ captcha }}
+						  {% if text_terms %}
+				          <div class="us-form-checkbox-group">
+							<input type="checkbox" id="scales" class="us-form-checkbox-input" name="scales">
+							<label for="scales" class="d-flex align-items-center"><span>{{ text_terms }}</span></label>
+				            {% if error_oct_terms %}
+				            <script>
+							usNotify('warning', '{{ error_oct_terms }}');
+							</script>
+				            {% endif %}
+						  </div>
+						  {% endif %}
+				          <div class="btn-group">
+					        <input class="us-module-btn us-module-btn-green" type="submit" value="{{ button_submit }}" />
+				          </div>
+					    </form>
+			    	</div>
+			    	{% if contact_html is defined %}
+			    	<div class="us-content-border">&nbsp;</div>
+			    	<div class="us-content-contact-offer">
+						<div class="us-content-contact-title">{{ oct_contact_page_title }}</div>
+						<div class="us-content-contact-offer-block">
+							<div class="us-content-contact-text">E-mail: <a href="mailto:{{ oct_ultrastore_data.contact_email }}" class="us-acc-info-link">{{ oct_ultrastore_data.contact_email }}</a></div>
+							{% if oct_contact_telephones is defined and oct_contact_telephones is not empty %}
+							<div class="us-content-contact-text us-content-contact-text-bold">{{ oct_telephones }}</div>
+							<ul class="list-unstyled">
+								{% for oct_contact_telephone in oct_contact_telephones %}
+								<li>
+									<a href="tel:{{ oct_contact_telephone|replace({" " : "", "-" : "", "(" : "", ")" : ""}) }}" class="us-acc-info-link phone-click">{{ oct_contact_telephone }}</a>
+								</li>
+								{% endfor %}
+							</ul>
+							{% endif %}
+							{% if oct_ultrastore_data.contact_open[oct_lang_id] is defined and oct_ultrastore_data.contact_open[oct_lang_id] %}
+							<div class="us-content-contact-text us-content-contact-text-bold">{{ oct_working_hours }}</div>
+							<div class="us-content-contact-text">
+								{% for contact_open in oct_contact_opens %}
+								<span>{{ contact_open }}</span><br>
+								{% endfor %}
+							</div>
+							{% endif %}
+						</div>
+						<div class="us-content-contact-text us-content-contact-text-bold">{{ oct_our_address }}</div>
+						<div class="us-content-contact-text">{{ oct_ultrastore_data.contact_address[oct_lang_id] }}</div>
+						{% if contact_html is defined and contact_html %}
+						{{ contact_html }}
+						{% endif %}
+					</div>
+					{% endif %}
+			    </div>
+			    {% if contact_map is defined %}
+			    <div class="row row-padding-top">
+					<div class="col-12">
+						<div class="us-content-contact-img">
+							{{ contact_map }}
+						</div>
+					</div>
+				</div>
+				{% endif %}
+
+				{% if oct_locations is defined and oct_locations %}
+				<div class="us-content-contact-title text-center pt-4">{{ oct_locations_header }}</div>
+				{% for location in oct_locations %}
+				<div class="row no-gutters us-contact-location">
+					{% if location.thumb is defined and location.thumb %}
+					<div class="col-lg-6 col-xl-3">
+						<img src="{{ location.thumb }}" alt="{{ location.title }}" class="img-fluid d-none d-lg-block">
+					</div>
+					{% endif %}
+					<div class="col-lg-6{% if location.thumb is defined and location.thumb %} col-xl-4{% else %} col-xl-7{% endif %}">
+						<div class="us-contact-location-info">
+							<div class="us-contact-location-store-title">{{ location.title }}</div>
+							{% if location.address is defined and location.address %}
+							<div class="us-contact-location-address">{{ location.address }}</div>
+							{% endif %}
+							<div class="row no-gutters">
+								{% if location.open is defined and location.open %}
+								<div class="col-xl-6">
+									<div class="us-contact-location-title">{{ oct_working_hours }}:</div>
+									<ul class="list-unstyled">
+										{% for open in location.open %}
+										<li>{{ open }}</li>
+										{% endfor %}
+									</ul>
+								</div>
+								{% endif %}
+								{% if location.phone is defined and location.phone %}
+								<div class="col-xl-6 mt-4 mt-xl-0">
+									<div class="us-contact-location-title">{{ oct_telephones }}</div>
+									<ul class="list-unstyled">
+										{% for phone in location.phone %}
+										<li class="us-contact-location-phone"><a href="tel:{{ phone|replace({" " : "", "-" : "", "(" : "", ")" : ""}) }}">{{ phone }}</a></li>
+										{% endfor %}
+									</ul>
+								</div>
+								{% endif %}
+							</div>
+							{% if location.link is defined and location.link %}
+							<div class="us-contact-location-title us-contact-location-link">{{ oct_text_contact_site }} <a href="{{ location.link }}">{{ location.link|replace({"https://" : "", "http://" : ""}) }}</a></div>
+							{% endif %}
+						</div>
+					</div>
+					{% if location.map is defined %}
+					<div class="col-xl-5">
+						{{ location.map }}
+					</div>
+					{% endif %}
+				</div>
+				{% endfor %}
+				{% endif %}
+		    </div>
+	    </div>
+	    {{ column_right }}
+	</div>
+	</main>
+	{{ content_bottom }}
+</div>
+{{ footer }}

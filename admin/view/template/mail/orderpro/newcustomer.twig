@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>{{ title }}</title>
+<style media="print" type="text/css">.noprint {display: none;}</style>
+</head>
+<body style="font-family: Arial, Helvetica, sans-serif;font-size:13px;color:#000000;background:#FFFFFF;">
+<div style="min-width:600px;max-width:960px;padding:10px;box-sizing:border-box;border:1px solid #ddd;box-shadow:0px 1px 5px rgba(85, 85, 85, 0.5);">
+<table style="width:100%;margin-bottom:20px;">
+	<tr>
+		<td valign="middle" width="50%">
+			<a href="{{ store_url }}" title="{{ store_name }}"><img style="border:none;" src="{{ logo }}" alt="{{ store_name }}" /></a>
+		</td>
+		<td valign="middle" width="50%" style="padding-left:30px;">
+			<b>{{ store_name }}</b><br />
+			<b>{{ text_address }}</b>{{ store_address }}<br />
+			<b>{{ text_telephone }}</b>{{ store_telephone }}<br />
+			{% if store_fax %}
+				<b>{{ text_fax }}</b>{{ store_fax }}<br />
+			{% endif %}
+			<b>{{ text_email }}</b>{{ store_email }}<br />
+			<b>{{ text_url }}</b>{{ store_url }}
+		</td>
+	</tr>
+</table>
+<table style="border-collapse:collapse;width:100%;margin-bottom:20px;border-top:1px solid #CDDDDD;border-right:1px solid #CDDDDD;">
+	<tr>
+		<td colspan="2" style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;" valign="top">
+			{{ text_message }}
+		</td>
+	</tr>
+	<tr>
+		<td style="width:150px;border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;background:#E7EFEF;"><b>{{ text_login }}</b></td>
+		<td style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;">{{ email }}</td>
+	</tr>
+	<tr>
+		<td style="width:150px;border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;background:#E7EFEF;"><b>{{ text_password }}</b></td>
+		<td style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;">{{ password }}</td>
+	</tr>
+	<tr>
+		<td style="width:150px;border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;background:#E7EFEF;"><b>{{ text_login_url }}</b></td>
+		<td style="border-left:1px solid #CDDDDD;border-bottom:1px solid #CDDDDD;padding:10px;"><a href="{{ login_url }}">{{ text_account }}</a></td>
+	</tr>
+</table>
+</div>
+</body>
+</html>

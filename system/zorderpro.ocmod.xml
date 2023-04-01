@@ -1,0 +1,491 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+    <name>OrderPro for OP v3.0</name>
+	<version>3.7.9</version>
+	<link>https://opencart-group.ru/modules/orderpro/</link>
+	<author><![CDATA[<font color="#00CC00"><b>shchs@ya.ru</b></font>]]></author>
+	<code>OrderPro</code>
+	
+	<file path="catalog/model/extension/total/coupon.php">
+			<operation error="skip">
+					<search><![CDATA[$coupon_query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "coupon` WHERE code = '" . $this->db->escape($code) . "' AND (]]></search>
+						<add position="before"><![CDATA[
+		if (!empty($this->session->data['order_date'])) {
+			$coupon_query=$this->db->query("SELECT * FROM `" . DB_PREFIX . "coupon` WHERE code = '" . $this->db->escape($code) . "' AND (date_end = '0000-00-00' OR date_end > '" . $this->db->escape($this->session->data['order_date']) . "')");
+		} else {
+						]]></add>
+			</operation>
+			<operation>
+					<search><![CDATA[$coupon_query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "coupon` WHERE code = '" . $this->db->escape($code) . "' AND (]]></search>
+						<add position="after"><![CDATA[
+		}
+						]]></add>
+			</operation>
+	</file>
+	
+	<file path="catalog/model/checkout/order.php">
+			<operation error="skip">
+					<search><![CDATA[foreach ($data['products'] as $product) {]]></search>
+						<add position="after"><![CDATA[
+			$piquery = $this->db->query("SELECT * FROM `" . DB_PREFIX . "product` WHERE product_id = '" . (int)$product['product_id'] . "'");
+			if ($piquery->num_rows) {
+				$sku = $piquery->row['sku'];
+				$upc = $piquery->row['upc'];
+				$ean = $piquery->row['ean'];
+				$jan = $piquery->row['jan'];
+				$isbn = $piquery->row['isbn'];
+				$mpn = $piquery->row['mpn'];
+				$location = $piquery->row['location'];
+				$weight_class_id = $piquery->row['weight_class_id'];
+				$pweight = $piquery->row['weight'];
+			} else {
+				$sku = '';
+				$upc = '';
+				$ean = '';
+				$jan = '';
+				$isbn = '';
+				$mpn = '';
+				$location = '';
+				$weight_class_id = 0;
+				$pweight = 0;
+			}
+
+			if (isset($product['sku'])) {
+				$sku = $product['sku'];
+			}
+			if (isset($product['upc'])) {
+				$upc = $product['upc'];
+			}
+			if (isset($product['ean'])) {
+				$ean = $product['ean'];
+			}
+			if (isset($product['jan'])) {
+				$jan = $product['jan'];
+			}
+			if (isset($product['isbn'])) {
+				$isbn = $product['isbn'];
+			}
+			if (isset($product['mpn'])) {
+				$mpn = $product['mpn'];
+			}
+			if (isset($product['location'])) {
+				$location = $product['location'];
+			}
+						]]></add>
+			</operation>
+			<operation>
+					<search><![CDATA[model = '" . $this->db->escape($product['model']) . "']]></search>
+						<add position="replace"><![CDATA[model = '" . $this->db->escape($product['model']) . "', sku = '" . $this->db->escape($sku) . "', upc = '" . $this->db->escape($upc) . "', ean = '" . $this->db->escape($ean) . "', jan = '" . $this->db->escape($jan) . "', isbn = '" . $this->db->escape($isbn) . "', mpn = '" . $this->db->escape($mpn) . "', location = '" . $this->db->escape($location) . "']]></add>
+			</operation>
+			<operation>
+					<search><![CDATA[foreach ($product['option'] as $option) {]]></search>
+						<add position="before"><![CDATA[
+				$weight = 0;
+				$option_weight = 0;
+				
+				foreach ($product['option'] as $poption) {
+					$ov_query = $this->db->query("SELECT weight, weight_prefix FROM `" . DB_PREFIX . "product_option_value` WHERE product_option_value_id = '" . (int)$poption['product_option_value_id'] . "' AND product_option_id = '" . (int)$poption['product_option_id'] . "'");
+
+					if ($ov_query->num_rows) {
+						if ($ov_query->row['weight_prefix'] == '+') {
+							$option_weight += $ov_query->row['weight'];
+						} elseif ($ov_query->row['weight_prefix'] == '-') {
+							$option_weight -= $ov_query->row['weight'];
+						}
+					}
+				}
+				
+				if ($weight_class_id) {
+					$all_weight = ($pweight + $option_weight) * $product['quantity'];
+					
+					if ($all_weight > 0) {
+						$weight = $this->weight->convert($all_weight, $weight_class_id, $this->config->get('config_weight_class_id'));
+					}
+				}
+				
+				$this->db->query("UPDATE `" . DB_PREFIX . "order_product` SET weight = '" . (float)$weight . "' WHERE order_id = '" . (int)$order_id . "' AND order_product_id = '" . (int)$order_product_id . "'");
+						]]></add>
+			</operation>
+	</file>
+	
+	<file path="admin/model/catalog/product.php">
+               <operation error="skip">
+                    <search><![CDATA[public function getProduct($product_id)]]></search>
+						<add position="replace"><![CDATA[public function nogetProduct($product_id)]]></add>
+               </operation>
+			
+               <operation error="skip">
+                    <search><![CDATA[public function getProducts(]]></search>
+						<add position="before"><![CDATA[
+	public function getOrderProductDiscounts($product_id, $customer_group_id) {
+		$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "product_discount` WHERE product_id = '" . (int)$product_id . "' AND customer_group_id = '" . (int)$customer_group_id . "' AND ((date_start = '0000-00-00' OR date_start < NOW()) AND (date_end = '0000-00-00' OR date_end > NOW())) ORDER BY priority ASC LIMIT 1");
+		return $query->rows;		
+	}
+	
+	public function getCatalogProducts($data = array()) {
+		$sql = "SELECT p.*, pd.*";
+
+		$sql .= " FROM `" . DB_PREFIX . "product` p LEFT JOIN `" . DB_PREFIX . "product_description` pd ON (p.product_id = pd.product_id)";
+
+		$sql .= " WHERE pd.language_id = '" . (int)$this->config->get('config_language_id') . "'"; 
+
+		if (isset($data['filter_name']) && !empty($data['filter_name'])) {
+			$sql .= " AND LCASE(pd.name) LIKE '%" . $this->db->escape(utf8_strtolower($data['filter_name'])) . "%'";
+		}
+
+		if (isset($data['filter_model']) && !empty($data['filter_model'])) {
+			$sql .= " AND LCASE(p.model) LIKE '%" . $this->db->escape(utf8_strtolower($data['filter_model'])) . "%'";
+		}
+
+		if (isset($data['filter_sku']) && !empty($data['filter_sku'])) {
+			$sql .= " AND LCASE(p.sku) LIKE '%" . $this->db->escape(utf8_strtolower($data['filter_sku'])) . "%'";
+		}
+
+		if (isset($data['filter_upc']) && !empty($data['filter_upc'])) {
+			$sql .= " AND LCASE(p.upc) LIKE '%" . $this->db->escape(utf8_strtolower($data['filter_upc'])) . "%'";
+		}
+		
+		if (isset($data['filter_ean']) && !empty($data['filter_ean'])) {
+			$sql .= " AND LCASE(p.ean) LIKE '%" . $this->db->escape(utf8_strtolower($data['filter_ean'])) . "%'";
+		}
+		
+		if (isset($data['filter_jan']) && !empty($data['filter_jan'])) {
+			$sql .= " AND LCASE(p.jan) LIKE '%" . $this->db->escape(utf8_strtolower($data['filter_jan'])) . "%'";
+		}
+		
+		if (isset($data['filter_isbn']) && !empty($data['filter_isbn'])) {
+			$sql .= " AND LCASE(p.isbn) LIKE '%" . $this->db->escape(utf8_strtolower($data['filter_isbn'])) . "%'";
+		}
+		
+		if (isset($data['filter_mpn']) && !empty($data['filter_mpn'])) {
+			$sql .= " AND LCASE(p.mpn) LIKE '%" . $this->db->escape(utf8_strtolower($data['filter_mpn'])) . "%'";
+		}
+		
+		if (isset($data['filter_location']) && !empty($data['filter_location'])) {
+			$sql .= " AND LCASE(p.location) LIKE '%" . $this->db->escape(utf8_strtolower($data['filter_location'])) . "%'";
+		}
+		
+		if (isset($data['filter_quantity']) && !is_null($data['filter_quantity'])) {
+			$sql .= " AND p.quantity = '" . $this->db->escape($data['filter_quantity']) . "'";
+		}
+
+		if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
+			$sql .= " AND p.status = '" . (int)$data['filter_status'] . "'";
+		}
+		
+		if (isset($data['filter_pid']) && !empty($data['filter_pid'])) {
+			$sql .= " AND p.product_id = '" . (int)$data['filter_pid'] . "'";
+		}
+
+		$sql .= " GROUP BY p.product_id";
+
+		$sort_data = array(
+			'pd.name',
+			'p.model',
+			'p.sku',
+			'p.upc',
+			'p.ean',
+			'p.jan',
+			'p.isbn',
+			'p.mpn',
+			'p.location',
+			'p.price',
+			'p.quantity',
+			'p.status',
+			'p.sort_order'
+		);
+
+		if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
+			$sql .= " ORDER BY " . $data['sort'];
+		} else {
+			$sql .= " ORDER BY pd.name";
+		}
+
+		if (isset($data['order']) && ($data['order'] == 'DESC')) {
+			$sql .= " DESC";
+		} else {
+			$sql .= " ASC";
+		}
+
+		if (isset($data['start']) || isset($data['limit'])) {
+			if ($data['start'] < 0) {
+				$data['start'] = 0;
+			}
+
+			if ($data['limit'] < 1) {
+				$data['limit'] = 15;
+			}
+
+			$sql .= " LIMIT " . (int)$data['start'] . "," . (int)$data['limit'];
+		}
+
+		$query = $this->db->query($sql);
+
+		return $query->rows;
+	}
+
+	public function getProduct($product_id, $customer_group_id = false) {
+		if ($customer_group_id) {
+			$query = $this->db->query("SELECT DISTINCT *, (SELECT price FROM `" . DB_PREFIX . "product_special` ps WHERE ps.product_id = p.product_id AND ps.customer_group_id = '" . (int)$customer_group_id . "' AND ((ps.date_start = '0000-00-00' OR ps.date_start < NOW()) AND (ps.date_end = '0000-00-00' OR ps.date_end > NOW())) ORDER BY ps.priority ASC, ps.price ASC LIMIT 1) AS special, (SELECT points FROM `" . DB_PREFIX . "product_reward` pr WHERE pr.product_id = p.product_id AND customer_group_id = '" . (int)$customer_group_id . "') AS reward FROM `" . DB_PREFIX . "product` p LEFT JOIN `" . DB_PREFIX . "product_description` pd ON (p.product_id = pd.product_id) WHERE p.product_id = '" . (int)$product_id . "' AND pd.language_id = '" . (int)$this->config->get('config_language_id') . "'");
+		} else {
+			$query = $this->db->query("SELECT DISTINCT * FROM `" . DB_PREFIX . "product` p LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id) WHERE p.product_id = '" . (int)$product_id . "' AND pd.language_id = '" . (int)$this->config->get('config_language_id') . "'");
+		}
+		
+		return $query->row;
+	}
+						]]></add>
+			</operation>
+
+			<operation error="skip">
+					<search><![CDATA[AND od.language_id = '" . (int)$this->config->get('config_language_id') . "'");]]></search>
+						<add position="replace"><![CDATA[AND od.language_id = '" . (int)$this->config->get('config_language_id') . "' ORDER BY o.sort_order ASC");]]></add>
+			</operation>
+			
+			<operation error="skip">
+					<search><![CDATA[$product_option_value_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_option_value pov LEFT JOIN " . DB_PREFIX . "option_value ov ON(pov.option_value_id = ov.option_value_id) WHERE pov.product_option_id = '" . (int)$product_option['product_option_id'] . "' ORDER BY ov.sort_order ASC");]]></search>
+						<add position="replace"><![CDATA[$product_option_value_query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "product_option_value` pov LEFT JOIN `" . DB_PREFIX . "option_value` ov ON (pov.option_value_id = ov.option_value_id) LEFT JOIN `" . DB_PREFIX . "option_value_description` ovd ON (ov.option_value_id = ovd.option_value_id) WHERE pov.product_id = '" . (int)$product_id . "' AND pov.product_option_id = '" . (int)$product_option['product_option_id'] . "' AND ovd.language_id = '" . (int)$this->config->get('config_language_id') . "' ORDER BY ov.sort_order ASC");]]></add>
+			</operation>
+
+			<operation>
+					<search><![CDATA[$product_option_value['option_value_id'],]]></search>
+						<add position="after"><![CDATA[					'name'                    => $product_option_value['name'],]]></add>
+			</operation>
+	</file>
+
+	<file path="system/library/cart/cart.php">
+			<operation error="skip">
+                    <search><![CDATA[$product_data[] = array(]]></search>
+						<add position="before"><![CDATA[
+				if ($cart['price']) {
+					$newprice = $cart['price'];
+					$orderpro = 1;
+				} else {
+					$newprice = $price + $option_price;
+					$orderpro = 0;
+				}
+						]]></add>
+			</operation>
+	
+			<operation error="skip">
+                    <search><![CDATA[=> ($price + $option_price)]]></search>
+						<add position="replace"><![CDATA[=> $newprice]]></add>
+			</operation>
+	
+			<operation error="skip">
+                    <search><![CDATA[=> $product_query->row['name']]]></search>
+						<add position="after"><![CDATA[
+					'sku'             => $product_query->row['sku'],
+					'upc'             => $product_query->row['upc'],
+					'ean'             => $product_query->row['ean'],
+					'jan'             => $product_query->row['jan'],
+					'isbn'            => $product_query->row['isbn'],
+					'mpn'             => $product_query->row['mpn'],
+					'location'        => $product_query->row['location'],
+					'product_row'     => $cart['product_row'],
+					'orderpro'        => (!empty($orderpro)) ? 1 : 0,]]></add>
+			</operation>
+	</file>
+	
+	<file path="admin/controller/sale/order.php">
+			<operation>
+                    <search><![CDATA[$data['invoice'] = $this->url->link('sale/order/invoice', 'user_token=' . $this->session->data['user_token'], true);]]></search>
+						<add position="after"><![CDATA[
+					$data['invoice'] = ($this->config->get('orderpro_invoice_type')) ? $this->url->link('sale/orderpro/invoice', 'user_token=' . $this->session->data['user_token'], true) : $this->url->link('sale/order/invoice', 'user_token=' . $this->session->data['user_token'], true);
+					$data['export_order'] = ($this->config->get('orderpro_export_orders')) ? $this->url->link('sale/orderpro/export', 'user_token=' . $this->session->data['user_token'], true) : '';
+					$data['merge_order'] = ($this->config->get('orderpro_merge_orders')) ? 1 : 0;
+					
+					$data['button_export'] = $this->language->get('button_export');
+					$data['button_merge'] = $this->language->get('button_merge');
+						]]></add>
+			</operation>
+			<operation>
+                    <search><![CDATA[$data['invoice'] = $this->url->link('sale/order/invoice', 'user_token=' . $this->session->data['user_token'] . '&order_id=' . (int)$this->request->get['order_id'], true);]]></search>
+						<add position="after"><![CDATA[
+					$data['invoice'] = ($this->config->get('orderpro_invoice_type')) ? $this->url->link('sale/orderpro/invoice', 'user_token=' . $this->session->data['user_token'] . '&order_id=' . (int)$this->request->get['order_id'], true) : $this->url->link('sale/order/invoice', 'user_token=' . $this->session->data['user_token'] . '&order_id=' . (int)$this->request->get['order_id'], true);
+					$data['export_order'] = ($this->config->get('orderpro_export_orders')) ? $this->url->link('sale/orderpro/export', 'user_token=' . $this->session->data['user_token'] . '&order_id=' . (int)$this->request->get['order_id'], true) : '';
+					$data['button_export'] = $this->language->get('button_export');
+						]]></add>
+			</operation>
+			<operation>
+                    <search><![CDATA[sale/order/add]]></search>
+						<add position="replace"><![CDATA[sale/orderpro/edit]]></add>
+			</operation>
+			<operation>
+                    <search><![CDATA[sale/order/edit]]></search>
+						<add position="replace"><![CDATA[sale/orderpro/edit]]></add>
+			</operation>
+	</file>
+	
+	<file path="admin/controller/extension/dashboard/recent.php">
+			<operation>
+                    <search><![CDATA[$data['user_token']]]></search>
+						<add position="after"><![CDATA[$data['button_edit'] = $this->language->get('button_edit');]]></add>
+			</operation>
+			<operation>
+                    <search><![CDATA[=> $this->currency->format]]></search>
+						<add position="after"><![CDATA['edit'       => $this->url->link('sale/orderpro/edit', 'user_token=' . $this->session->data['user_token'] . '&order_id=' . $result['order_id'], true),]]></add>
+			</operation>
+	</file>
+	
+	<file path="admin/view/template/extension/dashboard/recent_info.twig">
+			<operation>
+                    <search><![CDATA[<i class="fa fa-eye"></i></a></td>]]></search>
+						<add position="replace"><![CDATA[<i class="fa fa-eye"></i></a>
+			<a href="{{ order.edit }}" data-toggle="tooltip" title="{{ button_edit }}" id="button-edit" class="btn btn-primary"><i class="fa fa-pencil"></i></a>
+		</td>
+						]]></add>
+			</operation>
+	</file>
+	
+	<file path="admin/view/template/sale/order_info.twig">
+			<operation error="skip">
+				<search><![CDATA[<a href="{{ invoice }}"]]></search>
+				<add position="replace"><![CDATA[{% if export_order is not empty %}<a id="button-oexport" href="{{ export_order }}" data-toggle="tooltip" title="{{ button_export }}" class="btn btn-info"><i class="fa fa-table" aria-hidden="true"></i></a> {% endif %}<a href="{{ invoice }}"]]></add>
+			</operation>
+	</file>
+	
+	<file path="admin/view/template/sale/order_list.twig">
+			<operation error="skip">
+                    <search><![CDATA[url: '{{ catalog }}index.php?route=api/order/delete&api_token={{ api_token }}]]></search>
+						<add position="replace"><![CDATA[url: 'index.php?route=sale/orderpro/deleteOrder&user_token={{ user_token }}]]></add>
+			</operation>
+	</file>
+	
+	<file path="admin/view/template/sale/order_list.twig">
+			<operation error="skip">
+                    <search><![CDATA[<button type="submit" id="button-shipping"]]></search>
+						<add position="before"><![CDATA[
+	    {% if export_order is not empty %}<button type="submit" id="button-oexport" form="form-order" formaction="{{ export_order }}" data-toggle="tooltip" title="{{ button_export }}" class="btn btn-info"><i class="fa fa-table" aria-hidden="true"></i></button> {% endif %}
+		{% if merge_order is not empty %}<a id="button-merge" onclick="getmerge();" data-toggle="tooltip" title="{{ button_merge }}" class="btn btn-warning"><i class="fa fa-share-alt-square" aria-hidden="true"></i></a> {% endif %}
+						]]></add>
+			</operation>
+			<operation error="skip">
+                    <search><![CDATA[<script src="view/javascript/jquery/datetimepicker/bootstrap]]></search>
+						<add position="before"><![CDATA[
+{% if merge_order is not empty %}
+<div id="merge_block"></div>
+<style>#merge_form .alert {text-align:center;font-size:13px;}</style>
+<script type="text/javascript">
+$(document).delegate('#old_order', 'change', function() {
+	if ($(this).val() == 1) {
+		$('#merge_form .old-status').slideDown('slow');
+	} else {
+		$('#merge_form .old-status').slideUp('slow');
+	}
+});
+
+function getmerge() {
+	$('#merge_modal').remove();
+    $.ajax({
+        url: 'index.php?route=sale/orderpro/getMerge&user_token={{ user_token }}',
+        type: 'post',
+        dataType: 'json',
+        data: $('#form-order :checked'),
+		beforeSend: function() {
+			$('.alert').remove();
+			$('#button-merge').children('.fa').addClass('fa-cog fa-spin');
+		},
+        success: function(json) {
+			if (json['error']) {
+				$('#button-merge').children('.fa').removeClass('fa-cog fa-spin');
+				$('#content > .container-fluid').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+			}
+			if (json['html']) {
+				$('#merge_block').html(json['html']);
+				setTimeout (function() {
+					$('#merge_modal').on('hidden.bs.modal', function(e) {location.reload();});
+					$('#merge_modal').modal('show');
+					$('#button-merge').children('.fa').removeClass('fa-cog fa-spin');
+				}, 600);
+			}
+        }
+	});
+}
+
+function merge_order() {
+    $.ajax({
+        url: 'index.php?route=sale/orderpro/MergeOrder&user_token={{ user_token }}',
+        type: 'post',
+        dataType: 'json',
+        data: $('#merge_form :input'),
+		beforeSend: function() {
+			$('#merge_modal .btn-success').remove();
+		},
+        success: function(json) {
+			if (json['error']) {
+				$('#merge_form').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error'] + ' </div>');
+			}
+			if (json['success']) {
+				$('#merge_form').prepend('<div class="alert alert-success"><i class="fa fa-exclamation-circle"></i> ' + json['success'] + ' </div>');
+			}
+        }
+	});
+}
+</script>
+{% endif %}
+						]]></add>
+			</operation>
+	</file>
+	
+	<file path="admin/view/template/sale/order_list.twig">
+			<operation error="skip">
+                    <search><![CDATA[$('#button-shipping, #button-invoice').prop('disabled', true);]]></search>
+						<add position="after"><![CDATA[
+		$('#button-oexport').prop('disabled', true);
+						]]></add>
+			</operation>
+			<operation error="skip">
+                    <search><![CDATA[$('#button-invoice').prop('disabled', false);]]></search>
+						<add position="after"><![CDATA[
+		$('#button-oexport').prop('disabled', false);
+						]]></add>
+			</operation>
+	</file>
+	
+	<file path="catalog/model/checkout/order.php">
+			<operation error="skip">
+                    <search><![CDATA[$this->load->model('extension/total/' . $order_total['code']);]]></search>
+						<add position="replace"><![CDATA[
+					if (is_file(DIR_APPLICATION . 'model/extension/total/' . $order_total['code'] . '.php')) {
+						$this->load->model('extension/total/' . $order_total['code']);
+					} else {
+						continue;
+					}
+						]]></add>
+			</operation>
+	</file>
+	
+	<file path="admin/model/sale/order.php">
+			<operation error="skip">
+					<search><![CDATA[$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_product WHERE order_id = '" . (int)$order_id . "'");]]></search>
+					<add position="replace"><![CDATA[$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order_product` WHERE order_id = '" . (int)$order_id . "' ORDER BY order_product_id");]]></add>
+			</operation>
+	</file>
+	
+	<file path="catalog/model/account/order.php">
+			<operation error="skip">
+					<search><![CDATA[$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_product WHERE order_id = '" . (int)$order_id . "'");]]></search>
+					<add position="replace"><![CDATA[$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order_product` WHERE order_id = '" . (int)$order_id . "' ORDER BY order_product_id");]]></add>
+			</operation>
+	</file>
+	
+	<file path="admin/language/ru-ru/sale/order.php">
+			<operation error="skip">
+					<search><![CDATA[$_['entry_date_modified']]]></search>
+					<add position="after"><![CDATA[
+$_['button_export']                           = 'Экспорт в Excel';
+$_['button_merge']                            = 'Объединить заказы';
+					]]></add>
+			</operation>
+	</file>
+	
+	<file path="admin/language/en-gb/sale/order.php">
+			<operation error="skip">
+					<search><![CDATA[$_['entry_date_modified']]]></search>
+					<add position="after"><![CDATA[
+$_['button_export']                           = 'Export to Excel';
+$_['button_merge']                            = 'Merge orders';
+					]]></add>
+			</operation>
+	</file>
+</modification>

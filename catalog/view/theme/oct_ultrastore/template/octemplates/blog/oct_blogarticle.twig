@@ -1,0 +1,272 @@
+{{ header }}
+<div class="container">
+	{{ oct_breadcrumbs }}
+	<div class="content-top-box">{{ content_top }}</div>
+	<main>
+		<div class="row">
+			<div class="col-12">
+				<h1 class="us-main-shop-title">{{ heading_title }}</h1>
+			</div>
+		</div>
+		<div class="row us-blog-category-row">
+		{{ column_left }}
+		{% if column_left and column_right %}
+		{% set class = 'col-md-6' %}
+		{% elseif column_left or column_right %}
+		{% set class = 'col-md-9' %}
+		{% else %}
+		{% set class = 'col-md-12' %}
+		{% endif %}
+		<div class="{{ class }} us-blog-category-content us-blog-article-content">
+			<div class="us-content p-15">
+				<div class="us-blog-post-cont-top">
+					{% if thumb %}
+					<div class="us-blog-post-img">
+						<img src="{{ thumb }}" class="img-fluid" alt="{{ heading_title }}" width="{{ thumb_width }}" height="{{ thumb_height }}" />
+					</div>
+					{% endif %}
+					<div class="us-blog-post-text">
+					{{ description }}
+					{% if tags %}
+					<p class="us-product-tags">{{ text_tags }}
+						{% for i in 0..tags|length %}
+						{% if i < (tags|length - 1) %} <a href="{{ tags[i].href }}">{{ tags[i].tag }}</a>,
+						{% else %} <a href="{{ tags[i].href }}">{{ tags[i].tag }}</a> {% endif %}
+						{% endfor %}
+					</p>
+					{% endif %}
+					</div>
+					{% if images %}
+					<div class="us-blog-post-gallery">
+						<div class="us-page-main-title">
+							{{ entry_dop_photo }}
+						</div>
+						<div class="row">
+							{% for image in images %}
+							<div class="col-4 col-md-2">
+								<a href="{{ image.popup }}" data-fancybox="images" class="us-blog-post-gallery-item">
+									<img src="{{ image.thumb }}" alt="" width="{{ image.thumb_width }}" height="{{ image.thumb_height }}" />
+									<span class="us-blog-post-gallery-overlay"></span>
+								</a>
+							</div>
+							{% endfor %}
+						</div>
+					</div>
+					{% endif %}
+				</div>
+				<div class="us-blog-post-info">
+					<div class="us-blog-post-info-list d-md-flex">
+						<div class="us-blog-post-info-item d-flex align-items-center">
+							<i class="far fa-calendar-alt"></i><span>{{ date_added }}</span>
+						</div>
+						{% if review_status %}
+						<div class="us-blog-post-info-item d-flex align-items-center">
+							<i class="fas fa-comment"></i><span>{{ comments_total }}</span>
+						</div>
+						{% endif %}
+						<div class="us-blog-post-info-item d-flex align-items-center">
+							<i class="far fa-eye"></i><span>{{ comments_viewed }}</span>
+						</div>
+					</div>
+				</div>
+				{% if review_status %}
+				<div id="us-blog-comments" class="us-reviews us-reviews-blog">
+					<div class="row">
+						<div class="col-12">
+							<div class="us-reviews-top d-md-flex justify-content-between align-items-start">
+								<div class="us-page-main-title">
+									{{ text_comments }}
+								</div>
+								<button type="button" class="us-module-btn us-module-btn-green" data-toggle="modal" data-target="#us-comment-modal">{{ text_add_comment }}</button>
+								<div class="modal" id="us-comment-modal" tabindex="-1" role="dialog" aria-labelledby="us-review" aria-hidden="true">
+									<div class="modal-dialog modal-dialog-centered" role="document">
+										<div class="modal-content">
+											<div class="modal-header">
+												<div class="modal-title" id="us-review">{{ text_write }}</div>
+												<button type="button" class="us-close" data-dismiss="modal" aria-label="Close">
+													<span aria-hidden="true" class="us-modal-close-icon us-modal-close-left"></span>
+													<span aria-hidden="true" class="us-modal-close-icon us-modal-close-right"></span>
+												</button>
+											</div>
+											<div class="modal-body us-modal-body-one-click">
+												<form id="form-comment" class="d-flex">
+													<div class="us-modal-body-one-click-right">
+														<div class="form-group-20">
+															<input type="text" name="name" class="form-control" id="input-name" placeholder="{{ entry_name }}">
+														</div>
+														<div class="form-group-10">
+															<textarea id="input-review" name="text" class="form-control" placeholder="{{ oct_article_your_comment }}"></textarea>
+														</div>
+														<div class="us-modal-comment">{{ text_note }}</div>
+														{% if captcha %}
+														<div class="form-group-20">
+															{{ captcha }}
+														</div>
+														{% endif %}
+														<div class="btn-group" role="group" aria-label="us-cont-btn">
+															<button type="button" id="button-comment" class="us-module-btn us-module-btn-green">{{ button_continue }}</button>
+														</div>
+													</div>
+												</form>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div id="article-comments"></div>
+				</div>
+				{% endif %}
+			</div>
+		</div>
+		{{ column_right }}
+	</div>
+	</main>
+	{% if articles %}
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="us-main-shop-title">
+				{{ text_related_articles }}
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		{% for article in articles %}
+		<div class="col-lg-4 us-news-block-inner">
+			<div class="us-news-block h-100 d-flex flex-column">
+				<div class="us-news-block-photo">
+					<div class="us-news-stickers-date">
+						{{ article.date_added }}
+					</div>
+					<a href="{{ article.href }}" title="{{ article.name }}" class="h-100 w-100"><img src="{{ article.thumb }}" class="w-100" alt="{{ article.name }}" width="{{ article.width }}" height="{{ article.height }}" /></a>
+				</div>
+				<div class="us-news-block-cont d-flex flex-column justify-content-start h-100">
+					<a href="{{ article.href }}" class="us-news-block-title">
+						{{ article.name }}
+					</a>
+					<div class="us-news-block-text">
+						{{ article.description }}
+					</div>
+				</div>
+			</div>
+		</div>
+		{% endfor %}
+	</div>
+	{% endif %}
+	{% if oct_products %}
+	{{ oct_products }}
+	{% endif %}
+	{{ content_bottom }}
+</div>
+<script>
+$('#article-comments').delegate('.pagination a', 'click', function(e) {
+    e.preventDefault();
+
+    $('#article-comments').fadeOut('slow');
+
+    $('#article-comments').load(this.href);
+
+    $('#article-comments').fadeIn('slow');
+});
+
+$('#article-comments').load('index.php?route=octemplates/blog/oct_blogarticle/comment&blogarticle_id={{ blogarticle_id }}');
+
+$('#button-comment').on('click', function() {
+	$.ajax({
+		url: 'index.php?route=octemplates/blog/oct_blogarticle/write&blogarticle_id={{ blogarticle_id }}',
+		type: 'post',
+		dataType: 'json',
+		cache: false,
+		data: $('#form-comment').serialize(),
+		beforeSend: function() {
+			$('#button-comment').button('loading');
+		},
+		complete: function() {
+			$('#button-comment').button('reset');
+		},
+		success: function(json) {
+			$('.alert-dismissible').remove();
+
+			if (json['error']) {
+				let errorOption = '';
+
+				$.each(json['error'], function(i, val) {
+					if (val) {
+						$('#form-comment [name="' + i + '"]').addClass('error_style');
+						errorOption += '<div class="alert-text-item">' + val + '</div>';
+					}
+				});
+
+				usNotify('danger', errorOption);
+			}
+
+			if (json['success']) {
+				usNotify('success', json['success']);
+				$('#us-comment-modal').modal('hide');
+				$('input[name=\'name\']').val('');
+				$('textarea[name=\'text\']').val('');
+				$('input[name=\'rating\']:checked').prop('checked', false);
+				$('.us-module-rating-star-is').removeClass('us-module-rating-star-is');
+			}
+		}
+	});
+});
+</script>
+{% if oct_is_youtube is defined and oct_is_youtube %}
+<script>
+function findVideos() {
+	let videos = document.querySelectorAll('.us-video');
+
+	for (let i = 0; videos.length > i; i++) {
+		setupVideo(videos[i]);
+	}
+}
+
+function setupVideo(video) {
+	let link = video.querySelector('.us-video__link');
+	let media = video.querySelector('.us-video__media');
+	let button = video.querySelector('.us-video__button');
+	let id = parseMediaURL(media);
+
+	video.addEventListener('click', () => {
+		let iframe = createIframe(id);
+
+		link.remove();
+		button.remove();
+		video.appendChild(iframe);
+	});
+
+	link.removeAttribute('href');
+	video.classList.add('us-video--enabled');
+}
+
+function parseMediaURL(media) {
+	let regexp = /https:\/\/i\.ytimg\.com\/vi\/([a-zA-Z0-9_-]+)\/maxresdefault\.jpg/i;
+	let url = media.src;
+	let match = url.match(regexp);
+
+	return match[1];
+}
+
+function createIframe(id) {
+	let iframe = document.createElement('iframe');
+
+	iframe.setAttribute('allowfullscreen', '');
+	iframe.setAttribute('allow', 'autoplay');
+	iframe.setAttribute('src', generateURL(id));
+	iframe.classList.add('us-video__media');
+
+	return iframe;
+}
+
+function generateURL(id) {
+	let query = '?rel=0&showinfo=0&autoplay=1';
+
+	return 'https://www.youtube.com/embed/' + id + query;
+}
+
+findVideos();
+</script>
+{% endif %}
+{{ footer }}

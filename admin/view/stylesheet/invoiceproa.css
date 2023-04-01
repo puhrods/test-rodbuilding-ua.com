@@ -1,0 +1,83 @@
+body {
+	background: #FFFFFF;
+}
+body, td, th, input, select, textarea, option, optgroup {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 13px;
+	color: #000000;
+}
+h1 {
+	text-transform: uppercase;
+	color: #a0a0a0;
+	text-align: right;
+	font-size: 24px;
+	font-weight: normal;
+	padding-bottom: 5px;
+	margin-top: 0px;
+	margin-bottom: 15px;
+	border-bottom: 1px solid #CDDDDD;
+}
+a.print-button {
+    position: fixed;
+    right: 20px;
+    top: 20px;
+    display: block;
+    padding: 8px 20px;
+    text-decoration: none;
+    background: #CD6661;
+    border-radius: 4px;
+    color: #fff;
+    box-shadow: 1px 2px 3px rgba(85, 85, 85, 0.7);
+}
+.store {
+	width: 100%;
+	margin-bottom: 20px;
+}
+.heading td {
+	background: #E7EFEF;
+}
+.address, .product {
+	border-collapse: collapse;
+}
+.address {
+	width: 100%;
+	margin-bottom: 20px;
+	border-top: 1px solid #CDDDDD;
+	border-right: 1px solid #CDDDDD;
+}
+.address th, .address td, .comment td {
+	border-left: 1px solid #CDDDDD;
+	border-bottom: 1px solid #CDDDDD;
+	padding: 10px;
+	vertical-align: text-bottom;
+}
+.address .method {
+	background: #E7EFEF;
+}
+.comment {
+	width: 100%;
+	margin-bottom: 20px;
+	border-collapse: collapse;
+}
+.comment td {
+	border: 1px solid #CDDDDD;
+	padding: 10px;
+	vertical-align: middle;
+}
+.comment .method {
+	background: #E7EFEF;
+}
+.product {
+	width: 100%;
+	margin-bottom: 20px;
+	border-top: 1px solid #CDDDDD;
+	border-right: 1px solid #CDDDDD;
+}
+.product td {
+	border-left: 1px solid #CDDDDD;
+	border-bottom: 1px solid #CDDDDD;
+	padding: 10px;
+}
+.hidden {
+	display: none;
+}

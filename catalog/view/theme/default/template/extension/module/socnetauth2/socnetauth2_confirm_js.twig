@@ -1,0 +1,56 @@
+<div id="socnetauth2_confirm_block" style="display: none"></div>
+<script>
+
+setTimeout(() => { 
+	if (typeof jQuery !== 'undefined' )
+		jContainer = jQuery;
+	else if (typeof jq !== 'undefined' )
+		jContainer = jq;
+	else
+		jContainer = $;
+
+	jContainer(document).ready(function() {
+			var r = Math.random();
+			jContainer.ajax({
+				url: 'index.php?route=extension/module/socnetauth2/getConfirmCode&r='+r,
+				dataType: 'html',
+				data: {
+					'lastlink': '',
+					'lastroute': 'common/home'
+				},
+				success: function(html) {
+				
+					if( html )
+					{
+						jContainer('#socnetauth2_confirm_block').html(html);
+						jContainer('#socnetauth2_confirm_block').show();
+					}
+					else
+					{ 
+						jContainer('#socnetauth2_confirm_block').hide();
+					}
+				},
+				error: function(xhr, ajaxOptions, thrownError) {
+					alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+				}
+			});
+		});
+}, 1000);
+</script>
+
+
+{% if telegram_code %}
+<script>
+function showTelegramWindow(ID) {
+ var element = $("#sna_telegram_popup_block").detach(); 
+ $("#sna_telegram_popup"+ID).append(element); 
+ $(".sna_telegram_popup").hide();
+ $("#sna_telegram_popup"+ID).show();
+} 
+</script>
+<div style="display: none;">
+<div id="sna_telegram_popup_block">
+{{ telegram_code }}
+</div>
+</div>
+{% endif %}

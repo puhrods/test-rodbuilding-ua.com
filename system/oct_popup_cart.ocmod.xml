@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+	<code>oct_popup_cart</code>
+	<name>Octemplates - PopUp Cart</name>
+	<version>1.0.0</version>
+	<author>Octemplates</author>
+	<link>http://octemplates.net/</link>
+	
+	<file path="catalog/controller/common/{header,cart}.php">
+		<operation error="skip">
+			<search><![CDATA[$this->load->language('common/]]></search>
+			<add position="after"><![CDATA[
+			$data['oct_popup_cart_status'] = $this->config->get('theme_oct_ultrastore_popup_cart_status');
+			]]></add>
+		</operation>
+	</file>
+</modification>

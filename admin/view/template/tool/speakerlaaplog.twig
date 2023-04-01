@@ -1,0 +1,78 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <h1>{{ heading_title }}</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+        <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="container-fluid">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-list"></i> {{ text_list }}</h3>
+      </div>
+      <div class="panel-body">
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover">
+            <thead>
+            <tr>
+              <td class="text-left">{{ text_date }}</td>
+              <td class="text-left">{{ text_login }}</td>
+              <td class="text-left">{{ text_ip }}</td>
+              <td class="text-left">{{ text_action }}</td>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            {% if all_actions %}
+              {% for all_action in all_actions %}
+                <tr>
+                  <td class="text-left">{{ all_action.date }}</td>
+                  <td class="text-left">{{ all_action.login }} <a href="{{ all_action.edit }}" target="_blank" class="btn btn-primary" style="margin-left:5px;font-size: 10px;padding: 2px 5px;"><i class="fa fa-pencil"></i></a></td>
+                  <td><a href="https://whatismyipaddress.com/ip/{{ all_action.ip }}" target="_blank">{{ all_action.ip }} <i class="fa fa-external-link"></i></a></td>
+                  <td style="word-break: break-all;">{{ all_action.action }}</td>
+                </tr>
+              {% endfor %}
+            {% else %}
+              <tr>
+                <td class="text-center" colspan="4">{{ text_no_results }}</td>
+              </tr>
+            {% endif %}
+            </tbody>
+
+          </table>
+          <style>
+            .spp_accordion {padding-left:0;background: none;border: none;}
+            .spp_accordion .fa {transform: rotate(180deg);margin-left: 5px;transition: all .5s;color: #1e91cf;}
+            .spp_accordion.active .fa {transform: rotate(0deg);transition: all .5s;}
+            .spp_panel {padding:5px 5px;display:none;background-color:white;overflow:hidden;margin-top: 5px;}
+          </style>
+          <script>
+            var acc = document.getElementsByClassName("spp_accordion");
+            var i;
+            for (i = 0; i < acc.length; i++) {
+              acc[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var panel = this.nextElementSibling;
+                if (panel.style.display === "block") {
+                  panel.style.display = "none";
+                } else {
+                  panel.style.display = "block";
+                }
+              });
+            }
+          </script>
+        </div>
+        <div class="row">
+          <div class="col-sm-6 text-left">{{ pagination }}</div>
+          <div class="col-sm-6 text-right">{{ results }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{{ footer }}

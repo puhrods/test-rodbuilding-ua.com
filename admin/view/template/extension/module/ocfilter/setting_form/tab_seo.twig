@@ -1,0 +1,310 @@
+<h3 class="jumbotron">{{ nav_seo_page }}</h3>
+<div class="form-group">
+  <label class="col-sm-3 control-label">{{ entry_sitemap }}</label>
+  <div class="col-sm-9">
+    <div class="btn-group" data-toggle="buttons">
+      {% if sitemap_status %}
+      <label class="btn btn-default active" data-trigger="onclick" onclick="$('#sitemap-link').collapse('show')">
+        <input type="radio" name="sitemap_status" value="1" checked="checked" /> {{ text_enabled }}
+      </label>
+      <label class="btn btn-default" onclick="$('#sitemap-link').collapse('hide')">
+        <input type="radio" name="sitemap_status" value="0" /> {{ text_disabled }}
+      </label>
+      {% else %}
+      <label class="btn btn-default" onclick="$('#sitemap-link').collapse('show')">
+        <input type="radio" name="sitemap_status" value="1" /> {{ text_enabled }}
+      </label>
+      <label class="btn btn-default active" data-trigger="onclick" onclick="$('#sitemap-link').collapse('hide')">
+        <input type="radio" name="sitemap_status" value="0" checked="checked" /> {{ text_disabled }}
+      </label>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="collapse" id="sitemap-link">
+  <div class="form-group">
+    <label class="col-sm-3 control-label">{{ entry_sitemap_link }}</label>
+    <div class="col-sm-9">
+      <input type="text" name="sitemap_link" value="{{ sitemap_link }}" class="form-control" onclick="$(this).select();" readonly="readonly" />
+    </div>
+  </div>
+</div>
+
+<div class="form-group">
+  <label class="col-sm-3 control-label">{{ entry_page_category_link_status }}</label>
+  <div class="col-sm-9">
+    <div class="btn-group" data-toggle="buttons">
+      {% if page_category_link_status %}
+      <label class="btn btn-default active" data-trigger="onclick" onclick="$('#page-category-link').collapse('show')">
+        <input type="radio" name="page_category_link_status" value="1" checked="checked" /> {{ text_yes }}
+      </label>
+      <label class="btn btn-default" onclick="$('#page-category-link').collapse('hide')">
+        <input type="radio" name="page_category_link_status" value="0" /> {{ text_no }}
+      </label>
+      {% else %}
+      <label class="btn btn-default" onclick="$('#page-category-link').collapse('show')">
+        <input type="radio" name="page_category_link_status" value="1" /> {{ text_yes }}
+      </label>
+      <label class="btn btn-default active" data-trigger="onclick" onclick="$('#page-category-link').collapse('hide')">
+        <input type="radio" name="page_category_link_status" value="0" checked="checked" /> {{ text_no }}
+      </label>
+      {% endif %}
+    </div>
+    <p class="help-block">{{ help_page_category_link_status }}</p>   
+  </div>
+</div>
+
+<div class="collapse" id="page-category-link">
+  <div class="form-group">
+    <label class="col-sm-3 control-label">{{ entry_page_category_link_position }}</label>
+    <div class="col-sm-9">
+      <div class="btn-group" data-toggle="buttons">
+        {% if page_category_link_position == 'top' %}
+        <label class="btn btn-default active">
+          <input type="radio" name="page_category_link_position" value="top" checked="checked" /> <i class="fa fa-sort-asc"></i> &nbsp;{{ text_page_category_link_above }}
+        </label>
+        {% else %}
+        <label class="btn btn-default">
+          <input type="radio" name="page_category_link_position" value="top" /> <i class="fa fa-sort-asc"></i> &nbsp;{{ text_page_category_link_above }}
+        </label>
+        {% endif %}
+        {% if page_category_link_position == 'bottom' %}
+        <label class="btn btn-default active">
+          <input type="radio" name="page_category_link_position" value="bottom" checked="checked" /> <i class="fa fa-sort-desc"></i> &nbsp;{{ text_page_category_link_under }}
+        </label>
+        {% else %}
+        <label class="btn btn-default">
+          <input type="radio" name="page_category_link_position" value="bottom" /> <i class="fa fa-sort-desc"></i> &nbsp;{{ text_page_category_link_under }}
+        </label>
+        {% endif %}
+        {% if page_category_link_position == 'both' %}
+        <label class="btn btn-default active">
+          <input type="radio" name="page_category_link_position" value="both" checked="checked" /> <i class="fa fa-sort"></i> &nbsp;{{ text_page_category_link_both }}
+        </label>
+        {% else %}
+        <label class="btn btn-default">
+          <input type="radio" name="page_category_link_position" value="both" /> <i class="fa fa-sort"></i> &nbsp;{{ text_page_category_link_both }}
+        </label>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="form-group">
+  <label class="col-sm-3 control-label">{{ entry_page_module_link_status }}</label>
+  <div class="col-sm-9">
+    <div class="btn-group" data-toggle="buttons">
+      {% if page_module_link_status %}
+      <label class="btn btn-default active" data-trigger="onclick" onclick="$('#page-module-link').collapse('show')">
+        <input type="radio" name="page_module_link_status" value="1" checked="checked" /> {{ text_yes }}
+      </label>
+      <label class="btn btn-default" onclick="$('#page-module-link').collapse('hide')">
+        <input type="radio" name="page_module_link_status" value="0" /> {{ text_no }}
+      </label>
+      {% else %}
+      <label class="btn btn-default" onclick="$('#page-module-link').collapse('show')">
+        <input type="radio" name="page_module_link_status" value="1" /> {{ text_yes }}
+      </label>
+      <label class="btn btn-default active" data-trigger="onclick" onclick="$('#page-module-link').collapse('hide')">
+        <input type="radio" name="page_module_link_status" value="0" checked="checked" /> {{ text_no }}
+      </label>
+      {% endif %}
+    </div>
+    <p class="help-block">{{ help_page_module_link_status }}</p>   
+  </div>
+</div>
+
+<div class="collapse" id="page-module-link">
+  <div class="form-group">
+    <label class="col-sm-3 control-label">{{ entry_page_module_link_title }}</label>
+    <div class="col-sm-9">
+      {% for language in languages %}
+      <div class="input-group">
+        <span class="input-group-addon"><img src="{{ language.image }}" title="{{ language.name }}" /></span>
+        <input type="text" name="page_module_link_title[{{ language.language_id }}]" value="{{ page_module_link_title[language.language_id] ? page_module_link_title[language.language_id] : '' }}" placeholder="{{ entry_page_module_link_title }}" class="form-control" />
+      </div>
+      {% if error_page_module_link_title[language.language_id] %}
+      <div class="text-danger">{{ error_page_module_link_title[language.language_id] }}</div>
+      {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<div class="form-group">
+  <label class="col-sm-3 control-label">{{ entry_page_product_link_status }}</label>
+  <div class="col-sm-9">
+    <div class="btn-group" data-toggle="buttons">
+      {% if page_product_link_status %}
+      <label class="btn btn-default active" data-trigger="onclick" onclick="$('#page-product-link').collapse('show')">
+        <input type="radio" name="page_product_link_status" value="1" checked="checked" /> {{ text_yes }}
+      </label>
+      <label class="btn btn-default" onclick="$('#page-product-link').collapse('hide')">
+        <input type="radio" name="page_product_link_status" value="0" /> {{ text_no }}
+      </label>
+      {% else %}
+      <label class="btn btn-default" onclick="$('#page-product-link').collapse('show')">
+        <input type="radio" name="page_product_link_status" value="1" /> {{ text_yes }}
+      </label>
+      <label class="btn btn-default active" data-trigger="onclick" onclick="$('#page-product-link').collapse('hide')">
+        <input type="radio" name="page_product_link_status" value="0" checked="checked" /> {{ text_no }}
+      </label>
+      {% endif %}
+    </div>
+    <p class="help-block">{{ help_page_product_link_status }}</p>   
+  </div>
+</div>
+
+<div class="collapse" id="page-product-link"> 
+  <div class="form-group">
+    <label class="col-sm-3 control-label">{{ entry_page_product_link_relation_type }}</label>
+    <div class="col-sm-9">
+      <div class="btn-group" data-toggle="buttons">
+        {% if page_product_link_relation_type == 'complete' %}
+        <label class="btn btn-default active">
+          <input type="radio" name="page_product_link_relation_type" value="complete" checked="checked" /> <i class="fa fa-object-group"></i> &nbsp;{{ text_page_product_link_relation_complete }}
+        </label>
+        {% else %}
+        <label class="btn btn-default">
+          <input type="radio" name="page_product_link_relation_type" value="complete" /> <i class="fa fa-object-group"></i> &nbsp;{{ text_page_product_link_relation_complete }}
+        </label>
+        {% endif %}
+        {% if page_product_link_relation_type == 'partial' %}
+        <label class="btn btn-default active">
+          <input type="radio" name="page_product_link_relation_type" value="partial" checked="checked" /> <i class="fa "></i> &nbsp;{{ text_page_product_link_relation_partial }}
+        </label>
+        {% else %}
+        <label class="btn btn-default">
+          <input type="radio" name="page_product_link_relation_type" value="partial" /> <i class="fa fa-object-ungroup"></i> &nbsp;{{ text_page_product_link_relation_partial }}
+        </label>
+        {% endif %}
+      </div>
+      <p class="help-block">{{ help_page_product_link_relation_type }}</p>  
+    </div>
+  </div>  
+</div>
+
+<div class="form-group">
+  <label class="col-sm-3 control-label">{{ entry_url_suffix }}</label>
+  <div class="col-sm-2">
+    <input type="text" name="url_suffix" value="{{ url_suffix }}" placeholder="{{ placeholder_url_suffix }}" class="form-control" />
+  </div>
+</div>
+
+<h3 class="jumbotron">{{ nav_seo_meta }}</h3>
+
+<div class="form-group">
+  <label class="col-sm-3 control-label">{{ entry_add_meta }}</label>
+  <div class="col-sm-9">
+    <div class="btn-group" data-toggle="buttons">
+      {% if add_meta == 'filter_value' %}
+      <label class="btn btn-default active">
+        <input type="radio" name="add_meta" value="filter_value" checked="checked" /> {{ text_add_meta_filter_value }}
+      </label>
+      {% else %}
+      <label class="btn btn-default">
+        <input type="radio" name="add_meta" value="filter_value" /> {{ text_add_meta_filter_value }}
+      </label>
+      {% endif %}
+      {% if add_meta == 'value' %}
+      <label class="btn btn-default active">
+        <input type="radio" name="add_meta" value="value" checked="checked" /> {{ text_add_meta_value }}
+      </label>
+      {% else %}
+      <label class="btn btn-default">
+        <input type="radio" name="add_meta" value="value" /> {{ text_add_meta_value }}
+      </label>
+      {% endif %}
+      {% if not add_meta %}
+      <label class="btn btn-default active">
+        <input type="radio" name="add_meta" value="0" checked="checked" /> {{ text_add_meta_disabled }}
+      </label>
+      {% else %}
+      <label class="btn btn-default">
+        <input type="radio" name="add_meta" value="0" /> {{ text_add_meta_disabled }}
+      </label>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="collapse" id="collapse-meta-filter">
+  <div class="form-group">
+    <label class="col-sm-3 control-label">{{ entry_meta_filter_separator }}</label>
+    <div class="col-sm-2 col-lg-1">
+      <input type="text" name="meta_filter_separator" value="{{ meta_filter_separator }}" class="form-control">
+    </div>
+  </div>
+</div>
+
+<div class="collapse" id="collapse-meta-value">
+  <div class="form-group">
+    <label class="col-sm-3 control-label">{{ entry_meta_value_separator }}</label>
+    <div class="col-sm-2 col-lg-1">
+      <input type="text" name="meta_value_separator" value="{{ meta_value_separator }}" class="form-control">
+    </div>
+  </div>
+</div>
+
+<div class="collapse" id="collapse-meta-lowercase">
+  <div class="form-group">
+    <label class="col-sm-3 control-label">{{ entry_meta_lowercase }}</label>
+    <div class="col-sm-9">
+      {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: meta_lowercase, name: 'meta_lowercase' }) }}
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="col-sm-3 control-label" for="input-add-meta-limit">{{ entry_add_meta_limit }}</label>
+    <div class="col-sm-3 col-lg-2">
+      <div class="input-group">
+        <input type="number" name="add_meta_limit" min="1" value="{{ add_meta_limit }}" class="form-control" id="input-add-meta-limit" />
+        <span class="input-group-addon">{{ text_values }}</span>
+      </div>      
+    </div>
+  </div>
+</div>
+
+<h3 class="jumbotron">{{ nav_seo_misc }}</h3>
+
+<div class="form-group">
+  <label class="col-sm-3 control-label">{{ entry_category_breadcrumb }}</label>
+  <div class="col-sm-9">
+    {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: category_breadcrumb, name: 'category_breadcrumb' }) }}
+    
+    <p class="help-block">{{ help_category_breadcrumb }}</p>  
+  </div>
+</div>
+
+<div class="form-group">
+  <label class="col-sm-3 control-label">{{ entry_product_breadcrumb }}</label>
+  <div class="col-sm-9">
+    {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: product_breadcrumb, name: 'product_breadcrumb' }) }}
+    
+    <p class="help-block">{{ help_product_breadcrumb }}</p>  
+  </div>
+</div>
+
+<script type="text/javascript">
+$(function() {
+  $('input[name="add_meta"]').on('change', function(e) {
+    if (!$(this).prop('checked')) {
+      return;
+    }
+
+    if ($(this).val() == 'filter_value') {
+      $('#collapse-meta-filter, #collapse-meta-value, #collapse-meta-lowercase').collapse('show');
+    } else if ($(this).val() == 'value') {
+      $('#collapse-meta-value, #collapse-meta-lowercase').collapse('show');
+      $('#collapse-meta-filter').collapse('hide');
+    } else {
+      $('#collapse-meta-filter, #collapse-meta-value, #collapse-meta-lowercase').collapse('hide');
+    }
+  }).filter(':checked').trigger('change');
+
+  $('input[name="indexing_status"]').on('change', function() {
+    $('#collapse-indexing').collapse($(this).prop('checked') && $(this).val() == 1 ? 'show' : 'hide');
+  }).filter(':checked').trigger('change');
+});
+</script>

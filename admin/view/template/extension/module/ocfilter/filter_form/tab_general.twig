@@ -1,0 +1,162 @@
+<div class="form-group required">
+  <label class="col-sm-3 control-label">{{ entry_name }}</label>
+  <div class="col-sm-9">
+    {% for language in languages %}
+    <div class="input-group">
+      <span class="input-group-addon"><img src="{{ language.image }}" title="{{ language.name }}" /></span>
+      <input type="text" name="filter_description[{{ language.language_id }}][name]" maxlength="128" value="{{ filter_description[language.language_id] ? filter_description[language.language_id].name : '' }}" placeholder="{{ entry_name }}" class="form-control" />
+    </div>
+    {% if error_name[language.language_id] %}
+    <div class="text-danger">{{ error_name[language.language_id] }}</div>
+    {% endif %}
+    {% endfor %}
+  </div>
+</div>
+<div class="form-group">
+  <label class="col-sm-3 control-label">{{ entry_category }}</label>
+  <div class="col-sm-9">
+    <div class="input-group">                  
+      <input type="text" name="category" value="" placeholder="{{ entry_category }}" id="input-category" class="form-control" />
+      <div class="input-group-btn">
+        <button type="button" class="btn btn-primary" data-ocf="category">{{ button_show_all }} <i class="fa fa-flip-horizontal fa-object-ungroup"></i></button>
+      </div>      
+      <div class="input-group-addon"><i class="fa fa-bars"></i></div>
+    </div>
+    <div id="filter-category" class="well well-sm" style="height: 150px; overflow: auto;">
+      {% for category_id, _name in filter_category %}
+      <div id="filter-category-{{ category_id }}"><i class="fa fa-minus-circle"></i> {{ _name }}
+        <input type="hidden" name="filter_category[{{ category_id }}]" value="{{ _name }}" />
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+<div class="form-group">
+  <label class="col-sm-3 control-label">{{ entry_type }}</label>
+  <div class="col-sm-3">
+    <select name="type" class="form-control" onchange="$('#collapse-type-text').collapse(this.value == 'checkbox' || this.value == 'radio' ? 'show' : 'hide');">
+      {% for key, item in type_items %}
+      {% if type == key %}
+      <option value="{{ key }}" selected="selected">{{ item }}</option>
+      {% else %}
+      <option value="{{ key }}">{{ item }}</option>
+      {% endif %}
+      {% endfor %}
+    </select>
+  </div>
+</div>
+{% if type == 'checkbox' or type == 'radio' %}
+{% set class = 'collapse in' %}
+{% else %}
+{% set class = 'collapse' %}
+{% endif %}
+<div class="{{ class }}" id="collapse-type-text">
+  <div class="form-group">
+    <label class="col-sm-3 control-label">{{ entry_dropdown }}</label>
+    <div class="col-sm-9">      
+      {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: dropdown, name: 'dropdown' }) }}
+    </div>
+  </div>                 
+  
+  <div class="form-group">
+    <label class="col-sm-3 control-label">{{ entry_is_image }}</label>
+    <div class="col-sm-9">      
+      {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: image, name: 'image' }) }}
+    </div>
+  </div>                
+
+  <div class="form-group">
+    <label class="col-sm-3 control-label">{{ entry_is_color }}</label>
+    <div class="col-sm-9">      
+      {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: color, name: 'color' }) }}
+    </div>
+  </div>
+</div>
+
+<div class="form-group">
+  <label class="col-sm-3 control-label" for="input-sort-order">{{ entry_sort_order }}</label>
+  <div class="col-sm-3">
+    <input type="number" name="sort_order" value="{{ sort_order }}" placeholder="{{ entry_sort_order }}" id="input-sort-order" class="form-control" />
+  </div>
+</div>
+
+<div class="form-group">
+  <label class="col-sm-3 control-label">{{ entry_status }}</label>
+  <div class="col-sm-9">    
+    {{ include('extension/module/ocfilter/control/bool_button.twig', { flag: status, name: 'status', text_yes: text_enabled, text_no: text_disabled }) }}
+  </div>
+</div>
+<script>
+
+var
+
+ocfDOMReady = function(fn) {
+  if (document.readyState != 'loading') {
+    fn();
+  } else {
+    document.addEventListener('DOMContentLoaded', fn);
+  }
+};
+
+ocfDOMReady(function() {
+$(function() {
+  // Category
+  $('input[name="category"]').autocomplete({     
+    'source': function(request, response) {
+      var $this = $(this);
+      
+      $this.parent().find('.input-group-addon').find('i').attr('class', 'fa fa-refresh fa-spin');
+     
+      $.ajax({
+        url: ocfilter.link('catalog/category/autocomplete', 'filter_name=' +  request),
+        dataType: 'json',
+        success: function(json) {
+          $this.parent().find('.input-group-addon').find('i').attr('class', 'fa fa-bars');
+        
+          json.unshift({
+            name: '{{ text_all }}',
+            category_id: 0
+          });
+
+          response($.map(json, function(item) {
+            return {
+              label: item.name,
+              value: item.category_id
+            }
+          }));
+        }
+      });
+    },
+    'select': function(item) {
+      $('#filter-category-' + item.value).remove();
+
+      if (item.value < 1) {
+        $('#filter-category').html('');
+      } else if ($('#filter-category-0').length) {
+        $('#filter-category-0').remove();
+      }
+
+      $('#filter-category').append('<div id="filter-category-' + item.value + '"><i class="fa fa-minus-circle"></i> ' + item.label + '<input type="hidden" name="filter_category[' + item.value + ']" value="' + item.label + '" /></div>');
+
+      $('input[name="category"]').val('');
+    }
+  });
+
+  $('#filter-category').on('click', '.fa-minus-circle', function() {
+    $(this).parent().remove();
+  });  
+  
+  $('[data-ocf="category"]').on('click', function(e) {
+    $('#modal-category-list').remove();
+
+    $.get(ocfilter.link('extension/module/ocfilter/filter/modalCategory', 'filter_key={{ filter_key }}&target=filter-category'), {}, function(response) {
+      if (response) {
+        $('body').append(response);
+
+        $('#modal-category-list').modal('show');
+      }
+    }, 'html');
+  });  
+});  
+}); // DOM Ready
+</script>

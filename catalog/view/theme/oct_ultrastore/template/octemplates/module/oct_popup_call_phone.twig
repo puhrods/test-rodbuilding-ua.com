@@ -1,0 +1,119 @@
+<div class="modal show" id="us-callback-modal" tabindex="-1" role="dialog" aria-labelledby="us-callback" style="display: block; padding-left: 0px;">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+	    <div class="modal-content">
+	        <div class="modal-header">
+	            <h5 class="modal-title" id="us-callback">{{ heading_title }}</h5>
+	            <button type="button" class="us-close" data-dismiss="modal" aria-label="Close">
+	            	<span aria-hidden="true" class="us-modal-close-icon us-modal-close-left"></span>
+	                <span aria-hidden="true" class="us-modal-close-icon us-modal-close-right"></span>
+	            </button>
+	        </div>
+	        <div class="modal-body">
+	            <form method="post" enctype="multipart/form-data" id="call-phone-form">
+					<div class="pb-4">{{ enter_text }}</div>
+					{% if oct_popup_call_phone_data.name %}
+					<div class="form-group-20">
+						<input type="text" name="name" value="{{ name }}" class="form-control" id="InputName" placeholder="{{ enter_name }}">
+					</div>
+					{% endif %}
+					{% if oct_popup_call_phone_data.telephone %}
+					<div class="form-group-20">
+						<input type="tel" name="telephone" value="{{ telephone }}" class="form-control" id="InputPhone" placeholder="{{ enter_telephone }}">
+					</div>
+					{% endif %}
+					{% if oct_popup_call_phone_data.time %}
+					<div class="form-group-20">
+						<input type="text" name="time" value="{{ time }}" class="form-control datetime" id="InputTime" placeholder="{{ enter_time }}">
+					</div>
+					{% endif %}
+					<input class="input-text" value="" type="hidden" name="url_page" />
+					{% if oct_popup_call_phone_data.comment %}
+					<div class="form-group-20">
+						<textarea name="comment" class="form-control" id="InputComment" placeholder="{{ enter_comment }}"></textarea>
+					</div>
+					{% endif %}
+					{% if text_terms %}
+					<div class="us-form-checkbox-group us-form-checkbox-group-20">
+						<input type="checkbox" id="scales-1" class="us-form-checkbox-input" name="agree">
+						<label for="scales-1" class="d-flex align-items-center"><span>{{ text_terms }}</span></label>
+					</div>
+					{% endif %}
+					<div class="btn-group" role="group" aria-label="us-cont-btn">
+						<button type="submit" class="us-module-btn us-module-btn-green">{{ button_send }}</button>
+					</div>
+				</form>
+	        </div>
+	    </div>
+	</div>
+{% if oct_popup_call_phone_data.time %}
+<script src="catalog/view/javascript/jquery/datetimepicker/moment/moment-with-locales.min.js"></script>
+<script src="catalog/view/theme/oct_ultrastore/js/bootstrap-datetimepicker.min.js"></script>
+<link href="catalog/view/javascript/jquery/datetimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+<script>
+var nowDate = new Date();
+var today = new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate(), 0, 0, 0, 0);
+
+$('#us-callback-modal .datetime').datetimepicker({
+	pickDate: true,
+	pickTime: false,
+	minDate: today,
+	language: '{{ datepicker }}',
+	icons: {
+		time: 'fa fa-clock',
+		date: 'fa fa-calendar-alt',
+		up: 'fa fa-arrow-up',
+		down: 'fa fa-arrow-down',
+		previous: 'fa fa-chevron-left',
+		next: 'fa fa-chevron-right',
+		today: 'fa fa-calendar-check',
+		clear: 'fa fa-trash-alt',
+		close: 'fa fa-times'
+	}
+});
+</script>
+{% endif %}
+<script>
+$("#InputName, #InputPhone, #InputTime, #InputComment, #scales-1").on("change paste keyup", function() {
+	$(this).removeClass('error_style');
+});
+
+$('[name="url_page"]').val(window.location.href);
+
+$('#call-phone-form').on('submit', function( event ) {
+	event.preventDefault();
+	masked('body', true);
+	$.ajax({
+		type: 'post',
+		url:  'index.php?route=octemplates/module/oct_popup_call_phone/send',
+		dataType: 'json',
+		cache: false,
+		data: $('#call-phone-form').serialize(),
+		success: function(json) {
+			if (json['error']) {
+				$('#us-callback-modal .text-danger').remove();
+				let errorOption = '';
+
+				$.each(json['error'], function(i, val) {
+					$('#us-callback-modal [name="' + i + '"]').addClass('error_style');
+					errorOption += '<div class="alert-text-item">' + val + '</div>';
+				});
+
+				usNotify('danger', errorOption);
+			} else {
+				if (json['output']) {
+					$('.us-module-btn').attr( "disabled", "disabled" );
+					$('#us-callback-modal .modal-body').html(json['output']);
+				}
+			}
+			masked('body', false);
+		}
+	});
+});
+</script>
+{% if mask is defined and mask is not empty %}
+<script src="catalog/view/theme/oct_ultrastore/js/jquery.inputmask.bundle.min.js"></script>
+<script>
+usInputMask('#InputPhone','{{ mask }}');
+</script>
+{% endif %}
+</div>

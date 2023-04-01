@@ -1,0 +1,310 @@
+<footer>
+    {% if oct_ultrastore_data.footer_totop is defined and oct_ultrastore_data.footer_totop %}
+    <div id="back-top">
+        <button type="button" onclick="scrollToElement('header');" aria-label="To top"><i class="fas fa-chevron-up"></i></button>
+    </div>
+    {% endif %}
+    {% if oct_feedback_data is defined and oct_feedback_data %}
+    <div id="us_fixed_contact_substrate"></div>
+    <div id="us_fixed_contact_button" class="d-flex align-items-center justify-content-center">
+        <div class="us-fixed-contact-pulsation"></div>
+        <div class="us-fixed-contact-icon d-flex align-items-center justify-content-center"><i class="far fa-comment-dots"></i><i class="fas fa-times d-none"></i></div>
+        <div class="us-fixed-contact-dropdown d-flex flex-column align-items-start">
+            {% if (oct_feedback_data.feedback_messenger is defined and oct_feedback_data.feedback_messenger) and (oct_ultrastore_data.contact_messenger is defined and oct_ultrastore_data.contact_messenger) %}
+            <a rel="noopener noreferrer" href="https://m.me/{{ oct_ultrastore_data.contact_messenger }}" target="_blank" class="us-fixed-contact-item d-flex align-items-center"><span class="us-fixed-contact-item-icon us-fixed-contact-messenger d-flex align-items-center justify-content-center"><i class="fab fa-facebook-messenger"></i></span><span>Messenger</span></a>
+            {% endif %}
+
+            {% if (oct_feedback_data.feedback_viber is defined and oct_feedback_data.feedback_viber) and (oct_ultrastore_data.contact_viber is defined and oct_ultrastore_data.contact_viber) %}
+            <a rel="noopener noreferrer" href="viber://chat?number=+{{ oct_ultrastore_data.contact_viber }}" target="_blank" class="us-fixed-contact-item d-flex align-items-center us-fixed-contact-viber-desktop"><span class="us-fixed-contact-item-icon us-fixed-contact-viber d-flex align-items-center justify-content-center"><i class="fab fa-viber"></i></span><span>Viber</span></a>
+            <a rel="noopener noreferrer" href="viber://add?number={{ oct_ultrastore_data.contact_viber }}" target="_blank" class="us-fixed-contact-item d-flex align-items-center us-fixed-contact-viber-mobile"><span class="us-fixed-contact-item-icon us-fixed-contact-viber d-flex align-items-center justify-content-center"><i class="fab fa-viber"></i></span><span>Viber</span></a>
+            {% endif %}
+
+            {% if (oct_feedback_data.feedback_telegram is defined and oct_feedback_data.feedback_telegram) and (oct_ultrastore_data.contact_telegram is defined and oct_ultrastore_data.contact_telegram) %}
+            <a rel="noopener noreferrer" href="https://t.me/{{ oct_ultrastore_data.contact_telegram }}" target="_blank" class="us-fixed-contact-item d-flex align-items-center"><span class="us-fixed-contact-item-icon us-fixed-contact-telegram d-flex align-items-center justify-content-center"><i class="fab fa-telegram"></i></span><span>Telegram</span></a>
+            {% endif %}
+
+            {% if (oct_feedback_data.feedback_skype is defined and oct_feedback_data.feedback_skype) and (oct_ultrastore_data.contact_skype is defined and oct_ultrastore_data.contact_skype) %}
+            <a rel="noopener noreferrer" href="skype:{{ oct_ultrastore_data.contact_skype }}?chat" class="us-fixed-contact-item d-flex align-items-center"><span class="us-fixed-contact-item-icon us-fixed-contact-skype d-flex align-items-center justify-content-center"><i class="fab fa-skype"></i></span><span>Skype</span></a>
+            {% endif %}
+
+            {% if (oct_feedback_data.feedback_whatsapp is defined and oct_feedback_data.feedback_whatsapp) and (oct_ultrastore_data.contact_whatsapp is defined and oct_ultrastore_data.contact_whatsapp) %}
+            <a rel="noopener noreferrer" href="https://api.whatsapp.com/send?phone={{ oct_ultrastore_data.contact_whatsapp }}" target="_blank" class="us-fixed-contact-item d-flex align-items-center"><span class="us-fixed-contact-item-icon us-fixed-contact-whatsapp d-flex align-items-center justify-content-center"><i class="fab fa-whatsapp"></i></span><span>WhatsApp</span></a>
+            {% endif %}
+
+            {% if (oct_feedback_data.feedback_email is defined and oct_feedback_data.feedback_email) and (oct_ultrastore_data.contact_email is defined and oct_ultrastore_data.contact_email) %}
+            <a href="mailto:{{ oct_ultrastore_data.contact_email }}" class="us-fixed-contact-item d-flex align-items-center"><span class="us-fixed-contact-item-icon us-fixed-contact-email d-flex align-items-center justify-content-center"><i class="far fa-envelope"></i></span><span>{{ oct_ultrastore_data.contact_email }}</span></a>
+            {% endif %}
+
+            {% if (oct_feedback_data.feedback_callback is defined and oct_feedback_data.feedback_callback) and (oct_popup_call_phone_status is defined and oct_popup_call_phone_status) %}
+            <div id="uptocall-mini" onclick="octPopupCallPhone()" class="us-fixed-contact-item d-flex align-items-center"><span class="us-fixed-contact-item-icon us-fixed-contact-call d-flex align-items-center justify-content-center"><i class="fas fa-phone"></i></span><span>{{ oct_call_phone }}</span></div>
+            {% endif %}
+
+            <a href="{{ oct_contact_link }}" class="us-fixed-contact-item d-flex align-items-center"><span class="us-fixed-contact-item-icon us-fixed-contact-contacts d-flex align-items-center justify-content-center"><i class="far fa-address-book"></i></span><span>{{ oct_account_main_contacts }}</span></a>
+
+        </div>
+    </div>
+    {% endif %}
+    <div class="container footer-sub">
+        {% if oct_subscribe is defined %}
+        {{ oct_subscribe }}
+        {% endif %}
+        <div class="row">
+            {% if informations %}
+            <div class="col-lg-3 col-md-6 us-footer-box">
+                <div class="us-footer-title">{{ text_information }}<i class="fas fa-chevron-down d-md-none"></i></div>
+                <ul class="us-footer-list  list-unstyled">
+                    {% for information in informations %}
+                    <li class="us-footer-item us-footer-information"><a href="{{ information.href }}" class="us-footer-link">{{ information.title }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+            {% if categories is defined and categories %}
+            <div class="col-lg-3 col-md-6 us-footer-box">
+                <div class="us-footer-title">{{ oct_footer_category }}<i class="fas fa-chevron-down d-md-none"></i></div>
+                <ul class="us-footer-list  list-unstyled mb-0">
+                	{% for category in categories %}
+                    <li class="us-footer-item"><a href="{{ category.href }}" class="us-footer-link">{{ category.name }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+            <div class="col-lg-3 col-md-6 us-footer-box us-footer-shedule-box">
+                <div class="us-footer-title">{{ oct_working_hours }}<i class="fas fa-chevron-down d-md-none"></i></div>
+                <div class="us-footer-list">
+                	{% if oct_contact_opens is defined and oct_contact_opens is not empty %}
+                    <div class="us-footer-shedule d-flex align-items-center">
+                        <div class="us-footer-shedule-icon">
+                            <img src="catalog/view/theme/oct_ultrastore/img/sprite.svg#include--footer-shedule-icon" alt="" width="56" height="56" />
+                        </div>
+                        <ul class="us-footer-shedule-text list-unstyled mb-0">
+                        	{% for oct_contact_open in oct_contact_opens %}
+                            <li class="us-footer-shedule-text-item">{{ oct_contact_open }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                    {% if oct_ultrastore_data.socials is defined and oct_ultrastore_data.socials is not empty %}
+                    <div class="us-footer-social">
+                        <div class="us-footer-social-text us-footer-text">{{ oct_footer_social_tex }}</div>
+                        <ul class="us-footer-social-list d-flex list-unstyled">
+                        	{% for social in oct_ultrastore_data.socials %}
+                            <li class="us-footer-social-item"><a rel="noopener noreferrer" href="{{ (social.link == "#" or social.link is empty) ? 'javascript:;' : social.link }}" class="us-footer-social-link us-footer-social-link-{{ social.icone|replace({'fa ': "", "fab " : "", "far " : "", "fas " : ""}) }}" target="_blank"><i class="{{ social.icone }}"></i>{{ social.link }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 us-footer-box">
+                <div class="us-footer-title">{{ oct_footer_contacts }}<i class="fas fa-chevron-down d-md-none"></i></div>
+                <div class="us-footer-list us-footer-contact-box">
+                	{% if oct_contact_telephones is defined and oct_contact_telephones is not empty %}
+                		{% if oct_contact_telephones|length > 1 %}
+	                    <a class="btn us-footer-phone-btn top-phone-btn dropdown-toggle d-flex align-items-center" href="tel:{{ oct_contact_telephones[0]|replace({" " : "", "-" : "", "(" : "", ")" : ""}) }}" role="button" id="dropdownMenu5" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ oct_contact_telephones[0] }} <i class="fas fa-chevron-down"></i></a>
+	                    <ul class="dropdown-menu header-dropdown-menu" aria-labelledby="dropdownMenu5">
+	                    	{% for oct_contact_telephone in oct_contact_telephones %}
+	                        <li><a href="tel:{{ oct_contact_telephone|replace({" " : "", "-" : "", "(" : "", ")" : ""}) }}" class="phoneclick"><i class="fas fa-phone-volume"></i> {{ oct_contact_telephone }}</a></li>
+	                        {% endfor %}
+	                    </ul>
+						{% else %}
+						<a class="btn us-footer-phone-btn top-phone-btn d-flex align-items-center" href="tel:{{ oct_contact_telephones[0]|replace({" " : "", "-" : "", "(" : "", ")" : ""}) }}" role="button" id="dropdownMenu5">{{ oct_contact_telephones[0] }}</a>
+						{% endif %}
+                    {% endif %}
+                    {% if oct_ultrastore_data.contact_email is defined and oct_ultrastore_data.contact_email %}
+                    <a href="mailto:{{ oct_ultrastore_data.contact_email }}" class="us-footer-mail">{{ oct_ultrastore_data.contact_email }}</a>
+                    {% endif %}
+                    {% if oct_ultrastore_data.contact_address[oct_lang_id] is defined and oct_ultrastore_data.contact_address[oct_lang_id] %}
+                    <div class="us-footer-address">{{ oct_ultrastore_data.contact_address[oct_lang_id] }}</div>
+                    {% endif %}
+                    <ul class="us-footer-contact-list d-flex list-unstyled">
+                    	{% if oct_ultrastore_data.contact_skype is defined and oct_ultrastore_data.contact_skype %}
+                        <li class="us-footer-contact-item"><a href="skype:{{ oct_ultrastore_data.contact_skype }}?chat" class="us-footer-contact-link us-footer-contact-link-skype"><i class="fab fa-skype"></i>Skype</a></li>
+                        {% endif %}
+                        {% if oct_ultrastore_data.contact_viber is defined and oct_ultrastore_data.contact_viber %}
+                        <li class="us-footer-contact-item us-fixed-contact-viber-desktop"><a rel="noopener noreferrer" href="viber://chat?number=+{{ oct_ultrastore_data.contact_viber }}" class="us-footer-contact-link us-footer-contact-link-viber"><i class="fab fa-viber"></i>Viber</a></li>
+                        <li class="us-footer-contact-item us-fixed-contact-viber-mobile"><a rel="noopener noreferrer" href="viber://add?number={{ oct_ultrastore_data.contact_viber }}" class="us-footer-contact-link us-footer-contact-link-viber"><i class="fab fa-viber"></i>Viber</a></li>
+                        {% endif %}
+                        {% if oct_ultrastore_data.contact_telegram is defined and oct_ultrastore_data.contact_telegram %}
+                        <li class="us-footer-contact-item"><a rel="noopener noreferrer" target="_blank" href="https://t.me/{{ oct_ultrastore_data.contact_telegram }}" class="us-footer-contact-link us-footer-contact-link-telegram"><i class="fab fa-telegram"></i>Telegram</a></li>
+                        {% endif %}
+                        {% if oct_ultrastore_data.contact_whatsapp is defined and oct_ultrastore_data.contact_whatsapp %}
+                        <li class="us-footer-contact-item"><a rel="noopener noreferrer" target="_blank" href="https://api.whatsapp.com/send?phone={{ oct_ultrastore_data.contact_whatsapp }}" class="us-footer-contact-link us-footer-contact-link-whatsapp"><i class="fab fa-whatsapp"></i>Whatsapp</a></li>
+                        {% endif %}
+                        {% if oct_ultrastore_data.contact_messenger is defined and oct_ultrastore_data.contact_messenger %}
+                        <li class="us-footer-contact-item"><a rel="noopener noreferrer" target="_blank" href="https://m.me/{{ oct_ultrastore_data.contact_messenger }}" class="us-footer-contact-link us-footer-contact-link-messenger"><i class="fab fa-facebook-messenger"></i>Messenger</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="row row-padding-top">
+            <div class="col-lg-12">
+                <div class="us-footer-bottom d-flex justify-content-between">
+                    <div class="us-footer-bottom-credits">{{ powered }}</div>
+                	<ul class="us-footer-bottom-payment-list d-flex list-unstyled">
+                	{% if oct_ultrastore_data.payments.sber is defined and oct_ultrastore_data.payments.sber %}
+						<li class="us-footer-bottom-payment-item sberbank"></li>
+					{% endif %}
+
+                    {% if oct_ultrastore_data.payments.privat24 is defined and oct_ultrastore_data.payments.privat24 %}
+						<li class="us-footer-bottom-payment-item privat24"></li>
+					{% endif %}
+
+                    {% if oct_ultrastore_data.payments.ym is defined and oct_ultrastore_data.payments.ym %}
+						<li class="us-footer-bottom-payment-item yandex-money"></li>
+					{% endif %}
+
+                    {% if oct_ultrastore_data.payments.wm is defined and oct_ultrastore_data.payments.wm %}
+						<li class="us-footer-bottom-payment-item webmoney"></li>
+					{% endif %}
+
+                    {% if oct_ultrastore_data.payments.visa is defined and oct_ultrastore_data.payments.visa %}
+						<li class="us-footer-bottom-payment-item visa"></li>
+					{% endif %}
+
+                    {% if oct_ultrastore_data.payments.qw is defined and oct_ultrastore_data.payments.qw %}
+						<li class="us-footer-bottom-payment-item qiwi"></li>
+					{% endif %}
+
+                    {% if oct_ultrastore_data.payments.skrill is defined and oct_ultrastore_data.payments.skrill %}
+						<li class="us-footer-bottom-payment-item skrill"></li>
+					{% endif %}
+
+                    {% if oct_ultrastore_data.payments.interkassa is defined and oct_ultrastore_data.payments.interkassa %}
+						<li class="us-footer-bottom-payment-item interkassa"></li>
+					{% endif %}
+
+                    {% if oct_ultrastore_data.payments.lp is defined and oct_ultrastore_data.payments.lp %}
+						<li class="us-footer-bottom-payment-item liqpay"></li>
+					{% endif %}
+
+                    {% if oct_ultrastore_data.payments.pp is defined and oct_ultrastore_data.payments.pp %}
+						<li class="us-footer-bottom-payment-item paypal"></li>
+					{% endif %}
+
+                    {% if oct_ultrastore_data.payments.robo is defined and oct_ultrastore_data.payments.robo %}
+						<li class="us-footer-bottom-payment-item robokassa"></li>
+					{% endif %}
+
+                    {% if oct_ultrastore_data.payments.mc is defined and oct_ultrastore_data.payments.mc %}
+						<li class="us-footer-bottom-payment-item mastercard"></li>
+					{% endif %}
+
+                    {% if oct_ultrastore_data.payments.maestro is defined and oct_ultrastore_data.payments.maestro %}
+						<li class="us-footer-bottom-payment-item maestro"></li>
+					{% endif %}
+
+					{% for payment_customer in oct_customer_paymets %}
+						<li class="us-footer-bottom-payment-item custom-payment"><img src="{{ payment_customer }}" alt="" width="52" height="32"></li>
+					{% endfor %}
+			    	</ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+{% if oct_subscribe_status is defined and oct_subscribe_status %}
+<script>
+$(function() {
+    if (getOCTCookie('oct_subscribe') == 'undefined') {
+        setTimeout(function(){
+            octPopupSubscribe();
+        }, {{ oct_subscribe_form_data.seconds ? oct_subscribe_form_data.seconds : '10000' }});
+
+        const date = new Date('{{ oct_subscribe_day_now }}'.replace(/-/g, "/"));
+        date.setTime(date.getTime() + ({{ oct_subscribe_form_data.expire ? oct_subscribe_form_data.expire : '1' }} * 24 * 60 * 60 * 1000));
+        document.cookie = 'oct_subscribe=1; path=/; expires=' + date.toUTCString();
+    }
+});
+</script>
+{% endif %}
+<script async src="catalog/view/theme/oct_ultrastore/js/oct-fonts.js"></script>
+{% for script in scripts %}
+<script src="{{ script }}"></script>
+{% endfor %}
+<div class="modal-holder"></div>
+<div id="us_overlay"></div>
+{% if oct_isiOS is defined and oct_isiOS %}
+<script>
+var elementsA = document.getElementsByTagName('a');
+for(var i = 0; i < elementsA.length; i++){
+    elementsA[i].addEventListener('touchend',function(){});
+}
+
+var elementsB = document.getElementsByTagName('button');
+for(var i = 1; i < elementsB.length; i++){
+    elementsB[i].addEventListener('touchend',function(){});
+}
+
+var elementsI = document.getElementsByTagName('input');
+for(var i = 0; i < elementsI.length; i++){
+    elementsI[i].addEventListener('touchend',function(){});
+}
+
+var elementsS = document.getElementsByTagName('span');
+for(var i = 0; i < elementsS.length; i++){
+    elementsS[i].addEventListener('touchend',function(){});
+}
+</script>
+{% endif %}
+
+{% if (oct_analytics_targets is defined and oct_analytics_targets is not empty) %}
+    <script>
+        {% for target in oct_analytics_targets %}
+        $('body').on('click', '{{ target['atribute'] }}', function() {
+            {% if (target['google'] is defined and target['google']) %}
+            gtag('event', '{{ target['action'] }}', {
+                'event_category' : '{{ target['category'] }}'
+            });
+            {% endif %}
+
+            {% if (target['yandex'] is defined and target['yandex']) %}
+            ym({{ oct_analytics_yandex_code }}, 'reachGoal', '{{ target['action'] }}');
+            {% endif %}
+        });
+        {% endfor %}
+    </script>
+{% endif %}
+
+{% if (oct_policy_value is defined and oct_policy_value is not empty and oct_policy_value) %}
+<script>
+function getOctPolicy() {
+    $.ajax({
+        url: "index.php?route=common/footer/getOctPolicy",
+        type: "post",
+        dataType: "json",
+        cache: false,
+        success: function(t) {
+            if (t['text_oct_policy']) {
+                var html = '<div id="oct-policy" class="fixed-bottom"><div class="container"><div class="row"><div class="col-lg-12 d-flex align-items-center justify-content-between flex-column flex-md-row"><div class="oct-policy-text">'+ t['text_oct_policy'] +'</div><button type="button" id="oct-policy-btn" class="mt-4 mt-md-0">'+ t['oct_policy_accept'] +'</button></div></div></div></div>';
+
+                $('body').append(html);
+
+                $('#oct-policy-btn').on('click', function () {
+                    $('#oct-policy').addClass('hidden');
+                    const date = new Date(t['oct_policy_day_now'].replace(/-/g, "/"));
+                    date.setTime(date.getTime() + (t['oct_max_day'] * 24 * 60 * 60 * 1000));
+                    document.cookie = t['oct_policy_value']+'=1; path=/; expires=' + date.toUTCString();
+                });
+            }
+        },
+        error: function(e, t, i) {
+        }
+    });
+}
+
+$(function() {
+    if (getOCTCookie('{{ oct_policy_value }}') == 'undefined') {
+        getOctPolicy();
+    }
+});
+</script>
+{% endif %}
+{% if oct_jscode is defined and oct_jscode %}
+<script>
+{{ oct_jscode }}
+</script>
+{% endif %}
+</body>
+</html>

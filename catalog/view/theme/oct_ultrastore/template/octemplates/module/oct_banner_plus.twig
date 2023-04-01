@@ -1,0 +1,91 @@
+{% if oct_banner_pluss|length <= 2 %}
+<div class="row{% if position == 'column_left' or position == 'column_right' %} us-module-column-box{% else %} row-padding-top{% endif %}">
+	{% set key = 0 %}
+	{% for banner in oct_banner_pluss %}
+	{% set key = key + 1 %}
+	{% if oct_banner_pluss|length == 1 %}
+	<div id="oct_banner_plus_{{ module }}_{{ key }}" class="us-banner-plus-wrap us-banner-plus-wrap-full-width col-sm-12">
+		<div class="us-banner-plus-box h-100 py-0">
+			<div class="us-banner-plus-inner d-flex align-items-center justify-content-between{% if position == 'column_left' or position == 'column_right' %} text-center{% endif %}">
+				<div class="us-banner-plus-info us-banner-plus-info-single d-flex flex-column h-100 justify-content-between">
+					<div class="us-banner-plus-title mb-3">{{ banner.title }}</div>
+					{% if position == 'column_left' or position == 'column_right' %}
+					<div class="us-banner-plus-img my-4">
+						<a href="{{ banner.link }}"><img src="{{ banner.image }}"{% if oct_lazyload %} data-srcset="{{ banner.image }} 100w" srcset="{{ oct_lazy_image }} 100w" sizes="100vw" class="oct-lazy"{% endif %} alt="{{ banner.title }}" title="{{ banner.title }}" width="{{ banner.width }}" height="{{ banner.height }}" /></a>
+					</div>
+					{% endif %}
+					<div class="us-banner-plus-text mb-4">{{ banner.description }}</div>
+					<a href="{{ banner.link }}" class="us-banner-plus-btn">{{ banner.button }}</a>
+				</div>
+				{% if position == 'content_top' or position == 'content_bottom' %}
+				<div class="us-banner-plus-img us-banner-plus-img-single my-2">
+					<a href="{{ banner.link }}"><img src="{{ banner.image }}"{% if oct_lazyload %} data-srcset="{{ banner.image }} 100w" srcset="{{ oct_lazy_image }} 100w" sizes="100vw" class="oct-lazy"{% endif %} alt="{{ banner.title }}" title="{{ banner.title }}" width="{{ banner.width }}" height="{{ banner.height }}" /></a>
+				</div>
+				{% endif %}
+			</div>
+		</div>
+	</div>
+	{% elseif oct_banner_pluss|length == 2 %}
+	<div id="oct_banner_plus_{{ module }}_{{ key }}" class="us-banner-plus-wrap{% if loop.index == 2 %} us-banner-plus-wrap-second{% endif %} col-md-12 col-lg-6">
+		<div class="us-banner-plus-box h-100">
+			{% if position == 'content_top' or position == 'content_bottom' %}
+			<div class="us-banner-plus-title mb-2">{{ banner.title }}</div>
+			{% endif %}
+			<div class="d-flex{% if position == 'column_left' or position == 'column_right' %}-column text-center{% endif %} align-items-center justify-content-between">
+				{% if position == 'column_left' or position == 'column_right' %}
+				<div class="us-banner-plus-title mb-2">{{ banner.title }}</div>
+				<div class="us-banner-plus-img my-4">
+					<a href="{{ banner.link }}"><img src="{{ banner.image }}"{% if oct_lazyload %} data-srcset="{{ banner.image }} 100w" srcset="{{ oct_lazy_image }} 100w" sizes="100vw" class="oct-lazy"{% endif %} alt="{{ banner.title }}" title="{{ banner.title }}" width="{{ banner.width }}" height="{{ banner.height }}" /></a>
+				</div>
+				{% endif %}
+				<div class="us-banner-plus-info d-flex flex-column h-100 justify-content-between">
+					<div class="us-banner-plus-text mb-{% if position == 'column_left' or position == 'column_right' %}4{% else %}5{% endif %}">{{ banner.description }}</div>
+					<a href="{{ banner.link }}" class="us-banner-plus-btn">{{ banner.button }}</a>
+				</div>
+				{% if position == 'content_top' or position == 'content_bottom' %}
+				<div class="us-banner-plus-img us-banner-plus-img-narrow">
+					<a href="{{ banner.link }}"><img src="{{ banner.image }}"{% if oct_lazyload %} data-srcset="{{ banner.image }} 100w" srcset="{{ oct_lazy_image }} 100w" sizes="100vw" class="oct-lazy"{% endif %} alt="{{ banner.title }}" title="{{ banner.title }}" width="{{ banner.width }}" height="{{ banner.height }}" /></a>
+				</div>
+				{% endif %}
+			</div>
+		</div>
+	</div>
+	{% endif %}
+	<style>
+		#oct_banner_plus_{{ module }}_{{ key }} .us-banner-plus-box {background: {{ banner.background_color }};}
+		#oct_banner_plus_{{ module }}_{{ key }} .us-banner-plus-title {color: {{ banner.title_color }};}
+		#oct_banner_plus_{{ module }}_{{ key }} .us-banner-plus-text {color: {{ banner.text_color }};}
+		#oct_banner_plus_{{ module }}_{{ key }} .us-banner-plus-btn {color: {{ banner.button_color }}; background: {{ banner.button_background }};}
+		#oct_banner_plus_{{ module }}_{{ key }} .us-banner-plus-btn:hover {color: {{ banner.button_text_hover }}; background: {{ banner.button_background_hover }};}
+	</style>
+	{% endfor %}
+</div>
+{% else %}
+<div class="row row-padding-top us-four-banners">
+	{% set key = 100 %}
+	{% for banner in oct_banner_pluss %}
+	{% set key = key + 1 %}
+	<div class="col-lg-6" id="oct_banner_plus_{{ module }}_{{ key }}">
+		<div class="us-four-banners-item d-flex">
+			<div class="us-four-banners-item-info d-flex flex-column justify-content-between">
+				<div class="us-four-banners-item-info-top">
+					<div class="us-four-banners-item-title">{{ banner.title }}</div>
+					<div class="us-four-banners-item-text">{{ banner.description }}</div>
+				</div>
+				<a href="{{ banner.link }}" class="us-four-banners-item-btn">{{ banner.button }}</a>
+			</div>
+			<div class="us-four-banners-item-img d-flex align-items-center justify-content-center">
+				<a href="{{ banner.link }}"><img src="{{ banner.image }}"{% if oct_lazyload %} data-srcset="{{ banner.image }} 100w" srcset="{{ oct_lazy_image }} 100w" sizes="100vw" class="oct-lazy"{% endif %} alt="{{ banner.title }}" title="{{ banner.title }}" width="{{ banner.width }}" height="{{ banner.height }}" /></a>
+			</div>
+		</div>
+	</div>
+	<style>
+		#oct_banner_plus_{{ module }}_{{ key }} .us-four-banners-item{background:{{ banner.background_color }};}
+		#oct_banner_plus_{{ module }}_{{ key }} .us-four-banners-item-title{color:{{ banner.title_color }};}
+		#oct_banner_plus_{{ module }}_{{ key }} .us-four-banners-item-text {color: {{ banner.text_color }};}
+		#oct_banner_plus_{{ module }}_{{ key }} .us-four-banners-item-btn{color:{{ banner.button_color }}; background:{{ banner.button_background }};}
+		#oct_banner_plus_{{ module }}_{{ key }} .us-four-banners-item-btn:hover{color:{{ banner.button_text_hover }};background: {{ banner.button_background_hover }};}
+	</style>
+	{% endfor %}
+</div>
+{% endif %}
