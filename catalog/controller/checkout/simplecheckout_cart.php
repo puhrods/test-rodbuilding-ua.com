@@ -179,6 +179,15 @@ class ControllerCheckoutSimpleCheckoutCart extends SimpleController {
                 }
             }
 
+
+            $full_total = false;
+            $full_price = false;
+            if($product['full_price'] > $product['price']) {
+
+                $full_total = $this->simplecheckout->formatCurrency($this->tax->calculate($product['full_price'], $product['tax_class_id'], $this->config->get('config_tax')) * $product['quantity']);
+                $full_price = $this->simplecheckout->formatCurrency($this->tax->calculate($product['full_price'], $product['tax_class_id'], $this->config->get('config_tax')));
+            }
+
             if ($version >= 200) {
                 $recurring = '';
 
@@ -216,6 +225,8 @@ class ControllerCheckoutSimpleCheckoutCart extends SimpleController {
                     'reward'    => ($product['reward'] ? sprintf($this->language->get('text_points'), $product['reward']) : ''),
                     'price'     => $price,
                     'old_price' => $old_price,
+                    'full_total' => $full_total,
+                    'full_price' => $full_price,
                     'total'     => $total,
                     'href'      => $this->url->link('product/product', 'product_id=' . $product['product_id'])
                 );
@@ -258,6 +269,8 @@ class ControllerCheckoutSimpleCheckoutCart extends SimpleController {
                     'price'               => $price,
                     'old_price'           => $old_price,
                     'total'               => $total,
+                    'full_total'          => $full_total,
+                    'full_price'          => $full_price,
                     'href'                => $this->url->link('product/product', 'product_id=' . $product['product_id']),
                     'recurring'           => $product['recurring'],
                     'profile_name'        => isset($product['profile_name']) ? $product['profile_name'] : '',
@@ -277,6 +290,8 @@ class ControllerCheckoutSimpleCheckoutCart extends SimpleController {
                     'old_price' => $old_price,
                     'price'     => $price,
                     'total'     => $total,
+                    'full_total' => $full_total,
+                    'full_price' => $full_price,
                     'href'      => $this->url->link('product/product', 'product_id=' . $product['product_id'])
                 );
             }

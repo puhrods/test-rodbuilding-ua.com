@@ -76,6 +76,9 @@
             </div>
 
             <div class="min-width-120 text-right text-md-center">
+                {% if product['full_total'] is not empty %}
+                    <div style="text-decoration: line-through;">{{ product['full_total'] }}</div>
+                {% endif %}
                 {{ product['total'] }}
             </div>
 

@@ -250,6 +250,8 @@ class Cart {
 					'stock'           => $stock,
 					'price'           => ($price + $option_price),
 					'total'           => ($price + $option_price) * $cart['quantity'],
+                    'full_price'      => ($product_query->row['price'] + $option_price),
+                    'full_total'      => ($product_query->row['price'] + $option_price) * $cart['quantity'],
 					'reward'          => $reward * $cart['quantity'],
 					'points'          => ($product_query->row['points'] ? ($product_query->row['points'] + $option_points) * $cart['quantity'] : 0),
 					'tax_class_id'    => $product_query->row['tax_class_id'],
