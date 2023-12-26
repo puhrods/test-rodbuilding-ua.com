@@ -16,7 +16,7 @@ class ModelExtensionTotalHyperDiscount extends Model {
             }
         } else {
 
-            $this->load->language('extension/total/sub_total');
+            $this->load->language('extension/total/hyper_discount');
             $value = 0;
             $products = $this->cart->getProducts();
 
