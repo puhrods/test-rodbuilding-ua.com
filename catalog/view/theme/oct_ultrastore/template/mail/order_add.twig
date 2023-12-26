@@ -97,8 +97,18 @@
 					</td>
 					<td style="font-size: 12px; border-right: 1px solid #E7E7E7; border-bottom: 1px solid #E7E7E7; text-align: left; padding: 7px;">{{ product.model }}</td>
 					<td style="font-size: 12px;	border-right: 1px solid #E7E7E7; border-bottom: 1px solid #E7E7E7; text-align: right; padding: 7px;">{{ product.quantity }}</td>
-					<td style="font-size: 12px;	border-right: 1px solid #E7E7E7; border-bottom: 1px solid #E7E7E7; text-align: right; padding: 7px;">{{ product.price }}</td>
-					<td style="font-size: 12px;	border-right: 1px solid #E7E7E7; border-bottom: 1px solid #E7E7E7; text-align: right; padding: 7px;">{{ product.total }}</td>
+					<td style="font-size: 12px;	border-right: 1px solid #E7E7E7; border-bottom: 1px solid #E7E7E7; text-align: right; padding: 7px;">
+						{% if product['full_price'] %}
+							<div style="text-decoration: line-through;">{{ product['full_price'] }}</div>
+						{% endif %}
+						{{ product.price }}
+					</td>
+					<td style="font-size: 12px;	border-right: 1px solid #E7E7E7; border-bottom: 1px solid #E7E7E7; text-align: right; padding: 7px;">
+						{% if product['full_total'] %}
+							<div style="text-decoration: line-through;">{{ product['full_total'] }}</div>
+						{% endif %}
+						{{ product.total }}
+					</td>
 				</tr>
 				{% endfor %}
 				{% for voucher in vouchers %}

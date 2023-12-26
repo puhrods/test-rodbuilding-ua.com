@@ -217,11 +217,21 @@ class ControllerMailOrder extends Controller {
 				);
 			}
 
+            $full_price = false;
+            $full_total = false;
+
+            if($order_product['discount_amount']) {
+                $full_price = $this->currency->format(($order_product['price'] + $order_product['discount_amount']) + ($this->config->get('config_tax') ? $order_product['tax'] : 0), $order_info['currency_code'], $order_info['currency_value']);
+                $full_total = $this->currency->format((($order_product['price'] + $order_product['discount_amount']) *  $order_product['quantity']) + ($this->config->get('config_tax') ? ($order_product['tax'] * $order_product['quantity']) : 0), $order_info['currency_code'], $order_info['currency_value']);
+            }
+
 			$data['products'][] = array(
 				'name'     => $order_product['name'],
 				'model'    => $order_product['model'],
 				'option'   => $option_data,
 				'quantity' => $order_product['quantity'],
+                'full_price' => $full_price,
+                'full_total' => $full_total,
 				'price'    => $this->currency->format($order_product['price'] + ($this->config->get('config_tax') ? $order_product['tax'] : 0), $order_info['currency_code'], $order_info['currency_value']),
 				'total'    => $this->currency->format($order_product['total'] + ($this->config->get('config_tax') ? ($order_product['tax'] * $order_product['quantity']) : 0), $order_info['currency_code'], $order_info['currency_value'])
 			);
