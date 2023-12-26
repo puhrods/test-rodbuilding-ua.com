@@ -1111,6 +1111,14 @@ class ControllerCheckoutSimpleCheckout extends SimpleController {
                     }
                 }
 
+                $discount_amount = 0.0000;
+                $discount_type = '';
+
+                if($product['full_price'] > $product['price']) {
+                    $discount_amount = ($product['full_price'] - $product['price']);
+                    $discount_type = 'S';
+                }
+
                 $product_data[] = array(
                     'product_id' => $product['product_id'],
                     'name'       => $product['name'],
@@ -1120,6 +1128,8 @@ class ControllerCheckoutSimpleCheckout extends SimpleController {
                     'quantity'   => $product['quantity'],
                     'subtract'   => $product['subtract'],
                     'price'      => $product['price'],
+                    'discount_amount' => $discount_amount,
+                    'discount_type' => $discount_type,
                     'total'      => $product['total'],
                     'tax'        => method_exists($this->tax,'getRate') ? $this->tax->getRate($product['tax_class_id']) : $this->tax->getTax($product['price'], $product['tax_class_id'])
                 );
@@ -1174,6 +1184,14 @@ class ControllerCheckoutSimpleCheckout extends SimpleController {
                     );
                 }
 
+                $discount_amount = 0.0000;
+                $discount_type = '';
+
+                if($product['full_price'] > $product['price']) {
+                    $discount_amount = ($product['full_price'] - $product['price']);
+                    $discount_type = 'S';
+                }
+
                 $product_data[] = array(
                     'product_id' => $product['product_id'],
                     'name'       => $product['name'],
@@ -1184,6 +1202,8 @@ class ControllerCheckoutSimpleCheckout extends SimpleController {
                     'subtract'   => $product['subtract'],
                     'price'      => $product['price'],
                     'total'      => $product['total'],
+                    'discount_amount' => $discount_amount,
+                    'discount_type' => $discount_type,
                     'tax'        => $this->tax->getTax($product['price'], $product['tax_class_id']),
                     'reward'     => $product['reward']
                 );
