@@ -80,8 +80,18 @@
 		              &nbsp;<small> - {{ option.name }}: {{ option.value }}</small> {% endfor %}</td>
 		            <td>{{ product.model }}</td>
 		            <td>{{ product.quantity }}</td>
-		            <td>{{ product.price }}</td>
-		            <td>{{ product.total }}</td>
+		            <td>
+						{% if product['full_price'] %}
+							<div style="text-decoration: line-through;">{{ product['full_price'] }}</div>
+						{% endif %}
+						{{ product.price }}
+					</td>
+		            <td>
+						{% if product['full_total'] %}
+							<div style="text-decoration: line-through;">{{ product['full_total'] }}</div>
+						{% endif %}
+						{{ product.total }}
+					</td>
 		            <td style="white-space: nowrap;">{% if product.reorder %} <a href="{{ product.reorder }}" data-toggle="tooltip" title="{{ button_reorder }}" class="us-acc-btn us-acc-btn-green"><i class="fa fa-shopping-cart"></i></a> {% endif %} <a href="{{ product.return }}" data-toggle="tooltip" title="{{ button_return }}" class="us-acc-btn us-acc-btn-red"><i class="fa fa-reply"></i></a></td>
 		          </tr>
 		          {% endfor %}
