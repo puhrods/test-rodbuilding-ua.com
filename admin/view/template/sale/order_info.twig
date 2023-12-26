@@ -165,8 +165,16 @@
                   {% endfor %}</td>
                 <td class="text-left">{{ product.model }}</td>
                 <td class="text-right">{{ product.quantity }}</td>
-                <td class="text-right">{{ product.price }}</td>
-                <td class="text-right">{{ product.total }}</td>
+                <td class="text-right">
+                  {% if product['full_price'] %}
+                    <div style="text-decoration: line-through;">{{ product['full_price'] }}</div>
+                  {% endif %}
+                  {{ product.price }}</td>
+                <td class="text-right">
+                  {% if product['full_total'] %}
+                    <div style="text-decoration: line-through;">{{ product['full_total'] }}</div>
+                  {% endif %}
+                  {{ product.total }}</td>
               </tr>
             {% endfor %}
             {% for voucher in vouchers %}
