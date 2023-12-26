@@ -1,5 +1,5 @@
 <?php
-$_['heading_title'] = ' <strong style="color:#41637d">feofan.club —</strong> Simple - упрощенная регистрация и заказ <a href="https://feofan.club" target="_blank" title="feofan.club - Модули и шаблоны для Opencart"><img style="margin-left:15px;height:35px;margin-top:10px;margin-bottom:10px;" src="https://feofan.club" alt="feofan.club - Модули и шаблоны для Opencart"/></a>';
+$_['heading_title'] = 'Simple - упрощенная регистрация и заказ';
 $_['select_store'] = 'Выбор магазина';
 $_['main_settings'] = 'Основные настройки';
 $_['enter_license'] = 'Введите ключ для домена {domain}';

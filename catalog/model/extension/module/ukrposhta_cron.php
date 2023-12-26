@@ -7,7 +7,7 @@ class ModelModuleUkrPoshtaCron extends Model {
             $settings = $this->config->get('ukrposhta');
         }
 
-		$result = $this->db->query("SELECT `o`.*, `l`.`code`, `l`.`directory`, CONCAT(`c`.`firstname`, ' ', `c`.`lastname`) as `customer` FROM `" . DB_PREFIX . "order` as `o` LEFT JOIN `" . DB_PREFIX . "language` as `l` ON (`l`.`language_id` = `o`.`language_id`) LEFT JOIN `" . DB_PREFIX . "customer` as `c` ON (`c`.`customer_id` = `o`.`customer_id`)  WHERE `order_status_id` IN (" . implode(',', $settings['tracking_statuses']) . ") AND `ukrposhta_cn_number` <> ''")->rows;
+		$result = $this->db->query("SELECT `o`.*, `l`.`code`, `l`.`directory`, CONCAT(`c`.`firstname`, ' ', `c`.`lastname`) as `customer` FROM `" . DB_PREFIX . "order` as `o` LEFT JOIN `" . DB_PREFIX . "language` as `l` ON (`l`.`language_id` = `o`.`language_id`) LEFT JOIN `" . DB_PREFIX . "customer` as `c` ON (`c`.`customer_id` = `o`.`customer_id`)  WHERE `order_status_id` IN (" . implode(',', $settings['tracking_statuses']) . ") AND `ukrposhta_cn_number` <> ''");
 		
 		return $result;
 	}
@@ -46,23 +46,36 @@ class ModelModuleUkrPoshtaCron extends Model {
                 }
             }
 
+            if (version_compare(VERSION, '1.5.4', '>=')) {
+                $ean  = $product['ean'];
+                $jan  = $product['jan'];
+                $isbn = $product['isbn'];
+                $mpn  = $product['mpn'];
+            } else {
+                $ean  = '';
+                $jan  = '';
+                $isbn = '';
+                $mpn  = '';
+            }
+
             $product_data[] = array(
-                'name'            => $product['name'],
-                'model'           => $product['model'],
-                'option'   		  => $option_data,
-                'quantity'        => $product['quantity'],
-                'sku'             => $product['sku'],
-                'upc'             => $product['upc'],
-                'ean'             => $product['ean'],
-                'jan'             => $product['jan'],
-                'isbn'            => $product['isbn'],
-                'mpn'             => $product['mpn'],
-                'weight'          => ($product['weight'] + $option_weight) * $product['quantity'],
-                'weight_class_id' => $product['weight_class_id'],
-                'length'          => $product['length'],
-                'width'           => $product['width'],
-                'height'          => $product['height'],
-                'length_class_id' => $product['length_class_id']
+                'order_product_id' => $product['order_product_id'],
+                'name'             => $product['name'],
+                'model'            => $product['model'],
+                'option'   	 	   => $option_data,
+                'quantity'         => $product['quantity'],
+                'sku'              => $product['sku'],
+                'upc'              => $product['upc'],
+                'ean'              => $ean,
+                'jan'              => $jan,
+                'isbn'             => $isbn,
+                'mpn'              => $mpn,
+                'weight'           => ($product['weight'] + $option_weight) * $product['quantity'],
+                'weight_class_id'  => $product['weight_class_id'],
+                'length'           => $product['length'],
+                'width'            => $product['width'],
+                'height'           => $product['height'],
+                'length_class_id'  => $product['length_class_id']
             );
         }
 

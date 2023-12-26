@@ -1,0 +1,611 @@
+{{ header }}{{ column_left }}
+<div id="content">
+    <div class="container-fluid h-editor">
+        <div id="panel_top" class="affix col-sm-12">
+            <div class="text-title text-center"><i class="fa fa-opencart" aria-hidden="true"></i>
+                <span class="win-title">{{ hyper_discount_name }}</span>
+                <hr class="ht-min">
+                <span class="ht-title">{{ hyper_discount_title }}</span>
+            </div>
+            <h1 data-toggle="tooltip" data-placement="bottom" title="{{ users_discount_text }}">{{ user_discount['name'][config_language_id] }}</h1>
+            <div id="panel_tops" class="pull-right">
+                <button type="button" onclick="Apply();" data-toggle="tooltip" data-placement="bottom" class="btn btn-primary memory-button" title="{{ button_apply }}"><i class="fa fa-check-circle-o"></i></button>
+                <button type="submit" form="users_discount_form" data-toggle="tooltip" data-placement="bottom" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+                <a href="{{ cancel }}" data-toggle="tooltip" data-placement="bottom" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a>
+            </div>
+        </div>
+        <div class="panel panel-default col-sm-12">
+            {% if error_warning %}
+            <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+              <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+            {% endif %}
+            
+            <div class="panel-heading">
+                <h3><i class="fa fa-sliders" aria-hidden="true"></i> {{ heading_action_text }}</h3>
+                <button form="help_modals" class="pull-right hm-help btn btn-primary btn-sm" data-toggle="modal" data-target="#Users_Form_Modal">
+                    <i class="fa fa-info" aria-hidden="true"></i> - INFO
+                </button>
+            </div>
+            <div class="panel-body top-pad">
+                <div class="col-sm-12">
+                    <form action="{{ action }}" method="post" enctype="multipart/form-data" id="users_discount_form" class="form-horizontal">
+                        <input type="hidden" value="{{ user_discount['discount_id'] }}" name="user_discount[discount_id]">
+
+                        <table class="table table-striped table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <td class="text-center " style="width: 25%;">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ entry_title_titles }}">
+                                                {{ entry_title }} 
+                                            </span>
+                                        </label>
+                                    </td>
+                                    <td class="text-center" style="width: 75%;">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ entry_description_titles }}">
+                                                {{ entry_description }} 
+                                            </span>
+                                        </label>
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="text-center">
+                                    <td class="text-center">
+                                        {% for language in languages %} 
+                                        {% if (error_name[language['language_id']] is defined) %} 
+                                        <div class="text-danger">{{ error_name[language['language_id']] }}</div>
+                                        {% endif %} 
+                                        <div class="input-group pull-left"><span class="input-group-addon"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}" /></span>
+                                            <input type="text" name="user_discount[name][{{ language['language_id'] }}]"
+                                                   value="{{ user_discount['name'][language['language_id']] is defined ? user_discount['name'][language['language_id']] : '' }}" class="form-control" />
+                                        </div>
+                                        {% endfor %} 
+                                    </td>
+                                    <td class="text-center">
+                                        <textarea style="resize:vertical;" name="user_discount[description]" class="form-control">{{ user_discount['description'] }}</textarea>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <legend>
+                            {{ settings_text }} 
+                            <button form="help_modals" class="pull-right hm-help btn btn-primary btn-sm" data-toggle="modal" data-target="#Users_One_Modal">
+                                <i class="fa fa-info" aria-hidden="true"></i> - {{ help_name }} 
+                            </button>
+                        </legend>
+                        <table class="table table-striped table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <td class="hidden text-center editor">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ entry_users_variants_titles }}">
+                                                {{ entry_users_variants }} 
+                                            </span>
+                                        </label>
+                                    </td>
+                                    <td class="text-center editor">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ entry_shops_titles }}">
+                                                {{ entry_shops }} 
+                                            </span>
+                                        </label>
+                                    </td>
+                                    <td class="text-center editor">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ entry_geo_titles }}">
+                                                {{ entry_geo }} 
+                                            </span>
+                                        </label>
+                                    </td>
+                                    <td class="hidden text-center editor">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ entry_users_groups_titles }}">
+                                                {{ entry_users_groups }} 
+                                            </span>
+                                        </label>
+                                    </td>
+                                    <td class="text-center editor">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ entry_guest_titles }}">
+                                                {{ entry_guest }} 
+                                            </span>
+                                        </label>
+                                    </td>
+                                    <td class="text-center editor">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ entry_client_group_titles }}">
+                                                {{ entry_client_group }} 
+                                            </span>
+                                        </label>
+                                    </td>
+                                    <td class="text-center"></td>
+                                    <td class="text-center mini-style">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ users_price_correction_titles }}">
+                                                <i class="fa fa-exchange" aria-hidden="true"></i>
+                                            </span>
+                                        </label>
+                                    </td>
+                                    <td class="text-center mini-style"></td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="text-center">
+
+                                    <td class="text-center editor">
+                                        <div class="input-group pull-left">
+                                            <input class="bootstrap-switcher form-control" type="checkbox" value="1" id='shop_settings'
+                                                   name="user_discount[shops_all]" data-size="small" data-on-color="success"
+                                                   {% if (user_discount['shops_all'] == 1) %} {{ 'checked' }}{% endif %}
+                                                   data-on-text="ALL" data-off-text="EDIT">
+                                        </div>
+                                        <a id='shop_settings_link' href="{{ edit_shops_list }}"
+                                           {% if (user_discount['shops_all'] == 1 ) %} {{ 'disabled="true"' }}{% endif %}
+                                           data-toggle="tooltip" title="{{ button_edit_shops_list }}" class="btn btn-primary"><i class="fa fa-pencil"></i></a>
+                                    </td>
+                                    <td class="text-center editor">
+                                        <div class="input-group pull-left">
+                                            <input class="bootstrap-switcher form-control" type="checkbox" value="1" id='geo_settings'
+                                                   name="user_discount[geos_all]" data-size="small" data-on-color="success"
+                                                   {% if (user_discount['geos_all'] == 1) %} {{ 'checked' }}{% endif %}
+                                                   data-on-text="ALL" data-off-text="EDIT">
+                                        </div>
+                                        <a href="{{ edit_geo_list }}" id='geo_settings_link' 
+                                           {% if (user_discount['geos_all'] == 1) %} {{ 'disabled="true"' }}{% endif %}
+                                           data-toggle="tooltip" title="{{ button_edit_geo_list }}" class="btn btn-primary"><i class="fa fa-pencil"></i></a>
+                                    </td>
+                                    <td class="text-center midi">
+                                        <div class="text-center">
+                                            <input class="bootstrap-switcher form-control" type="checkbox" value="1" id='guests'
+                                                   name="user_discount[guests]" data-size="small" data-on-color="success"
+                                                   {% if (user_discount['guests'] is defined and user_discount['guests'] == 1) %} {{ 'checked' }}{% endif %}
+                                                   data-on-text="YES" data-off-text="NO">
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+
+                                        <div class="input-group pull-left">
+                                            <input class="bootstrap-switcher form-control " type="checkbox" value="1" id='customers_settings'
+                                                   name="user_discount[customers_all]" data-size="small" data-on-color="success"
+                                                   {% if (user_discount['customers_all'] is defined and user_discount['customers_all'] == 1) %} {{ 'checked' }}{% endif %}
+                                                   data-on-text="ALL" data-off-text="EDIT">
+                                        </div>
+                                        <a href="{{ edit_client_group }}" id='customers_settings_link'
+                                           data-toggle="tooltip" title="{{ button_client_group_list }}" class="btn btn-primary"><i class="fa fa-pencil"></i></a>
+                                    </td>
+                                    <td class="text-center"></td>
+                                    <td class="text-center mini-style">
+                                        <div class="text-center group">
+                                            <input class="bootstrap-switcher form-control" type="checkbox" value="1"
+                                                   name="user_discount[correction]" id='correction' data-size="small" data-on-color="success"
+                                                   {% if (user_discount['correction'] is defined and user_discount['correction'] == 1) %} {{ 'checked' }}{% endif %}
+                                                   data-on-text="MAIN" data-off-text="GROUP">
+                                        </div>
+                                    </td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <legend>
+                            {{ discount_editor_text }}
+                            <button form="help_modals" class="pull-right hm-help btn btn-primary btn-sm" data-toggle="modal" data-target="#Users_Two_Modal">
+                                <i class="fa fa-info" aria-hidden="true"></i> - {{ help_name }} 
+                            </button>
+                        </legend>
+                        <table id="discount_editor" class="table table-striped table-bordered table-hover num">
+                            <thead>
+                                <tr>
+                                    <td class="text-center micro-style">№</td>
+                                    <td class="text-center editor">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ entry_discount_percent_titles }}">
+                                                {{ entry_discount_percent }} 
+                                            </span>
+                                        </label>
+                                    </td>
+                                    <td class="text-center data-style">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ entry_date_titles }}">
+                                                {{ entry_date }} 
+                                            </span>
+                                        </label>
+                                    </td>
+                                    <td class="text-center editor">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ entry_product_group_titles }}">
+                                                {{ entry_product_group }} 
+                                            </span>
+                                        </label>
+                                    </td>
+                                    <td class="text-center">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ entry_discounts_titles }}">
+                                                {{ entry_discounts }} 
+                                            </span>
+                                        </label>
+                                    </td>
+                                    <td class="text-center">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ entry_stock_titles }}">
+                                                {{ entry_stock }} 
+                                            </span>
+                                        </label>
+                                    </td>
+
+                                    <td class="text-center mini-style">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ entry_discount_editor_status_titles }}">
+                                                {{ entry_discount_editor_status }} 
+                                            </span>
+                                        </label>
+                                    </td>
+                                    <td class="text-center mini-style">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ column_delete_titles }}">
+                                                {{ column_delete }} 
+                                            </span>
+                                        </label>
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% set users_discount_row = 1 %} 
+                                {% if (user_discount['discount_editor'] is defined) %}
+            {% for discount_editor in user_discount['discount_editor'] %} 
+                <tr id="users_discount_row{{ users_discount_row }}">
+                            <td class="for-titles">
+                                <label class="control-label">
+                                  <span data-toggle="tooltip" title="" data-original-title="
+                                  {% set str = user_discount['description'] %}
+                                  {% set str_arr =  str|split('#') %}
+                                  {{ str_arr[users_discount_row] is defined ?
+                                  str_arr[users_discount_row] : constant('false') }}"><b id="numb"></b></span>
+                                </label>
+                                <input type="hidden" name="user_discount[discount_editor][{{ users_discount_row }}][editor_id]" value="{{ users_discount_row }}" />
+                                <input type="hidden" name="user_discount[discount_editor][{{ users_discount_row }}][id]" value="{{ discount_editor.id }}" />
+                            </td>
+                            <td class="text-center">
+                              <div class="input-group pull-left">
+                                <input type="text" name="user_discount[discount_editor][{{ users_discount_row }}][discount_percent]"
+                                       value="{{ discount_editor['discount_percent'] is defined ? discount_editor['discount_percent'] : '' }}" class="form-control text-right pull-left hd-md" style="color: red"/>
+                                <select name="user_discount[discount_editor][{{ users_discount_row }}][discount_type]" class="form-control pull-left hd-md" >
+                                    {% for order_status_value in array_discount_types %}
+                                    {% if (discount_editor['discount_type'] is defined and discount_editor['discount_type'] == order_status_value) %}
+                                        <option value="{{ order_status_value }}" selected="selected">{{ order_status_value }}</option>
+                                    {% else %} 
+                                        <option value="{{ order_status_value }}" >{{ order_status_value }}</option>
+                                    {% endif %} 
+                                    {% endfor %} 
+                                </select>
+                              </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="input-group date">
+                                    <input type="text" name="user_discount[discount_editor][{{ users_discount_row }}][start_date]" placeholder="{{ entry_date_start }}"
+                                           value="{{ discount_editor['start_date'] }}" data-date-format="YYYY-MM-DD" id="input-date-available" class="form-control"  style="color: blue"/>
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button"><i class="fa fa-calendar"></i></button>
+                                    </span>
+                                </div>
+                                <div class="input-group date">
+                                    <input type="text" name="user_discount[discount_editor][{{ users_discount_row }}][end_date]" placeholder="{{ entry_date_end }}"
+                                           value="{{ discount_editor['end_date'] }}" data-date-format="YYYY-MM-DD" id="input-date-available" class="form-control" style="color: darkred"/>
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button"><i class="fa fa-calendar"></i></button>
+                                    </span>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="input-group pull-left local-checkbox-readonly">
+                                    <input class="bootstrap-switcher form-control product_settings" type="checkbox" value="1"
+                                           name="user_discount[discount_editor][{{ users_discount_row }}][products_all]" data-size="small" data-on-color="success"
+                                           {% if (discount_editor['products_all'] is defined and discount_editor['products_all'] == 1) %} {{ 'checked' }}{% endif %}
+                                           data-on-text="ALL" data-off-text="EDIT">
+                                </div>
+                                <a  href="{{ discount_editor['product_group_href'] is defined ? discount_editor['product_group_href'] : '#' }}"
+                                    {% if (discount_editor['products_all'] is defined and discount_editor['products_all'] == 1) %} {{ 'disabled="true"' }}{% endif %}
+                                    data-toggle="tooltip" title="{{ button_product_group_list }}" class="btn btn-primary product_settings_link"><i class="fa fa-pencil"></i></a>
+                            </td>
+
+                            <td class="text-center">
+                                <select name="user_discount[discount_editor][{{ users_discount_row }}][discount_variant_discount]" class="form-control">
+                                    {% for discount_key,discount_value in array_discounts %}
+                                {% if (discount_editor['discount_variant_discount'] is defined and discount_key == discount_editor['discount_variant_discount']) %}
+                                    <option value="{{ discount_key }}" selected="selected">{{ discount_value }}</option>
+                                {% else %} 
+                                    <option value="{{ discount_key }}" >{{ discount_value }}</option>
+                                {% endif %} 
+                                    {% endfor %} 
+                                </select>
+                            </td>
+                            <td class="text-center">
+                                <select name="user_discount[discount_editor][{{ users_discount_row }}][discount_variant_specials]" class="form-control">
+                                    {% for specials_key,specials_value in array_specials %}
+                                {% if (discount_editor['discount_variant_specials'] is defined and specials_key == discount_editor['discount_variant_specials']) %}
+                                    <option value="{{ specials_key }}" selected="selected">{{ specials_value }}</option>
+                                {% else %} 
+                                    <option value="{{ specials_key }}" >{{ specials_value }}</option>
+                                {% endif %} 
+                                    {% endfor %} 
+                                </select>
+                            </td>
+                            <td class="text-center">
+                                <div class="input-group pull-left">
+                                    <input class="bootstrap-switcher form-control" type="checkbox" value="1"
+                                           name="user_discount[discount_editor][{{ users_discount_row }}][status]" data-size="small" data-on-color="success"
+                                           {% if (discount_editor['status'] is defined and discount_editor['status'] == 1) %} {{ 'checked' }}{% endif %} >
+                                </div>
+                            </td>
+                            <td class="text-center"><button type="button" onclick="$('#users_discount_row{{ users_discount_row }}').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>
+
+                            </tr>
+                            {% set users_discount_row = users_discount_row + 1 %} 
+                            {% endfor %} 
+                            {% endif %} 
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="7"></td>
+                                    <td class="text-center">
+                                        <button type="button" onclick="addDiscountEditor();" data-toggle="tooltip" title="{{ button_add }}" class="btn btn-primary">
+                                            <i class="fa fa-plus-circle"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </form>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <hr>
+                    <div class="panel-heading text-center ">
+                        <button form="help_modals" class="hm-info btn btn-primary btn-sm" data-toggle="modal" data-target="#Authors_Modal">
+                            {{ description_author_start }} 
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Start Modal Users -->
+<div class="modal fade" id="Users_Form_Modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times" aria-hidden="true"></i></button>
+                <h4 class="modal-title" id="myModalLabel"><i class="fa fa-cogs"></i> {{ help_name_users }}</h4>
+            </div>
+            <div class="modal-body">
+                <legend>{{ help_text }}</legend>
+                <div class="text-center">{{ info_first_users }}</div>
+                <div class="helper-info">{{ info_second_users }}</div>
+                <div class="text-center">{{ info_third_users }}</div>
+                <div class="helper-info">{{ info_fourth_users }}</div>
+                <div class="text-center">{{ help_name_title }}</div>
+                <div class="helper-info">{{ help_list }}</div>
+                <div class="text-center">{{ help_warning }}</div>
+                <div class="helper-info">{{ help_end }}</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal"> {{ help_ok }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Start Modal users_one -->
+<div class="modal fade" id="Users_One_Modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times" aria-hidden="true"></i></button>
+                <h4 class="modal-title" id="myModalLabel"><i class="fa fa-cogs"></i> {{ help_name_users_one }}</h4>
+            </div>
+            <div class="modal-body">
+                <legend>{{ help_text }}</legend>
+                <div class="text-center">{{ helper_name_users_one }}</div>
+                <div class="helper-info">{{ helpers_name_users_one }}</div>
+                <div class="text-center">{{ help_first_users_one }}</div>
+                <div class="helper-info">{{ help_second_users_one }}</div>
+                <div class="text-center">{{ help_third_users_one }}</div>
+                <div class="helper-info">{{ help_fourth_users_one }}</div>
+                <div class="text-center">{{ help_fifth_users_one }}</div>
+                <div class="helper-info">{{ help_sixth_users_one }}</div>
+                <div class="text-center">{{ help_seventh_users_one }}</div>
+                <div class="helper-info">{{ help_eighth_users_one }}</div>
+                <div class="text-center">{{ help_ninth_users_one }}</div>
+                <div class="helper-info">{{ help_tenth_users_one }}</div>
+                <div class="text-center">{{ help_warning }}</div>
+                <div class="helper-info">{{ help_end }}</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal"> {{ help_ok }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Start Modal users_two -->
+<div class="modal fade" id="Users_Two_Modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times" aria-hidden="true"></i></button>
+                <h4 class="modal-title" id="myModalLabel"><i class="fa fa-cogs"></i> {{ help_name_users_two }}</h4>
+            </div>
+            <div class="modal-body">
+                <legend>{{ help_text }}</legend>
+                <div class="text-center">{{ help_first_users_two }}</div>
+                <div class="helper-info">{{ help_second_users_two }}</div>
+                <div class="text-center">{{ help_sixth_users_two }}</div>
+                <div class="helper-info">{{ help_seventh_users_two }}</div>
+                <div class="text-center">{{ help_eighth_users_two }}</div>
+                <div class="helper-info">{{ help_ninth_users_two }}</div>
+                <div class="text-center">{{ help_tenth_users_two }}</div>
+                <div class="helper-info">{{ help_eleventh_users_two }}</div>
+                <div class="text-center">{{ help_twelfth_users_two }}</div>
+                <div class="helper-info">{{ help_thirteenth_users_two }}</div>
+                <div class="text-center">{{ help_fourteenth_users_two }}</div>
+                <div class="helper-info">{{ help_fifteenth_users_two }}</div>
+                <div class="text-center">{{ help_sixteenth_users_two }}</div>
+                <div class="helper-info">{{ help_seventeenth_users_two }}</div>
+                <div class="text-center">{{ help_eighteenth_users_two }}</div>
+                <div class="helper-info">{{ help_nineteenth_users_two }}</div>
+                <div class="text-center">{{ help_twentieth_users_two }}</div>
+                <div class="helper-info">{{ help_twentyfirst_users_two }}</div>
+                <div class="text-center">{{ help_twentysecond_users_two }}</div>
+                <div class="helper-info">{{ help_twentythird_users_two }}</div>
+                <div class="text-center">{{ help_warning }}</div>
+                <div class="helper-info">{{ help_end }}</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal"> {{ help_ok }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Start Modal HELPER Authors -->
+<div class="modal fade" id="Authors_Modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times" aria-hidden="true"></i></button>
+                <h4 class="modal-title" id="myModalLabel"><i class="fa fa-cogs"></i> {{ description_author }}</h4>
+            </div>
+            <div class="modal-body">
+                <legend>{{ description_copyright }}</legend>
+                <div class="text-center">{{ description_author_copyright }}</div>
+                <div class="text-center">{{ thank_you }}</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal"> {{ help_ok }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#customers_settings").on('switchChange.bootstrapSwitch', function (event, state) {
+            $("#customers_settings_link").attr("disabled", state);
+        });
+        $("#geo_settings").on('switchChange.bootstrapSwitch', function (event, state) {
+            $("#geo_settings_link").attr("disabled", state);
+        });
+        $("#shop_settings").on('switchChange.bootstrapSwitch', function (event, state) {
+            $("#shop_settings_link").attr("disabled", state);
+        });
+
+        $(".product_settings").on('switchChange.bootstrapSwitch', function (event, state) {
+            $(this).parents('td').find(".product_settings_link").attr("disabled", state);
+        });
+    });
+</script>
+<script type="text/javascript">
+    function initSwitcher() {
+        $('.bootstrap-switcher').bootstrapSwitch();
+    }
+
+    function Apply() {
+            $('#users_discount_form').attr('action', '{{ update_stay|replace({"&amp;": "&"}) }}');
+            $('#users_discount_form').submit();
+        }
+        ;
+
+    var users_discount_row = {{ users_discount_row }};
+                
+    function addDiscountEditor() {
+        html = '<tr id="users_discount_row' + users_discount_row + '">';
+        html += '<td class="for-titles">';
+        html += '<b id="numb">';
+        html += '</b>';
+        html += '</td>';
+        html += '<td class="text-center">';
+        html += '<div class="input-group pull-left">';
+        html += '<input type="hidden" value="' + users_discount_row + '" name="user_discount[discount_editor][' + users_discount_row + '][editor_id]">';
+        html += '<input type="text" name="user_discount[discount_editor][' + users_discount_row + '][discount_percent]" value="" class="form-control text-right pull-left hd-md" style="color: red"/>';
+        html += '<select name="user_discount[discount_editor][' + users_discount_row + '][discount_type]" class="form-control pull-left hd-md" >';
+        html += '{% for order_status_value in array_discount_types %}';
+        html += '<option value="{{ order_status_value }}" >{{ order_status_value }}</option>';
+        html += '{% endfor %}';
+        html += '</select>';
+        html += '</div>';
+        html += '</td>';
+
+        html += '<td class="text-center local-settings">';
+        html += '<div class="input-group date">';
+        html += '<input type="text" name="user_discount[discount_editor][' + users_discount_row + '][date_start]" value="" data-date-format="YYYY-MM-DD" placeholder="{{ entry_date_start }}" value="" id="input-date-available" class="form-control" style="color: blue"/>';
+        html += '<span class="input-group-btn"><button class="btn btn-default" type="button"><i class="fa fa-calendar"></i></button></span>';
+        html += '</div>';
+        html += '<div class="input-group date">';
+        html += '<input type="text" name="user_discount[discount_editor][' + users_discount_row + '][end_date]" value="" data-date-format="YYYY-MM-DD" placeholder="{{ entry_date_end }}" value="" id="input-date-available" class="form-control" style="color: darkred"/>';
+        html += '<span class="input-group-btn"><button class="btn btn-default" type="button"><i class="fa fa-calendar"></i></button></span>';
+        html += '</div>';
+        html += ' </td>';
+
+        html += '<td class="text-center local-settings">';
+        html += '<div class="input-group pull-left local-checkbox-readonly">';
+        html += '<input class="bootstrap-switcher form-control" type="checkbox" value="1" name="user_discount[discount_editor][' + users_discount_row + '][product_group]" data-size="small" data-on-color="success" data-on-text="ALL" data-off-text="EDIT" checked >';
+        html += '</div>';
+        html += '<a href="#" data-toggle="tooltip" title="{{ button_client_group_list }}" class="btn btn-primary" disabled="disabled" onclick="return false"><i class="fa fa-pencil"></i></a>';
+        html += '</td>';
+
+        html += '<td class="text-center local-settings">';
+        html += '<select name="user_discount[discount_editor][' + users_discount_row + '][discount_variant_discount]" class="form-control">';
+        html += '{% for discount_key,discount_value in array_discounts %}';
+        html += '<option value="{{ discount_key }}" {% if (discount_variant["discount_variant_discount"] == discount_key) %} selected {% endif %}>{{ discount_value }}</option>';
+        html += '{% endfor %}';
+        html += '</select>';
+        html += '</td>';
+
+        html += '<td class="text-center local-settings">';
+        html += '<select name="user_discount[discount_editor][' + users_discount_row + '][discount_variant_specials]" class="form-control">';
+        html += '{% for specials_key,specials_value in array_specials %}';
+        html += '<option value="{{ specials_key }}" {% if (discount_variant["discount_variant_specials"] == specials_key) %} selected {% endif %} >{{ specials_value }}</option>';
+        html += '{% endfor %}';
+        html += '</select>';
+        html += '</td>';
+
+        html += '<td class="text-center">';
+        html += '<div class="input-group pull-left">';
+        html += '<input class="bootstrap-switcher form-control" type="checkbox" value="1" name="user_discount[discount_editor][' + users_discount_row + '][status]" data-size="small" data-on-color="success">';
+        html += '</div>';
+        html += '</td>';
+        html += '<td class="text-center">';
+        html += '<button type="button" onclick="$(\'#users_discount_row' + users_discount_row + '\').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button>';
+        html += '</td>';
+        html += '</tr>';
+
+        $('#discount_editor tbody').append(html);
+
+        $('.date').datetimepicker({
+                pickDate: true,
+                pickTime: false
+                                            });
+            //    globalSettings();
+        $('.bootstrap-switcher').bootstrapSwitch();
+
+        users_discount_row++;
+    }
+</script>
+<script type="text/javascript"><!--
+
+    $( document ).ready(function() {
+        $('body').addClass('hyper-page hm-edit-page hd-switch hl-users');
+
+        $('.date').datetimepicker({
+        pickDate: true,
+        pickTime: false
+                });
+
+    initSwitcher();
+
+});
+
+    //-->
+</script>
+{{ footer }}

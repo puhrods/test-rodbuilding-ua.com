@@ -1,0 +1,87 @@
+{% if poip_installed ?? false %}
+				
+	<div class="form-group">
+		<div class="col-sm-2">
+			<div class="row">
+				<label class="col-sm-12 control-label" for="input-sort-order">{{ poip_module_name }}:</label>
+			</div>
+			<div class="row">
+				<div class="col-sm-12" style="padding-top:10px;">
+					<button type="button" id="poip-button-hide-settings" style="display:none;" onclick="poip.hideSettings();" class="btn btn-default pull-right">{{ entry_hide_settings }}</button>
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-10">
+			{% set poip_custom_settings_cnt = 0 %}
+			{% for poip_setting in poip_settings_details %}
+				{% if (poip_saved_settings[poip_setting.name] ?? 0) == (val_id+1) %}
+					{% set poip_custom_settings_cnt = poip_custom_settings_cnt + 1 %}
+				{% endif %}
+			{% endfor %}
+			{% if poip_custom_settings_cnt != 0 %}
+				{% set poip_custom_settings_cnt = ' ('~poip_custom_settings_cnt~')' %}
+			{% else %}
+				{% set poip_custom_settings_cnt = '' %}
+			{% endif %}
+			<button type="button" id="poip-button-show-settings" class="btn btn-default" onclick="poip.showSettings();">{{ entry_show_settings }}<span id="poip-custom-settings-cnt"></span></button>
+			<div class="row" id="poip-settings" style="display:none;">
+		
+				{% for poip_setting in poip_settings_details %}
+					<div class="col-sm-4">
+					{{ poip_setting.title }}:
+					<select name="poip_settings[{{ poip_setting.name }}]" class="form-control">
+						{% if poip_setting.values %}
+							<option value="0">{{ poip_settings_enable_disable_options[0] }}</option>
+							{% for val_id, val_text in poip_setting.values %}
+								<option value="{{ 1+val_id }}" 
+									{% if (poip_saved_settings[poip_setting.name] ?? 0) == (val_id+1) %}
+										selected
+									{% endif %}
+								>{{ val_text }}</option>
+							{% endfor %}
+						{% else %}
+							{% for poip_settings_enable_disable_option_value,poip_settings_enable_disable_option_name in poip_settings_enable_disable_options %}
+								<option value="{{ poip_settings_enable_disable_option_value }}"
+									{% if (poip_saved_settings[poip_setting.name] ?? 0) == poip_settings_enable_disable_option_value %}
+										selected
+									{% endif %}
+								>{{ poip_settings_enable_disable_option_name }}</option>
+							{% endfor %}
+						{% endif %}
+					</select>
+					</div>
+				{% endfor %}
+		
+			</div>	
+		</div>
+		
+	</div>
+	
+	<script>
+		poip = {
+			showSettings: function() {
+				$('#poip-button-hide-settings').show();
+				$('#poip-button-show-settings').hide();
+				$('#poip-settings').show();
+			},
+			hideSettings: function() {
+				$('#poip-button-hide-settings').hide();
+				$('#poip-button-show-settings').show();
+				$('#poip-settings').hide();
+				poip.updateNumberOfCustomSettings();
+			},
+			updateNumberOfCustomSettings: function(){
+				let cnt = 0;
+				$('select[name^="poip_settings["]').each(function(){
+					if ( $(this).val() && $(this).val() != '0' ) {
+						cnt++;
+					}
+				});
+				let cnt_view = cnt ? ' ('+cnt+')' : '';
+				$('#poip-custom-settings-cnt').html(cnt_view);
+			},
+		};
+		poip.updateNumberOfCustomSettings();
+	</script>
+
+{% endif %}

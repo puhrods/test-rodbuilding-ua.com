@@ -1,0 +1,723 @@
+{{ header }}{{ column_left }}
+<div id="content">
+    <div class="container-fluid  h-editor">
+        <div id="panel_top" class="affix col-sm-12">
+            <div class="text-title text-center"><i class="fa fa-opencart" aria-hidden="true"></i>
+                <span class="win-title">{{ hyper_discount_name }}</span>
+                <hr class="ht-min">
+                <span class="ht-title">{{ hyper_discount_title }}</span>
+            </div>
+            <h1 data-toggle="tooltip" data-placement="bottom" title="{{ heading_text_title }}">{{ accumulative_discount['name'][config_language_id] }}</h1>
+            <div id="panel_tops" class="pull-right">
+                <button type="button" onclick="Apply();" data-toggle="tooltip" data-placement="bottom" class="btn btn-primary memory-button" title="{{ button_apply }}"><i class="fa fa-check-circle-o"></i></button>
+                <button type="submit" form="accumulative_discount_form" data-toggle="tooltip" data-placement="bottom" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+                <a href="{{ cancel }}" data-toggle="tooltip" data-placement="bottom" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a>
+            </div>
+        </div>
+
+        <div class="panel panel-default col-sm-12">
+            {% if error_warning %}
+            <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+              <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+            {% endif %}
+            
+            <div class="panel-heading">
+                <h3><i class="fa fa-sliders" aria-hidden="true"></i> {{ heading_action_text }}</h3>
+                <button form="help_modals" class="pull-right hm-help btn btn-primary btn-sm" data-toggle="modal" data-target="#Accumulative_Form_Modal">
+                    <i class="fa fa-info" aria-hidden="true"></i> - INFO
+                </button>
+            </div>
+            <div class="panel-body top-pad">
+                <div class="col-sm-12">
+                    <form action="{{ action }}" method="post" enctype="multipart/form-data" id="accumulative_discount_form" class="form-horizontal">
+                        <input type="hidden" value="{{ accumulative_discount['discount_id'] }}" name="accumulative_discount[discount_id]">
+
+                        <table class="table table-striped table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <td class="text-center" style="width: 25%;">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ entry_title_titles }}">
+                                                {{ entry_title }} 
+                                            </span>
+                                        </label>
+                                    </td>
+                                    <td class="text-center" style="width: 75%;">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ entry_description_titles }}">
+                                                {{ entry_description }} 
+                                            </span>
+                                        </label>
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="text-center">
+                                    <td class="text-center">
+                                        {% for language in languages %} 
+                                        {% if (error_name[language['language_id']] is defined) %} 
+                                        <div class="text-danger">{{ error_name[language['language_id']] }}</div>
+                                        {% endif %} 
+                                        <div class="input-group pull-left"><span class="input-group-addon"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}" /></span>
+                                            <input type="text" name="accumulative_discount[name][{{ language['language_id'] }}]"
+                                                   value="{{ accumulative_discount['name'][language['language_id']] is defined ? accumulative_discount['name'][language['language_id']] : '' }}" class="form-control" />
+                                        </div>
+                                        {% endfor %} 
+                                    </td>
+                                    <td class="text-center">
+                                        <textarea style="resize:vertical;" name="accumulative_discount[description]" class="form-control">{{ accumulative_discount['description'] }}</textarea>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <legend>
+                            {{ settings_text }} 
+                            <button form="help_modals" class="pull-right hm-help btn btn-primary btn-sm" data-toggle="modal" data-target="#Accumulative_One_Modal">
+                                <i class="fa fa-info" aria-hidden="true"></i> - {{ help_name }} 
+                            </button>
+                        </legend>
+                        <table class="table table-striped table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <td class="hidden text-center editor">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ entry_users_variants_titles }}">
+                                                {{ entry_users_variants }} 
+                                            </span>
+                                        </label>
+                                    </td>
+                                    <td class="text-center editor">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ entry_shops_titles }}">
+                                                {{ entry_shops }} 
+                                            </span>
+                                        </label>
+                                    </td>
+                                    <td class="text-center editor">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ entry_geo_titles }}">
+                                                {{ entry_geo }} 
+                                            </span>
+                                        </label>
+                                    </td>
+                                    <td class="text-center editor">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ entry_client_group_titles }}">
+                                                {{ entry_client_group }} 
+                                            </span>
+                                        </label>
+                                    </td>
+                                    <td class="text-center editor">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ entry_product_groups_titles }}">
+                                                {{ entry_product_groups }} 
+                                            </span>
+                                        </label>
+                                    </td>
+                                    <td class="text-center">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ entry_discounts_titles }}">
+                                                {{ entry_discounts }} 
+                                            </span>
+                                        </label>
+                                    </td>
+                                    <td class="text-center">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ entry_stock_titles }}">
+                                                {{ entry_stock }} 
+                                            </span>
+                                        </label>
+                                    </td>
+                                    <td class="text-center editor">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ entry_sum_status_orders_titles }}">
+                                                {{ entry_sum_status_orders }} 
+                                            </span>
+                                        </label>
+                                    </td>
+                                    <td class="text-center data-style">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ entry_sum_data_orders_titles }}">
+                                                {{ entry_date }} 
+                                            </span>
+                                        </label>
+                                    </td>
+                                    <td class="text-center mini-style">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ accumulative_price_correction_titles }}">
+                                                <i class="fa fa-exchange" aria-hidden="true"></i>
+                                            </span>
+                                        </label>
+                                    </td>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="text-center">
+                                   
+                                    <td class="text-center">
+                                        <div class="input-group pull-left">
+                                            <input class="bootstrap-switcher form-control" type="checkbox" value="1"
+                                                   name="accumulative_discount[shops_all]" data-size="small" data-on-color="success"
+                                                   {% if ((accumulative_discount['shops_all'] is defined and accumulative_discount['shops_all'] == 1)) %} {{ 'checked' }}{% endif %}
+                                                   data-on-text="ALL" data-off-text="EDIT">
+                                        </div>
+                                        <a href="{{ edit_shops_list }}" data-toggle="tooltip" title="{{ button_edit_shops_list }}" class="btn btn-primary"><i class="fa fa-pencil"></i></a>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="input-group pull-left">
+                                            <input class="bootstrap-switcher form-control" type="checkbox" value="1"
+                                                   name="accumulative_discount[geos_all]" data-size="small" data-on-color="success"
+                                                   {% if (accumulative_discount['geos_all'] == 1) %} {{ 'checked' }}{% endif %}
+                                                   data-on-text="ALL" data-off-text="EDIT">
+                                        </div>
+                                        <a href="{{ edit_geo_list }}" data-toggle="tooltip" title="{{ button_edit_geo_list }}" class="btn btn-primary"><i class="fa fa-pencil"></i></a>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="input-group pull-left checkbox-readonly">
+                                            <input class="bootstrap-switcher form-control" type="checkbox" value="1"
+                                                   name="accumulative_discount[customers_all]" data-size="small" data-on-color="success"
+                                                   {% if ((accumulative_discount['customers_all'] is defined and accumulative_discount['customers_all'] == 1) ) %} {{ 'checked' }}{% endif %}
+                                                   data-on-text="ALL" data-off-text="EDIT">
+                                        </div>
+                                        <a href="{{ edit_client_group }}" data-toggle="tooltip" title="{{ button_client_group_list }}" class="btn btn-primary"><i class="fa fa-pencil"></i></a>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="input-group pull-left checkbox-readonly">
+                                            <input class="bootstrap-switcher form-control" type="checkbox" value="1"
+                                                   name="accumulative_discount[products_all]" data-size="small" data-on-color="success"
+                                                   {% if ((accumulative_discount['products_all'] is defined and accumulative_discount['products_all'] == 1)) %} {{ 'checked' }}{% endif %}
+                                                   data-on-text="ALL" data-off-text="EDIT">
+                                        </div>
+                                        <a href="{{ edit_product_groups }}" data-toggle="tooltip" title="{{ button_product_group_list }}" class="btn btn-primary"><i class="fa fa-pencil"></i></a>
+                                    </td>
+                                    <td class="text-center">
+                                        <select name="accumulative_discount[discount_variant_discount]" class="form-control">
+                                            {% for discount_key,discount_value in array_discounts %}
+                                {% if (accumulative_discount['discount_variant_discount'] is defined and discount_key == accumulative_discount['discount_variant_discount']) %}
+                                    <option value="{{ discount_key }}" selected="selected">{{ discount_value }}</option>
+                                {% else %} 
+                                    <option value="{{ discount_key }}" >{{ discount_value }}</option>
+                                {% endif %} 
+                                            {% endfor %} 
+                                        </select>
+                                    </td>
+                                    <td class="text-center">
+                                        <select name="accumulative_discount[discount_variant_specials]" class="form-control">
+                                            {% for specials_key,specials_value in array_specials %}
+                                {% if (accumulative_discount['discount_variant_specials'] is defined and specials_key == accumulative_discount['discount_variant_specials']) %}
+                                    <option value="{{ specials_key }}" selected="selected">{{ specials_value }}</option>
+                                {% else %} 
+                                    <option value="{{ specials_key }}" >{{ specials_value }}</option>
+                                {% endif %} 
+                                            {% endfor %} 
+                                        </select>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="multiselect-native-select">
+                                            <select id="multiple-selected" multiple="multiple" name="accumulative_discount[order_statuses][]">
+                                                {% for order_status_value in array_order_status %}
+                                    {% if accumulative_discount['order_statuses'] is iterable and order_status_value['order_status_id'] in accumulative_discount['order_statuses'] %}
+                                        <option  value="{{ order_status_value['order_status_id'] }}" selected="selected">{{ order_status_value['name'] }}</option>
+                                    {% else %} 
+                                        <option value="{{ order_status_value['order_status_id'] }}" >{{ order_status_value['name'] }}</option>
+                                    {% endif %} 
+                                                {% endfor %} 
+                                            </select>
+                                        </span>
+                                    </td>
+                                    <td class="text-center data-style">
+                                        <div class="input-group date">
+                                            <input type="text" name="accumulative_discount[start_date]" placeholder="Дата начала" data-date-format="YYYY-MM-DD" 
+                                                   id="input-date-available" class="form-control" value="{{ accumulative_discount['start_date'] }}" style="color: blue">
+                                            <span class="input-group-btn">
+                                                <button class="btn btn-default" type="button"><i class="fa fa-calendar"></i></button>
+                                            </span>
+                                        </div>
+                                        <div class="input-group date">
+                                            <input type="text" name="accumulative_discount[end_date]"  placeholder="Дата окончания" data-date-format="YYYY-MM-DD" id="input-date-available" class="form-control" value="{{ accumulative_discount['end_date'] }}" style="color: darkred">
+                                            <span class="input-group-btn">
+                                                <button class="btn btn-default" type="button"><i class="fa fa-calendar"></i></button>
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td class="text-center mini-style">
+                                        <div class="text-center group">
+                                            <input class="bootstrap-switcher form-control" type="checkbox" value="1"
+                                                   name="accumulative_discount[correction]" id='correction' data-size="small" data-on-color="success"
+                                                {% if (accumulative_discount['correction'] is defined and accumulative_discount['correction'] == 1) %} {{ 'checked' }}{% endif %}
+                                                   data-on-text="MAIN" data-off-text="GROUP">
+                                        </div>
+                                    </td>
+
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <legend>
+                            {{ discount_editor_text }}
+                            <button form="help_modals" class="pull-right hm-help btn btn-primary btn-sm" data-toggle="modal" data-target="#Accumulative_Two_Modal">
+                                <i class="fa fa-info" aria-hidden="true"></i> - {{ help_name }} 
+                            </button>
+                        </legend>
+                        <table id="discount_editor" class="table table-striped table-bordered table-hover num">
+                            <thead>
+                                <tr>
+                                    <td class="text-center micro-style">№</td>
+                                    <td class="text-center">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ entry_client_status_titles }}">
+                                                {{ entry_client_status }} 
+                                            </span>
+                                        </label>
+                                    </td>
+                                    <td class="text-center editor">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ name_function_orders_titles }}">
+                                                {{ name_function_orders }} 
+                                            </span>
+                                        </label>
+                                    </td>
+                                    <td class="text-center editor">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ name_function_products_titles }}">
+                                                {{ name_function_products }} 
+                                            </span>
+                                        </label>
+                                    </td>
+                                    <td class="text-center editor">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ name_function_sum_titles }}">
+                                                {{ name_function_sum }} 
+                                            </span>
+                                        </label>
+                                    </td>
+                                    <td class="text-center editor">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ entry_variant_accumulative_titles }}">
+                                                {{ entry_variant_accumulative }} 
+                                            </span>
+                                        </label>
+                                    </td>
+                                    <td class="text-center editor">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ entry_discount_percent_titles }}">
+                                                {{ entry_discount_percent }} 
+                                            </span>
+                                        </label>
+                                    </td>
+                                    <td class="text-center data-style">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ entry_date_titles }}">
+                                                {{ entry_date }} 
+                                            </span>
+                                        </label>
+                                    </td>
+                                    <td class="text-center mini-style">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ entry_discount_editor_status_titles }}">
+                                                {{ entry_discount_editor_status }} 
+                                            </span>
+                                        </label>
+                                    </td>
+                                    <td class="text-center mini-style">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ column_delete_titles }}">
+                                                {{ column_delete }} 
+                                            </span>
+                                        </label>
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% set accumulative_discount_row = 1 %} 
+                                {% if (accumulative_discount['discount_editor'] is defined) %}
+                        {% for discount_editor in accumulative_discount['discount_editor'] %} 
+                        <tr id="accumulative_discount_row{{ accumulative_discount_row }}">
+                            <td class="for-titles">
+                                <label class="control-label">
+                                  <span data-toggle="tooltip" title="" data-original-title="
+                                  {% set str = accumulative_discount['description'] %}
+                                  {% set str_arr =  str|split('#') %}
+                                  {{ str_arr[accumulative_discount_row] is defined ?
+                                  str_arr[accumulative_discount_row] : constant('false') }}"><b id="numb"></b></span>
+                                </label>
+                                <input type="hidden" name="accumulative_discount[discount_editor][{{ accumulative_discount_row }}][editor_id]" value="{{ accumulative_discount_row }}" />
+                                <input type="hidden" name="accumulative_discount[discount_editor][{{ accumulative_discount_row }}][id]" value="{{ discount_editor.id }}" />
+                            </td>
+                            <td class="text-center">
+                                <select name="accumulative_discount[discount_editor][{{ accumulative_discount_row }}][discount_status]" class="form-control">
+                                    <option value=""></option>
+                                    {% for status in accamulation_statuses %} 
+                                        <option value="{{ status['statuses_id'] }}"
+{% if (discount_editor['discount_status_id'] is defined and discount_editor['discount_status_id'] == status['statuses_id']) %} selected="selected" {% endif %} >{{ status['name'] }}</option>
+                                {% endfor %} 
+
+                                </select>
+                                </td>
+                            <td class="text-center">
+                                <input type="text" name="accumulative_discount[discount_editor][{{ accumulative_discount_row }}][discount_function_orders]"
+                                       value="{{ discount_editor['discount_function_orders'] is defined ? discount_editor['discount_function_orders'] : '' }}" class="form-control text-right" style="color: blueviolet"/>
+                            </td>
+                            <td class="text-center">
+                                <input type="text" name="accumulative_discount[discount_editor][{{ accumulative_discount_row }}][discount_function_products]"
+                                       value="{{ discount_editor['discount_function_products'] is defined ? discount_editor['discount_function_products'] : '' }}" class="form-control text-right" style="color: darkblue"/>
+                            </td>
+                            <td class="text-center">
+                                <input type="text" name="accumulative_discount[discount_editor][{{ accumulative_discount_row }}][discount_function_sum]"
+                                       value="{{ discount_editor['discount_function_sum'] is defined ? discount_editor['discount_function_sum'] : '' }}" class="form-control text-right"  style="color: teal"/>
+                            </td>
+                            <td class="text-center">
+                                <select name="accumulative_discount[discount_editor][{{ accumulative_discount_row }}][discount_function]" class="form-control">
+                                    {% for option_key,option_value in array_discount_function %}
+                                        {% if (discount_editor['discount_function'] is defined and option_key == discount_editor['discount_function']) %}
+                                            <option value="{{ option_key }}" selected="selected">{{ option_value }}</option>
+                                        {% else %} 
+                                            <option value="{{ option_key }}" >{{ option_value }}</option>
+                                        {% endif %} 
+                                    {% endfor %} 
+                                </select>
+                            </td>
+
+                            <td class="text-center">
+                                <div class="input-group pull-left">
+                                    <input type="text" name="accumulative_discount[discount_editor][{{ accumulative_discount_row }}][discount_percent]"
+                                           value="{{ discount_editor['discount_percent'] is defined ? discount_editor['discount_percent'] : '' }}" class="form-control text-right pull-left hd-md" style="color: red"/>
+                                    <select name="accumulative_discount[discount_editor][{{ accumulative_discount_row }}][discount_type]" class="form-control pull-left hd-md" >
+                                        {% for order_status_value in array_discount_types %}
+                                            {% if (discount_editor['discount_type'] is defined and discount_editor['discount_type'] == order_status_value) %}
+                                                <option value="{{ order_status_value }}" selected="selected">{{ order_status_value }}</option>
+                                            {% else %} 
+                                                <option value="{{ order_status_value }}" >{{ order_status_value }}</option>
+                                            {% endif %} 
+                                        {% endfor %} 
+                                    </select>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="input-group date">
+                                    <input type="text" name="accumulative_discount[discount_editor][{{ accumulative_discount_row }}][start_date]" placeholder="{{ entry_date_start }}"
+                                           data-date-format="YYYY-MM-DD" id="input-date-available" class="form-control" value="{{ discount_editor['start_date'] }}" style="color: blue"/>
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button"><i class="fa fa-calendar"></i></button>
+                                    </span>
+                                </div>
+                                <div class="input-group date">
+                                    <input type="text" name="accumulative_discount[discount_editor][{{ accumulative_discount_row }}][end_date]" placeholder="{{ entry_date_end }}"
+                                           data-date-format="YYYY-MM-DD" id="input-date-available" class="form-control" value="{{ discount_editor['end_date'] }}" style="color: darkred"/>
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button"><i class="fa fa-calendar"></i></button>
+                                    </span>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="input-group pull-left">
+                                    <input class="bootstrap-switcher form-control" type="checkbox" value="1"
+                                           name="accumulative_discount[discount_editor][{{ accumulative_discount_row }}][status]" data-size="small" data-on-color="success"
+                                           {% if (discount_editor['status'] is defined and discount_editor['status'] == 1) %} {{ 'checked' }}{% endif %} >
+                                </div>
+                            </td>
+                            <td class="text-center"><button type="button" onclick="$('#accumulative_discount_row{{ accumulative_discount_row }}').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>
+                            </tr>
+                            {% set accumulative_discount_row = accumulative_discount_row + 1 %} 
+                            {% endfor %} 
+                            {% endif %} 
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="9"></td>
+                                    <td class="text-center">
+                                        <button type="button" onclick="addDiscountEditor();" data-toggle="tooltip" title="{{ button_add }}" class="btn btn-primary">
+                                            <i class="fa fa-plus-circle"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+
+                    </form>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <hr>
+                    <div class="panel-heading text-center ">
+                        <h3 class="text-center panel-title"><i class="fa fa-copyright" aria-hidden="true"></i> {{ description_author }}</h3>
+                    </div>
+                    <br>
+                    <div class="text-center">
+                        <button form="help_modals" class="hm-info btn btn-primary btn-sm" data-toggle="modal" data-target="#Authors_Modal">
+                            {{ description_author_start }} 
+                        </button>
+                    </div>
+                    <hr>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Start Modal Accumulative -->
+<div class="modal fade" id="Accumulative_Form_Modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times" aria-hidden="true"></i></button>
+                <h4 class="modal-title" id="myModalLabel"><i class="fa fa-cogs"></i> {{ help_name_accumulative }}</h4>
+            </div>
+            <div class="modal-body">
+                <legend>{{ help_text }}</legend>
+                <div class="text-center">{{ info_first_accumulative }}</div>
+                <div class="helper-info">{{ info_second_accumulative }}</div>
+                <div class="text-center">{{ info_third_accumulative }}</div>
+                <div class="helper-info">{{ info_fourth_accumulative }}</div>
+                <div class="text-center">{{ help_name_title }}</div>
+                <div class="helper-info">{{ help_list }}</div>
+                <div class="text-center">{{ help_warning }}</div>
+                <div class="helper-info">{{ help_end }}</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal"> {{ help_ok }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Start Modal accumulative_one -->
+<div class="modal fade" id="Accumulative_One_Modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times" aria-hidden="true"></i></button>
+                <h4 class="modal-title" id="myModalLabel"><i class="fa fa-cogs"></i> {{ help_name_accumulative_one }}</h4>
+            </div>
+            <div class="modal-body">
+                <legend>{{ help_text }}</legend>
+                <div class="text-center">{{ helper_name_accumulative_one }}</div>
+                <div class="helper-info">{{ helpers_name_accumulative_one }}</div>
+                <div class="text-center">{{ help_first_accumulative_one }}</div>
+                <div class="helper-info">{{ help_second_accumulative_one }}</div>
+                <div class="text-center">{{ help_third_accumulative_one }}</div>
+                <div class="helper-info">{{ help_fourth_accumulative_one }}</div>
+                <div class="text-center">{{ help_fifth_accumulative_one }}</div>
+                <div class="helper-info">{{ help_sixth_accumulative_one }}</div>
+                <div class="text-center">{{ help_seventh_accumulative_one }}</div>
+                <div class="helper-info">{{ help_eighth_accumulative_one }}</div>
+                <div class="text-center">{{ help_ninth_accumulative_one }}</div>
+                <div class="helper-info">{{ help_tenth_accumulative_one }}</div>
+                <div class="text-center">{{ help_eleventh_accumulative_one }}</div>
+                <div class="helper-info">{{ help_twelfth_accumulative_one }}</div>
+                <div class="text-center">{{ help_thirteenth_accumulative_one }}</div>
+                <div class="helper-info">{{ help_fourteenth_accumulative_one }}</div>
+                <div class="text-center">{{ help_fifteenth_accumulative_one }}</div>
+                <div class="helper-info">{{ help_sixteenth_accumulative_one }}</div>
+                <div class="text-center">{{ help_seventeenth_accumulative_one }}</div>
+                <div class="helper-info">{{ help_eighteenth_accumulative_one }}</div>
+                <div class="text-center">{{ help_nineteenth_accumulative_one }}</div>
+                <div class="helper-info">{{ help_twentieth_accumulative_one }}</div>
+                <div class="text-center">{{ help_twentyfirst_accumulative_one }}</div>
+                <div class="helper-info">{{ help_twentysecond_accumulative_one }}</div>
+                <div class="text-center">{{ help_warning }}</div>
+                <div class="helper-info">{{ help_end }}</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal"> {{ help_ok }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Start Modal accumulative_two -->
+<div class="modal fade" id="Accumulative_Two_Modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times" aria-hidden="true"></i></button>
+                <h4 class="modal-title" id="myModalLabel"><i class="fa fa-cogs"></i> {{ help_name_accumulative_two }}</h4>
+            </div>
+            <div class="modal-body">
+                <legend>{{ help_text }}</legend>
+                <div class="text-center">{{ help_first_accumulative_two }}</div>
+                <div class="helper-info">{{ help_second_accumulative_two }}</div>
+                <div class="text-center">{{ help_third_accumulative_two }}</div>
+                <div class="helper-info">{{ help_fourth_accumulative_two }}</div>
+                <div class="text-center">{{ help_tenth_accumulative_two }}</div>
+                <div class="helper-info">{{ help_eleventh_accumulative_two }}</div>
+                <div class="text-center">{{ help_twelfth_accumulative_two }}</div>
+                <div class="helper-info">{{ help_thirteenth_accumulative_two }}</div>
+                <div class="text-center">{{ help_fourteenth_accumulative_two }}</div>
+                <div class="helper-info">{{ help_fifteenth_accumulative_two }}</div>
+                <div class="text-center">{{ help_eighth_accumulative_two }}</div>
+                <div class="helper-info">{{ help_ninth_accumulative_two }}</div>
+                <div class="text-center">{{ help_sixth_accumulative_two }}</div>
+                <div class="helper-info">{{ help_seventh_accumulative_two }}</div>
+                <div class="text-center">{{ help_sixteenth_accumulative_two }}</div>
+                <div class="helper-info">{{ help_seventeenth_accumulative_two }}</div>
+                <div class="text-center">{{ help_eighteenth_accumulative_two }}</div>
+                <div class="helper-info">{{ help_nineteenth_accumulative_two }}</div>
+                <div class="text-center">{{ help_twentieth_accumulative_two }}</div>
+                <div class="helper-info">{{ help_twentyfirst_accumulative_two }}</div>
+
+                <div class="text-center">{{ help_warning }}</div>
+                <div class="helper-info">{{ help_end }}</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal"> {{ help_ok }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Start Modal HELPER Authors -->
+<div class="modal fade" id="Authors_Modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times" aria-hidden="true"></i></button>
+                <h4 class="modal-title" id="myModalLabel"><i class="fa fa-cogs"></i> {{ description_author }}</h4>
+            </div>
+            <div class="modal-body">
+                <legend>{{ description_copyright }}</legend>
+                <div class="text-center">{{ description_author_copyright }}</div>
+                <div class="text-center">{{ thank_you }}</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal"> {{ help_ok }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function initSwitcher() {
+        $('.bootstrap-switcher').bootstrapSwitch({
+            onInit: function (event, state) {
+                switcher(event, state, this);
+            },
+            onSwitchChange: function (event, state) {
+                switcher(event, state, this);
+            }
+        });
+    }
+
+    function switcher(event, state, $this) {
+        if (state == true) {
+            $($this).parent().parent().parent().parent().find('a').attr("disabled", "true");
+            $($this).parent().parent().parent().parent().find('a').attr("onclick", "return false");
+        } else {
+            $($this).parent().parent().parent().parent().find('a').removeAttr("disabled");
+            $($this).parent().parent().parent().parent().find('a').removeAttr("onclick");
+        }
+    }
+
+    function Apply() {
+            $('#accumulative_discount_form').attr('action', '{{ update_stay|replace({"&amp;": "&"}) }}');
+            $('#accumulative_discount_form').submit();
+        }
+
+    var accumulative_discount_row = {{ accumulative_discount_row }};
+
+    function addDiscountEditor() {
+
+        html = '<tr id="accumulative_discount_row' + accumulative_discount_row + '">';
+        html += '<td class="for-titles">';
+        html += '<b id="numb">';
+        html += '</b>';
+        html += '</td>';
+        html += '<td class="text-center">';
+        html += '<input type="hidden" value="' + accumulative_discount_row + '" name="accumulative_discount[discount_editor][' + accumulative_discount_row + '][editor_id]">';
+        html += '<select name="accumulative_discount[discount_editor][' + accumulative_discount_row + '][discount_status]" class="form-control">';
+
+        html  += ' <option value=""></option>';
+        html += ' {% for status in accamulation_statuses %}';
+        html  += ' <option value="{{ status['statuses_id'] }}">{{ status['name'] }}</option>';
+        html  += '{% endfor %}';
+        html += '</select>';
+        html += '</select>';
+        html += '</td>';
+
+        html += '<td class="text-center">';
+        html += '<input type="text" name="accumulative_discount[discount_editor][' + accumulative_discount_row + '][discount_function_orders]" value="" class="form-control text-right" style="color: blueviolet"/>';
+        html += '</td>';
+
+        html += '<td class="text-center">';
+        html += '<input type="text" name="accumulative_discount[discount_editor][' + accumulative_discount_row + '][discount_function_products]" value="" class="form-control text-right" style="color: darkblue"/>';
+        html += '</td>';
+
+        html += '<td class="text-center">';
+        html += '<input type="text" name="accumulative_discount[discount_editor][' + accumulative_discount_row + '][discount_function_sum]" value="" class="form-control text-right" style="color: teal"/>';
+        html += '</td>';
+
+        html += '<td class="text-center">';
+        html += '<select name="accumulative_discount[discount_editor][' + accumulative_discount_row + '][discount_function]" class="form-control">';
+        html += ' {% for option_key,option_value in array_discount_function %}';
+        html  += '<option value="{{ option_key }}" >{{ option_value }}</option>';
+        html  += '{% endfor %}';
+        html += '</select>';
+        html += '</td>';
+
+        html += '<td class="text-center">';
+        html += '<div class="input-group pull-left">';
+        html += '<input type="text" name="accumulative_discount[discount_editor][' + accumulative_discount_row + '][discount_percent]" value="" class="form-control text-right pull-left hd-md" style="color: red"/>';
+        html += '<select name="accumulative_discount[discount_editor][' + accumulative_discount_row + '][discount_type]" class="form-control pull-left hd-md" >';
+        html += '{% for order_status_value in array_discount_types %}';
+        html  += '<option value="{{ order_status_value }}" >{{ order_status_value }}</option>';
+        html  += '{% endfor %}';
+        html += '</select>';
+        html += '</div>';
+        html += '</td>';
+
+        html += '<td class="text-center">';
+        html += '<div class="input-group date">';
+        html += '<input type="text" name="accumulative_discount[discount_editor][' + accumulative_discount_row + '][start_date]" placeholder="{{ entry_date_start }}" data-date-format="YYYY-MM-DD" id="input-date-available" class="form-control" value="" style="color: blue"/>';
+        html += '<span class="input-group-btn">';
+        html += '<button class="btn btn-default" type="button"><i class="fa fa-calendar"></i></button>';
+        html += '</span>';
+        html += '</div>';
+        html += '<div class="input-group date">';
+        html += '<input type="text" name="accumulative_discount[discount_editor][' + accumulative_discount_row + '][end_date]" placeholder="{{ entry_date_end }}" data-date-format="YYYY-MM-DD" id="input-date-available" class="form-control" value="" style="color: darkred"/>';
+        html += '<span class="input-group-btn">';
+        html += '<button class="btn btn-default" type="button"><i class="fa fa-calendar"></i></button>';
+        html += '</span>';
+        html += '</div>';
+        html += '</td>';
+
+        html += '<td class="text-center">';
+        html += '<div class="input-group pull-left">';
+        html += '<input class="bootstrap-switcher form-control" type="checkbox" value="1" name="accumulative_discount[discount_editor][' + accumulative_discount_row + '][status]" data-size="small" data-on-color="success">';
+        html += '</div>';
+        html += '</td>';
+        html += '<td class="text-center"><button type="button" onclick="$(\'#accumulative_discount_row' + accumulative_discount_row + '\').remove();"" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>';
+
+        html += '</tr>';
+
+        accumulative_discount_row++;
+
+        $('#discount_editor tbody').append(html);
+
+        $('.bootstrap-switcher').bootstrapSwitch();
+
+        $('.date').datetimepicker({
+            pickDate: true,
+            pickTime: false
+        });
+
+    }
+</script>
+<script type="text/javascript">
+    $( document ).ready(function() {
+
+        $('#multiple-selected').multiselect({
+            buttonWidth: '150px'
+        });
+
+        $('body').addClass('hyper-page hm-edit-page hd-switch hl-accumulative');
+
+        $('.date').datetimepicker({
+            pickDate: true,
+            pickTime: false
+        });
+
+    initSwitcher();
+
+    });
+</script>
+{{ footer }}

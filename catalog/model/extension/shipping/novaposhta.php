@@ -27,13 +27,24 @@ class ModelShippingNovaPoshta extends Model {
 		$quote_data = array();
         $url        = $this->config->get('config_secure') ? HTTPS_SERVER : HTTP_SERVER;
 		$products 	= $this->cart->getProducts();
-        $departure 	= $this->novaposhta->getDeparture($products, 0);
+        $departure 	= $this->novaposhta->getDeparture($products);
         $totals 	= $this->getTotals();
+        $sub_total  = $totals['total'];
 
-        if (isset($totals['totals'][0], $totals['totals'][0]['value'])) {
-            $sub_total = $totals['totals'][0]['value'];
+        if (!empty($this->settings['calculate_declared_cost_commision'])) {
+            if ($this->settings['declared_cost_default'] && isset($this->session->data['payment_method']['code']) && !in_array($this->session->data['payment_method']['code'], $this->settings['payment_cod'])) {
+                $declared_cost = $this->settings['declared_cost_default'];
+            } else {
+                $declared_cost = $this->novaposhta->getDeclaredCost($totals['totals']);
+            }
         } else {
-            $sub_total = 0;
+            $declared_cost = 0;
+        }
+
+        if (isset($this->settings['calculate_cod']) && ($this->settings['calculate_cod'] == 'all_payment_methods' || ($this->settings['calculate_cod'] == 'enabled' && isset($this->session->data['payment_method']['code']) && in_array($this->session->data['payment_method']['code'], $this->settings['payment_cod'])))) {
+            $cod = round($sub_total);
+        } else {
+            $cod = 0;
         }
 
         foreach ($address as $k => &$v) {
@@ -42,11 +53,23 @@ class ModelShippingNovaPoshta extends Model {
             }
         }
 
-		if (!empty($address['city'])) {
-			$recipient_city_ref = $this->novaposhta->getCityRef($address['city']);
-		} else {
-			$recipient_city_ref = '';
-		}
+        if (!empty($address['zone'])) {
+            $recipient_region = $this->novaposhta->getRegionRef($address['zone']);
+        } else {
+            $recipient_region = '';
+        }
+
+        if (!empty($address['city'])) {
+            $recipient_city = $this->novaposhta->getCityRef(trim($address['city']), $recipient_region);
+        } else {
+            $recipient_city = '';
+        }
+
+        if (!empty($address['address_1'])) {
+            $recipient_department = $this->novaposhta->getDepartmentRef(trim($address['address_1']), $recipient_city);
+        } else {
+            $recipient_department = '';
+        }
 
         if ($this->settings['calculate_volume']) {
             $volume_weight = $departure['volume'] * 250;
@@ -56,8 +79,10 @@ class ModelShippingNovaPoshta extends Model {
 
         if ($this->settings['autodetection_departure_type']) {
             $departure_type = $this->novaposhta->getDepartureType($departure);
-        } else {
+        } elseif (!empty($this->settings['departure_type'])) {
             $departure_type = $this->settings['departure_type'];
+        } else {
+            $departure_type = 'Parcel';
         }
 
         if ($this->settings['seats_amount']) {
@@ -66,11 +91,51 @@ class ModelShippingNovaPoshta extends Model {
 		    $seats = $this->novaposhta->getDepartureSeats($products);
         }
 
-        if ($this->settings['pack'] && !empty($this->settings['pack_type'])) {
-		    if ($this->settings['autodetection_pack_type']) {
-                $pack_type = $this->novaposhta->getPackType($departure);
-            } else {
-                $pack_type = $this->settings['pack_type'][0];
+        if ($seats == 1) {
+            $options_seat[0] = array(
+                'weight'           => $departure['weight'],
+                'volumetricLength' => $departure['length'],
+                'volumetricWidth'  => $departure['width'],
+                'volumetricHeight' => $departure['height'],
+                'volumetricVolume' => max(round($departure['length'] * $departure['width'] * $departure['height'] / 1000000, 4), 0.0004)
+            );
+
+            if ($this->settings['manual_processing']) {
+                $options_seat[0]['specialCargo'] = 1;
+            }
+
+            if ($this->settings['pack'] && !empty($this->settings['pack_type'])) {
+                if ($this->settings['autodetection_pack_type']) {
+                    $pack_type = $this->novaposhta->getPackType($departure);
+                } else {
+                    $pack_type = $this->settings['pack_type'][0];
+                }
+
+                $options_seat[0]['packRef'] = $pack_type;
+            }
+        } else {
+            foreach ($departure['parcels'] as $i => $parcel) {
+                $options_seat[$i] = array(
+                    'weight'           => $parcel['weight'],
+                    'volumetricLength' => $parcel['length'],
+                    'volumetricWidth'  => $parcel['width'],
+                    'volumetricHeight' => $parcel['height'],
+                    'volumetricVolume' => max(round($parcel['length'] * $parcel['width'] * $parcel['height'] / 1000000, 4), 0.0004)
+                );
+
+                if ($this->settings['manual_processing']) {
+                    $options_seat[$i]['specialCargo'] = 1;
+                }
+
+                if ($this->settings['pack'] && !empty($this->settings['pack_type'])) {
+                    if ($this->settings['autodetection_pack_type']) {
+                        $pack_type = $this->novaposhta->getPackType($parcel);
+                    } else {
+                        $pack_type = $this->settings['pack_type'][0];
+                    }
+
+                    $options_seat[$i]['packRef'] = $pack_type;
+                }
             }
         }
 
@@ -104,34 +169,40 @@ class ModelShippingNovaPoshta extends Model {
                     $description = $this->language->get('text_description_' . $code);
                 }
 
-                if ($code == 'poshtomat') {
+                if ($code == 'department' || $code == 'poshtomat') {
                     $service_type = $this->settings['sender_address_type'] . 'Warehouse';
                 } else {
                     $service_type = $this->settings['sender_address_type'] . ucfirst($code);
                 }
 
-                // Cost
+                /* Cost */
                 if ($method['cost'] && (!$method['free_shipping'] || $sub_total < $method['free_shipping'])) {
-                    if ($method['api_calculation'] && $recipient_city_ref && $departure['weight']) {
+                    if ($method['api_calculation'] && $recipient_city && $departure['weight']) {
                         $properties_cost = array (
-                            'Sender'		=> $this->settings['sender'],
-                            'CitySender'	=> $this->settings['sender_city'],
-                            'CityRecipient'	=> $recipient_city_ref,
-                            'ServiceType'   => $service_type,
-                            'CargoType'     => $departure_type,
-                            'Weight'		=> $departure['weight'],
-                            'VolumeWeight'	=> $volume_weight,
-                            'SeatsAmount'   => $seats,
-                            'Cost'			=> $sub_total,
-                            'DateTime' 		=> date('d.m.Y')
+                            'Sender'		   => $this->settings['sender'],
+                            'CitySender'	   => $this->settings['sender_city'],
+                            'CityRecipient'    => $recipient_city,
+                            'RecipientAddress' => $recipient_department,
+                            'ServiceType'      => $service_type,
+                            'CargoType'        => $departure_type,
+                            'Weight'		   => $departure['weight'],
+                            'VolumeWeight'	   => $volume_weight,
+                            'SeatsAmount'      => $seats,
+                            'OptionsSeat'      => $options_seat,
+                            'Cost'			   => $declared_cost,
+                            'DateTime' 		   => date('d.m.Y')
                         );
 
+                        if ($this->settings['sender_address_pick_up']) {
+                            $properties_cost['SenderAddress'] = $this->settings['sender_address'];
+                        } else {
+                            $properties_cost['SenderAddress'] = $this->settings['sender_department'];
+                        }
 
-
-                        if (!empty($pack_type)) {
-                            $properties_cost['PackCalculate'] = array(
-                                'PackRef'   => $pack_type,
-                                'PackCount' => $seats
+                        if ($cod) {
+                            $properties_cost['RedeliveryCalculate'] = array(
+                                'CargoType' => 'Money',
+                                'Amount' => $cod
                             );
                         }
 								
@@ -139,7 +210,7 @@ class ModelShippingNovaPoshta extends Model {
                     }
 
                     if ($method['tariff_calculation'] && !$cost) {
-                        $cost = $this->tariffCalculation($service_type, lcfirst($departure_type), $address['zone_id'], $recipient_city_ref, $departure['weight'], $volume_weight, $sub_total);
+                        $cost = $this->tariffCalculation($recipient_region, $recipient_city, $recipient_department, $departure['weight'], $volume_weight, $declared_cost, $cod, $code, $service_type, lcfirst($departure_type), $totals);
                     }
 									
                     /* Currency correcting */
@@ -150,10 +221,10 @@ class ModelShippingNovaPoshta extends Model {
 
                 /* Period */
                 if ($method['delivery_period']) {
-                    if ($recipient_city_ref) {
+                    if ($recipient_city) {
                         $properties_period = array (
                             'CitySender'	=> $this->settings['sender_city'],
-                            'CityRecipient'	=> $recipient_city_ref,
+                            'CityRecipient'	=> $recipient_city,
                             'ServiceType'	=> $service_type,
                             'CargoType'     => $departure_type,
                             'DateTime' 		=> date('d.m.Y')
@@ -163,7 +234,7 @@ class ModelShippingNovaPoshta extends Model {
                     }
 
                     if (!$period) {
-                        $period = $this->getDeliveryPeriod(lcfirst($departure_type), $address['zone_id'], $recipient_city_ref);
+                        $period = $this->getDeliveryPeriod($recipient_region, $recipient_city, $recipient_department, lcfirst($departure_type));
                     }
                 }
 					
@@ -183,9 +254,9 @@ class ModelShippingNovaPoshta extends Model {
                     $text = '';
                 }
 					
-                /* Period */
+                /* Period text */
                 if ($period) {
-                    $text_period = $this->language->get('text_period') . $this->plural_tool($period, array($this->language->get('text_day_1'), $this->language->get('text_day_2'), $this->language->get('text_day_3')));
+                    $text_period = $this->language->get('text_period') . $this->plural_tool((int)$period, array($this->language->get('text_day_1'), $this->language->get('text_day_2'), $this->language->get('text_day_3')));
                 } else {
                     $text_period = '';
                 }
@@ -265,6 +336,10 @@ class ModelShippingNovaPoshta extends Model {
         ksort($extensions);
 
         foreach ($extensions as $v) {
+            if ($v['code'] == 'shipping') {
+                continue;
+            }
+
             if (version_compare(VERSION, '2.3', '>=')) {
                 $this->load->model('extension/total/' . $v['code']);
 
@@ -291,16 +366,30 @@ class ModelShippingNovaPoshta extends Model {
         return $total_data;
     }
 
-	private function tariffCalculation($service_type, $departure_type, $zone_id, $city, $weight, $volume_weight, $total) {
+	private function tariffCalculation($region, $city, $department, $weight, $volume_weight, $declared_cost, $cod, $delivery_type, $service_type, $departure_type, $totals) {
         if (!in_array($departure_type, array('parcel'))) {
             $departure_type = 'parcel';
         }
 
-		$cost = 45;
+	    if ($service_type == 'DoorsDoors') {
+            $cost = 90;
+        } elseif ($service_type == 'WarehouseDoors' || $service_type == 'DoorsWarehouse') {
+            $cost = 70;
+        } else {
+            $cost = 50;
+        }
 
-        if ($city && $city == $this->settings['sender_city']) {
+        if ($this->settings['sender_address_pick_up']) {
+            $sender_address = $this->settings['sender_address'];
+        } else {
+            $sender_address = $this->settings['sender_department'];
+        }
+
+        if ($department && $department == $sender_address && $delivery_type == 'department') {
+            $tariff_zone  = 'department';
+        } elseif ($city && $city == $this->settings['sender_city']) {
             $tariff_zone  = 'city';
-        } elseif ($zone_id && $zone_id == $this->settings['sender_region']) {
+        } elseif ($region && $region == $this->settings['sender_region']) {
             $tariff_zone  = 'region';
         } else {
             $tariff_zone  = 'Ukraine';
@@ -328,25 +417,65 @@ class ModelShippingNovaPoshta extends Model {
             }
         }
 
-		if ($this->settings['tariffs'][$departure_type]['additional_commission'] && $total > $this->settings['tariffs'][$departure_type]['additional_commission_bottom']) {
-			$cost += $total * (double)$this->settings['tariffs'][$departure_type]['additional_commission'] / 100;
-		}
+		if ($this->settings['tariffs'][$departure_type]['declared_cost_commission'] && $declared_cost > $this->settings['tariffs'][$departure_type]['declared_cost_commission_bottom']) {
+			$cost += $declared_cost * (double)$this->settings['tariffs'][$departure_type]['declared_cost_commission'] / 100;
+		} elseif ($declared_cost && $this->settings['tariffs'][$departure_type]['declared_cost_minimum_commission'] && $declared_cost <= $this->settings['tariffs'][$departure_type]['declared_cost_commission_bottom']) {
+            $cost += $this->settings['tariffs'][$departure_type]['declared_cost_minimum_commission'];
+        }
 
         if ($this->settings['tariffs'][$departure_type]['discount']) {
             $cost -= $cost * (double)$this->settings['tariffs'][$departure_type]['discount'] / 100;
         }
 
+        if ($cod) {
+            $cod_payment = 0;
+
+            foreach((array)$this->settings['tariffs']['cod'] as $v) {
+                $base = 0;
+
+                if ($v['delivery_type'] == $delivery_type) {
+                    foreach ($totals['totals'] as $total) {
+                        if (in_array($total['code'], $v['calculation_base'])) {
+                            $base += $total['value'];
+                        }
+                    }
+                }
+
+                if ($base && (!$v['tariff_limit'] || $base <= $v['tariff_limit'])) {
+                    if ($v['percent']) {
+                        $cod_payment += $base * (double)$v['percent'] / 100;
+                    }
+
+                    if ($v['fixed_amount']) {
+                        $cod_payment += (double)$v['fixed_amount'];
+                    }
+
+                    if ($v['minimum_payment'] > $cod_payment) {
+                        $cod_payment = $v['minimum_payment'];
+                    }
+
+                    $cost += $cod_payment;
+
+                    break;
+                }
+            }
+        }
+
 		return round($cost);
 	}
 
-	private function getDeliveryPeriod($departure_type, $zone_id, $city) {
-        if (!in_array($departure_type, array('parcel'))) {
-            $departure_type = 'parcel';
+	private function getDeliveryPeriod($region, $city, $department, $departure_type) {
+        if ($this->settings['sender_address_pick_up']) {
+            $sender_address = $this->settings['sender_address'];
+        } else {
+            $sender_address = $this->settings['sender_department'];
         }
 
-	    if ($city && $city == $this->settings['sender_city']) {
+        if ($department && $department == $sender_address) {
+            $period = $this->settings['tariffs'][$departure_type]['department_delivery_period'];
+        } elseif ($city && $city == $this->settings['sender_city']) {
             $period = $this->settings['tariffs'][$departure_type]['city_delivery_period'];
-        } elseif ($zone_id && $zone_id == $this->settings['sender_region']) {
+        } elseif ($region && $region == $this->settings['sender_region']) {
             $period = $this->settings['tariffs'][$departure_type]['region_delivery_period'];
         } else {
             $period = $this->settings['tariffs'][$departure_type]['ukraine_delivery_period'];

@@ -1,0 +1,29 @@
+<div class="be-product-form in fade product-form-free-product-plug   " unique-id="{{ product_form_unique_id }}" data-item-position="{{ item_position }}" data-item-position-free="-1" data-product-id="-1"  style="display: none">
+    {% set class = 'col-sm-12' %}
+    <input type="hidden" name="item_position" value="{{ item_position }}">
+    <input type="hidden" name="item_position_free" value="{{ item_position_free }}">
+    <input type="hidden" name="empty_mode_item_is_empty" id="input-for-empty-mode-item-is-empty" value="1">
+    <input type="hidden" name="is_free_product" data-id="input-is-free-product" value="1">
+    <input type="hidden" name="free_product_in_kit" data-id="input-free-product-in-kit" value="0">
+
+    <!--    -->{# if($item_product['item_empty_mode']['enable']){ #}
+    {% if (1) %}
+        <div class="" id="content-empty" style=""  >
+
+            <a class="bundle-expert-transparent" style="margin-top: 14px;display: inline-block;" onclick="bundle_expert_form.on_click_select_item_product_button(this);">
+                <img src="{{ empty_image_name }}" title="{{ '' }}" alt="{{ '' }}" />
+            </a>
+
+            <h3 class="be-product-title" style="margin-bottom: 4px"><a style="white-space: nowrap;    text-overflow: ellipsis;">{{ free_item_title }}</a></h3>
+            <p>{{ text_item_not_selected }}</p>
+
+            <span class="selectable-item empty-item-add-button" style="margin-top: 0px;" onclick="bundle_expert_form.show_item_products(this);" >
+                            {{ text_add_product }}
+            </span>
+
+        </div>
+    {% endif %}
+
+</div>
+
+

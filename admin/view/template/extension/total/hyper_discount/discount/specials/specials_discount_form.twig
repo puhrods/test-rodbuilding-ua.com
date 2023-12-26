@@ -1,0 +1,804 @@
+{{ header }}{{ column_left }}
+<div id="content">
+    <div class="container-fluid h-editor">
+        <div id="panel_top" class="affix col-sm-12">
+            <div class="text-title text-center"><i class="fa fa-opencart" aria-hidden="true"></i>
+                <span class="win-title">{{ hyper_discount_name }}</span>
+                <hr class="ht-min">
+                <span class="ht-title">{{ hyper_discount_title }}</span>
+            </div>
+            <h1 data-toggle="tooltip" data-placement="bottom" title="{{ discount_specials_text }}">{{ product_discount['name'][config_language_id] }}</h1>
+            <div id="panel_tops" class="pull-right">
+                <button type="button" onclick="Apply();" data-toggle="tooltip" data-placement="bottom" class="btn btn-primary memory-button" title="{{ button_apply }}"><i class="fa fa-check-circle-o"></i></button>
+                <button type="submit" form="product_discount_form" data-toggle="tooltip" data-placement="bottom" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+                <a href="{{ cancel }}" data-toggle="tooltip" data-placement="bottom" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a>
+            </div>
+        </div>
+
+        <div class="panel panel-default col-sm-12">
+            {% if error_warning %}
+            <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+              <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+            {% endif %}
+            
+            <div class="panel-heading">
+                <h3><i class="fa fa-sliders" aria-hidden="true"></i> {{ heading_action_text }}</h3>
+                <button form="help_modals" class="pull-right hm-help btn btn-primary btn-sm" data-toggle="modal" data-target="#Specials_Form_Modal">
+                    <i class="fa fa-info" aria-hidden="true"></i> - {{ help_name }} 
+                </button>
+            </div>
+            <div class="panel-body top-pad">
+                <div class="col-sm-12">
+                    <form action="{{ action }}" method="post" enctype="multipart/form-data" id="product_discount_form" class="form-horizontal">
+                        <input type="hidden" value="{{ product_discount['discount_id'] }}" name="product_discount[discount_id]">
+
+                        <table class="table table-striped table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <td class="text-center " style="width: 25%;">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ entry_title_titles }}">
+                                                {{ entry_title }} 
+                                            </span>
+                                        </label>
+                                    </td>
+                                    <td class="text-center" style="width: 75%;">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ entry_description_titles }}">
+                                                {{ entry_description }} 
+                                            </span>
+                                        </label>
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="text-center">
+                                    <td class="text-center">
+                                        {% for language in languages %} 
+                                        {% if (error_name[language['language_id']] is defined) %} 
+                                        <div class="text-danger">{{ error_name[language['language_id']] }}</div>
+                                        {% endif %} 
+                                        <div class="input-group pull-left"><span class="input-group-addon"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}" /></span>
+                                            <input type="text" name="product_discount[name][{{ language['language_id'] }}]"
+                                            value="{{ product_discount['name'][language['language_id']] is defined ? product_discount['name'][language['language_id']] : '' }}" class="form-control" />
+                                        </div>
+                                        {% endfor %} 
+                                    </td>
+                                    <td class="text-center">
+                                        <textarea style="resize:vertical;" name="product_discount[description]" class="form-control">{{ product_discount['description'] }}</textarea>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <legend>
+                            {{ settings_text }} 
+                            <button form="help_modals" class="pull-right hm-help btn btn-primary btn-sm" data-toggle="modal" data-target="#Specials_One_Modal">
+                                <i class="fa fa-info" aria-hidden="true"></i> - {{ help_name }} 
+                            </button>
+                        </legend>
+                        <table class="table table-striped table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <td class="text-center"></td>
+                                    <td class="text-center editor">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ entry_cost_title }}">
+                                                <i class="fa fa-gg fa-rotate-90" aria-hidden="true"></i>
+                                            </span>
+                                        </label>
+                                    </td>
+                                    <td class="text-center editor">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ entry_round_title }}">
+                                                {{ entry_round_name }} 
+                                            </span>
+                                        </label>
+                                    </td>
+                                    <td class="text-center mini-style"></td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="text-center">
+                                     <td class="text-center"></td>
+
+                                     <td class="text-center">
+                                        <select name="product_discount[cost]" class="form-control hd-md" >
+                                            {% for condition_key,condition_value in array_cost %}
+                                            {% if (product_discount['cost'] == condition_key) %}
+                                            <option value="{{ condition_key }}" selected="selected">{{ condition_value }}</option>
+                                            {% else %} 
+                                            <option value="{{ condition_key }}" >{{ condition_value }}</option>
+                                            {% endif %} 
+                                            {% endfor %} 
+                                        </select>
+                                    </td>
+
+                                    <td class="text-center">
+                                        <select name="product_discount[round]" class="form-control hd-md" >
+                                            {% for condition_key,condition_value in array_round %}
+                                            {% if (product_discount['round'] == condition_key) %}
+                                            <option value="{{ condition_key }}" selected="selected">{{ condition_value }}</option>
+                                            {% else %} 
+                                            <option value="{{ condition_key }}" >{{ condition_value }}</option>
+                                            {% endif %} 
+                                            {% endfor %} 
+                                        </select>
+                                    </td>
+                                    <td class="text-center mini-style"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <legend>
+                            {{ specials_editor_text }}
+                            <button form="help_modals" class="pull-right hm-help btn btn-primary btn-sm" data-toggle="modal" data-target="#Specials_Two_Modal">
+                                <i class="fa fa-info" aria-hidden="true"></i> - {{ help_name }} 
+                            </button>
+                        </legend>
+                        <table id="products_discount_editor" class="table table-striped table-bordered table-hover num">
+                            <thead>
+                                <tr><td class="text-center micro-style">№</td>
+                                    <td class="text-center editor">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ entry_product_group_titles }}">
+                                                {{ entry_product_group }} 
+                                            </span>
+                                        </label>
+                                    </td>
+                                    <td class="text-center">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ entry_users_groups_titles }}">
+                                                {{ entry_users_groups }} 
+                                            </span>
+                                        </label>
+                                    </td>
+                                    <td class="text-center mini-style">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ entry_qty_title }}">
+                                                <i class="fa fa-sort-amount-asc fa-rotate-180" aria-hidden="true"></i>
+                                            </span>
+                                        </label>
+                                    </td>
+                                    <td class="text-center formula">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ entry_discount_formula_titles }}">
+                                                {{ entry_discount_formula }} 
+                                            </span>
+                                        </label>
+                                    </td>
+                                    <td class="text-center data-style">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ entry_date_titles }}">
+                                                {{ entry_date }} 
+                                            </span>
+                                        </label>
+                                    </td>
+
+                                    <td class="text-center week">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ discount_week_title }}">
+                                                {{ discount_week }} 
+                                            </span>
+                                        </label>
+                                    </td>
+                                    <td class="text-center mini-style period">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ discount_period_title }}">
+                                                <i class="fa fa-repeat" aria-hidden="true"></i>
+                                            </span>
+                                        </label>
+                                    </td>
+                                    <td class="text-center time">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ discount_time_title }}">
+                                                <i class="fa fa-clock-o" aria-hidden="true"></i>
+                                            </span>
+                                            {{ current_time }}
+                                        </label>
+                                    </td>
+
+                                    <td class="text-center mini-style">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ discount_products_start }}">
+                                                <i class="fa fa-eject fa-rotate-90" aria-hidden="true"></i>
+                                            </span>
+                                        </label>
+                                    </td>
+                                    <td class="text-center mini-style">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ button_clone_title }}">
+                                                <i class="fa fa-clone" aria-hidden="true"></i>
+                                            </span>
+                                        </label>
+                                    </td>
+                                    <td class="text-center mini-style">
+                                        <label class="control-label">
+                                            <span data-toggle="tooltip" title="" data-original-title="{{ column_delete_titles }}">
+                                                {{ column_delete }} 
+                                            </span>
+                                        </label>
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% set product_discount_row = 1 %} 
+                                {% if (product_discount['discount_editor']) %}
+                                {% for discount_editor in product_discount['discount_editor'] %} 
+                                <tr id="product_discount_row{{ product_discount_row }}">
+                                  <td class="for-titles">
+                                    <label class="control-label">
+                                      <span data-toggle="tooltip" title="" data-original-title="
+                                      {% set str = product_discount['description'] %}
+                                      {% set str_arr =  str|split('#') %}
+                                      {{ str_arr[product_discount_row] is defined ?
+                                      str_arr[product_discount_row] : constant('false') }}"><b id="numb"></b></span>
+                                    </label>
+                                    <input type="hidden" name="product_discount[discount_editor][{{ product_discount_row }}][editor_id]" value="{{ product_discount_row }}" />
+                                    <input type="hidden" name="product_discount[discount_editor][{{ product_discount_row }}][id]" value="{{ discount_editor.id }}" />
+                                  </td>
+
+                                    <td class="text-center">
+                                        <div class="input-group pull-left local-checkbox-readonly">
+                                            <input class="bootstrap-switcher form-control product_settings" type="checkbox" value="1"
+                                            name="product_discount[discount_editor][{{ product_discount_row }}][products_all]" data-size="small" data-on-color="success"
+                                            {% if (discount_editor['products_all'] is defined and discount_editor['products_all'] == 1) %} {{ 'checked' }}{% endif %}
+                                            data-on-text="ALL" data-off-text="EDIT">
+                                        </div>
+                                        <a href="{{ discount_editor['product_group_href'] is defined ? discount_editor['product_group_href'] : '#' }}"
+                                         class="btn btn-primary product_settings_link"><i class="fa fa-pencil"></i></a>
+                                     </td>
+
+                                     <td class="text-center">
+                                        <div class="users-groups">
+                                            <span class="multiselect-native-select">
+                                                <select multiple="multiple" name="product_discount[discount_editor][{{ product_discount_row }}][customer_groups][]" class="filter-customer-group">
+
+                                                    {% for customer_group in customer_groups %} 
+                                                    {% if customer_group['customer_group_id'] in discount_editor['customer_groups'] %} 
+                                                    <option value="{{ customer_group['customer_group_id'] }}" selected="selected">{{ customer_group['name'] }}</option>
+                                                    {% else %} 
+                                                    <option value="{{ customer_group['customer_group_id'] }}">{{ customer_group['name'] }}</option>
+                                                    {% endif %} 
+                                                    {% endfor %} 
+                                                </select>
+                                            </span>
+                                        </div>
+                                    </td>
+
+                                    <td class="text-center">
+                                        <div class="input-group">
+                                            <input type="text" name="product_discount[discount_editor][{{ product_discount_row }}][discount_priority]"
+                                            value="{{ discount_editor['discount_priority'] is defined ? discount_editor['discount_priority'] : '' }}" data-toggle="tooltip" title="{{ entry_priority_titles }}" class="form-control text-right pull-left hd-xs" style="color: darkred"/>
+                                        </div>
+                                    </td>
+
+                                    <td class="formula text-center">
+
+                                        <div class="hidden-xs hidden-sm col-md-12">
+                                            <div class="row">
+                                                <div class="col-md-2 vertical"></div><div class="col-md-2 top-line"></div>
+                                                <div class="col-md-2 vertical top-line"></div><div class="col-md-2 top-line"></div>
+                                                <div class="col-md-2 vertical top-line"></div><div class="col-md-2"></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xs-12">
+                                            <div class="row">
+
+                                                <div class="col-sm-12 col-md-4">
+                                                    <div class="row">
+                                                        <div class="input-group pull-left">
+                                                            <select name="product_discount[discount_editor][{{ product_discount_row }}][discount_type1]" class="form-control pull-left hd-md" >
+                                                                {% for order_status_value in array_discount_types %}
+                                                                {% if (discount_editor['discount_type1'] is defined and discount_editor['discount_type1'] == order_status_value) %}
+                                                                <option value="{{ order_status_value }}" selected="selected">{{ order_status_value }}</option>
+                                                                {% else %} 
+                                                                <option value="{{ order_status_value }}" >{{ order_status_value }}</option>
+                                                                {% endif %} 
+                                                                {% endfor %} 
+                                                            </select>
+                                                            <input type="text" name="product_discount[discount_editor][{{ product_discount_row }}][discount_coef1]"
+                                                            value="{{ discount_editor['discount_coef1'] is defined ? discount_editor['discount_coef1'] : '' }}" class="form-control text-right pull-left hd-md"/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-sm-12 col-md-4">
+                                                    <div class="row">
+                                                        <div class="input-group pull-left">
+                                                            <select name="product_discount[discount_editor][{{ product_discount_row }}][discount_type2]" class="form-control pull-left hd-md" >
+                                                                {% for order_status_value in array_discount_types %}
+                                                                {% if (discount_editor['discount_type2'] is defined and discount_editor['discount_type2'] == order_status_value) %}
+                                                                <option value="{{ order_status_value }}" selected="selected">{{ order_status_value }}</option>
+                                                                {% else %} 
+                                                                <option value="{{ order_status_value }}" >{{ order_status_value }}</option>
+                                                                {% endif %} 
+                                                                {% endfor %} 
+                                                            </select>
+                                                            <input type="text" name="product_discount[discount_editor][{{ product_discount_row }}][discount_coef2]"
+                                                            value="{{ discount_editor['discount_coef2'] is defined ? discount_editor['discount_coef2'] : '' }}" class="form-control text-right pull-left hd-md"/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-sm-12 col-md-4">
+                                                    <div class="row">
+                                                        <div class="input-group pull-left">
+                                                            <select name="product_discount[discount_editor][{{ product_discount_row }}][discount_type3]" class="form-control pull-left hd-md" >
+                                                                {% for order_status_value in array_discount_types %}
+                                                                {% if (discount_editor['discount_type3'] is defined and discount_editor['discount_type3'] == order_status_value) %}
+                                                                <option value="{{ order_status_value }}" selected="selected">{{ order_status_value }}</option>
+                                                                {% else %} 
+                                                                <option value="{{ order_status_value }}" >{{ order_status_value }}</option>
+                                                                {% endif %} 
+                                                                {% endfor %} 
+                                                            </select>
+                                                            <input type="text" name="product_discount[discount_editor][{{ product_discount_row }}][discount_coef3]"
+                                                            value="{{ discount_editor['discount_coef3'] is defined ? discount_editor['discount_coef3'] : '' }}" class="form-control text-right pull-left hd-md"/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <td class="text-center">
+                                        <div class="input-group date">
+                                            <input type="text" name="product_discount[discount_editor][{{ product_discount_row }}][start_date]" placeholder="{{ entry_date_start }}"
+                                            value="{{ discount_editor['start_date'] }}" data-date-format="YYYY-MM-DD" id="input-date-available" class="form-control" style="color: blue"/>
+                                            <span class="input-group-btn">
+                                                <button class="btn btn-default" type="button"><i class="fa fa-calendar"></i></button>
+                                            </span>
+                                        </div>
+                                        <div class="input-group date">
+                                            <input type="text" name="product_discount[discount_editor][{{ product_discount_row }}][end_date]" placeholder="{{ entry_date_end }}"
+                                            value="{{ discount_editor['end_date'] }}" data-date-format="YYYY-MM-DD" id="input-date-available" class="form-control" style="color: darkred"/>
+                                            <span class="input-group-btn">
+                                                <button class="btn btn-default" type="button"><i class="fa fa-calendar"></i></button>
+                                            </span>
+                                        </div>
+                                    </td>
+
+                                    <td class="text-center week">
+                                        <div class="data-week">
+                                            <span class="multiselect-native-select">
+                                                <select multiple="multiple" name="product_discount[discount_editor][{{ product_discount_row }}][discount_week][]" class="filter-customer-group">
+
+                                                   {% for key,time in array_discount_week %} 
+                                                   {% if key in discount_editor['discount_week'] %} 
+                                                   <option value="{{ key }}" selected="selected">{{ time }}</option>
+                                                   {% else %} 
+                                                   <option value="{{ key }}" >{{ time }}</option>
+                                                   {% endif %} 
+                                                   {% endfor %} 
+                                               </select>
+                                           </span>
+                                       </div>
+                                   </td>
+
+                                   <td class="text-center mini-style period">
+                                    <select name="product_discount[discount_editor][{{ product_discount_row }}][discount_period]" class="form-control" data-toggle="tooltip" title="" data-original-title="{{ discount_period_titles }}">
+                                        {% for condition_key,condition_value in array_discount_period %}
+                                        {% if (discount_editor['discount_period'] == condition_key) %}
+                                        <option value="{{ condition_key }}" selected="selected">{{ condition_value }}</option>
+                                        {% else %} 
+                                        <option value="{{ condition_key }}" >{{ condition_value }}</option>
+                                        {% endif %} 
+                                        {% endfor %} 
+                                    </select>
+                                </td>
+
+                                <td class="text-center time">
+                                    <div class="data-time">
+                                        <span class="multiselect-native-select">
+                                            <select multiple="multiple" name="product_discount[discount_editor][{{ product_discount_row }}][discount_time][]" class="filter-customer-group" data-toggle="tooltip" title="" data-original-title="{{ discount_period_titles }}">
+
+                                                {% for key,time in array_discount_time %} 
+                                                {% if key in discount_editor['discount_time'] %} 
+                                                <option value="{{ key }}" selected="selected">{{ time }}</option>
+                                                {% else %} 
+                                                <option value="{{ key }}" >{{ time }}</option>
+                                                {% endif %} 
+                                                {% endfor %} 
+                                            </select>
+                                        </span>
+                                    </div>
+                                </td>
+
+                                <td class="text-center">
+                                  <div class="input-group pull-left">
+                                    <input class="bootstrap-switcher form-control" type="checkbox" value="1" name="product_discount[discount_editor][{{ product_discount_row }}][status]" data-size="small" data-on-color="success" {% if discount_editor['status'] %}checked{% endif %} />
+                                  </div>
+                                </td>
+  
+                              <td class="text-center">
+                                <a href="{{ discount_editor['editor_clone_href'] is defined ? discount_editor['editor_clone_href'] : '#' }}" data-toggle="tooltip" title="{{ button_clone_titles }}" class="btn btn-warning"><i class="fa fa-clone" aria-hidden="true"></i></a>
+                            </td>
+
+                            <td class="text-center">
+                                <button type="button" onclick="$('#product_discount_row{{ product_discount_row }}').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button>
+                            </td>
+                        </tr>
+                        {% set product_discount_row = product_discount_row + 1 %} 
+                        {% endfor %} 
+                        {% endif %} 
+                    </tbody>
+
+                    <tfoot>
+                        <tr>
+                            <td colspan="11"></td>
+                            <td class="text-center">
+                                <button type="button" onclick="addDiscountEditor();" data-toggle="tooltip" title="{{ button_add }}" class="btn btn-primary">
+                                    <i class="fa fa-plus-circle"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <hr>
+            <div class="panel-heading text-center ">
+                <h3 class="text-center panel-title"><i class="fa fa-copyright" aria-hidden="true"></i> {{ description_author }}</h3>
+            </div>
+            <br>
+            <div class="text-center">
+                <button form="help_modals" class="hm-info btn btn-primary btn-sm" data-toggle="modal" data-target="#Authors_Modal">
+                    {{ description_author_start }} 
+                </button>
+            </div>
+            <hr>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+<!-- Start Modal specials -->
+<div class="modal fade" id="Specials_Form_Modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times" aria-hidden="true"></i></button>
+                <h4 class="modal-title" id="myModalLabel"><i class="fa fa-cogs"></i> {{ help_name_specials }}</h4>
+            </div>
+            <div class="modal-body">
+                <legend>{{ help_text }}</legend>
+                <div class="text-center">{{ info_first_specials }}</div>
+                <div class="helper-info">{{ info_second_specials }}</div>
+                <div class="text-center">{{ info_third_specials }}</div>
+                <div class="helper-info">{{ info_fourth_specials }}</div>
+                <div class="text-center">{{ help_name_title }}</div>
+                <div class="helper-info">{{ help_list }}</div>
+                <div class="text-center">{{ help_warning }}</div>
+                <div class="helper-info">{{ help_end }}</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal"> {{ help_ok }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Start Modal specials_one -->
+<div class="modal fade" id="Specials_One_Modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times" aria-hidden="true"></i></button>
+                <h4 class="modal-title" id="myModalLabel"><i class="fa fa-cogs"></i> {{ help_name_specials_one }}</h4>
+            </div>
+            <div class="modal-body">
+                <legend>{{ help_text }}</legend>
+                <div class="text-center">{{ helper_name_specials_one }}</div>
+                <div class="helper-info">{{ helpers_name_specials_one }}</div>
+                <div class="text-center">{{ help_first_specials_one }}</div>
+                <div class="helper-info">{{ help_second_specials_one }}</div>
+                <div class="text-center">{{ help_third_specials_one }}</div>
+                <div class="helper-info">{{ help_fourth_specials_one }}</div>
+                <div class="text-center">{{ help_fifth_specials_one }}</div>
+                <div class="helper-info">{{ help_sixth_specials_one }}</div>
+                <div class="text-center">{{ help_warning }}</div>
+                <div class="helper-info">{{ help_end }}</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal"> {{ help_ok }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Start Modal specials_two -->
+<div class="modal fade" id="Specials_Two_Modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times" aria-hidden="true"></i></button>
+                <h4 class="modal-title" id="myModalLabel"><i class="fa fa-cogs"></i> {{ help_name_specials_two }}</h4>
+            </div>
+            <div class="modal-body">
+                <legend>{{ help_text }}</legend>
+                <div class="text-center">{{ help_first_specials_two }}</div>
+                <div class="helper-info">{{ help_second_specials_two }}</div>
+                <div class="text-center">{{ help_third_specials_two }}</div>
+                <div class="helper-info">{{ help_fourth_specials_two }}</div>
+                <div class="text-center">{{ help_fifth_specials_two }}</div>
+                <div class="helper-info">{{ help_sixth_specials_two }}</div>
+                <div class="text-center">{{ help_seventh_specials_two }}</div>
+                <div class="helper-info">{{ help_eighth_specials_two }}</div>
+                <div class="text-center">{{ help_ninth_specials_two }}</div>
+                <div class="helper-info">{{ help_tenth_specials_two }}</div>
+                <div class="text-center">{{ help_eleventh_specials_two }}</div>
+                <div class="helper-info">{{ help_twelfth_specials_two }}</div>
+                <div class="text-center">{{ help_thirteenth_specials_two }}</div>
+                <div class="helper-info">{{ help_fourteenth_specials_two }}</div>
+                <div class="text-center">{{ help_fifteenth_specials_two }}</div>
+                <div class="helper-info">{{ help_sixteenth_specials_two }}</div>
+                <div class="text-center">{{ help_seventeenth_specials_two }}</div>
+                <div class="helper-info">{{ help_eighteenth_specials_two }}</div>
+                <div class="text-center">{{ help_nineteenth_specials_two }}</div>
+                <div class="helper-info">{{ help_twentieth_specials_two }}</div>
+                <div class="text-center">{{ help_twentyfirst_specials_two }}</div>
+                <div class="helper-info">{{ help_twentysecond_specials_two }}</div>
+                <div class="text-center">{{ help_twentythird_specials_two }}</div>
+                <div class="helper-info">{{ help_twentyfourth_specials_two }}</div>
+                <div class="text-center">{{ help_warning }}</div>
+                <div class="helper-info">{{ help_end }}</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal"> {{ help_ok }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Start Modal HELPER Authors -->
+<div class="modal fade" id="Authors_Modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times" aria-hidden="true"></i></button>
+                <h4 class="modal-title" id="myModalLabel"><i class="fa fa-cogs"></i> {{ description_author }}</h4>
+            </div>
+            <div class="modal-body">
+                <legend>{{ description_copyright }}</legend>
+                <div class="text-center">{{ description_author_copyright }}</div>
+                <div class="text-center">{{ thank_you }}</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal"> {{ help_ok }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+
+        $('.filter-customer-group').multiselect({
+            buttonWidth: '150px',
+            maxHeight: 300
+        });
+        
+        
+        $('body').addClass('hyper-page hm-edit-page hd-switch hl-products');
+        $('.date').datetimepicker({
+            pickDate: true,
+            pickTime: false
+        });
+        initSwitcher();
+    });</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $("#edit_users_groups").on('switchChange.bootstrapSwitch', function (event, state) {
+            $("#edit_users_groups_link").attr("disabled", state);
+        });
+        $("#shop_settings").on('switchChange.bootstrapSwitch', function (event, state) {
+            $("#shop_settings_link").attr("disabled", state);
+        });
+        $(".product_settings").on('switchChange.bootstrapSwitch', function (event, state) {
+
+            $(this).parents('td').find(".product_settings_link").attr("disabled", state);
+        });
+
+        $('tr.disabled button').attr('onclick',null);
+        $("tr.disabled select,tr.disabled input").attr('readonly', true);
+        $("tr.disabled .bootstrap-switch").bootstrapSwitch('toggleDisabled',true,true);
+        $("tr.disabled button, tr.disabled a").click(function(e){
+
+            if(!$(this).hasClass('status'))
+            {
+                e.preventDefault();
+                return false;
+            }
+        });
+    });
+</script>
+<script type="text/javascript">
+
+    function initSwitcher() {
+        $('.bootstrap-switcher').bootstrapSwitch({
+
+        });
+    }
+
+
+    function Apply() {
+        $('#product_discount_form').attr('action', '{{ update_stay|replace({"&amp;": "&"}) }}');
+        $('#product_discount_form').submit();
+    }
+    ;
+    var product_discount_row = {{ product_discount_row }};
+
+    function addDiscountEditor() {
+        html = '<tr id="product_discount_row' + product_discount_row + '">';
+
+        html += '<td class="for-titles">';
+        html += '<b id="numb">';
+        html += '</b>';
+        html += '</td>';
+
+        html += ' <td class="text-center">';
+        html += ' <div class="input-group pull-left local-checkbox-readonly">';
+        html += ' <input class="bootstrap-switcher form-control product_settings" type="checkbox" value="1"';
+        html += ' name="product_discount[discount_editor][' + product_discount_row + '][products_all]" data-size="small" data-on-color="success"';
+        html += ' data-on-text="ALL" data-off-text="EDIT">';
+        html += ' </div>';
+        html += ' <div class="btn btn-primary product_settings_link"><i class="fa fa-pencil"></i></div>';
+        html += ' </td>';
+        html += '<td class="text-center">';
+        html += '<div class="users-groups">';
+        html += '<span class="multiselect-native-select">';
+        html += '<select multiple="multiple" name="product_discount[discount_editor][' + product_discount_row + '][customer_groups][]" class="filter-customer-group">';
+
+    {% for customer_group in customer_groups %}
+        html += '<option value="{{ customer_group["customer_group_id"] }}">{{ customer_group["name"] }}</option>';
+    {% endfor %}
+        html += '</select>';
+        html += '</span>';
+        html += '</div>';
+
+        html += '</td>';
+        html += '<td class="text-center mini-style">';
+        html += '<input type="hidden" value="' + product_discount_row + '" name="product_discount[discount_editor][' + product_discount_row + '][editor_id]">';
+        html += '<div class="input-group">';
+
+        html += '<input type="text" name="product_discount[discount_editor][' + product_discount_row + '][discount_priority]"';
+        html += 'value="" data-toggle="tooltip" title="{{ entry_priority_titles }}" class="form-control text-right pull-left hd-xs" style="color: darkred"/>';
+        html += '</div>';
+        html += '</td>';
+        html += '<td class="formula text-center">';
+        html += '<div class="hidden-xs hidden-sm col-md-12">';
+        html += '<div class="row">';
+        html += '<div class="col-md-2 vertical"></div><div class="col-md-2 top-line"></div>';
+        html += '<div class="col-md-2 vertical top-line"></div><div class="col-md-2 top-line"></div>';
+        html += '<div class="col-md-2 vertical top-line"></div><div class="col-md-2"></div>';
+        html += '</div>';
+        html += '</div>';
+        html += ' <div class="col-xs-12">';
+        html += '    <div class="row">';
+        html += '  <div class="col-sm-12 col-md-4">';
+        html += '     <div class="row">';
+        html += '        <div class="input-group pull-left">';
+        html += '    <select name="product_discount[discount_editor][' + product_discount_row + '][discount_type1]" class="form-control pull-left hd-md" >';
+    {% for order_status_value in array_discount_types %}
+       html += '<option value="{{ order_status_value }}" >{{ order_status_value }}</option>';
+    {% endfor %}
+        html += '</select>';
+        html += '<input type="text" name="product_discount[discount_editor][' + product_discount_row + '][discount_coef1]"';
+        html += 'value="" class="form-control text-right pull-left hd-md"/>';
+        html += '</div>';
+        html += '</div>';
+        html += '</div>';
+        html += '<div class="col-sm-12 col-md-4">';
+        html += '<div class="row">';
+        html += '<div class="input-group pull-left">';
+        html += '<select name="product_discount[discount_editor][' + product_discount_row + '][discount_type2]" class="form-control pull-left hd-md" >';
+    {% for order_status_value in array_discount_types %}
+        html += '<option value="{{ order_status_value }}" >{{ order_status_value }}</option>';
+    {% endfor %}
+        html += '</select>';
+        html += '<input type="text" name="product_discount[discount_editor][' + product_discount_row + '][discount_coef2]"';
+        html += 'value="" class="form-control text-right pull-left hd-md"/>'
+        html += '</div>';
+        html += '</div>';
+        html += '</div>';
+        html += '<div class="col-sm-12 col-md-4">';
+        html += '<div class="row">';
+        html += '<div class="input-group pull-left">';
+        html += '<select name="product_discount[discount_editor][' + product_discount_row + '][discount_type3]" class="form-control pull-left hd-md" >';
+    {% for order_status_value in array_discount_types %}
+        html += '<option value="{{ order_status_value }}" >{{ order_status_value }}</option>';
+    {% endfor %}
+        html += '</select>';
+        html += '<input type="text" name="product_discount[discount_editor][' + product_discount_row + '][discount_coef3]"';
+        html += 'value="" class="form-control text-right pull-left hd-md"/>';
+        html += '</div>';
+        html += '</div>';
+        html += '</div>';
+        html += '</div>';
+        html += '</div>';
+        html += '</td>';
+        html += '<td class="text-center">';
+        html += '<div class="input-group date">';
+        html += '<input type="text" name="product_discount[discount_editor][' + product_discount_row + '][start_date]" placeholder="{{ entry_date_start }}"';
+        html += 'value="" data-date-format="YYYY-MM-DD" id="input-date-available" class="form-control" style="color: blue"/>';
+        html += '<span class="input-group-btn">';
+        html += '<button class="btn btn-default" type="button"><i class="fa fa-calendar"></i></button>';
+        html += '</span>';
+        html += '</div>';
+        html += '<div class="input-group date">';
+        html += '<input type="text" name="product_discount[discount_editor][' + product_discount_row + '][end_date]" placeholder="{{ entry_date_end }}"';
+        html += '  value="" data-date-format="YYYY-MM-DD" id="input-date-available" class="form-control" style="color: darkred"/>';
+        html += '<span class="input-group-btn">';
+        html += '<button class="btn btn-default" type="button"><i class="fa fa-calendar"></i></button>';
+        html += '</span>';
+        html += '</div>';
+        html += '</td>';
+
+        html += '<td class="text-center week">';
+        html += '<div class="data-week">';
+        html += '<span class="multiselect-native-select">';
+        html += '<select multiple="multiple" name="product_discount[discount_editor][' + product_discount_row + '][discount_week][]" class="filter-customer-group">';
+    {% for key,time in array_discount_week %}
+        html += '   <option value="{{ key }}" >{{ time }}</option>';
+    {% endfor %}
+        html += ' </select>';
+        html += '</span>';
+        html += ' </div>';
+        html += ' </td>';
+
+        html += ' <td class="text-center mini-style period">';
+        html += '  <select name="product_discount[discount_editor][' + product_discount_row + '][discount_period]" class="form-control" >';
+    {% for condition_key,condition_value in array_discount_period %}
+        html += '<option value="{{ condition_key }}" >{{ condition_value }}</option>';
+    {% endfor %}
+        html += '    </select>';
+        html += '  </td>';
+
+        html += '<td class="text-center time">';
+        html += '<div class="data-time">';
+        html += '<span class="multiselect-native-select">';
+        html += '<select multiple="multiple" name="product_discount[discount_editor][' + product_discount_row + '][discount_time][]" class="filter-customer-group">';
+    {% for key,time in array_discount_time %}
+        html += ' <option value="{{ key }}" >{{ time }}</option>';
+    {% endfor %}
+     html += '   </select>';
+     html += '   </span>';
+     html += '  </div>';
+     html += '  </td>';
+
+     html += '<td class="text-center">';
+     html += '<div class="input-group pull-left">';
+     html += '</div>';
+     html += '</td>';
+     html += '<td class="text-center">';
+     html += '<button type="button" onclick="" data-toggle="tooltip" title="{{ button_clone_titles }}" class="btn btn-default"><i class="fa fa-clone" aria-hidden="true"></i></button>';
+     html += '</td>';
+     html += '<td class="text-center">';
+     html += '<button type="button" onclick="$(\'#product_discount_row' + product_discount_row + '\').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button>';
+     html += '</td>';
+     html += '</tr>';
+     $('#products_discount_editor tbody').append(html);
+     $('.date').datetimepicker({
+        pickDate: true,
+        pickTime: false
+    });
+
+     $('.filter-customer-group').multiselect({
+        buttonWidth: '150px',
+        maxHeight: 300
+    });
+
+
+     $('.bootstrap-switcher').bootstrapSwitch();
+
+     product_discount_row++;
+    }
+
+
+</script>
+                             {{ footer }}

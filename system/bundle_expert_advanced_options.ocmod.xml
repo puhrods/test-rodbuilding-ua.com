@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+    <name><![CDATA[BundleExpert Advanced Options]]></name>
+    <version><![CDATA[1.0.1]]></version>
+    <code><![CDATA[BundleExpert  Advanced Options]]></code>
+    <author><![CDATA[opencart-expert.com]]></author>
+    <link><![CDATA[http://opencart-expert.com]]></link>
+
+
+
+    <file path="admin/controller/catalog/bundle_expert_kit.php">
+        <operation error="skip">
+            <search><![CDATA[$disable_options[$index]['item_name'] = $data['text_option'] . ' >' . $option_info['name'] . ' > ' . $option_value_info['name'];]]></search>
+            <add position="after"><![CDATA[
+                //BundleExpert Custom
+                $parent_options_name = $this->get_parent_options_names($kit_product['item_id'],$disable_option['product_option_id'],$disable_option['option_value_id']);
+                $disable_options[$index]['item_name'] = $data['text_option'] . ' >' . $parent_options_name.$option_info['name'] . ' > ' . $option_value_info['name'];
+                //BundleExpert Custom
+              ]]></add>
+        </operation>
+        <operation error="skip">
+            <search><![CDATA[$fixed_options[$index]['item_name'] = $data['text_option'] . ' > ' . $option_info['name'] . '->' . $option_value_info['name'];]]></search>
+            <add position="after"><![CDATA[
+                //BundleExpert Custom
+                $parent_options_name = $this->get_parent_options_names($kit_product['item_id'],$fixed_option['product_option_id'],$fixed_option['option_value_id']);
+                $fixed_options[$index]['item_name'] = $data['text_option'] . ' > ' . $parent_options_name. $option_info['name'] .  '->' . $option_value_info['name'];
+                //BundleExpert Custom
+              ]]></add>
+        </operation>
+        <operation error="skip">
+            <search><![CDATA[$enabled_options[$index]['item_name'] = $data['text_option'] . ' >' . $option_info['name'] . ' > ' . $option_value_info['name'];]]></search>
+            <add position="after"><![CDATA[
+                //BundleExpert Custom
+                $parent_options_name = $this->get_parent_options_names($kit_product['item_id'],$enabled_option['product_option_id'],$enabled_option['option_value_id']);
+                $enabled_options[$index]['item_name'] = $data['text_option'] . ' >' . $parent_options_name. $option_info['name'] . ' > ' . $option_value_info['name'];
+                //BundleExpert Custom
+              ]]></add>
+        </operation>
+
+
+        <operation error="skip">
+            <search><![CDATA[foreach ($data['product_options'] as $product_option) {]]></search>
+            <add position="after"><![CDATA[
+                //BundleExpert Custom
+                $parent_options_name = $this->get_parent_options_names($product_id,$product_option['product_option_id']);
+                //BundleExpert Custom
+              ]]></add>
+        </operation>
+        <operation error="skip">
+            <search><![CDATA['item_name' => $data['text_option'].' > ' . strip_tags(html_entity_decode($product_option['name'], ENT_QUOTES, 'UTF-8')),]]></search>
+            <add position="after"><![CDATA[
+                //BundleExpert Custom
+                'item_name' => $data['text_option'].' > ' . strip_tags(html_entity_decode($parent_options_name . $product_option['name'], ENT_QUOTES, 'UTF-8')),
+                //BundleExpert Custom
+              ]]></add>
+        </operation>
+
+        <operation error="skip">
+            <search><![CDATA[$fixed_options[$index]['item_name'] = $data['text_option'] . ' > ' . $option_info['name'];]]></search>
+            <add position="after"><![CDATA[
+               //BundleExpert Custom
+                $parent_options_name = $this->get_parent_options_names($kit_product['item_id'],$fixed_option['product_option_id']);
+                $fixed_options[$index]['item_name'] = $data['text_option'] . ' > ' . $parent_options_name. $option_info['name'];
+                //BundleExpert Custom
+              ]]></add>
+        </operation>
+        <operation error="skip">
+            <search><![CDATA[$enabled_options[$index]['item_name'] = $data['text_option'] . ' > ' . $option_info['name'];]]></search>
+            <add position="after"><![CDATA[
+                //BundleExpert Custom
+                $parent_options_name = $this->get_parent_options_names($kit_product['item_id'],$enabled_option['product_option_id']);
+                $enabled_options[$index]['item_name'] = $data['text_option'] . ' > ' . $parent_options_name. $option_info['name'];
+                //BundleExpert Custom
+              ]]></add>
+        </operation>
+        <operation error="skip">
+            <search><![CDATA[$disable_options[$index]['item_name'] = $data['text_option'] . ' > ' . $option_info['name'];]]></search>
+            <add position="after"><![CDATA[
+                    //BundleExpert Custom
+                    $parent_options_name = $this->get_parent_options_names($kit_product['item_id'],$disable_option['product_option_id']);
+                    $disable_options[$index]['item_name'] = $data['text_option'] . ' > ' . $parent_options_name. $option_info['name'];
+                    //BundleExpert Customm
+              ]]></add>
+        </operation>
+
+
+
+        <operation error="skip">
+            <search><![CDATA[foreach ($product_option['product_option_value'] as $product_option_value) {]]></search>
+            <add position="after"><![CDATA[
+                //BundleExpert Custom
+                $parent_options_name = $this->get_parent_options_names($product_id,$product_option['product_option_id'],$product_option_value['option_value_id']);
+                //BundleExpert Custom
+              ]]></add>
+        </operation>
+        <operation error="skip">
+            <search><![CDATA['item_name' => $data['text_option'].' > ' . strip_tags(html_entity_decode($product_option['name'] . ' > ' . $data['option_values'][$product_option['option_id']][$product_option_value['option_value_id']]['name'], ENT_QUOTES, 'UTF-8')),]]></search>
+            <add position="after"><![CDATA[
+                //BundleExpert Custom
+                 'item_name' => $data['text_option'].' > ' . strip_tags(html_entity_decode($parent_options_name . $product_option['name'] .  ' > ' . $data['option_values'][$product_option['option_id']][$product_option_value['option_value_id']]['name'], ENT_QUOTES, 'UTF-8')),
+                //BundleExpert Custom
+              ]]></add>
+        </operation>
+
+        <operation error="skip">
+            <search><![CDATA[public function save_kit_ajax(){]]></search>
+            <add position="before"><![CDATA[
+                //BundleExpert Custom
+                public function get_parent_options_names($product_id, $product_option_id, $option_value_id=''){
+                        $parent_name = '';
+                        if(!empty($option_value_id)){
+                            $sql = "SELECT * FROM " . DB_PREFIX . "may_advanced_option_product_value WHERE product_id= '" . (int)$product_id . "' AND product_option_id= '" . (int)$product_option_id . "' AND option_value_id= '" . (int)$option_value_id . "'";
+                        }else{
+                            $sql = "SELECT * FROM " . DB_PREFIX . "may_advanced_option_product_value WHERE product_id= '" . (int)$product_id . "' AND product_option_id= '" . (int)$product_option_id . "'";
+                        }
+                        $query = $this->db->query($sql);
+                        if($query->row){
+                            $tree_string = $query->row['combination_id'];
+                            $tree_array = explode('-', $tree_string);
+                            $array_size = count($tree_array);
+                            if($array_size>0){
+                                foreach ($tree_array as $index=>$tree_item){
+                                    if($tree_item==0){
+                                        continue;
+                                    }
+
+                                    $parent_option_value_id = $tree_item;
+                                    $option_value_data = $this->model_catalog_option->getOptionValue($parent_option_value_id);
+                                    if($option_value_data){
+                                        $parent_name .= '| ' . $option_value_data['name'] .' |' ." > " ;
+                                    }
+
+                                }
+
+                            }
+                        }
+                       return $parent_name;
+                    }
+                //BundleExpert Custom
+              ]]></add>
+        </operation>
+        <operation error="skip">
+            <search><![CDATA[$json = $product_options;]]></search>
+            <add position="before"><![CDATA[
+                //BundleExpert Custom
+                usort($product_options, function($a, $b) {
+                    return $a['item_name'] <=> $b['item_name'];
+                });
+                //BundleExpert Custom
+              ]]></add>
+        </operation>
+    </file>
+
+    <file path="system/library/bundle_expert/bundle_expert.php">
+        <operation error="skip">
+            <search><![CDATA[if ($option_value['quantity'] > 0 || $this->config->get('config_stock_checkout') || !$option_value['subtract']) {]]></search>
+            <add position="replace"><![CDATA[
+                //BundleExpert Custom
+                if (!$option_value['subtract'] || ($option_value['quantity'] > 0) || (($option['type'] == 'select' || $option['type'] == 'radio') && $option['value'] == 'may_advanced_option')) {
+                //BundleExpert Custom
+              ]]></add>
+        </operation>
+        <operation error="skip">
+            <search><![CDATA[$this->kit_options_cache[$product_id] = $options;]]></search>
+            <add position="replace"><![CDATA[
+                //BundleExpert Custom
+                //$this->kit_options_cache[$product_id] = $options;
+                //BundleExpert Custom
+              ]]></add>
+        </operation>
+        <operation error="skip">
+            <search index="0"><![CDATA[foreach ($kit_item_product['product_info']['options'] as $option) {]]></search>
+            <add position="before"><![CDATA[
+                //BundleExpert Custom
+                $stock = true;
+                //BundleExpert Custom
+              ]]></add>
+        </operation>
+    </file>
+
+    <file path="admin/controller/extension/may/advanced_options.php">
+        <operation error="skip">
+            <search><![CDATA[$this->model_extension_may_advanced_options_product->setProductAdvancedOptions($args[0], $args[1]);]]></search>
+            <add position="after"><![CDATA[
+                //BundleExpert Custom
+                if($this->registry->has('bundle_expert')){
+                    $this->bundle_expert->onEditProduct($args[0]);
+                }
+                //BundleExpert Custom
+              ]]></add>
+        </operation>
+    </file>
+    <file path="">
+        <operation error="skip">
+            <search><![CDATA[]]></search>
+            <add position="after"><![CDATA[
+                //BundleExpert Custom
+                if (typeof be_custom != "undefined") {
+                }
+                //BundleExpert Custom
+              ]]></add>
+        </operation>
+    </file>
+
+
+
+</modification>

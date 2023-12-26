@@ -1,0 +1,39 @@
+/*
+Product Option Image PRO / Изображения опций PRO
+Support: support@liveopencart.com / Поддержка: help@liveopencart.ru
+*/
+
+.poip-options-to-image {
+	vertical-align: top;
+}
+.poip-option-to-image {
+	display: inline-block;
+	vertical-align: top;
+	padding-right: 20px;
+}
+.poip-option-to-image .checkbox {
+	width: auto;
+	opacity: 1;
+	position: relative;
+	min-height: 20px;
+	padding-top: 1px;
+	white-space: nowrap;
+}
+
+.poip-image-to-option .input-group input {
+	width:72px;
+	float:left;
+}
+
+.poip-option-images-grid {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.poip-container-option-images {
+	width:240px;
+}
+
+.poip-container-button-hide-settings {
+	padding-top:10px;
+}

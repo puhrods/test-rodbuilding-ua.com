@@ -1,10 +1,120 @@
 <?php
 class ModelShippingUkrPoshta extends Model {
+    protected $extension = 'ukrposhta';
+
     public function creatTables() {
-        $this->db->query('CREATE TABLE IF NOT EXISTS `' . DB_PREFIX . 'ukrposhta_references` (
+        $this->db->query('CREATE TABLE IF NOT EXISTS `' . DB_PREFIX . $this->extension . '_references` (
    			`type` varchar(100) NOT NULL, 
    			`value` mediumtext NOT NULL,  
    			UNIQUE(`type`)
+   			) ENGINE=MyISAM DEFAULT CHARSET=utf8'
+        );
+
+        $this->db->query('CREATE TABLE IF NOT EXISTS `' . DB_PREFIX . $this->extension . '_regions` (
+   			`REGION_ID` int(11) NOT NULL,
+   			`REGION_UA` varchar(50) NOT NULL,
+   			`REGION_EN` varchar(50) NOT NULL,
+   			`REGION_RU` varchar(50) NOT NULL, 
+   			`REGION_KATOTTG` bigint(20) NOT NULL,
+   			`REGION_KOATUU` bigint(20) NOT NULL,
+   			PRIMARY KEY (`REGION_ID`)
+   			) ENGINE=MyISAM DEFAULT CHARSET=utf8'
+        );
+
+        $this->db->query('CREATE TABLE IF NOT EXISTS `' . DB_PREFIX . $this->extension . '_cities` (
+   			`CITY_ID` int(11) NOT NULL,
+   			`CITY_UA` varchar(100) NOT NULL,
+   			`CITY_EN` varchar(100) NOT NULL, 
+   			`CITY_RU` varchar(100) NOT NULL,
+   			`OLDCITY_UA` varchar(100) NOT NULL,
+   			`OLDCITY_EN` varchar(100) NOT NULL, 
+   			`OLDCITY_RU` varchar(100) NOT NULL,   
+   			`CITYTYPE_UA` varchar(20) NOT NULL,
+   			`CITYTYPE_EN` varchar(20) NOT NULL, 
+   			`CITYTYPE_RU` varchar(20) NOT NULL,
+   			`SHORTCITYTYPE_UA` varchar(10) NOT NULL,
+   			`SHORTCITYTYPE_EN` varchar(10) NOT NULL, 
+   			`SHORTCITYTYPE_RU` varchar(10) NOT NULL,
+   			`CITY_KOATUU` bigint(20) NOT NULL,
+   			`CITY_KATOTTG` bigint(20) NOT NULL,
+   			`LONGITUDE` double NOT NULL,
+   			`LATTITUDE` double NOT NULL,
+   			`OWNOF` varchar(50) NOT NULL,
+   			`POPULATION` int(11) NOT NULL,
+   			`DISTRICT_ID` int(11) NOT NULL,
+   			`DISTRICT_UA` varchar(50) NOT NULL,
+   			`DISTRICT_EN` varchar(50) NOT NULL, 
+   			`DISTRICT_RU` varchar(50) NOT NULL,
+   			`NEW_DISTRICT_UA` varchar(50) NOT NULL,
+   			`REGION_ID` int(11) NOT NULL,
+   			`REGION_UA` varchar(50) NOT NULL,
+   			`REGION_EN` varchar(50) NOT NULL, 
+   			`REGION_RU` varchar(50) NOT NULL,
+   			`NAME_UA` varchar(50) NOT NULL,
+   			INDEX (`DISTRICT_ID`),
+   			INDEX (`REGION_ID`),	
+   			PRIMARY KEY (`CITY_ID`)
+   			) ENGINE=MyISAM DEFAULT CHARSET=utf8'
+        );
+
+        $this->db->query('CREATE TABLE IF NOT EXISTS `' . DB_PREFIX . $this->extension . '_departments` (
+            `ID` int(11) NOT NULL,
+            `POSTINDEX` varchar(10) NOT NULL,
+            `TECHINDEX` varchar(10) NOT NULL,	
+            `PO_LONG` varchar(300) NOT NULL,
+            `PO_SHORT` varchar(100) NOT NULL,
+            `PHONE` varchar(100) NOT NULL,
+            `ADDRESS` varchar(300) NOT NULL,
+            `MEREZA_NUMBER` int(11) NOT NULL,	
+            `PARENT_ID` int(11) NOT NULL,
+            `POSTTERMINAL` tinyint(1) NOT NULL,
+            `PELPEREKAZY` tinyint(1) NOT NULL,	
+            `IS_CASH` tinyint(1) NOT NULL,	
+            `IS_SECURITY` tinyint(1) NOT NULL,	
+            `IS_SMARTBOX` tinyint(1) NOT NULL,
+            `IS_FLAGMAN` tinyint(1) NOT NULL,
+            `IS_AUTOMATED` tinyint(1) NOT NULL,
+            `ISVPZ` tinyint(1) NOT NULL,
+            `IS_DHL` tinyint(1) NOT NULL,
+   			`LONGITUDE` double NOT NULL,
+   			`LATTITUDE` double NOT NULL,
+   			`TYPE_LONG` varchar(200) NOT NULL,
+            `TYPE_SHORT` varchar(200) NOT NULL,
+            `TYPE_ACRONYM` varchar(20) NOT NULL,
+            `HOUSENUMBER` varchar(100) NOT NULL,
+            `STREET_UA` varchar(200) NOT NULL,
+   			`STREET_EN` varchar(200) NOT NULL, 
+   			`STREET_RU` varchar(200) NOT NULL,
+   			`STREETTYPE_UA` varchar(20) NOT NULL,
+   			`STREETTYPE_EN` varchar(20) NOT NULL, 
+   			`STREETTYPE_RU` varchar(20) NOT NULL,
+   			`CITY_ID` int(11) NOT NULL,
+   			`CITY_UA` varchar(100) NOT NULL,
+   			`CITY_EN` varchar(100) NOT NULL, 
+   			`CITY_RU` varchar(100) NOT NULL,
+   			`CITYTYPE_UA` varchar(20) NOT NULL,
+   			`CITYTYPE_EN` varchar(20) NOT NULL, 
+   			`CITYTYPE_RU` varchar(20) NOT NULL,
+   			`SHORTCITYTYPE_UA` varchar(10) NOT NULL,
+   			`SHORTCITYTYPE_EN` varchar(10) NOT NULL, 
+   			`SHORTCITYTYPE_RU` varchar(10) NOT NULL,
+   			`DISTRICT_ID` int(11) NOT NULL,
+   			`DISTRICT_UA` varchar(50) NOT NULL,
+   			`DISTRICT_EN` varchar(50) NOT NULL, 
+   			`DISTRICT_RU` varchar(50) NOT NULL,
+   			`NEW_DISTRICT_UA` varchar(50) NOT NULL,
+   			`REGION_ID` int(11) NOT NULL,
+   			`REGION_UA` varchar(50) NOT NULL,
+   			`REGION_EN` varchar(50) NOT NULL, 
+   			`REGION_RU` varchar(50) NOT NULL,
+   			`LOCK_CODE` int(11) NOT NULL,
+   			`LOCK_UA` varchar(50) NOT NULL,
+   			`LOCK_EN` varchar(50) NOT NULL, 
+   			`LOCK_RU` varchar(50) NOT NULL,
+   			INDEX (`CITY_ID`),
+   			INDEX (`DISTRICT_ID`),
+   			INDEX (`REGION_ID`),	
+   			PRIMARY KEY (`ID`)
    			) ENGINE=MyISAM DEFAULT CHARSET=utf8'
         );
 
@@ -19,7 +129,7 @@ class ModelShippingUkrPoshta extends Model {
     }
 
     public function deleteTables() {
-        $this->db->query("DROP TABLE `" . DB_PREFIX  . "ukrposhta_references`");
+        $this->db->query("DROP TABLE `" . DB_PREFIX  . $this->extension . "_references`, `" . DB_PREFIX  . $this->extension . "_regions`, `" . DB_PREFIX  . $this->extension . "_cities`, `" . DB_PREFIX  . $this->extension . "_departments`");
     }
 
     public function getOrder($order_id) {
@@ -68,6 +178,18 @@ class ModelShippingUkrPoshta extends Model {
                 }
             }
 
+            if (version_compare(VERSION, '1.5.4', '>=')) {
+                $ean  = $product['ean'];
+                $jan  = $product['jan'];
+                $isbn = $product['isbn'];
+                $mpn  = $product['mpn'];
+            } else {
+                $ean  = '';
+                $jan  = '';
+                $isbn = '';
+                $mpn  = '';
+            }
+
             $product_data[] = array(
                 'order_product_id' => $product['order_product_id'],
                 'name'             => $product['name'],
@@ -76,10 +198,10 @@ class ModelShippingUkrPoshta extends Model {
                 'quantity'         => $product['quantity'],
                 'sku'              => $product['sku'],
                 'upc'              => $product['upc'],
-                'ean'              => $product['ean'],
-                'jan'              => $product['jan'],
-                'isbn'             => $product['isbn'],
-                'mpn'              => $product['mpn'],
+                'ean'              => $ean,
+                'jan'              => $jan,
+                'isbn'             => $isbn,
+                'mpn'              => $mpn,
                 'weight'           => ($product['weight'] + $option_weight) * $product['quantity'],
                 'weight_class_id'  => $product['weight_class_id'],
                 'length'           => $product['length'],

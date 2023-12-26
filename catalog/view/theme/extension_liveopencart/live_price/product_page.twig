@@ -1,0 +1,54 @@
+
+{% if liveprice_installed ?? 0 %}
+	<script type="text/javascript">
+		
+		(function(){
+			
+			let livepriceInit = function($){
+				let lp_product_id = {{ lp_product_id }};
+			
+				if ( lp_product_id ) {
+				
+					let params = {
+						'lp_settings' 			: {{ ( liveprice_settings ?? 0 ) ? liveprice_settings|json_encode : '[]' }},
+						'theme_name'			: '{{ lp_theme_name ?? '' }}',
+						'product_id'			: lp_product_id,
+						{% if (lp_request_url ?? false) %}
+						'request_url'			: '{{ lp_request_url }}',
+						{% endif %}
+						'get_custom_methods'	: {% if (liveprice_custom_methods_function_name ?? false)%}{{ liveprice_custom_methods_function_name }}{% else %}( typeof(liveprice_getCustomMethodsOfTheme) == 'function' ? liveprice_getCustomMethodsOfTheme : false ){% endif %},
+						{% if (liveprice_custom_option_prefix ?? false) %}
+							'option_prefix': '{{ liveprice_custom_option_prefix }}',
+						{% endif %}
+					};
+					
+					{% if ( liveprice_inQuickview ?? 0 ) %}
+						params.in_quickview = true;
+					{% endif %}
+					
+					// standard for most of themes
+					$container = $('body, div:first').first();
+					
+					var liveprice = $container.liveopencart_LivePrice( params );
+					
+				}
+			}
+			
+			if ( typeof(jQuery) == 'undefined' ) {
+				window.addEventListener('load', function(){
+					livepriceInit(jQuery);
+				})
+				
+			} else {
+				if ( jQuery.fn.liveopencart_LivePrice ) {
+					livepriceInit(jQuery);
+				} else {
+					jQuery().ready(function(){
+						livepriceInit(jQuery);
+					});
+				}
+			}
+			
+		})();
+	</script>
+{% endif %}

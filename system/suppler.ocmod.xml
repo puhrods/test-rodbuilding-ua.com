@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+  	<name>suppler</name>
+  	<code>default</code>
+  	<version>9.4</version>
+  	<author>usergio</author> 
+	<!--languages-->
+	<file path="admin/language/{en}*/common/column_left.php" error="skip">
+		<operation error="skip">
+			<search><![CDATA[$_['text_manufacturer']]]></search>
+			<add position="before"><![CDATA[$_['text_suppler']                	 = 'Suppliers';]]></add>
+		</operation>
+	</file>	
+	<file path="admin/language/{ru}*/common/column_left.php" error="skip">
+		<operation error="skip">
+			<search><![CDATA[$_['text_manufacturer']]]></search>
+			<add position="before"><![CDATA[$_['text_suppler']                  	    = 'Поставщики';]]></add>
+		</operation>
+	</file>	
+	<file path="admin/language/{ukrainian,ua-ua,uk-ua}/common/column_left.php" error="skip">
+		<operation error="skip">
+			<search><![CDATA[$_['text_manufacturer']]]></search>
+			<add position="before"><![CDATA[$_['text_suppler']                  	    = 'Постачальники';]]></add>
+		</operation>
+	</file>
+	
+	<file path="admin/language/{en}*/catalog/product.php" error="skip">
+		<operation error="skip">
+			<search><![CDATA['Model']]></search>
+			<add position="replace"><![CDATA['Product code']]></add>
+		</operation>		
+		<operation error="skip">
+			<search><![CDATA[$_['entry_status']]]></search>
+			<add position="before"><![CDATA[$_['entry_optsku']      	 = 'SKU:';]]></add>
+		</operation>		
+	</file>		
+	<file path="admin/language/{ru}*/catalog/product.php" error="skip">
+		<operation error="skip">
+			<search><![CDATA['Модель']]></search>
+			<add position="replace"><![CDATA['Код товара']]></add>
+		</operation>
+		<operation error="skip">
+			<search><![CDATA['Модель:']]></search>
+			<add position="replace"><![CDATA['Код товара:']]></add>
+		</operation>
+		<operation error="skip">
+			<search><![CDATA[$_['entry_status']]]></search>
+			<add position="before"><![CDATA[$_['entry_optsku']      	    = 'Артикул:';]]></add>
+		</operation>		
+	</file>	
+	<file path="admin/language/{ukrainian,ua-ua,uk-ua}/catalog/product.php" error="skip">
+		<operation error="skip">
+			<search><![CDATA['Модель']]></search>
+			<add position="replace"><![CDATA['Код товару']]></add>
+		</operation>
+		<operation error="skip">
+			<search><![CDATA['Модель:']]></search>
+			<add position="replace"><![CDATA['Код товару:']]></add>
+		</operation>
+		<operation error="skip">
+			<search><![CDATA[$_['entry_status']]]></search>
+			<add position="before"><![CDATA[$_['entry_optsku']      	    = 'Артикул:';]]></add>
+		</operation>		
+	</file>	
+	<file path="catalog/language/{ru}*/product/product.php" error="skip">
+		<operation error="skip">
+			<search><![CDATA['Модель:']]></search>
+			<add position="replace"><![CDATA['Код товара:']]></add>
+		</operation>
+		<operation error="skip">
+			<search><![CDATA['Модель']]></search>
+			<add position="replace"><![CDATA['Код товара']]></add>
+		</operation>
+	</file>	
+	<file path="catalog/language/{ukrainian,ua-ua,uk-ua}/product/product.php" error="skip">
+		<operation error="skip">
+			<search><![CDATA['Модель:']]></search>
+			<add position="replace"><![CDATA['Код товару:']]></add>
+		</operation>
+		<operation error="skip">
+			<search><![CDATA['Модель']]></search>
+			<add position="replace"><![CDATA['Код товару']]></add>
+		</operation>
+	</file>	
+	<file path="admin/language/{ru}*/report/product_purchased.php" error="skip">
+		<operation error="skip">
+			<search><![CDATA['Модель']]></search>
+			<add position="replace"><![CDATA['Код товара']]></add>
+		</operation>
+	</file>	
+	<file path="admin/language/{ukrainian,ua-ua,uk-ua}/report/product_purchased.php" error="skip">
+		<operation error="skip">
+			<search><![CDATA['Модель']]></search>
+			<add position="replace"><![CDATA['Код товару']]></add>
+		</operation>
+	</file>
+	
+	<!--model-->
+	<file path="admin/model/catalog/product.php" >
+		<operation>
+			<search><![CDATA[$this->addProduct($data);]]></search>
+			<add position="before"><![CDATA[
+			$row1 = $this->getMaxModel();
+			$max_mod = $row1["max(product_id)"];
+			$next_code = $max_mod + 1;
+			$p = strpos($data["model"], "-");
+			if (!$p) strpos($data["model"], "~");
+			if ($p) {
+				$p = substr($data["model"], $p);
+				$data["model"] = $next_code.$p;
+			}]]></add>
+		</operation>
+		<operation>
+			<search><![CDATA[public function getProducts($data = array()) {]]></search>
+			<add position="before"><![CDATA[
+	public function getMaxModel() {		
+		$query = $this->db->query("SELECT max(product_id) FROM " . DB_PREFIX . "product");			
+		return $query->row;
+	} ]]></add>
+		</operation>
+		<operation>
+			<search><![CDATA[$product_option_value['weight'],]]></search>
+			<add position="after"><![CDATA['optsku'          		  => $product_option_value['optsku'],]]></add>
+		</operation>
+		<operation>
+			<search><![CDATA[$product_option_value['weight'] . "',]]></search>
+			<add position="replace"><![CDATA[$product_option_value['weight'] . "', optsku= '" . $this->db->escape($product_option_value['optsku']) . "',]]></add>
+		</operation>
+	</file>
+	<!--controller-->
+	<file path="admin/controller/common/column_left.php" >
+		<operation>
+			<search><![CDATA[if ($this->user->hasPermission('access', 'catalog/download')) {]]></search>
+			<add position="before"><![CDATA[if ($this->user->hasPermission('access', 'catalog/suppler')) {
+				$catalog[] = array(
+					'name'	   => $this->language->get('text_suppler'),
+					'href'     => $this->url->link('catalog/suppler', 'user_token=' . $this->session->data['user_token'], true),
+					'children' => array()		
+				);
+			}]]></add>
+		</operation>
+	</file>	
+	<file path="admin/controller/catalog/product.php" >
+		<operation>
+			<search><![CDATA[protected function getForm() {]]></search>
+			<add position="after"><![CDATA[		$data['entry_optsku'] = $this->language->get('entry_optsku');]]></add>
+		</operation>
+		<operation>
+            <search><![CDATA[$product_info = $this->model_catalog_product->getProduct($this->request->get['product_id']);]]></search>
+            <add position="replace"><![CDATA[$product_info = $this->model_catalog_product->getProduct($this->request->get['product_id']);
+        } else {
+            $row = $this->model_catalog_product->getMaxModel();
+            $max_model = $row["max(product_id)"];
+            $next_code = $max_model + 1;
+            $next_code = $next_code."-";
+        ]]></add>
+        </operation> 
+		<operation>
+			<search><![CDATA[$data['model'] = '']]></search>
+			<add position="replace"><![CDATA[$data['model'] = $next_code]]></add>
+		</operation>		
+		<operation>
+			<search><![CDATA[$product_option_value['weight'],]]></search>
+			<add position="after"><![CDATA[						'optsku'          		  => $product_option_value['optsku'],]]></add>
+		</operation>
+	</file>
+	<!--template-->
+	<file path="admin/view/template/catalog/product_form.twig" >
+		<operation>
+			<search index="0"><![CDATA[<td class="text-left">{{ entry_option_value }}</td>]]></search>
+			<add position="after"><![CDATA[				  <td class="text-left">{{ entry_optsku }}</td>]]></add>
+		</operation>
+		<operation>
+			<search><![CDATA[<td class="text-left">{{ entry_option_value }}</td>';]]></search>
+			<add position="after"><![CDATA[			  html += '        <td class="text-right">{{ entry_optsku }}</td>';]]></add>
+		</operation>
+		<operation error="skip">
+			<search><![CDATA[value="{{ product_option_value.product_option_value_id }}" /></td>]]></search>
+			<add position="after"><![CDATA[				    <td class="text-left"><input type="text" name="product_option[{{ option_row }}][product_option_value][{{ option_value_row }}][optsku]" value="{{ product_option_value.optsku }}" placeholder="{{ entry_optsku }}" class="form-control" /></td>]]></add>
+		</operation>
+		<operation error="skip">
+			<search><![CDATA[value="{{ product_option_value.product_option_value_id }}"/></td>]]></search>
+			<add position="after"><![CDATA[				    <td class="text-left"><input type="text" name="product_option[{{ option_row }}][product_option_value][{{ option_value_row }}][optsku]" value="{{ product_option_value.optsku }}" placeholder="{{ entry_optsku }}" class="form-control" /></td>]]></add>
+		</operation>
+		<operation>
+			<search><![CDATA[<td colspan="6"></td>]]></search>
+			<add position="replace"><![CDATA[<td colspan="7"></td>]]></add>
+		</operation>		
+		<operation>
+			<search><![CDATA[option_value_row + '][product_option_value_id]" value="" /></td>';]]></search>
+			<add position="after"><![CDATA[	  html += '  <td class="text-left"><input type="text" name="product_option[' + option_row + '][product_option_value][' + option_value_row + '][optsku]" value="" placeholder="{{ entry_optsku }}" class="form-control" /></td>';]]></add>
+		</operation>		
+	</file>		
+</modification>

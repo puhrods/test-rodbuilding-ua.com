@@ -1,0 +1,138 @@
+{{header}}{{column_left}}
+<div id="content">
+	<div class="page-header">
+		<div class="container-fluid">
+			<div class="pull-right">
+				<button type="submit" form="form-attribute" data-toggle="tooltip" title="{{button_save}}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+				<a href="{{cancel}}" data-toggle="tooltip" title="{{button_cancel}}" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
+			<h1>{{heading_title_raw}}</h1>
+			<ul class="breadcrumb">
+				{% for breadcrumb in breadcrumbs %}
+					<li><a href="{{breadcrumb.href}}">{{breadcrumb.text}}</a></li>
+					{% endfor %}
+			</ul>
+		</div>
+	</div>
+	<div class="container-fluid">
+		{% if error_warning %}
+			<div class="alert alert-danger">
+				<i class="fa fa-exclamation-circle"></i> {{error_warning}}
+				<button type="button" class="close" data-dismiss="alert">&times;</button>
+			</div>
+		{% endif %}
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title"><i class="fa fa-pencil"></i> {{text_form}}</h3>
+			</div>
+			<div class="panel-body">
+				<form action="{{action}}" method="post" enctype="multipart/form-data" id="form-attribute" class="form-horizontal">
+					<div class="form-group required">
+						<label class="col-sm-2 control-label">{{entry_name}}</label>
+						<div class="col-sm-10">
+							<input class="form-control" type="text" name="name" value="{% if name is defined and name is not empty %}{{name}}{% endif %}" placeholder="{{entry_name}}" />
+							{% if error_name %}
+								<div class="text-danger">{{error_name}}</div>
+							{% endif %} 
+						</div>
+					</div>
+					<div class="form-group required">
+						<label class="col-sm-2 control-label">{{entry_code_1c}}</label>
+						<div class="col-sm-10">
+							<input class="form-control" type="text" name="code_1c" value="{% if code_1c is defined and code_1c is not empty %}{{code_1c}}{% endif %}" placeholder="{{entry_code_1c}}" />
+							{% if error_code_1c %}
+								<div class="text-danger">{{error_code_1c}}</div>
+							{% endif %} 
+						</div>
+					</div>
+					<div class="form-group required">
+						<label class="col-sm-2 control-label">{{entry_sort_order}}</label>
+						<div class="col-sm-10">
+							<input class="form-control" type="text" name="sort_order" value="{% if sort_order is defined and sort_order is not empty %}{{sort_order}}{% endif %}" placeholder="{{entry_sort_order}}" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">{{entry_store}}</label>
+						<div class="col-sm-10">
+							<div class="well well-sm" style="height: 150px; overflow: auto;">
+								<div class="checkbox">
+									<label>
+										{% if 0 in warehouse_store %}
+											<input type="checkbox" name="warehouse_store[]" value="0" checked="checked" />
+											{{text_default}}
+										{% else %}
+											<input type="checkbox" name="warehouse_store[]" value="0" />
+											{{text_default}}
+										{% endif %}
+									</label>
+								</div>
+								{% for store in stores %}
+									<div class="checkbox">
+										<label>
+											{% if store.store_id in warehouse_store %}
+												<input type="checkbox" name="warehouse_store[]" value="{{store.store_id}}" checked="checked" />
+												{{store.name}}
+											{% else %}
+												<input type="checkbox" name="warehouse_store[]" value="{{store.store_id}}" />
+												{{store.name}}
+											{% endif %}
+										</label>
+									</div>
+								{% endfor %}
+							</div>
+						</div>
+					</div>
+					<ul class="nav nav-tabs" id="language">
+						{% for language in languages %}
+							<li {% if loop.index == 1 %}class="active"{% endif %}>
+								<a href="#language{{ language.language_id }}" data-toggle="tab">
+									<img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}" /> {{ language.name }}
+								</a>
+							</li>
+						{% endfor %}
+					</ul>
+					<div class="tab-content">
+						{% for language in languages %}
+							<div class="tab-pane{% if loop.index == 1 %} active{% endif %}" id="language{{language.language_id}}">
+								<div class="form-group">
+									<label class="col-sm-2 control-label" for="input-param1{{language.language_id}}">{{entry_param1}}</label>
+									<div class="col-sm-10">
+										<textarea id="input-param1{{language.language_id}}" class="form-control" placeholder="{{entry_param1}}" name="warehouse_description[{{language.language_id}}][param1]">{% if warehouse_description[language['language_id']]['param1'] is defined and warehouse_description[language['language_id']]['param1'] is not empty %}{{warehouse_description[language['language_id']]['param1']}}{% endif %}</textarea>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="col-sm-2 control-label" for="input-param2{{language.language_id}}">{{entry_param2}}</label>
+									<div class="col-sm-10">
+										<textarea id="input-param2{{language.language_id}}" class="form-control" placeholder="{{entry_param2}}" name="warehouse_description[{{language.language_id}}][param2]">{% if warehouse_description[language['language_id']]['param2'] is defined and warehouse_description[language['language_id']]['param2'] is not empty %}{{warehouse_description[language['language_id']]['param2']}}{% endif %}</textarea>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="col-sm-2 control-label" for="input-param3{{language.language_id}}">{{entry_param3}}</label>
+									<div class="col-sm-10">
+										<textarea id="input-param3{{language.language_id}}" class="form-control" placeholder="{{entry_param3}}" name="warehouse_description[{{language.language_id}}][param3]">{% if warehouse_description[language['language_id']]['param3'] is defined and warehouse_description[language['language_id']]['param3'] is not empty %}{{warehouse_description[language['language_id']]['param3']}}{% endif %}</textarea>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="col-sm-2 control-label" for="input-param4{{language.language_id}}">{{entry_param4}}</label>
+									<div class="col-sm-10">
+										<textarea id="input-param4{{language.language_id}}" class="form-control" placeholder="{{entry_param4}}" name="warehouse_description[{{language.language_id}}][param4]">{% if warehouse_description[language['language_id']]['param4'] is defined and warehouse_description[language['language_id']]['param4'] is not empty %}{{warehouse_description[language['language_id']]['param4']}}{% endif %}</textarea>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="col-sm-2 control-label" for="input-param5{{language.language_id}}">{{entry_param5}}</label>
+									<div class="col-sm-10">
+										<textarea id="input-param5{{language.language_id}}" class="form-control" placeholder="{{entry_param5}}" name="warehouse_description[{{language.language_id}}][param5]">{% if warehouse_description[language['language_id']]['param5'] is defined and warehouse_description[language['language_id']]['param5'] is not empty %}{{warehouse_description[language['language_id']]['param5']}}{% endif %}</textarea>
+									</div>
+								</div>
+							</div>
+						{% endfor %}
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+{{footer}}

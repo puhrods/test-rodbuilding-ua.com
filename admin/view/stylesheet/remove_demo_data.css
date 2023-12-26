@@ -1,0 +1,35 @@
+.mt-1{
+  margin-top:1em;
+}
+.mt-3{
+  margin-top:3em;
+}
+.mt-5p{
+  margin-top:5px;
+}
+.mb-0{
+  margin-bottom:0;
+}
+.mb-05{
+  margin-bottom:0.5em;
+}
+.ml-3{
+  margin-left:3em;
+}
+
+.pt-0{
+  padding-top:0;
+}
+
+.pb-0{
+  padding-bottom:0;
+}
+
+.color-old-black{
+  color:#7e7e7e;
+}
+
+.border-top-old-black{
+  border-top: 1px solid #c8c8c8;
+}
+

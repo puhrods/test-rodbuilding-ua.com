@@ -1,0 +1,756 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <style>
+  {{ may_advanced_options_swatch_css }}
+  </style>
+  <style id="may-advanced-options-swatch-style">
+  .may-swatches input[type=radio] + img,
+  .may-swatches input[type=radio] + span {
+    border: {{ may_advanced_options_swatch_style_border_width }}px solid #{{ may_advanced_options_swatch_style_border_color_default }};
+    min-width: {{ may_advanced_options_swatch_style_size_width }}px;
+    height: {{ may_advanced_options_swatch_style_size_height }}px;
+    border-radius: {{ may_advanced_options_swatch_style_size_radius }}px;
+  }
+  .may-swatches input[type=radio] + img {
+    max-width: {{ may_advanced_options_swatch_style_size_width }}px;
+    padding: {{ may_advanced_options_swatch_style_space_padding }}px;
+  }
+  .may-swatches input[type=radio] + span {
+    padding: {{ may_advanced_options_swatch_style_space_padding + 4 }}px;
+    line-height: {{ may_advanced_options_swatch_style_size_height - may_advanced_options_swatch_style_space_padding * 2 - 8 }}px;
+  }
+  .may-swatches input[type=radio]:enabled + img:hover,
+  .may-swatches input[type=radio]:enabled + span:hover,
+  .may-swatches input[type=radio]:checked + img,
+  .may-swatches input[type=radio]:checked + span {
+    border-color: #{{ may_advanced_options_swatch_style_border_color_selected }};
+  }
+  </style>
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        <button type="submit" form="form-may-advanced-options" data-toggle="tooltip" title="{{ _['Save'] }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+        <a href="{{ cancel }}" data-toggle="tooltip" title="{{ _['Cancel'] }}" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
+      <h1>{{ _['Maybooster Advanced Options'] }}</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+        <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="container-fluid">
+    {% if error.error_warning %}
+    <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    {% endif %}
+    <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-may-advanced-options" class="form-horizontal">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title"><i class="fa fa-pencil"></i> {{ _['Edit Maybooster Advanced Options Module'] }}</h3>
+        </div>
+        <div class="panel-body">
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-status">{{ _['Status'] }}</label>
+            <div class="col-sm-10">
+              <select name="may_advanced_options_status" id="input-status" class="form-control">
+                {% if may_advanced_options_status %}
+                <option value="1" selected="selected">{{ _['Enabled'] }}</option>
+                <option value="0">{{ _['Disabled'] }}</option>
+                {% else %}
+                <option value="1">{{ _['Enabled'] }}</option>
+                <option value="0" selected="selected">{{ _['Disabled'] }}</option>
+                {% endif %}
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">{{ _['Values for combination'] }}</label>
+            <div class="col-sm-10">
+              <div class="row col-sm-12">
+                <div class="col-sm-2 checkbox">
+                  <label for="input-attribute-model">
+                    <input name="may_advanced_options_attribute_model" type="checkbox" value="1" id="input-attribute-model" {% if may_advanced_options_attribute_model %} checked="checked" {% endif %}>
+                    {{ _['Model'] }}
+                  </label>
+                </div>
+                <div class="col-sm-2 checkbox">
+                  <label for="input-attribute-sku">
+                    <input name="may_advanced_options_attribute_sku" type="checkbox" value="1" id="input-attribute-sku" {% if may_advanced_options_attribute_sku %} checked="checked" {% endif %}>
+                    {{ _['SKU'] }}
+                  </label>
+                </div>
+                <div class="col-sm-2 checkbox">
+                  <label for="input-attribute-upc">
+                    <input name="may_advanced_options_attribute_upc" type="checkbox" value="1" id="input-attribute-upc" {% if may_advanced_options_attribute_upc %} checked="checked" {% endif %}>
+                    {{ _['UPC'] }}
+                  </label>
+                </div>
+                <div class="col-sm-2 checkbox">
+                  <label for="input-attribute-ean">
+                    <input name="may_advanced_options_attribute_ean" type="checkbox" value="1" id="input-attribute-ean" {% if may_advanced_options_attribute_ean %} checked="checked" {% endif %}>
+                    {{ _['EAN'] }}
+                  </label>
+                </div>
+                <div class="col-sm-2 checkbox">
+                  <label for="input-attribute-jan">
+                    <input name="may_advanced_options_attribute_jan" type="checkbox" value="1" id="input-attribute-jan" {% if may_advanced_options_attribute_jan %} checked="checked" {% endif %}>
+                    {{ _['JAN'] }}
+                  </label>
+                </div>
+                <div class="col-sm-2 checkbox">
+                  <label for="input-attribute-isbn">
+                    <input name="may_advanced_options_attribute_isbn" type="checkbox" value="1" id="input-attribute-isbn" {% if may_advanced_options_attribute_isbn %} checked="checked" {% endif %}>
+                    {{ _['ISBN'] }}
+                  </label>
+                </div>
+                <div class="col-sm-2 checkbox">
+                  <label for="input-attribute-mpn">
+                    <input name="may_advanced_options_attribute_mpn" type="checkbox" value="1" id="input-attribute-mpn" {% if may_advanced_options_attribute_mpn %} checked="checked" {% endif %}>
+                    {{ _['MPN'] }}
+                  </label>
+                </div>
+                <div class="col-sm-2 checkbox">
+                  <label for="input-attribute-location">
+                    <input name="may_advanced_options_attribute_location" type="checkbox" value="1" id="input-attribute-location" {% if may_advanced_options_attribute_location %} checked="checked" {% endif %}>
+                    {{ _['Location'] }}
+                  </label>
+                </div>
+                <div class="col-sm-2 checkbox">
+                  <label for="input-attribute-quantity">
+                   <input name="may_advanced_options_attribute_quantity" type="checkbox" value="1" id="input-attribute-quantity" {% if may_advanced_options_attribute_quantity %} checked="checked" {% endif %}>
+                    {{ _['Quantity'] }}
+                  </label>
+                </div>
+                <div class="col-sm-2 checkbox">
+                  <label for="input-attribute-stock-status">
+                   <input name="may_advanced_options_attribute_stock_status" type="checkbox" value="1" id="input-attribute-stock-status" {% if may_advanced_options_attribute_stock_status %} checked="checked" {% endif %}>
+                    {{ _['Stock Status'] }}
+                  </label>
+                </div>
+                <div class="col-sm-2 checkbox">
+                  <label for="input-attribute-price">
+                    <input name="may_advanced_options_attribute_price" type="checkbox" value="1" id="input-attribute-price" {% if may_advanced_options_attribute_price %} checked="checked" {% endif %}>
+                    {{ _['Price'] }}
+                  </label>
+                </div>
+                <div class="col-sm-2 checkbox">
+                  <label for="input-attribute-point">
+                    <input name="may_advanced_options_attribute_point" type="checkbox" value="1" id="input-attribute-point" {% if may_advanced_options_attribute_point %} checked="checked" {% endif %}>
+                    {{ _['Points'] }}
+                  </label>
+                </div>
+                <div class="col-sm-2 checkbox">
+                  <label for="input-attribute-weight">
+                    <input name="may_advanced_options_attribute_weight" type="checkbox" value="1" id="input-attribute-weight" {% if may_advanced_options_attribute_weight %} checked="checked" {% endif %}>
+                    {{ _['Weight'] }}
+                  </label>
+                </div>
+                <div class="col-sm-2 checkbox">
+                  <label for="input-attribute-image">
+                    <input name="may_advanced_options_attribute_image" type="checkbox" value="1" id="input-attribute-image" checked="checked" disabled="disabled">
+                    {{ _['Image'] }}
+                  </label>
+                </div>
+                <div class="col-sm-2 checkbox">
+                  <label for="input-attribute-dimension">
+                    <input name="may_advanced_options_attribute_dimension" type="checkbox" value="1" id="input-attribute-dimension" {% if may_advanced_options_attribute_dimension %} checked="checked" {% endif %}>
+                    {{ _['Dimension'] }}
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-swatches">{{ _['Swatch for Advanced Options'] }}</label>
+            <div class="col-sm-10">
+              <select name="may_advanced_options_swatches" id="input-swatches" class="form-control">
+                {% if may_advanced_options_swatches %}
+                <option value="1" selected="selected">{{ _['Yes'] }}</option>
+                <option value="0">{{ _['No'] }}</option>
+                {% else %}
+                <option value="1">{{ _['Yes'] }}</option>
+                <option value="0" selected="selected">{{ _['No'] }}</option>
+                {% endif %}
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-swatch-image">{{ _['Use Product Image for Swatch'] }}</label>
+            <div class="col-sm-10">
+              <select name="may_advanced_options_swatch_image" id="input-swatch-image" class="form-control">
+                {% if may_advanced_options_swatch_image %}
+                <option value="1" selected="selected">{{ _['Yes'] }}</option>
+                <option value="0">{{ _['No'] }}</option>
+                {% else %}
+                <option value="1">{{ _['Yes'] }}</option>
+                <option value="0" selected="selected">{{ _['No'] }}</option>
+                {% endif %}
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-show-out-of-stock-option">{{ _['Show Out of Stock Option'] }}</label>
+            <div class="col-sm-10">
+              <select name="may_advanced_options_show_out_of_stock_option" id="input-show-out-of-stock-option" class="form-control">
+                <option value="1" {% if may_advanced_options_show_out_of_stock_option == 1 %}selected="selected"{% endif %}>{{ _['Yes'] }}</option>
+                <option value="0" {% if may_advanced_options_show_out_of_stock_option == 0 %}selected="selected"{% endif %}>{{ _['No'] }}</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-show-option-price">{{ _['Show option price in swatch label'] }}</label>
+            <div class="col-sm-10">
+              <select name="may_advanced_options_show_option_price" id="input-show-option-price" class="form-control">
+                {% if may_advanced_options_show_option_price %}
+                <option value="1" selected="selected">{{ _['Yes'] }}</option>
+                <option value="0">{{ _['No'] }}</option>
+                {% else %}
+                <option value="1">{{ _['Yes'] }}</option>
+                <option value="0" selected="selected">{{ _['No'] }}</option>
+                {% endif %}
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-select-first-option">{{ _['Select First Option by Default'] }}</label>
+            <div class="col-sm-10">
+              <select name="may_advanced_options_select_first_option" id="input-select-first-option" class="form-control">
+                {% if may_advanced_options_select_first_option %}
+                <option value="1" selected="selected">{{ _['Yes'] }}</option>
+                <option value="0">{{ _['No'] }}</option>
+                {% else %}
+                <option value="1">{{ _['Yes'] }}</option>
+                <option value="0" selected="selected">{{ _['No'] }}</option>
+                {% endif %}
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-show-first-option-in-list">{{ _['Show First Option in Product List'] }}</label>
+            <div class="col-sm-10">
+              <select name="may_advanced_options_show_first_option_in_list" id="input-show-first-option-in-list" class="form-control">
+                {% if may_advanced_options_show_first_option_in_list %}
+                <option value="1" selected="selected">{{ _['Yes'] }}</option>
+                <option value="0">{{ _['No'] }}</option>
+                {% else %}
+                <option value="1">{{ _['Yes'] }}</option>
+                <option value="0" selected="selected">{{ _['No'] }}</option>
+                {% endif %}
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-option-select-effect-in-list">{{ _['Option Select Effect in Product List'] }}</label>
+            <div class="col-sm-10">
+              <select name="may_advanced_options_option_select_effect_in_list" id="input-option-select-effect-in-list" class="form-control">
+                <option value="0" {% if may_advanced_options_option_select_effect_in_list == 0 %}selected="selected"{% endif %}>{{ _['Stay in Product List Page'] }}</option>
+                <option value="1" {% if may_advanced_options_option_select_effect_in_list == 1 %}selected="selected"{% endif %}>{{ _['Go to Product Detail Page'] }}</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-show-attribute-label">{{ _['Show Attribute Label in Cart/Order Item List'] }}</label>
+            <div class="col-sm-10">
+              <select name="may_advanced_options_show_attribute_label" id="input-show-attribute-label" class="form-control">
+                {% if may_advanced_options_show_attribute_label %}
+                <option value="1" selected="selected">{{ _['Yes'] }}</option>
+                <option value="0">{{ _['No'] }}</option>
+                {% else %}
+                <option value="1">{{ _['Yes'] }}</option>
+                <option value="0" selected="selected">{{ _['No'] }}</option>
+                {% endif %}
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title"><i class="fa fa-pencil"></i> {{ _['Hide values for combination per page'] }}</h3>
+        </div>
+        <div class="panel-body">
+          <div class="form-group">
+            <label class="col-sm-2 control-label">{{ _['Product View'] }}</label>
+            <div class="col-sm-10">
+              <div class="row col-sm-12">
+                <div class="col-sm-2 checkbox">
+                  <label for="input-hide-pp-sku">
+                    <input name="may_advanced_options_hide_pp_sku" type="checkbox" value="1" id="input-hide-pp-sku" {% if may_advanced_options_hide_pp_sku %} checked="checked" {% endif %}>
+                    {{ _['SKU'] }}
+                  </label>
+                </div>
+                <div class="col-sm-2 checkbox">
+                  <label for="input-hide-pp-upc">
+                    <input name="may_advanced_options_hide_pp_upc" type="checkbox" value="1" id="input-hide-pp-upc" {% if may_advanced_options_hide_pp_upc %} checked="checked" {% endif %}>
+                    {{ _['UPC'] }}
+                  </label>
+                </div>
+                <div class="col-sm-2 checkbox">
+                  <label for="input-hide-pp-ean">
+                    <input name="may_advanced_options_hide_pp_ean" type="checkbox" value="1" id="input-hide-pp-ean" {% if may_advanced_options_hide_pp_ean %} checked="checked" {% endif %}>
+                    {{ _['EAN'] }}
+                  </label>
+                </div>
+                <div class="col-sm-2 checkbox">
+                  <label for="input-hide-pp-jan">
+                    <input name="may_advanced_options_hide_pp_jan" type="checkbox" value="1" id="input-hide-pp-jan" {% if may_advanced_options_hide_pp_jan %} checked="checked" {% endif %}>
+                    {{ _['JAN'] }}
+                  </label>
+                </div>
+                <div class="col-sm-2 checkbox">
+                  <label for="input-hide-pp-isbn">
+                    <input name="may_advanced_options_hide_pp_isbn" type="checkbox" value="1" id="input-hide-pp-isbn" {% if may_advanced_options_hide_pp_isbn %} checked="checked" {% endif %}>
+                    {{ _['ISBN'] }}
+                  </label>
+                </div>
+                <div class="col-sm-2 checkbox">
+                  <label for="input-hide-pp-mpn">
+                    <input name="may_advanced_options_hide_pp_mpn" type="checkbox" value="1" id="input-hide-pp-mpn" {% if may_advanced_options_hide_pp_mpn %} checked="checked" {% endif %}>
+                    {{ _['MPN'] }}
+                  </label>
+                </div>
+                <div class="col-sm-2 checkbox">
+                  <label for="input-hide-pp-location">
+                    <input name="may_advanced_options_hide_pp_location" type="checkbox" value="1" id="input-hide-pp-location" {% if may_advanced_options_hide_pp_location %} checked="checked" {% endif %}>
+                    {{ _['Location'] }}
+                  </label>
+                </div>
+                <div class="col-sm-2 checkbox">
+                  <label for="input-hide-pp-dimension">
+                    <input name="may_advanced_options_hide_pp_dimension" type="checkbox" value="1" id="input-hide-pp-dimension" {% if may_advanced_options_hide_pp_dimension %} checked="checked" {% endif %}>
+                    {{ _['Dimension'] }}
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">{{ _['Cart & Checkout'] }}</label>
+            <div class="col-sm-10">
+              <div class="row col-sm-12">
+                <div class="col-sm-2 checkbox">
+                  <label for="input-hide-cc-sku">
+                    <input name="may_advanced_options_hide_cc_sku" type="checkbox" value="1" id="input-hide-cc-sku" {% if may_advanced_options_hide_cc_sku %} checked="checked" {% endif %}>
+                    {{ _['SKU'] }}
+                  </label>
+                </div>
+                <div class="col-sm-2 checkbox">
+                  <label for="input-hide-cc-upc">
+                    <input name="may_advanced_options_hide_cc_upc" type="checkbox" value="1" id="input-hide-cc-upc" {% if may_advanced_options_hide_cc_upc %} checked="checked" {% endif %}>
+                    {{ _['UPC'] }}
+                  </label>
+                </div>
+                <div class="col-sm-2 checkbox">
+                  <label for="input-hide-cc-ean">
+                    <input name="may_advanced_options_hide_cc_ean" type="checkbox" value="1" id="input-hide-cc-ean" {% if may_advanced_options_hide_cc_ean %} checked="checked" {% endif %}>
+                    {{ _['EAN'] }}
+                  </label>
+                </div>
+                <div class="col-sm-2 checkbox">
+                  <label for="input-hide-cc-jan">
+                    <input name="may_advanced_options_hide_cc_jan" type="checkbox" value="1" id="input-hide-cc-jan" {% if may_advanced_options_hide_cc_jan %} checked="checked" {% endif %}>
+                    {{ _['JAN'] }}
+                  </label>
+                </div>
+                <div class="col-sm-2 checkbox">
+                  <label for="input-hide-cc-isbn">
+                    <input name="may_advanced_options_hide_cc_isbn" type="checkbox" value="1" id="input-hide-cc-isbn" {% if may_advanced_options_hide_cc_isbn %} checked="checked" {% endif %}>
+                    {{ _['ISBN'] }}
+                  </label>
+                </div>
+                <div class="col-sm-2 checkbox">
+                  <label for="input-hide-cc-mpn">
+                    <input name="may_advanced_options_hide_cc_mpn" type="checkbox" value="1" id="input-hide-cc-mpn" {% if may_advanced_options_hide_cc_mpn %} checked="checked" {% endif %}>
+                    {{ _['MPN'] }}
+                  </label>
+                </div>
+                <div class="col-sm-2 checkbox">
+                  <label for="input-hide-cc-location">
+                    <input name="may_advanced_options_hide_cc_location" type="checkbox" value="1" id="input-hide-cc-location" {% if may_advanced_options_hide_cc_location %} checked="checked" {% endif %}>
+                    {{ _['Location'] }}
+                  </label>
+                </div>
+                <div class="col-sm-2 checkbox">
+                  <label for="input-hide-cc-dimension">
+                    <input name="may_advanced_options_hide_cc_dimension" type="checkbox" value="1" id="input-hide-cc-dimension" {% if may_advanced_options_hide_cc_dimension %} checked="checked" {% endif %}>
+                    {{ _['Dimension'] }}
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">{{ _['Sale Order & Invoice in Admin'] }}</label>
+            <div class="col-sm-10">
+              <div class="row col-sm-12">
+                <div class="col-sm-2 checkbox">
+                  <label for="input-hide-oi-sku">
+                    <input name="may_advanced_options_hide_oi_sku" type="checkbox" value="1" id="input-hide-oi-sku" {% if may_advanced_options_hide_oi_sku %} checked="checked" {% endif %}>
+                    {{ _['SKU'] }}
+                  </label>
+                </div>
+                <div class="col-sm-2 checkbox">
+                  <label for="input-hide-oi-upc">
+                    <input name="may_advanced_options_hide_oi_upc" type="checkbox" value="1" id="input-hide-oi-upc" {% if may_advanced_options_hide_oi_upc %} checked="checked" {% endif %}>
+                    {{ _['UPC'] }}
+                  </label>
+                </div>
+                <div class="col-sm-2 checkbox">
+                  <label for="input-hide-oi-ean">
+                    <input name="may_advanced_options_hide_oi_ean" type="checkbox" value="1" id="input-hide-oi-ean" {% if may_advanced_options_hide_oi_ean %} checked="checked" {% endif %}>
+                    {{ _['EAN'] }}
+                  </label>
+                </div>
+                <div class="col-sm-2 checkbox">
+                  <label for="input-hide-oi-jan">
+                    <input name="may_advanced_options_hide_oi_jan" type="checkbox" value="1" id="input-hide-oi-jan" {% if may_advanced_options_hide_oi_jan %} checked="checked" {% endif %}>
+                    {{ _['JAN'] }}
+                  </label>
+                </div>
+                <div class="col-sm-2 checkbox">
+                  <label for="input-hide-oi-isbn">
+                    <input name="may_advanced_options_hide_oi_isbn" type="checkbox" value="1" id="input-hide-oi-isbn" {% if may_advanced_options_hide_oi_isbn %} checked="checked" {% endif %}>
+                    {{ _['ISBN'] }}
+                  </label>
+                </div>
+                <div class="col-sm-2 checkbox">
+                  <label for="input-hide-oi-mpn">
+                    <input name="may_advanced_options_hide_oi_mpn" type="checkbox" value="1" id="input-hide-oi-mpn" {% if may_advanced_options_hide_oi_mpn %} checked="checked" {% endif %}>
+                    {{ _['MPN'] }}
+                  </label>
+                </div>
+                <div class="col-sm-2 checkbox">
+                  <label for="input-hide-oi-location">
+                    <input name="may_advanced_options_hide_oi_location" type="checkbox" value="1" id="input-hide-oi-location" {% if may_advanced_options_hide_oi_location %} checked="checked" {% endif %}>
+                    {{ _['Location'] }}
+                  </label>
+                </div>
+                <div class="col-sm-2 checkbox">
+                  <label for="input-hide-oi-dimension">
+                    <input name="may_advanced_options_hide_oi_dimension" type="checkbox" value="1" id="input-hide-oi-dimension" {% if may_advanced_options_hide_oi_dimension %} checked="checked" {% endif %}>
+                    {{ _['Dimension'] }}
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title"><i class="fa fa-pencil"></i> {{ _['Swatch Style'] }}</h3>
+        </div>
+        <div class="panel-body" id="panel-options-swatch-style">
+          <div class="form-group">
+            <label class="col-sm-3">
+              <div class="input-group input-group-sm">
+                <span class="input-group-addon">{{ _['Shape'] }}</span>
+                <select name="may_advanced_options_swatch_style_shape" id="input-swatch-style-shape" class="form-control">
+                  <option value="circle" {% if may_advanced_options_swatch_style_shape == 'circle' %} selected="selected" {% endif %}>{{ _['Circle'] }}</option>
+                  <option value="rectangle" {% if may_advanced_options_swatch_style_shape == 'rectangle' %} selected="selected" {% endif %}>{{ _['Rectangle'] }}</option>
+                  <option value="custom" {% if may_advanced_options_swatch_style_shape == 'custom' %} selected="selected" {% endif %}>{{ _['Custom'] }}</option>
+                </select>
+              </div>
+            </label>
+            <label class="col-sm-3">
+              <div class="input-group input-group-sm">
+                <span class="input-group-addon">{{ _['Width (px)'] }}</span>
+                <input type="number" min="0" class="form-control" id="input-swatch-style-size-width" name="may_advanced_options_swatch_style_size_width" value="{{ may_advanced_options_swatch_style_size_width }}">
+              </div>
+            </label>
+            <label class="col-sm-3">
+              <div class="input-group input-group-sm">
+                <span class="input-group-addon">{{ _['Height (px)'] }}</span>
+                <input type="number" min="0" class="form-control" id="input-swatch-style-size-height" name="may_advanced_options_swatch_style_size_height" value="{{ may_advanced_options_swatch_style_size_height }}">
+              </div>
+            </label>
+            <label class="col-sm-3">
+              <div class="input-group input-group-sm">
+                <span class="input-group-addon">{{ _['Radius (px)'] }}</span>
+                <input type="number" min="0" class="form-control" id="input-swatch-style-size-radius" name="may_advanced_options_swatch_style_size_radius" value="{{ may_advanced_options_swatch_style_size_radius }}">
+              </div>
+            </label>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3">
+              <div class="input-group input-group-sm">
+                <span class="input-group-addon">{{ _['Selected'] }}</span>
+                <select name="may_advanced_options_swatch_style_selected" id="input-swatch-style-selected" class="form-control">
+                  <option value="default" {% if may_advanced_options_swatch_style_selected == 'default' %} selected="selected" {% endif %}>{{ _['Default'] }}</option>
+                  <option value="checkmark" {% if may_advanced_options_swatch_style_selected == 'checkmark' %} selected="selected" {% endif %}>{{ _['Checkmark'] }}</option>
+                </select>
+              </div>
+            </label>
+            <label class="col-sm-3">
+              <div class="input-group input-group-sm">
+                <span class="input-group-addon">{{ _['Out of Stock'] }}</span>
+                <select name="may_advanced_options_swatch_style_out_of_stock" id="input-swatch-style-out-of-stock" class="form-control">
+                  <option value="default" {% if may_advanced_options_swatch_style_out_of_stock == 'default' %} selected="selected" {% endif %}>{{ _['Default'] }}</option>
+                  <option value="slash" {% if may_advanced_options_swatch_style_out_of_stock == 'slash' %} selected="selected" {% endif %}>{{ _['Slash'] }} (/)</option>
+                  <option value="cross" {% if may_advanced_options_swatch_style_out_of_stock == 'cross' %} selected="selected" {% endif %}>{{ _['Cross'] }} (x)</option>
+                </select>
+              </div>
+            </label>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3">
+              <div class="input-group input-group-sm">
+                <span class="input-group-addon">{{ _['Border Thickness (px)'] }}</span>
+                <input type="number" min="0" class="form-control" id="input-swatch-style-border-width" name="may_advanced_options_swatch_style_border_width" value="{{ may_advanced_options_swatch_style_border_width }}">
+              </div>
+            </label>
+            <label class="col-sm-3">
+              <div class="input-group input-group-sm">
+                <span class="input-group-addon">{{ _['Border Color (Default)'] }}</span>
+                <input type="text" class="form-control input-colorpicker" id="input-swatch-style-border-color-default" name="may_advanced_options_swatch_style_border_color_default" value="{{ may_advanced_options_swatch_style_border_color_default }}">
+              </div>
+            </label>
+            <label class="col-sm-3">
+              <div class="input-group input-group-sm">
+                <span class="input-group-addon">{{ _['Border Color (Selected)'] }}</span>
+                <input type="text" class="form-control input-colorpicker" id="input-swatch-style-border-color-selected" name="may_advanced_options_swatch_style_border_color_selected" value="{{ may_advanced_options_swatch_style_border_color_selected }}">
+              </div>
+            </label>
+            <label class="col-sm-3">
+              <div class="input-group input-group-sm">
+                <span class="input-group-addon">{{ _['Padding (px)'] }}</span>
+                <input type="number" min="0" class="form-control" id="input-swatch-style-space-padding" name="may_advanced_options_swatch_style_space_padding" value="{{ may_advanced_options_swatch_style_space_padding }}">
+              </div>
+            </label>
+          </div>
+          <div class="form-group preview-option-wrapper">
+            <div class="col-md-6 text-center">
+              <div id="swatch-color" class="may-swatches">
+                <label>
+                  <input type="radio" data-label="Dark Blue" name="preview_option_color" class="in-stock">
+                  <img src="view/image/may/swatch_dark-blue.jpg" alt="Dark Blue" class="img-thumbnail">
+                  <i class="" aria-hidden="true"></i>
+                </label>
+                <label>
+                  <input type="radio" data-label="Pink" name="preview_option_color" class="in-stock">
+                  <img src="view/image/may/swatch_pink.jpg" alt="Pink" class="img-thumbnail"> 
+                  <i class="" aria-hidden="true"></i>
+                </label>
+                <label>
+                  <input type="radio" data-label="Yellow" name="preview_option_color" class="in-stock" checked="checked">
+                  <img src="view/image/may/swatch_yellow.jpg" alt="Yellow" class="img-thumbnail"> 
+                  <i class="" aria-hidden="true"></i>
+                </label>
+                <label>
+                  <input type="radio" data-label="Blue" name="preview_option_color" class="in-stock">
+                  <img src="view/image/may/swatch_blue.jpg" alt="Blue" class="img-thumbnail"> 
+                  <i class="" aria-hidden="true"></i>
+                </label>
+                <label>
+                  <input type="radio" data-label="Black" name="preview_option_color" class="out-of-stock">
+                  <img src="view/image/may/swatch_black.jpg" alt="Black" class="img-thumbnail"> 
+                  <i class="" aria-hidden="true"></i>
+                </label>
+              </div>
+            </div>
+            <div class="col-md-6 text-center">
+              <div id="swatch-size" class="may-swatches">
+                <label>
+                  <input type="radio" data-label="XXS" name="preview_option_size" class="in-stock">
+                  <span>XXS</span>
+                  <i class="" aria-hidden="true"></i>
+                </label>
+                <label>
+                  <input type="radio" data-label="XS" name="preview_option_size" class="in-stock">
+                  <span>XS</span>
+                  <i class="" aria-hidden="true"></i>
+                </label>
+                <label>
+                  <input type="radio" data-label="S" name="preview_option_size" class="in-stock" checked="checked">
+                  <span>S</span>
+                  <i class="" aria-hidden="true"></i>
+                </label>
+                <label>
+                  <input type="radio" data-label="M" name="preview_option_size" class="in-stock">
+                  <span>M</span>
+                  <i class="" aria-hidden="true"></i>
+                </label>
+                <label>
+                  <input type="radio" data-label="L" name="preview_option_size" class="out-of-stock">
+                  <span>L</span>
+                  <i class="" aria-hidden="true"></i>
+                </label>
+                <label>
+                  <input type="radio" data-label="XL" name="preview_option_size" class="out-of-stock">
+                  <span>XL</span>
+                  <i class="" aria-hidden="true"></i>
+                </label>
+                <label>
+                  <input type="radio" data-label="XXL" name="preview_option_size" class="in-stock">
+                  <span>XXL</span>
+                  <i class="" aria-hidden="true"></i>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title"><i class="fa fa-pencil"></i> {{ _['Options for Developers only'] }}</h3>
+          <button type="button" class="pull-right" onclick="$('#panel-options-for-developers').toggleClass('hidden'); $(this).find('i.fa').toggleClass('fa-plus').toggleClass('fa-minus');"><i class="fa fa-plus"></i></button>
+        </div>
+        <div class="panel-body hidden" id="panel-options-for-developers">
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-swatch-css">{{ _['CSS for Advanced Option Swatches in Frontend'] }}</label>
+            <div class="col-sm-10">
+              <textarea name="may_advanced_options_swatch_css" id="input-swatch-css" rows="30" class="form-control">{{ may_advanced_options_swatch_css ?: '' }}</textarea>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-swatch-css">{{ _['Stock Sync Errors'] }} <span class="badge">{{ total_stock_sync_errors }}</span></label>
+            <div class="col-sm-10">
+              <div class="checkbox">
+                <label>
+                  <input type="checkbox" name="sync_stock">
+                  <span>{{ _['Fix Errors'] }}</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<script type="text/javascript">
+var updateSwatchStyle = function() {
+  if ($('#input-swatch-style-shape').val() == 'circle') {
+    var width = $('#input-swatch-style-size-width').val();
+    $('#input-swatch-style-size-height').val(width);
+    $('#input-swatch-style-size-height').prop('readOnly', true);
+    $('#input-swatch-style-size-radius').val(width / 2);
+    $('#input-swatch-style-size-radius').prop('readOnly', true);
+  } else if ($('#input-swatch-style-shape').val() == 'rectangle') {
+    $('#input-swatch-style-size-height').prop('readOnly', false);
+    $('#input-swatch-style-size-radius').val(0);
+    $('#input-swatch-style-size-radius').prop('readOnly', true);
+  } else {
+    $('#input-swatch-style-size-height').prop('readOnly', false);
+    $('#input-swatch-style-size-radius').prop('readOnly', false);
+  }
+
+  var width = parseFloat($('#input-swatch-style-size-width').val());
+  var height = parseFloat($('#input-swatch-style-size-height').val());
+  var radius = parseFloat($('#input-swatch-style-size-radius').val());
+
+  var selected = $('#input-swatch-style-selected').val();
+  var out_of_stock = $('#input-swatch-style-out-of-stock').val();
+
+  var border_width = parseFloat($('#input-swatch-style-border-width').val());
+  var border_color_default = $('#input-swatch-style-border-color-default').val();
+  var border_color_selected = $('#input-swatch-style-border-color-selected').val();
+  var space_padding = parseFloat($('#input-swatch-style-space-padding').val());
+
+  var line_height = height - border_width * 2 - space_padding * 2;
+
+  var style = '';
+  style += '.may-swatches input[type=radio] + img,';
+  style += '.may-swatches input[type=radio] + span {';
+  style += '  border: ' + border_width + 'px solid #' + border_color_default + ';';
+  style += '  min-width: ' + width + 'px;';
+  style += '  height: ' + height + 'px;';
+  style += '  border-radius: ' + radius + 'px;';
+  style += '}';
+  style += '.may-swatches input[type=radio] + img {';
+  style += '  max-width: ' + width + 'px;';
+  style += '  padding: '+ space_padding + 'px;';
+  style += '}';
+  style += '.may-swatches input[type=radio] + span {';
+  style += '  padding: ' + (space_padding + 4) + 'px;';
+  style += '  line-height: ' + (height - border_width * 2 - space_padding * 2 - 8) + 'px;';
+  style += '}';
+  style += '.may-swatches label:hover img,';
+  style += '.may-swatches label:hover span,';
+  style += '.may-swatches input[type=radio]:checked + img,';
+  style += '.may-swatches input[type=radio]:checked + span {';
+  style += '  border-color: #' + border_color_selected + ';';
+  style += '}';
+  style += '.may-swatches input[type=radio] + img + i:before,';
+  style += '.may-swatches input[type=radio] + span + i:before,';
+  style += '.may-swatches input[type=radio] + img + i:after,';
+  style += '.may-swatches input[type=radio] + span + i:after,';
+  style += '.may-swatches input[type=radio] + img + i,';
+  style += '.may-swatches input[type=radio] + span + i {';
+  style += '  width: calc(100% - ' + (space_padding * 2 + border_width * 2) + 'px);';
+  style += '  height: ' + (height - space_padding * 2 - border_width * 2) + 'px;';
+  style += '  line-height: ' + (height - space_padding * 2 - border_width * 2) + 'px;';
+  style += '  left: ' + (space_padding + border_width) + 'px;';
+  style += '  top: ' + (space_padding + border_width) + 'px;';
+  style += '  border-radius: ' + (radius ? radius - 1 : 0) + 'px;';
+  style += '}';
+  style += '.may-swatches input[type=radio] + img + i:before,';
+  style += '.may-swatches input[type=radio] + span + i:before,';
+  style += '.may-swatches input[type=radio] + img + i:after,';
+  style += '.may-swatches input[type=radio] + span + i:after {';
+  style += '  width: 100%;';
+  style += '  height: ' + (height - space_padding * 2 - border_width * 2) + 'px;';
+  style += '  line-height: ' + (height - space_padding * 2 - border_width * 2) + 'px;';
+  style += '  left: 0;';
+  style += '  top: 0;';
+  style += '  border-radius: ' + (radius ? radius - 1 : 0) + 'px;';
+  style += '}';
+  style += '.may-swatches input[type=radio].out-of-stock + img + i.slash,';
+  style += '.may-swatches input[type=radio].out-of-stock + span + i.slash {';
+  style += '  background: linear-gradient(to top left, transparent calc(50% - 1px), #' + border_color_default + ', transparent calc(50% + 1px));';
+  style += '}';
+  style += '.may-swatches input[type=radio].out-of-stock + img + i.cross:before,';
+  style += '.may-swatches input[type=radio].out-of-stock + span + i.cross:before,';
+  style += '.may-swatches input[type=radio].out-of-stock + img + i.cross:after,';
+  style += '.may-swatches input[type=radio].out-of-stock + span + i.cross:after {';
+  style += '  display: inline-block;';
+  style += '  position: absolute;';
+  style += '  content: "";';
+  style += '}';
+  style += '.may-swatches input[type=radio].out-of-stock + img + i.cross:before,';
+  style += '.may-swatches input[type=radio].out-of-stock + span + i.cross:before {';
+  style += '  background: linear-gradient(to top left, transparent calc(50% - 1px), #' + border_color_default + ', transparent calc(50% + 1px));';
+  style += '}';
+  style += '.may-swatches input[type=radio].out-of-stock + img + i.cross:after,';
+  style += '.may-swatches input[type=radio].out-of-stock + span + i.cross:after {';
+  style += '  background: linear-gradient(to top right, transparent calc(50% - 1px), #' + border_color_default + ', transparent calc(50% + 1px));';
+  style += '}';
+
+  if (selected == 'checkmark') {
+    $('.may-swatches label input[type=radio].in-stock + img + i').attr('class', 'fa fa-check');
+    $('.may-swatches label input[type=radio].in-stock + span + i').attr('class', 'fa fa-check');
+  } else {
+    $('.may-swatches label input[type=radio].in-stock + img + i').attr('class', '');
+    $('.may-swatches label input[type=radio].in-stock + span + i').attr('class', '');
+  }
+
+  $('.may-swatches label input[type=radio].out-of-stock + img + i').attr('class', out_of_stock);
+  $('.may-swatches label input[type=radio].out-of-stock + span + i').attr('class', out_of_stock);
+
+  $('#may-advanced-options-swatch-style').html(style);
+};
+
+$('[id^="input-swatch-style"]').on('change', function() {
+  updateSwatchStyle();
+});
+
+$('.input-colorpicker').ColorPicker({
+	onChange: function(hsb, hex, rgb) {
+		$(this).data('colorpicker').el.value = hex;
+    updateSwatchStyle();
+	},
+  onSubmit: function(hsb, hex, rgb, el) {
+		$(el).ColorPickerHide();
+	},
+  onBeforeShow: function () {
+		$(this).ColorPickerSetColor(this.value);
+	}
+}).bind('keyup', function(){
+	$(this).ColorPickerSetColor(this.value);
+});
+
+updateSwatchStyle();
+</script>
+{{ footer }}

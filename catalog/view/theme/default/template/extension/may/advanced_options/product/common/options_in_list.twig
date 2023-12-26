@@ -1,0 +1,21 @@
+<div id="may-advanced-options-for-list" class="hidden">
+    {% for product in products %}
+        {% if product.option %}
+            <div class="may-swatches input-option-{{ product.product_id }}" data-option-name="{{ product.option_name }}" data-product-link="{{ product.href }}" data-thumb-origin="{{ product.thumb }}" data-price="{{ product.price|escape }}" data-special="{{ product.special }}" data-tax="{{ product.tax }}" data-weight-unit="{{ product.weight_unit }}" data-length-unit="{{ product.length_unit }}">
+            {% for option in product.option %}
+            <label>
+                <input type="radio" data-label="{{ option.name }}" class="may-advanced-option {{ option.quantity > 0 or option.subtract == 0 ? 'in-stock' : 'out-of-stock' }}" name="product_option_{{ product.product_id }}" data-option='{{ option|json_encode|escape }}' data-swatch-image="{{ option.swatch_image }}"/>
+                {% if option.swatch_image and ('no_image' in option.swatch_image) == false %}
+                <img src="{{ option.swatch_image }}" alt="{{ option.name }}" class="img-thumbnail" data-toggle="tooltip" data-original-title="{{ option.name }}" /> 
+                {% else %}
+                <span>{{ option.name }}</span>
+                {% endif %}
+                {% if option.quantity <= 0 and option.subtract %}
+                <i class="{{ may_advanced_options_config.swatch_style_out_of_stock }}" aria-hidden="true"></i>
+                {% endif %}
+            </label>
+            {% endfor %}
+            </div>
+        {% endif %}
+    {% endfor %}
+</div>

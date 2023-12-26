@@ -1,0 +1,2396 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+    <name><![CDATA[BundleExpert]]></name>
+    <version><![CDATA[1.0.1]]></version>
+    <code><![CDATA[BundleExpert]]></code>
+    <author><![CDATA[opencart-expert.com]]></author>
+    <link><![CDATA[http://opencart-expert.com]]></link>
+
+    <file path="">
+        <operation error="skip">
+            <search><![CDATA[]]></search>
+            <add position="before"><![CDATA[
+
+              ]]></add>
+        </operation>
+    </file>
+
+    <!--INIT-->
+    <!-- v < 2200 -->
+    <file path="system/library/currency.php">
+        <operation error="abort">
+            <search><![CDATA[public function __construct($registry) {]]></search>
+            <add position="after"><![CDATA[
+                //BundleExpert
+                require_once(modification(DIR_SYSTEM . 'library/bundle_expert/bundle_expert_cart.php'));
+                require_once(modification(DIR_SYSTEM . 'library/bundle_expert/bundle_expert.php'));
+                $registry->set('bundle_expert_cart', new \BundleExpertCart($registry));
+                $registry->set('bundle_expert', new \BundleExpert($registry));
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+    <!-- v >= 2200 -->
+    <file path="system/library/cart/currency.php">
+        <operation error="abort">
+            <search><![CDATA[public function __construct($registry) {]]></search>
+            <add position="after"><![CDATA[
+                //BundleExpert
+                require_once(modification(DIR_SYSTEM . 'library/bundle_expert/bundle_expert_cart.php'));
+                require_once(modification(DIR_SYSTEM . 'library/bundle_expert/bundle_expert.php'));
+                $registry->set('bundle_expert_cart', new \BundleExpertCart($registry));
+                $registry->set('bundle_expert', new \BundleExpert($registry));
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+
+
+    <!--ADMIN-->
+
+    <!-- Ver < 2302 -->
+    <file path="admin/controller/common/menu.php">
+        <operation error="skip">
+            <search><![CDATA[$this->load->language('common/menu');]]></search>
+            <add position="after"><![CDATA[
+                //BundleExpert
+                $data['bundle_expert_enable'] = false;
+                if ($this->registry->has('bundle_expert')) {
+                $this->load->model('catalog/bundle_expert');
+                $this->load->language('catalog/bundle_expert');
+                if($this->model_catalog_bundle_expert->isModuleInstalled() && $this->bundle_expert->isEnabled()) {
+                    $data['text_module_title'] = $this->language->get('text_module_title');
+                    $data['text_kits'] = $this->language->get('text_kits');
+                    $data['text_widgets'] = $this->language->get('text_widgets');
+                    $data['text_settings'] = $this->language->get('text_settings');
+                    $data['text_report'] = $this->language->get('text_report');
+                    $data['text_import'] = $this->language->get('text_import');
+                    $data['text_cache_update'] = $this->language->get('text_cache_update');
+                    //$data['text_help'] = $this->language->get('text_help');
+
+                    $data['bundle_expert'] = $this->url->link('module/bundle_expert', 'token=' . $this->session->data['token'], 'SSL');
+                    $data['bundle_expert_widget'] = $this->url->link('catalog/bundle_expert_widget', 'token=' . $this->session->data['token'], 'SSL');
+                    $data['bundle_expert_kit'] = $this->url->link('catalog/bundle_expert_kit', 'token=' . $this->session->data['token'], 'SSL');
+                    $data['bundle_expert_report'] = $this->url->link('catalog/bundle_expert_report', 'token=' . $this->session->data['token'], 'SSL');
+                    $data['bundle_expert_cache_update'] = $this->url->link('catalog/bundle_expert/updateCache', 'token=' . $this->session->data['token'], 'SSL');
+                    //$data['bundle_expert_help'] = $this->url->link('catalog/bundle_expert_help', 'token=' . $this->session->data['token'], 'SSL');
+
+                    if(isset($this->session->data['user_token'])){
+                        $token_name = 'user_token=';
+                        $token_value = $this->session->data['user_token'];
+                    }else{
+                        $token_name = 'token=';
+                        $token_value = $this->session->data['token'];
+                    }
+
+                    $data['be_token_name'] = $token_name;
+                    $data['be_token_value'] = $token_value;
+
+                    $import_file = DIR_APPLICATION . 'controller/catalog/bundle_expert_import.php';
+                    if(file_exists($import_file) && $this->user->hasPermission('access', 'catalog/bundle_expert_import')) {
+                        $data['bundle_expert_import'] =  $this->url->link('catalog/bundle_expert_import', 'token=' . $this->session->data['token'], 'SSL');;
+                    }else{
+                        $data['bundle_expert_import'] = '';
+                    }
+
+                    $data['bundle_expert_enable'] = true;
+                }else{
+                    $data['bundle_expert_enable'] = false;
+                }
+                $this->load->language('common/menu');
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+    <!-- Ver >= 2302 -->
+    <file path="admin/controller/common/column_left.php">
+        <operation error="skip">
+            <!--<search><![CDATA[if ($catalog) {]]></search>-->
+            <search><![CDATA[if ($catalog) {]]></search>
+            <add position="before"><![CDATA[
+            //BundleExpert
+            $data['be_token_name'] = '';
+            $data['be_token_value'] = '';
+            if ($this->registry->has('bundle_expert')) {
+                $this->load->model('catalog/bundle_expert');
+                $this->load->language('catalog/bundle_expert');
+                if($this->model_catalog_bundle_expert->isModuleInstalled() && $this->bundle_expert->isEnabled()) {
+                    $bundle_expert_menu = array();
+
+                    if(isset($this->session->data['user_token'])){
+                        $token_name = 'user_token=';
+                        $token_value = $this->session->data['user_token'];
+                    }else{
+                        $token_name = 'token=';
+                        $token_value = $this->session->data['token'];
+                    }
+
+                    if ($this->user->hasPermission('access', 'catalog/bundle_expert_kit')) {
+                        $bundle_expert_menu[] = array(
+                            'name'	   => $this->language->get('text_kits'),
+                            'href'     => $this->url->link('catalog/bundle_expert_kit', $token_name . $token_value, true),
+                            'children' => array()
+                        );
+                    }
+                    if ($this->user->hasPermission('access', 'catalog/bundle_expert_widget')) {
+                        $bundle_expert_menu[] = array(
+                            'name'	   => $this->language->get('text_widgets'),
+                            'href'     => $this->url->link('catalog/bundle_expert_widget', $token_name . $token_value, true),
+                            'children' => array()
+                        );
+                    }
+                    if ($this->user->hasPermission('access', 'catalog/bundle_expert')) {
+                        $bundle_expert_menu[] = array(
+                            'name'	   => $this->language->get('text_settings'),
+                            'href'     => $this->url->link('catalog/bundle_expert', $token_name . $token_value, true),
+                            'children' => array()
+                        );
+                    }
+                    if ($this->user->hasPermission('access', 'catalog/bundle_expert_report')) {
+                        $bundle_expert_menu[] = array(
+                            'name'	   => $this->language->get('text_report'),
+                            'href'     => $this->url->link('catalog/bundle_expert_report', $token_name . $token_value, true),
+                            'children' => array()
+                        );
+                    }
+                    if ($this->user->hasPermission('access', 'catalog/bundle_expert_import')) {
+                        $bundle_expert_menu[] = array(
+                            'name'	   => $this->language->get('text_import'),
+                            'href'     => $this->url->link('catalog/bundle_expert_import', $token_name . $token_value, true),
+                            'children' => array()
+                        );
+                    }
+
+                    if ($this->user->hasPermission('access', 'catalog/bundle_expert')) {
+                        $bundle_expert_menu[] = array(
+                            'name'	   => $this->language->get('text_cache_update'),
+                            'href'     => $this->url->link('catalog/bundle_expert', $token_name . $token_value, true),
+                            'children' => array()
+                        );
+                    }
+
+                    $data['be_token_name'] = $token_name;
+                    $data['be_token_value'] = $token_value;
+
+                    if ($bundle_expert_menu) {
+                        $catalog[] = array(
+                            'name'	   =>  $this->language->get('text_module_title'),
+                            'href'     => '',
+                            'children' => $bundle_expert_menu
+                        );
+                    }
+                }else{
+                }
+                $this->load->language('common/menu');
+            }
+            //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+
+    <file path="admin/controller/catalog/product.php">
+        <operation error="skip">
+            <search><![CDATA[$this->load->model('design/layout');]]></search>
+            <add position="before"><![CDATA[
+                //BundleExpert
+                if ($this->registry->has('bundle_expert')) {
+                $data = $this->load->controller('catalog/bundle_expert/getProductFormBundleTab', array($data, $url, isset($this->request->get['product_id'])?$this->request->get['product_id']:''));
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+
+    <file path="admin/controller/sale/order.php">
+        <!-- < 2.2.0.0 -->
+        <operation error="skip">
+            <search><![CDATA[$this->response->setOutput($this->load->view('sale/order_form.tpl', $data));]]></search>
+            <add position="before"><![CDATA[
+                //BundleExpert
+                if ($this->registry->has('bundle_expert')) {
+                if(!isset($products)) $products = array();
+                $data = $this->load->controller('catalog/bundle_expert/addOrderFormBundleExpertData', array($data, $products));
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+        <!-- >= 2.2.0.0 -->
+        <operation error="skip">
+            <search><![CDATA[$this->response->setOutput($this->load->view('sale/order_form', $data))]]></search>
+            <add position="before"><![CDATA[
+                //BundleExpert
+                if ($this->registry->has('bundle_expert')) {
+                if(!isset($products)) $products = array();
+                $data = $this->load->controller('catalog/bundle_expert/addOrderFormBundleExpertData', array($data, $products));
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+
+
+        <operation error="skip">
+            <search><![CDATA[public function api() {]]></search>
+            <add position="after"><![CDATA[
+                //BundleExpert
+                if ($this->registry->has('bundle_expert')) {
+                $this->request->get['admin_mode_bundle_expert'] = 'true';
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+
+    <file path="admin/model/sale/order.php">
+        <operation error="skip">
+            <search><![CDATA[public function getOrderProducts($order_id) {]]></search>
+            <add position="after" offset="1"><![CDATA[
+                //BundleExpert
+                if ($this->registry->has('bundle_expert')) {
+                $this->bundle_expert->sortArray($query->rows, 'order_product_id');
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+
+    <!--Format product_as_kit for order info, invoice -->
+    <file path="admin/controller/sale/order.php">
+        <operation error="skip">
+            <search><![CDATA['quantity' => $product['quantity'],]]></search>
+            <add position="before"><![CDATA[
+            //BundleExpert New
+            'product_id' => $product['product_id'],
+            'order_product_id' => isset($product['order_product_id'])?$product['order_product_id']:null,
+            'price'    => $this->currency->format($product['price'] + ($this->config->get('config_tax') ? $product['tax'] : 0), $order_info['currency_code'], $order_info['currency_value']),
+			'total'    => $this->currency->format($product['total'] + ($this->config->get('config_tax') ? ($product['tax'] * $product['quantity']) : 0), $order_info['currency_code'], $order_info['currency_value']),
+            //BundleExpert
+              ]]></add>
+        </operation>
+
+        <!-- Ver < 2200 -->
+        <operation error="skip">
+            <search><![CDATA[$this->response->setOutput($this->load->view('sale/order_info.tpl', $data));]]></search>
+            <add position="before"><![CDATA[
+            //BundleExpert New
+            if($this->registry->has('bundle_expert')){
+                $data['products'] = $this->bundle_expert->orderInfoProductListPrepare($data['products']);
+            }
+            //BundleExpert
+              ]]></add>
+        </operation>
+        <operation error="skip">
+            <search><![CDATA[$this->response->setOutput($this->load->view('sale/order_invoice.tpl', $data));]]></search>
+            <add position="before"><![CDATA[
+            //BundleExpert New
+            if ($this->registry->has('bundle_expert')) {
+                foreach ($data['orders'] as $index => $order_data)
+                    $data['orders'][$index]['product'] = $this->bundle_expert->orderInfoProductListPrepare($order_data['product']);
+            }
+            //BundleExpert
+              ]]></add>
+        </operation>
+        <operation error="skip">
+            <search><![CDATA[$this->response->setOutput($this->load->view('sale/order_shipping.tpl', $data));]]></search>
+            <add position="before"><![CDATA[
+            //BundleExpert New
+            if ($this->registry->has('bundle_expert')) {
+                foreach ($data['orders'] as $index => $order_data){
+                    $data['orders'][$index]['product'] = $this->bundle_expert->orderInfoProductListPrepare($order_data['product']);
+                }
+            }
+            //BundleExpert
+              ]]></add>
+        </operation>
+
+        <!-- Ver >= 2200 -->
+        <operation error="skip">
+            <search><![CDATA['quantity' => $product['quantity'],]]></search>
+            <add position="before"><![CDATA[
+            //BundleExpert New
+            'order_product_id' => isset($product['order_product_id'])?$product['order_product_id']:null,
+            //BundleExpert
+              ]]></add>
+        </operation>
+        <operation error="skip">
+            <search><![CDATA[$this->response->setOutput($this->load->view('sale/order_info', $data));]]></search>
+            <add position="before"><![CDATA[
+            //BundleExpert New
+            if($this->registry->has('bundle_expert')){
+                $data['products'] = $this->bundle_expert->orderInfoProductListPrepare($data['products']);
+            }
+            //BundleExpert
+              ]]></add>
+        </operation>
+        <operation error="skip">
+            <search><![CDATA[$this->response->setOutput($this->load->view('sale/order_invoice', $data));]]></search>
+            <add position="before"><![CDATA[
+            //BundleExpert New
+            if ($this->registry->has('bundle_expert')) {
+                foreach ($data['orders'] as $index => $order_data)
+                    $data['orders'][$index]['product'] = $this->bundle_expert->orderInfoProductListPrepare($order_data['product']);
+            }
+            //BundleExpert
+              ]]></add>
+        </operation>
+        <operation error="skip">
+            <search><![CDATA[$this->response->setOutput($this->load->view('sale/order_shipping', $data));]]></search>
+            <add position="before"><![CDATA[
+            //BundleExpert New
+            if ($this->registry->has('bundle_expert')) {
+                foreach ($data['orders'] as $index => $order_data){
+                    $data['orders'][$index]['product'] = $this->bundle_expert->orderInfoProductListPrepare($order_data['product']);
+                }
+            }
+            //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+
+
+    <file path="admin/model/catalog/product.php">
+        <operation error="skip">
+            <search><![CDATA[public function editProduct($product_id, $data) {]]></search>
+            <add position="after"><![CDATA[
+            //BundleExpert
+            if($this->registry->has('bundle_expert')){
+                //$this->bundle_expert->dbCacheKitClearByProductId($product_id);
+            }
+            //BundleExpert
+              ]]></add>
+        </operation>
+        <operation error="skip">
+            <search><![CDATA[public function deleteProduct($product_id) {]]></search>
+            <add position="after"><![CDATA[
+            //BundleExpert
+            if($this->registry->has('bundle_expert')){
+                //$this->bundle_expert->dbCacheKitClearByProductId($product_id);
+            }
+            //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+
+
+    <!-- Ver < 2302 -->
+    <file path="admin/view/template/common/menu.tpl">
+        <operation error="skip">
+            <!--<search><![CDATA[<li><a href="<?php echo $product; ?>"><?php echo $text_product; ?></a></li>]]></search>-->
+            <search><![CDATA[<li><a href="<?php echo $information; ?>"><?php echo $text_information; ?></a></li>]]></search>
+            <add position="after"><![CDATA[
+              <!--BundleExpert-->
+                <?php if($bundle_expert_enable){?>
+                <li><a class="parent"><?php echo $text_module_title ?></a>
+                    <ul>
+                        <li><a href="<?php echo $bundle_expert_kit; ?>"><?php echo $text_kits; ?></a></li>
+                        <li><a href="<?php echo $bundle_expert_widget; ?>"><?php echo $text_widgets; ?></a></li>
+                        <li><a href="<?php echo $bundle_expert; ?>"><?php echo $text_settings; ?></a></li>
+                        <li><a href="<?php echo $bundle_expert_report; ?>"><?php echo $text_report; ?></a></li>
+                        <li><a href="<?php echo $bundle_expert; ?>"><?php echo $text_cache_update; ?></a></li>
+                        <?php if($bundle_expert_import) { ?>
+                            <li><a href="<?php echo $bundle_expert_import; ?>"><?php echo $text_import; ?></a></li>
+                        <?php } ?>
+                    </ul>
+                </li>
+                <?php } ?>
+
+                <script type="text/javascript">
+                   $(document).ready(function () {
+
+                        var element = $(".be-cache-update-menu-button").first();
+
+                        $(element).removeClass("hidden");
+                        $(element).hide();
+
+                        if($(element).length>0){
+                            var menu_element = $(element).closest('a')
+                            $(menu_element).removeAttr("href");
+                            $(menu_element).attr("onclick", "be_update_cache();");
+
+                            var spin_html = "<i class='fa fa-spinner fa-spin' style='margin-left: 4px;vertical-align: middle;'></i>";
+                            spin_html += "<i class='fa fa-check-circle' style='margin-left: 4px;vertical-align: middle;'></i>";
+                            spin_html += "<span class='be-cache-update-progress' style='font-size: 10px;margin-left: 2px;vertical-align: middle;'></span>";//+++
+                            $(element).html(spin_html);
+                        }
+
+                    });
+
+                    function be_update_cache() {
+                        var element = $(".be-cache-update-menu-button").first();
+
+                        $.ajax({
+                            url: 'index.php?route=catalog/bundle_expert/updateCacheWithProgress&<?php echo $be_token_name; ?><?php echo $be_token_value; ?>',
+                            dataType: 'json',
+                            beforeSend: function() {
+                                $('.alert-container').html('');
+                                $(element).show();
+                                $(element).find('.fa-spinner').show();
+                                $(element).find('.fa-check-circle').hide();
+                                $(element).find('.be-cache-update-progress').show();//+++
+                                $(element).find('.be-cache-update-progress').html('0%');//+++
+                            },
+                            complete: function() {
+                            },
+                            success: function(json) {
+
+                                if (json['success']) {
+                                    $(element).find('.fa-spinner').hide();
+                                    $(element).find('.fa-check-circle').show();
+                                    $(element).find('.be-cache-update-progress').hide();//+++
+
+                                    $('.alert-container').append('<div class="alert alert-success"><i class="fa fa-exclamation-circle"></i> ' + json['success'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+
+                                }
+
+                                if (json['total']) {
+                                    $('.be-cache-update-progress').html(json['total'] + '%');
+                                }
+                                if (json['next']) {
+                                    be_update_cache_next(json['next']);
+                                }
+                            },
+                            error: function(xhr, ajaxOptions, thrownError) {
+                                alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                            }
+                        });
+                    }
+
+                    function be_update_cache_next(url) {
+                       var element = $(".be-cache-update-menu-button").first();
+
+                       $.ajax({
+                           url: url,
+                           dataType: 'json',
+                           success: function(json) {
+                               $('.alert-dismissible').remove();
+
+                               if (json['error']) {
+                                   $('#content > .container-fluid').prepend('<div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> ' + json['error'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                               }
+
+                               if (json['success']) {
+                                   $(element).find('.fa-spinner').hide();
+                                   $(element).find('.fa-check-circle').show();
+                                   $(element).find('.be-cache-update-progress').hide();//+++
+                               }
+
+                               if (json['total']) {
+                                   $('.be-cache-update-progress').html(json['total'] + '%');
+                               }
+
+                               if (json['next']) {
+                                   be_update_cache_next(json['next']);
+                               }
+                           },
+                           error: function(xhr, ajaxOptions, thrownError) {
+                               alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                           }
+                       });
+                   }
+              </script>
+
+              <!--BundleExpert-->
+              ]]></add>
+        </operation>
+    </file>
+    <!-- Ver = 2302 -->
+    <file path="admin/view/template/common/column_left.tpl">
+        <operation error="skip">
+            <search><![CDATA[<ul id="menu">]]></search>
+            <add position="before"><![CDATA[
+              <!--BundleExpert-->
+              <script type="text/javascript">
+                   $(document).ready(function () {
+
+                        var element = $(".be-cache-update-menu-button").first();
+
+                        $(element).removeClass("hidden");
+                        $(element).hide();
+
+                        if($(element).length>0){
+                            var menu_element = $(element).closest('a')
+                            $(menu_element).removeAttr("href");
+                            $(menu_element).attr("onclick", "be_update_cache();");
+
+                            var spin_html = "<i class='fa fa-spinner fa-spin' style='margin-left: 4px;vertical-align: middle;'></i>";
+                            spin_html += "<i class='fa fa-check-circle' style='margin-left: 4px;vertical-align: middle;'></i>";
+                            spin_html += "<span class='be-cache-update-progress' style='font-size: 10px;margin-left: 2px;vertical-align: middle;'></span>";//+++
+                            $(element).html(spin_html);
+                        }
+
+                    });
+
+                    function be_update_cache() {
+                        var element = $(".be-cache-update-menu-button").first();
+
+                        $.ajax({
+                            url: 'index.php?route=catalog/bundle_expert/updateCacheWithProgress&<?php echo $be_token_name; ?><?php echo $be_token_value; ?>',
+                            dataType: 'json',
+                            beforeSend: function() {
+                                $('.alert-container').html('');
+                                $(element).show();
+                                $(element).find('.fa-spinner').show();
+                                $(element).find('.fa-check-circle').hide();
+                                $(element).find('.be-cache-update-progress').show();//+++
+                                $(element).find('.be-cache-update-progress').html('0%');//+++
+                            },
+                            complete: function() {
+
+                            },
+                            success: function(json) {
+                                if (json['success']) {
+                                    //+++
+                                    $(element).find('.fa-spinner').hide();
+                                    $(element).find('.fa-check-circle').show();
+                                    $(element).find('.be-cache-update-progress').hide();//+++
+                                    //+++
+
+                                    $('.alert-container').append('<div class="alert alert-success"><i class="fa fa-exclamation-circle"></i> ' + json['success'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+
+                                }
+
+                                //+++
+                                if (json['total']) {
+                                    $('.be-cache-update-progress').html(json['total'] + '%');
+                                }
+                                if (json['next']) {
+                                    be_update_cache_next(json['next']);
+                                }
+                                //+++
+                            },
+                            error: function(xhr, ajaxOptions, thrownError) {
+                                alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                            }
+                        });
+                    }
+
+                   function be_update_cache_next(url) {
+                       var element = $(".be-cache-update-menu-button").first();
+
+                       $.ajax({
+                           url: url,
+                           dataType: 'json',
+                           success: function(json) {
+                               $('.alert-dismissible').remove();
+
+                               if (json['error']) {
+                                   $('#content > .container-fluid').prepend('<div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> ' + json['error'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                               }
+
+                               if (json['success']) {
+                                   $(element).find('.fa-spinner').hide();
+                                   $(element).find('.fa-check-circle').show();
+                                   $(element).find('.be-cache-update-progress').hide();//+++
+                               }
+
+                               if (json['total']) {
+                                   $('.be-cache-update-progress').html(json['total'] + '%');
+                               }
+
+                               if (json['next']) {
+                                   be_update_cache_next(json['next']);
+                               }
+                           },
+                           error: function(xhr, ajaxOptions, thrownError) {
+                               alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                           }
+                       });
+                   }
+              </script>
+              <!--BundleExpert-->
+              ]]></add>
+        </operation>
+    </file>
+    <!-- Ver >= 3000 -->
+    <file path="admin/view/template/common/column_left.twig">
+        <operation error="skip">
+            <search><![CDATA[</nav>]]></search>
+            <add position="before"><![CDATA[
+              <!--BundleExpert-->
+             <script type="text/javascript">
+                   $(document).ready(function () {
+
+                        var element = $(".be-cache-update-menu-button").first();
+
+                        $(element).removeClass("hidden");
+                        $(element).hide();
+
+                        if($(element).length>0){
+                            var menu_element = $(element).closest('a')
+                            $(menu_element).removeAttr("href");
+                            $(menu_element).attr("onclick", "be_update_cache();");
+
+                            var spin_html = "<i class='fa fa-spinner fa-spin' style='margin-left: 4px;vertical-align: middle;'></i>";
+                            spin_html += "<i class='fa fa-check-circle' style='margin-left: 4px;vertical-align: middle;'></i>";
+                            spin_html += "<span class='be-cache-update-progress' style='font-size: 10px;margin-left: 2px;vertical-align: middle;'></span>";//+++
+
+                            $(element).html(spin_html);
+                        }
+
+                    });
+
+                    function be_update_cache() {
+                        var element = $(".be-cache-update-menu-button").first();
+
+                        $.ajax({
+                            url: 'index.php?route=catalog/bundle_expert/updateCacheWithProgress&{{ be_token_name }}{{ be_token_value }}',
+                            dataType: 'json',
+                            beforeSend: function() {
+                                $('.alert-container').html('');
+                                $(element).show();
+                                $(element).find('.fa-spinner').show();
+                                $(element).find('.fa-check-circle').hide();
+                                $(element).find('.be-cache-update-progress').show();//+++
+                                $(element).find('.be-cache-update-progress').html('0%');//+++
+                            },
+                            complete: function() {
+                            },
+                            success: function(json) {
+                                if (json['success']) {
+                                    $(element).find('.fa-spinner').hide();
+                                    $(element).find('.fa-check-circle').show();
+                                    $(element).find('.be-cache-update-progress').hide();//+++
+
+                                    $('.alert-container').append('<div class="alert alert-success"><i class="fa fa-exclamation-circle"></i> ' + json['success'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+
+                                }
+                                //+++
+                                if (json['total']) {
+                                    $('.be-cache-update-progress').html(json['total'] + '%');
+                                }
+                                if (json['next']) {
+                                    be_update_cache_next(json['next']);
+                                }
+                                //+++
+                            },
+                            error: function(xhr, ajaxOptions, thrownError) {
+                                alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                            }
+                        });
+                    }
+                    function be_update_cache_next(url) {
+                       var element = $(".be-cache-update-menu-button").first();
+
+                       $.ajax({
+                           url: url,
+                           dataType: 'json',
+                           success: function(json) {
+                               $('.alert-dismissible').remove();
+
+                               if (json['error']) {
+                                   $('#content > .container-fluid').prepend('<div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> ' + json['error'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                               }
+
+                               if (json['success']) {
+                                   $(element).find('.fa-spinner').hide();
+                                   $(element).find('.fa-check-circle').show();
+                                   $(element).find('.be-cache-update-progress').hide();//+++
+                               }
+
+                               if (json['total']) {
+                                   $('.be-cache-update-progress').html(json['total'] + '%');
+                               }
+
+                               if (json['next']) {
+                                   be_update_cache_next(json['next']);
+                               }
+                           },
+                           error: function(xhr, ajaxOptions, thrownError) {
+                               alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                           }
+                       });
+                   }
+              </script>
+              <!--BundleExpert-->
+              ]]></add>
+        </operation>
+    </file>
+
+    <!-- < 3000 -->
+    <file path="admin/view/template/catalog/product_form.tpl">
+        <operation error="skip">
+            <search><![CDATA[<li><a href="#tab-special" data-toggle="tab"><?php echo $tab_special; ?></a></li>]]></search>
+            <add position="after"><![CDATA[
+            <!--BundleExpert-->
+              <?php echo $html_bundle_expert_tab_header;?>
+            <!--BundleExpert-->
+              ]]></add>
+        </operation>
+        <operation error="skip">
+            <search><![CDATA[<div class="tab-pane" id="tab-special">]]></search>
+            <add position="before"><![CDATA[
+              <!--BundleExpert-->
+              <?php echo $html_bundle_expert_tab_content;?>
+              <!--BundleExpert-->
+              ]]></add>
+        </operation>
+    </file>
+    <!-- >= 3000 -->
+    <file path="admin/view/template/catalog/product_form.twig">
+        <operation error="skip">
+            <search><![CDATA[<li><a href="#tab-special" data-toggle="tab">{{ tab_special }}</a></li>]]></search>
+            <add position="after"><![CDATA[
+            <!--BundleExpert-->
+              {{ html_bundle_expert_tab_header }}
+            <!--BundleExpert-->
+              ]]></add>
+        </operation>
+        <operation error="skip">
+            <search><![CDATA[<div class="tab-pane" id="tab-special">]]></search>
+            <add position="before"><![CDATA[
+              <!--BundleExpert-->
+              {{ html_bundle_expert_tab_content }}
+              <!--BundleExpert-->
+              ]]></add>
+        </operation>
+    </file>
+
+    <!-- < 3000 -->
+    <file path="admin/view/template/sale/order_form.tpl">
+        <operation error="skip">
+            <search><![CDATA[<td class="text-left"><?php echo $order_product['name']; ?>]]></search>
+            <add position="after"><![CDATA[
+                <!--BundleExpert-->
+                <?php if($bundle_expert_installed && $bundle_expert_licensed){?>
+                    <input type="hidden" name="product[<?php echo $product_row; ?>][cart_kit_info]" value="<?php if(isset($order_product['cart_kit_info_encode'])) echo $order_product['cart_kit_info_encode']; ?>" />
+                    <input type="hidden" name="product[<?php echo $product_row; ?>][product_as_kit]" value="<?php if(isset($order_product['product_as_kit_info_encode'])) echo $order_product['product_as_kit_info_encode']; ?>" />
+                    <input type="hidden" name="product[<?php echo $product_row; ?>][order_id]" value="<?php if(isset($order_product['order_id'])) echo $order_product['order_id']; ?>" />
+                <?php } ?>
+                <!--BundleExpert-->
+              ]]></add>
+        </operation>
+    </file>
+    <!-- >= 3000 -->
+    <file path="admin/view/template/sale/order_form.twig">
+        <operation error="skip">
+            <search><![CDATA[<td class="text-left">{{ order_product.name }}]]></search>
+            <add position="after"><![CDATA[
+                <!--BundleExpert-->
+                {% if (bundle_expert_installed and bundle_expert_licensed) %}
+                    <input type="hidden" name="product[{{ product_row }}][cart_kit_info]" value="{% if (order_product['cart_kit_info_encode'] is defined) %} {{ order_product['cart_kit_info_encode'] }}{% endif %}" />
+                    <input type="hidden" name="product[{{ product_row }}][product_as_kit]" value="{% if (order_product['product_as_kit_info_encode'] is defined) %} {{ order_product['product_as_kit_info_encode'] }}{% endif %}" />
+                    <input type="hidden" name="product[{{ product_row }}][order_id]" value="{% if (order_product['order_id'] is defined) %} {{ order_product['order_id'] }}{% endif %}" />
+                {% endif %}
+                <!--BundleExpert-->
+              ]]></add>
+        </operation>
+    </file>
+
+    <!-- < 3000 -->
+    <file path="admin/view/template/sale/order_form.tpl">
+        <operation error="skip">
+            <search><![CDATA[<div class="tab-pane" id="tab-voucher">]]></search>
+            <add position="before" offset="1"><![CDATA[
+                    <!--BundleExpert-->
+                    <?php echo $html_bundle_expert_order_form_add_fieldset;?>
+                    <!--BundleExpert-->
+              ]]></add>
+        </operation>
+    </file>
+    <!-- >= 3000 -->
+    <file path="admin/view/template/sale/order_form.twig">
+        <operation error="skip">
+            <search><![CDATA[<div class="tab-pane" id="tab-voucher">]]></search>
+            <add position="before" offset="1"><![CDATA[
+                    <!--BundleExpert-->
+                    {{html_bundle_expert_order_form_add_fieldset}}
+                    <!--BundleExpert-->
+              ]]></add>
+        </operation>
+    </file>
+
+    <!-- < 3000 -->
+    <file path="admin/view/template/sale/order_form.tpl">
+        <operation error="skip">
+            <search><![CDATA[$('#cart').html(html);]]></search>
+            <add position="after"><![CDATA[
+                //BundleExpert
+                <?php if($bundle_expert_installed && $bundle_expert_licensed){?>
+                    add_key_to_products(json['products'])
+                <?php } ?>
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+    <!-- >= 3000 -->
+    <file path="admin/view/template/sale/order_form.twig">
+        <operation error="skip">
+            <search><![CDATA[$('#cart').html(html);]]></search>
+            <add position="after"><![CDATA[
+                //BundleExpert
+                {% if (bundle_expert_installed and bundle_expert_licensed) %}
+                    add_key_to_products(json['products'])
+                {% endif %}
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+
+    <!-- < 3000 -->
+    <file path="admin/view/template/sale/order_form.tpl">
+        <operation error="skip">
+            <search><![CDATA[$('#total').html(html);]]></search>
+            <add position="before"><![CDATA[
+            //BundleExpert
+            <?php if($bundle_expert_installed && $bundle_expert_licensed){?>
+            disable_kit_quantity_field();
+            <?php } ?>
+            //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+    <!-- >= 3000 -->
+    <file path="admin/view/template/sale/order_form.twig">
+        <operation error="skip">
+            <search><![CDATA[$('#total').html(html);]]></search>
+            <add position="before"><![CDATA[
+            //BundleExpert
+            {% if (bundle_expert_installed and bundle_expert_licensed) %}
+            disable_kit_quantity_field();
+            {% endif %}
+            //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+
+    <!-- 2200<=v<3000 -->
+    <file path="admin/view/template/sale/order_form.tpl">
+        <operation error="skip">
+            <search><![CDATA[token = json['token'];]]></search>
+            <add position="after"><![CDATA[
+			//BundleExpert
+            bundle_expert.api_token_value = token;
+            bundle_expert.load_bundle_expert_to_order_form();
+			//BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+
+
+    <!-- < 3000 -->
+    <file path="admin/view/template/sale/order_form.tpl">
+        <operation error="skip">
+            <search><![CDATA[<?php echo $footer; ?>]]></search>
+            <add position="before"><![CDATA[
+                <!--BundleExpert-->
+                <?php echo $html_bundle_expert_order_form_block;?>
+                <!--BundleExpert-->
+              ]]></add>
+        </operation>
+    </file>
+    <!-- >= 3000 -->
+    <file path="admin/view/template/sale/order_form.twig">
+        <operation error="skip">
+            <search><![CDATA[{{ footer }}]]></search>
+            <add position="before"><![CDATA[
+                <!--BundleExpert-->
+                {{ html_bundle_expert_order_form_block }}
+                <!--BundleExpert-->
+              ]]></add>
+        </operation>
+    </file>
+
+
+
+    <!--CATALOG-->
+
+    <file path="catalog/controller/api/cart.php">
+        <!-- v = 2000  TODO-->
+
+        <!-- v > 2000 -->
+        <operation error="skip">
+            <search><![CDATA[$this->cart->clear();]]></search>
+            <add position="before"><![CDATA[
+                //BundleExpert
+                if ($this->registry->has('bundle_expert') && $this->bundle_expert->isEnabled()) {
+                    $this->bundle_expert->admin_api_mode = true;
+                    $this->request->post['product'] = $this->bundle_expert_cart->apiAddBeforeClear($this->request->post['product']);
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+        <operation error="skip">
+            <search><![CDATA[$this->cart->add($product['product_id'], $product['quantity'], $option);]]></search>
+            <add position="before"><![CDATA[
+                    //BundleExpert
+                    if ($this->registry->has('bundle_expert') && $this->bundle_expert->isEnabled()) {
+                        $this->bundle_expert->admin_api_mode = true;
+                        $continue = $this->bundle_expert_cart->apiAddBeforeDefault($product, $option);
+                        if (!$continue) {
+                            continue;
+                        }
+                    }
+                    //BundleExpert
+              ]]></add>
+        </operation>
+
+        <!-- 2101< Ver <3> -->
+        <operation error="skip">
+            <search><![CDATA[public function products() {]]></search>
+            <add position="after"><![CDATA[
+                //BundleExpert
+                if ($this->registry->has('bundle_expert') && $this->bundle_expert->isEnabled()) {
+                    $this->bundle_expert->admin_api_mode = true;
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+
+        <!-- >= Ver 2.1.0.1 -->
+        <operation error="skip">
+            <search><![CDATA['product_id' => $product['product_id'],]]></search>
+            <add position="after"><![CDATA[
+                    //BundleExpert
+					'key' => isset($product['key'])?$product['key']:'',
+                    'product_as_kit_flag' => isset($product['product_as_kit_flag'])?$product['product_as_kit_flag']:0,
+                    //BundleExpert
+              ]]></add>
+        </operation>
+
+    </file>
+
+    <file path="catalog/controller/api/order.php">
+        <operation error="skip">
+            <search><![CDATA[foreach ($this->cart->getProducts() as $product)]]></search>
+            <add position="replace"><![CDATA[
+            //BundleExpert
+            foreach ($this->cart->getProductsDefault() as $product)
+            //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/controller/api/order.php">
+        <operation error="skip">
+            <search><![CDATA[$json['order_id'] = $this->model_checkout_order->addOrder($order_data);]]></search>
+            <add position="before"><![CDATA[
+                    //BundleExpert
+                    if ($this->registry->has('bundle_expert') && $this->bundle_expert->isEnabled()) {
+                        $index = 0;
+                        $this->bundle_expert->admin_api_mode = true;
+                        foreach ($this->cart->getProductsDefault() as $product) {
+                            $cart_product_data = unserialize(base64_decode($product['key']));
+                            if (isset($cart_product_data['cart_kit_info'])) {
+                                $order_data['products'][$index]['cart_kit_info'] = $cart_product_data['cart_kit_info'];
+                            }
+                             if (isset($cart_product_data['product_as_kit'])) {
+                                $order_data['products'][$index]['product_as_kit'] = $cart_product_data['product_as_kit'];
+                            }
+                            $index++;
+                        }
+                    }
+                    //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/controller/api/order.php">
+        <operation error="skip">
+            <search><![CDATA[$this->model_checkout_order->editOrder($order_id, $order_data);]]></search>
+            <add position="before"><![CDATA[
+                    //BundleExpert
+                    if ($this->registry->has('bundle_expert') && $this->bundle_expert->isEnabled()) {
+                        $index = 0;
+                        $this->bundle_expert->admin_api_mode = true;
+                        foreach ($this->cart->getProductsDefault() as $product) {
+                            $cart_product_data = unserialize(base64_decode($product['key']));
+                            if (isset($cart_product_data['cart_kit_info'])) {
+                                $order_data['products'][$index]['cart_kit_info'] = $cart_product_data['cart_kit_info'];
+                            }
+                             if (isset($cart_product_data['product_as_kit'])) {
+                                $order_data['products'][$index]['product_as_kit'] = $cart_product_data['product_as_kit'];
+                            }
+                            $index++;
+                        }
+                    }
+                    //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+
+    <file path="catalog/controller/checkout/cart.php">
+        <operation error="skip">
+            <search><![CDATA[$data['header'] = $this->load->controller('common/header');]]></search>
+            <add position="after"><![CDATA[
+                //BundleExpert
+                if ($this->registry->has('bundle_expert') && $this->bundle_expert->isEnabled()) {
+                    $data['bundle_expert_enabled'] = true;
+                    $data['bundle_expert_color_handler'] = $this->load->controller('module/bundle_expert/getCartColorHandler', array('products' => isset($data['products']) ? $data['products'] : array()));
+                    if (version_compare($this->bundle_expert->OC_VERSION, '2.1.0.1', '<')) $data['cart_product_index'] = 'key'; else $data['cart_product_index'] = 'cart_id';
+                }else{
+                    $data['bundle_expert_enabled'] = false;
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+
+    <file path="catalog/controller/checkout/cart.php">
+        <operation error="skip">
+            <search><![CDATA[$data['header'] = $this->load->controller('common/header');]]></search>
+            <add position="after"><![CDATA[
+                //BundleExpert
+                if ($this->registry->has('bundle_expert') && $this->bundle_expert->isEnabled()) {
+                    $data['bundle_expert_enabled'] = true;
+                    $data['bundle_expert_color_handler'] = $this->load->controller('module/bundle_expert/getCartColorHandler', array('products' => isset($data['products']) ? $data['products'] : array()));
+                    if (version_compare($this->bundle_expert->OC_VERSION, '2.1.0.1', '<')) $data['cart_product_index'] = 'key'; else $data['cart_product_index'] = 'cart_id';
+                }else{
+                    $data['bundle_expert_enabled'] = false;
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+
+    <file path="catalog/controller/checkout/cart.php">
+        <operation error="skip">
+            <search><![CDATA[if (!$json) {]]></search>
+            <add position="before"><![CDATA[
+                //BundleExpert
+                if ($this->registry->has('bundle_expert') && $this->bundle_expert->isEnabled()) {
+                    if ($this->bundle_expert->checkProductIsKit($product_id) || $this->bundle_expert->checkProductIsKit_LE($product_id)) {
+                        $be_continue = $this->bundle_expert->tryAddProductAsKitFromCategory($product_id, $json);
+                        if(!$be_continue){
+                            return;
+                        }
+                    };
+                    if ($this->bundle_expert->checkProductIsCollection($product_id)) {
+                        $json['error']['product_as_kit'] = '';
+                    };
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+
+    <file path="catalog/controller/checkout/confirm.php">
+        <operation error="skip">
+            <search index="0"><![CDATA[foreach ($this->cart->getProducts() as $product)]]></search>
+            <add position="replace"><![CDATA[
+            //BundleExpert
+            foreach ($this->cart->getProductsDefault() as $product)
+            //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+
+    <!--<file path="catalog/controller/checkout/confirm.php">-->
+    <!--<operation error="skip">-->
+    <!--<search><![CDATA[$this->session->data['order_id'] = $this->model_checkout_order->addOrder($order_data)]]></search>-->
+    <!--<add position="before"><![CDATA[-->
+    <!--//BundleExpert-->
+    <!--if ($this->bundle_expert->isEnabled()) {-->
+    <!--$order_data['products'] = $this->bundle_expert->orderAddProductListPrepare($order_data['products']);-->
+    <!--}-->
+    <!--//BundleExpert-->
+    <!--]]></add>-->
+    <!--</operation>-->
+    <!--</file>-->
+
+    <file path="catalog/controller/common/cart.php">
+        <operation error="skip">
+            <search><![CDATA[$data['cart'] = $this->url->link('checkout/cart');]]></search>
+            <add position="before"><![CDATA[
+                //BundleExpert
+                if ($this->registry->has('bundle_expert') && $this->bundle_expert->isEnabled()) {
+                    $data['bundle_expert_enabled'] = true;
+                    $data['bundle_expert_color_handler'] = $this->load->controller('module/bundle_expert/getCartColorHandler', array('products' => $data['products']));
+                    if (version_compare($this->bundle_expert->OC_VERSION, '2.1.0.1', '<')) $data['cart_product_index'] = 'key'; else $data['cart_product_index'] = 'cart_id';
+                }else{
+                    $data['bundle_expert_enabled'] = false;
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+
+    <file path="catalog/controller/common/header.php">
+        <operation error="skip">
+            <search><![CDATA[$data['title'] = $this->document->getTitle();]]></search>
+            <add position="before"><![CDATA[
+            //BundleExpert
+            if ($this->registry->has('bundle_expert') && $this->bundle_expert->isEnabled()) {
+                $data['bundle_expert_header_style'] = $this->load->controller('module/bundle_expert/getBundleExpertHeaderStyle');
+            }else{
+                $data['bundle_expert_header_style'] = "";
+            }
+            //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+
+    <file path="catalog/controller/common/footer.php">
+        <operation error="skip">
+            <search><![CDATA[$this->load->language('common/footer');]]></search>
+            <add position="after"><![CDATA[
+                //BundleExpert
+                if ($this->registry->has('bundle_expert') && $this->bundle_expert->isEnabled()) {
+                    $data['bundle_expert'] = $this->load->controller('module/bundle_expert/getBundleExpert');
+                }else{
+                    $data['bundle_expert'] = "";
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+
+
+    <file path="catalog/controller/product/category.php">
+        <operation error="skip">
+            <search index="3"><![CDATA[if (isset($this->request->get['limit'])) {]]></search>
+            <add position="before"><![CDATA[
+				 //BundleExpert
+                if ($this->registry->has('bundle_expert') && $this->bundle_expert->isEnabled()) {
+                    $this->load->controller('module/bundle_expert/addPageProducts', isset($data['products']) ? $data['products'] : array());
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+        <operation error="skip">
+            <search><![CDATA[$data['footer'] = $this->load->controller('common/footer');]]></search>
+            <add position="before"><![CDATA[
+                //BundleExpert
+                if ($this->registry->has('bundle_expert') && $this->bundle_expert->isEnabled()) {
+                    $this->load->controller('module/bundle_expert/addPageProducts', isset($data['products']) ? $data['products'] : array());
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+
+    <file path="catalog/controller/product/product.php">
+        <operation error="skip">
+            <search><![CDATA[$data['discounts'] = array();]]></search>
+            <add position="before"><![CDATA[
+            //BundleExpert
+            if ($this->registry->has('bundle_expert') && $this->bundle_expert->isEnabled()) {
+                $this->bundle_expert->getProductAsKitPriceDataForProductPage($product_id, $data);
+                if(isset($product_info)) {
+                    $this->bundle_expert->getProductAsKitWeightDataForProductPage($product_id, $product_info);
+                }
+            }
+            //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+
+    <!--Корректировка цены для товара-комплекта-->
+    <file path="catalog/model/catalog/product.php">
+        <operation error="skip">
+            <search index="0"><![CDATA[if ($query->num_rows)]]></search>
+            <add position="before"><![CDATA[
+                //BundleExpert
+                if ($this->registry->has('bundle_expert') && $this->bundle_expert->isEnabled()) {
+                    //1590
+                    $query = $this->bundle_expert->editProductInfoForModel($product_id, $query);
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+    <!--Корректировка цены для товара-комплекта-->
+
+    <!--Прямой вывод комплекта на странице товара в нужном месте-->
+    <file path="catalog/controller/product/product.php">
+        <operation error="skip">
+            <search index="0"><![CDATA[$this->response->setOutput($this->load->view('product/product', $data));]]></search>
+            <add position="before"><![CDATA[
+            //BundleExpert
+            if ($this->registry->has('bundle_expert') && $this->bundle_expert->isEnabled()) {
+                $data = $this->load->controller('module/bundle_expert/getWidgetsDirectOutputMode', $data);
+            }
+            //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+    <!--Корректировка цены для товара-комплекта-->
+
+    <file path="catalog/model/checkout/order.php">
+        <operation error="skip">
+            <search><![CDATA[public function addOrder($data) {]]></search>
+            <add position="after"><![CDATA[
+            //BundleExpert
+            if ($this->registry->has('bundle_expert') && $this->bundle_expert->isEnabled()) {
+                $data['products'] = $this->bundle_expert->orderProductListPrepare($data['products']);
+            }
+            //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/model/checkout/order.php">
+        <operation error="skip">
+            <search><![CDATA[public function editOrder($order_id, $data) {]]></search>
+            <add position="after"><![CDATA[
+            //BundleExpert
+            if ($this->registry->has('bundle_expert') && $this->bundle_expert->isEnabled()) {
+                $data['products'] = $this->bundle_expert->orderProductListPrepare($data['products']);
+            }
+            //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+
+    <file path="catalog/model/checkout/order.php">
+        <operation error="skip">
+            <search><![CDATA[$order_product_id = $this->db->getLastId();]]></search>
+            <add position="after"><![CDATA[
+                //BundleExpert
+                if ($this->registry->has('bundle_expert') && $this->bundle_expert->isEnabled()) {
+                    $this->bundle_expert->orderAddKitProductData($order_id, $order_product_id, $product);
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+    <!--<file path="catalog/model/checkout/order.php">-->
+    <!--<operation error="skip">-->
+    <!--<search><![CDATA[$order_product_id = $this->db->getLastId();]]></search>-->
+    <!--<add position="after"><![CDATA[-->
+    <!--//BundleExpert-->
+    <!--$this->load->model('checkout/bundle_expert');-->
+    <!--if ($this->bundle_expert->isEnabled()) {-->
+    <!--if (isset($product['cart_kit_info'])) {-->
+    <!--$this->db->query("INSERT INTO " . DB_PREFIX . "bundle_expert_order SET order_id = '" . (int)$order_id . "', order_product_id = '" . (int)$order_product_id . "', product_id = '" . (int)$product['product_id'] . "', cart_kit_info = '" . $this->db->escape(json_encode($product['cart_kit_info'])) . "'");-->
+    <!--$this->model_checkout_bundle_expert->addOrderKitHistory($product['cart_kit_info']['kit_id'], $product['cart_kit_info']['kit_unique_id'], $product['cart_kit_info']['main_product_id'], $order_id);-->
+    <!--}-->
+    <!--if (isset($product['product_as_kit'])) {-->
+    <!--$this->db->query("INSERT INTO " . DB_PREFIX . "bundle_expert_order SET order_id = '" . (int)$order_id . "', order_product_id = '" . (int)$order_product_id . "', product_id = '" . (int)$product['product_id'] . "', product_as_kit_info = '" . $this->db->escape(json_encode($product['product_as_kit'])) . "'");-->
+    <!--}-->
+    <!--}-->
+    <!--//BundleExpert-->
+    <!--]]></add>-->
+    <!--</operation>-->
+    <!--</file>-->
+
+    <file path="catalog/model/checkout/order.php">
+        <operation error="skip">
+            <search><![CDATA[$this->db->query("DELETE FROM " . DB_PREFIX . "order_option WHERE order_id = '" . (int)$order_id . "'");]]></search>
+            <add position="after"><![CDATA[
+                //BundleExpert
+                if ($this->registry->has('bundle_expert') && $this->bundle_expert->isEnabled()) {
+                    $this->db->query("DELETE FROM " . DB_PREFIX . "bundle_expert_order WHERE order_id = '" . (int)$order_id . "'");
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+
+    <file path="catalog/model/checkout/order.php">
+        <operation error="skip">
+            <search><![CDATA[$this->db->query("DELETE FROM `" . DB_PREFIX . "order` WHERE order_id = '" . (int)$order_id . "'");]]></search>
+            <add position="before"><![CDATA[
+               //BundleExpert
+                if ($this->registry->has('bundle_expert') && $this->bundle_expert->isEnabled()) {
+                    $this->db->query("DELETE FROM " . DB_PREFIX . "bundle_expert_order WHERE order_id = '" . (int)$order_id . "'");
+                    $this->db->query("DELETE FROM " . DB_PREFIX . "bundle_expert_order_kit_info WHERE order_id = '" . (int)$order_id . "'");
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+
+    <file path="catalog/model/checkout/order.php">
+        <operation error="skip">
+            <search><![CDATA[$this->cache->delete('product');]]></search>
+            <add position="before"><![CDATA[
+                //BundleExpert
+                if ($this->registry->has('bundle_expert')) {
+                $this->bundle_expert->orderUpdateKitQuantity($order_info, $order_id, $order_status_id);
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+    <!--<file path="catalog/model/checkout/order.php">-->
+    <!--<operation error="skip">-->
+    <!--<search><![CDATA[$this->cache->delete('product');]]></search>-->
+    <!--<add position="before"><![CDATA[-->
+    <!--//BundleExpert-->
+    <!--if (!in_array($order_info['order_status_id'], array_merge($this->config->get('config_processing_status'), $this->config->get('config_complete_status'))) && in_array($order_status_id, array_merge($this->config->get('config_processing_status'), $this->config->get('config_complete_status')))) {-->
+    <!--if ($this->bundle_expert->isEnabled()) {-->
+    <!--$this->load->model('checkout/bundle_expert');-->
+    <!--$order_kits = $this->model_checkout_bundle_expert->getOrderKits($order_id);-->
+    <!--foreach ($order_kits as $kit) {-->
+    <!--if ($kit['kit_quantity_mode']['limit']) {-->
+    <!--$this->model_checkout_bundle_expert->updateKitQuantity($kit['kit_id'], -1);-->
+    <!--}-->
+    <!--}-->
+    <!--}-->
+    <!--}-->
+    <!--if (in_array($order_info['order_status_id'], array_merge($this->config->get('config_processing_status'), $this->config->get('config_complete_status'))) && !in_array($order_status_id, array_merge($this->config->get('config_processing_status'), $this->config->get('config_complete_status')))) {-->
+    <!--if ($this->bundle_expert->isEnabled()) {-->
+    <!--$this->load->model('checkout/bundle_expert');-->
+    <!--$order_kits = $this->model_checkout_bundle_expert->getOrderKits($order_id);-->
+    <!--foreach ($order_kits as $kit) {-->
+    <!--if ($kit['kit_quantity_mode']['limit']) {-->
+    <!--$this->model_checkout_bundle_expert->updateKitQuantity($kit['kit_id'], 1);-->
+    <!--}-->
+    <!--}-->
+    <!--}-->
+    <!--}-->
+    <!--//BundleExpert-->
+    <!--]]></add>-->
+    <!--</operation>-->
+    <!--</file>-->
+
+    <!-- < 3000 -->
+    <file path="catalog/model/checkout/order.php">
+        <operation error="skip">
+            <search index="0"><![CDATA['quantity' => $product['quantity'],]]></search>
+            <add position="after"><![CDATA[
+                //BundleExpert
+                'product_id' => $product['product_id'],
+                'order_product_id' => $product['order_product_id'],
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+    <!-- >= 3000 -->
+    <file path="catalog/controller/mail/order.php">
+        <operation error="skip">
+            <search index="0"><![CDATA['quantity' => $order_product['quantity'],]]></search>
+            <add position="after"><![CDATA[
+                //BundleExpert
+                'product_id' => $order_product['product_id'],
+                'order_product_id' => $order_product['order_product_id'],
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+
+    <!-- < 3000 -->
+    <file path="catalog/model/checkout/order.php">
+        <operation error="skip">
+            <search index="0"><![CDATA[$data['vouchers'] = array();]]></search>
+            <add position="before"><![CDATA[
+                //BundleExpert
+                if ($this->registry->has('bundle_expert') && $this->bundle_expert->isEnabled()) {
+                    $data['products'] = $this->bundle_expert->orderEmailProductListPrepare($data['products']);
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+    <!-- >= 3000 -->
+    <file path="catalog/controller/mail/order.php">
+        <operation error="skip">
+            <search index="0"><![CDATA[$mail = new Mail($this->config->get('config_mail_engine'));]]></search>
+            <add position="before"><![CDATA[
+                //BundleExpert
+                if ($this->registry->has('bundle_expert') && $this->bundle_expert->isEnabled()) {
+                    $data['products'] = $this->bundle_expert->orderEmailProductListPrepare($data['products']);
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+
+    <!-- < 3000 -->
+    <file path="catalog/model/checkout/order.php">
+        <operation error="skip">
+            <search index="0"><![CDATA[foreach ($order_product_query->rows as $order_product)]]></search>
+            <add position="before"><![CDATA[
+                //BundleExpert
+                if($this->registry->has('bundle_expert') && $order_product_query->num_rows>=2)
+                    $this->bundle_expert->sortArray($order_product_query->rows, 'order_product_id');
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/model/checkout/order.php">
+        <operation error="skip">
+            <search index="1"><![CDATA[foreach ($order_product_query->rows as $order_product)]]></search>
+            <add position="before"><![CDATA[
+                //BundleExpert
+                if($this->registry->has('bundle_expert') && $order_product_query->num_rows>=2)
+                    $this->bundle_expert->sortArray($order_product_query->rows, 'order_product_id');
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+    <!-- >= 3000 -->
+    <file path="catalog/controller/mail/order.php">
+        <operation error="skip">
+            <search index="0"><![CDATA[foreach ($order_products as $order_product) {]]></search>
+            <add position="before"><![CDATA[
+                //BundleExpert
+                if ($this->registry->has('bundle_expert')) {
+                $this->bundle_expert->sortArray($order_products, 'order_product_id');
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/controller/mail/order.php">
+        <operation error="skip">
+            <search index="1"><![CDATA[foreach ($order_products as $order_product) {]]></search>
+            <add position="before"><![CDATA[
+                //BundleExpert
+                if ($this->registry->has('bundle_expert')) {
+                $this->bundle_expert->sortArray($order_products, 'order_product_id');
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/controller/mail/order.php">
+        <operation error="skip">
+            <search index="2"><![CDATA[foreach ($order_products as $order_product) {]]></search>
+            <add position="before"><![CDATA[
+                //BundleExpert
+                if ($this->registry->has('bundle_expert')) {
+                $this->bundle_expert->sortArray($order_products, 'order_product_id');
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+
+    <!--Format product_as_kit for order info, invoice -->
+    <file path="catalog/controller/account/order.php">
+        <operation error="skip">
+            <search><![CDATA['quantity' => $product['quantity'],]]></search>
+            <add position="before"><![CDATA[
+                    //BundleExpert
+                    'product_id' => $product['product_id'],
+                    'order_product_id' => isset($product['order_product_id'])?$product['order_product_id']:null,
+                    //BundleExpert
+              ]]></add>
+        </operation>
+
+        <operation error="skip">
+            <search><![CDATA[$data['vouchers'] = array();]]></search>
+            <add position="before"><![CDATA[
+            //BundleExpert
+            if($this->registry->has('bundle_expert') && $this->registry->has('bundle_expert')){
+                $data['products'] = $this->bundle_expert->orderInfoProductListPrepare($data['products']);
+            }
+            //BundleExpert
+              ]]></add>
+        </operation>
+
+        <operation error="skip">
+            <search><![CDATA[public function reorder() {]]></search>
+            <add position="after"><![CDATA[
+            //BundleExpert
+            if($this->registry->has('bundle_expert')){
+                if(!$this->bundle_expert->accountCheckReorder()){
+                    return;
+                }
+            }
+            //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+
+
+    <!-- < 3000 -->
+    <file path="1catalog/view/theme/*/template/checkout/cart.tpl">
+        <operation error="skip">
+            <search><![CDATA[<?php foreach ($products as $product)]]></search>
+            <add position="after"><![CDATA[
+              <!--BundleExpert Start-->
+              <?php if ($bundle_expert_enabled) {?>
+                <?php $color_index = $product[$cart_product_index];?>
+                <?php echo $bundle_expert_color_handler[$color_index];?>
+              <?php } ?>
+              <!--BundleExpert End-->
+              ]]></add>
+        </operation>
+    </file>
+    <!-- >= 3000 -->
+    <file path="1catalog/view/theme/*/template/checkout/cart.twig">
+        <operation error="skip">
+            <search><![CDATA[{% for product in products %}]]></search>
+            <add position="after"><![CDATA[
+              <!--BundleExpert Start-->
+              {% if (bundle_expert_enabled) %}
+                {% set color_index = product[cart_product_index] %}
+                {{ bundle_expert_color_handler[color_index] }}
+              {% endif %}
+              <!--BundleExpert End-->
+              ]]></add>
+        </operation>
+    </file>
+
+    <!-- < 3000 -->
+    <file path="1catalog/view/theme/*/template/common/cart.tpl">
+        <operation error="skip">
+            <search><![CDATA[<?php foreach ($products as $product)]]></search>
+            <add position="after"><![CDATA[
+              <!--BundleExpert Start-->
+              <?php if ($bundle_expert_enabled) {?>
+                <?php $color_index = $product[$cart_product_index];?>
+                <?php echo $bundle_expert_color_handler[$color_index];?>
+              <?php } ?>
+              <!--BundleExpert End-->
+              ]]></add>
+        </operation>
+    </file>
+    <!-- >= 3000 -->
+    <file path="1catalog/view/theme/*/template/common/cart.twig">
+        <operation error="skip">
+            <search><![CDATA[{% for product in products %}]]></search>
+            <add position="after"><![CDATA[
+              <!--BundleExpert Start-->
+              {% if (bundle_expert_enabled) %}
+                {% set color_index = product[cart_product_index] %}
+                {{ bundle_expert_color_handler[color_index] }}
+              {% endif %}
+              <!--BundleExpert End-->
+              ]]></add>
+        </operation>
+    </file>
+
+    <!-- < 3000 -->
+    <file path="catalog/view/theme/*/template/product/category.tpl1">
+        <operation error="skip">
+            <search><![CDATA[<div class="image">]]></search>
+            <add position="before"><![CDATA[
+                <!--BundleExpert-->
+                <div class='bundle-expert-product-id' style="display: none" data-product-id="<?php echo $product['product_id'];?>"></div>
+                <!--BundleExpert-->
+              ]]></add>
+        </operation>
+    </file>
+    <!-- >= 3000 -->
+    <file path="catalog/view/theme/*/template/product/category.twig1">
+        <operation error="skip">
+            <search><![CDATA[<div class="caption">]]></search>
+            <add position="before"><![CDATA[
+                <!--BundleExpert-->
+                <div class='bundle-expert-product-id' style="display: none" data-product-id="{{ product['product_id'] }}"></div>
+                <!--BundleExpert-->
+              ]]></add>
+        </operation>
+    </file>
+
+    <!-- < 3000 -->
+    <file path="catalog/view/theme/*/template/common/header.tpl">
+        <operation error="skip">
+            <search><![CDATA[</head>]]></search>
+            <add position="before"><![CDATA[
+            <!--BundleExpert-->
+            <?php echo $bundle_expert_header_style;?>
+            <!--BundleExpert-->
+              ]]></add>
+        </operation>
+    </file>
+    <!-- >= 3000 -->
+    <file path="catalog/view/theme/*/template/common/header.twig">
+        <operation error="skip">
+            <search><![CDATA[</head>]]></search>
+            <add position="before"><![CDATA[
+                <!--BundleExpert-->
+                {{ bundle_expert_header_style }}
+                <!--BundleExpert-->
+              ]]></add>
+        </operation>
+    </file>
+
+    <!-- < 3000 -->
+    <file path="catalog/view/theme/*/template/common/footer.tpl">
+        <operation error="skip">
+            <search><![CDATA[</body>]]></search>
+            <add position="before"><![CDATA[
+                <!--BundleExpert-->
+                <div><div id="be-footer-ocmod-checker"></div></div>
+                <?php echo $bundle_expert;?>
+                <!--BundleExpert-->
+              ]]></add>
+        </operation>
+    </file>
+    <!-- >= 3000 -->
+    <file path="catalog/view/theme/*/template/common/footer.twig">
+        <operation error="skip">
+            <search><![CDATA[</footer>]]></search>
+            <add position="after"><![CDATA[
+                <!--BundleExpert-->
+                <div><div id="be-footer-ocmod-checker"></div></div>
+                {{ bundle_expert }}
+                <!--BundleExpert-->
+              ]]></add>
+        </operation>
+    </file>
+
+
+    <!--Цена коллекции От-->
+    <file path="catalog/controller/product/{search.php,manufacturer.php,compare.php,category.php}">
+        <operation error="skip">
+            <search><![CDATA[$data['products'][] = array(]]></search>
+            <add position="before"><![CDATA[
+                //BundleExpert
+                if ($this->registry->has('bundle_expert') && $this->bundle_expert->isEnabled()) {
+                    if(isset($result['product_id']) && isset($price)){
+                        $is_collection = $this->bundle_expert->checkProductIsCollection($result['product_id']);
+                        if($is_collection){
+                            $price = $this->bundle_expert->getCollectionPriceFormatted($price);;
+                        }
+                    }
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/controller/extension/module/{*.php}">
+        <operation error="skip">
+            <search><![CDATA[$data['products'][] = array(]]></search>
+            <add position="before"><![CDATA[
+                //BundleExpert
+                if ($this->registry->has('bundle_expert') && $this->bundle_expert->isEnabled()) {
+                    if(isset($result['product_id']) && isset($price)){
+                        $is_collection = $this->bundle_expert->checkProductIsCollection($result['product_id']);
+                        if($is_collection){
+                            $price = $this->bundle_expert->getCollectionPriceFormatted($price);;
+                        }
+                    }
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/controller/product/product.php">
+        <operation error="skip">
+            <search><![CDATA[$data['discounts'] = array();]]></search>
+            <add position="before"><![CDATA[
+                //BundleExpert
+                if ($this->registry->has('bundle_expert') && $this->bundle_expert->isEnabled()) {
+                    if(isset($product_info) && isset( $data['price'] )){
+                        $is_collection = $this->bundle_expert->checkProductIsCollection($product_info['product_id']);
+                        if($is_collection){
+                            $data['price'] = $this->bundle_expert->getCollectionPriceFormatted( $data['price'] );;
+                        }
+                    }
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+
+
+    <!--SYSTEM-->
+
+
+    <file path="system/library/cart.php">
+        <operation error="skip">
+            <search><![CDATA[public function __construct($registry) {]]></search>
+            <add position="after"><![CDATA[
+                //BundleExpert
+                $this->registry = $registry;
+                $this->bundle_expert = $registry->get('bundle_expert');
+                $this->bundle_expert_cart = $registry->get('bundle_expert_cart');
+                $this->bundle_expert_prepare_complete = false;
+                $this->bundle_expert_all_product_data = array();
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+    <file path="system/library/cart/cart.php">
+        <operation error="skip">
+            <search><![CDATA[public function __construct($registry) {]]></search>
+            <add position="after"><![CDATA[
+                //BundleExpert
+                $this->registry = $registry;
+                $this->bundle_expert = $registry->get('bundle_expert');
+                $this->bundle_expert_cart = $registry->get('bundle_expert_cart');
+                $this->bundle_expert_prepare_complete = false;
+                $this->bundle_expert_all_product_data = array();
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+
+
+    <!-- 2101 <= v < 2200 -->
+    <file path="system/library/cart.php">
+        <operation error="skip">
+            <search><![CDATA[$cart_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "cart WHERE customer_id = '0']]></search>
+            <add position="after"><![CDATA[
+                //BundleExpert
+                if(isset($this->registry)) {
+                if ($this->registry->has('bundle_expert')) {
+                $this->bundle_expert_cart->sortCartQueryFromDb($cart_query->rows);
+                }
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+    <file path="system/library/cart.php">
+        <operation error="skip">
+            <search><![CDATA[$cart_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "cart WHERE customer_id = '"]]></search>
+            <add position="after"><![CDATA[
+                //BundleExpert
+                if(isset($this->registry)) {
+                if ($this->registry->has('bundle_expert')) {
+                $this->bundle_expert_cart->sortCartQueryFromDb($cart_query->rows);
+                }
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+    <!-- 2200 <= v < 2302 -->
+    <file path="system/library/cart/cart.php">
+        <operation error="skip">
+            <search><![CDATA[$cart_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "cart WHERE customer_id = '0']]></search>
+            <add position="after"><![CDATA[
+                //BundleExpert
+                if(isset($this->registry)) {
+                if ($this->registry->has('bundle_expert')) {
+                $this->bundle_expert_cart->sortCartQueryFromDb($cart_query->rows);
+                }
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+    <file path="system/library/cart/cart.php">
+        <operation error="skip">
+            <search><![CDATA[$cart_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "cart WHERE customer_id = '"]]></search>
+            <add position="after"><![CDATA[
+                //BundleExpert
+                if(isset($this->registry)) {
+                if ($this->registry->has('bundle_expert')) {
+                $this->bundle_expert_cart->sortCartQueryFromDb($cart_query->rows);
+                }
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+    <!-- v >= 2302 -->
+    <file path="system/library/cart/cart.php">
+        <operation error="skip">
+            <search><![CDATA[$cart_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "cart WHERE api_id = '0']]></search>
+            <add position="after"><![CDATA[
+                //BundleExpert
+                if(isset($this->registry)) {
+                if ($this->registry->has('bundle_expert')) {
+                $this->bundle_expert_cart->sortCartQueryFromDb($cart_query->rows);
+                }
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+    <file path="system/library/cart/cart.php">
+        <operation error="skip">
+            <search><![CDATA[$cart_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "cart WHERE api_id = '"]]></search>
+            <add position="after"><![CDATA[
+                //BundleExpert
+                if(isset($this->registry)) {
+                if ($this->registry->has('bundle_expert')) {
+                $this->bundle_expert_cart->sortCartQueryFromDb($cart_query->rows);
+                }
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+
+    <!-- v < 2101 -->
+    <file path="system/library/cart.php">
+        <operation error="skip">
+            <search><![CDATA[return $this->data;]]></search>
+            <add position="before"><![CDATA[
+                //BundleExpert
+                if(isset($this->registry)) {
+                if ($this->registry->has('bundle_expert') && $this->bundle_expert->isEnabled()) {
+                    if (!($this->bundle_expert_prepare_complete)) {
+                        $this->data = $this->bundle_expert_cart->prepareCartData($this->data);
+                        $this->data = $this->bundle_expert_cart->prepareCartHasStockData($this->data);
+                        $this->bundle_expert_prepare_complete = true;
+                        return $this->data;
+                    }
+                }
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+    <!-- 2101 <= v < 2200 -->
+    <file path="system/library/cart.php">
+        <operation error="skip">
+            <search><![CDATA[return $product_data;]]></search>
+            <add position="before"><![CDATA[
+                //BundleExpert
+                if (isset($cart_query)) {
+                if(isset($this->registry)) {
+                    if ($this->registry->has('bundle_expert') && $this->bundle_expert->isEnabled()) {
+                        if (!($this->bundle_expert_prepare_complete)) {
+                            $bundle_expert_all_product_data = array();
+                            $product_data = $this->bundle_expert_cart->prepareCartData($product_data, $bundle_expert_all_product_data);
+                            $product_data = $this->bundle_expert_cart->prepareCartHasStockData($product_data, $bundle_expert_all_product_data);
+                            $this->bundle_expert_prepare_complete = true;
+                            $this->bundle_expert_product_data = $product_data;
+                            $this->bundle_expert_all_product_data = $bundle_expert_all_product_data;
+                        } else {
+                            $product_data = $this->bundle_expert_product_data;
+                        }
+                    }
+                }
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+    <!-- 2200 <= v -->
+    <file path="system/library/cart/cart.php">
+        <operation error="skip">
+            <search><![CDATA[return $product_data;]]></search>
+            <add position="before"><![CDATA[
+                //BundleExpert
+                if (isset($cart_query)) {
+                if(isset($this->registry)) {
+                    if ($this->registry->has('bundle_expert') && $this->bundle_expert->isEnabled()) {
+                        if (!($this->bundle_expert_prepare_complete)) {
+                            $bundle_expert_all_product_data = array();
+                            $product_data = $this->bundle_expert_cart->prepareCartData($product_data, $bundle_expert_all_product_data);
+                            $product_data = $this->bundle_expert_cart->prepareCartHasStockData($product_data, $bundle_expert_all_product_data);
+                            $this->bundle_expert_prepare_complete = true;
+                            $this->bundle_expert_product_data = $product_data;
+                            $this->bundle_expert_all_product_data = $bundle_expert_all_product_data;
+                        } else {
+                            $product_data = $this->bundle_expert_product_data;
+                        }
+                    }
+                }
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+
+    <file path="system/library/cart.php">
+        <operation error="skip">
+            <search><![CDATA[public function hasDownload() {]]></search>
+            <add position="before"><![CDATA[
+                //BundleExpert
+                public function updateCartData() {
+                    $this->data = array();
+                    $this->bundle_expert_prepare_complete = false;
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+    <file path="system/library/cart/cart.php">
+        <operation error="skip">
+            <search><![CDATA[public function hasDownload() {]]></search>
+            <add position="before"><![CDATA[
+                //BundleExpert
+                public function updateCartData() {
+                    $this->bundle_expert_prepare_complete = false;
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+    <file path="system/library/cart.php">
+        <operation error="skip">
+            <search><![CDATA[public function hasDownload() {]]></search>
+            <add position="before"><![CDATA[
+                //BundleExpert (пробелы нужны)
+                public function   getProductsDefault($with_keys = false){
+                    if(isset($this->registry)) {
+                    if ($this->registry->has('bundle_expert') && $this->bundle_expert->isEnabled()) {
+                        if (!($this->bundle_expert_prepare_complete)) {
+                            $products = $this->getProducts();
+                            $cart_products = $this->bundle_expert_all_product_data;
+                        } else {
+                            $cart_products = $this->bundle_expert_all_product_data;
+                        }
+
+                        if ($with_keys) {
+                            $cart_products_with_keys = array();
+                            foreach ($cart_products as $cart_product) {
+                                $cart_products_with_keys[$cart_product['key']] = $cart_product;
+                            }
+                            $cart_products = $cart_products_with_keys;
+                        }
+                        return $cart_products;
+                    }else{
+						return $this->getProducts();
+					}
+					}
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+    <file path="system/library/cart/cart.php">
+        <operation error="skip">
+            <search><![CDATA[public function hasDownload() {]]></search>
+            <add position="before"><![CDATA[
+                //BundleExpert (пробелы нужны)
+                public function   getProductsDefault($with_keys = false){
+                    if(isset($this->registry)) {
+                    if ($this->registry->has('bundle_expert') && $this->bundle_expert->isEnabled()) {
+                        if (!($this->bundle_expert_prepare_complete)) {
+                            $products = $this->getProducts();
+                            $cart_products = $this->bundle_expert_all_product_data;
+                        } else {
+                            $cart_products = $this->bundle_expert_all_product_data;
+                        }
+
+                        if ($with_keys) {
+                            $cart_products_with_keys = array();
+                            foreach ($cart_products as $cart_product) {
+                                $cart_products_with_keys[$cart_product['key']] = $cart_product;
+                            }
+                            $cart_products = $cart_products_with_keys;
+                        }
+                        return $cart_products;
+                    }else{
+						return $this->getProducts();
+					}
+					}
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+
+    <!-- 2000 <= v < 2101-->
+    <file path="system/library/cart.php">
+        <operation error="skip">
+            <search><![CDATA[$this->session->data['cart'][$key] += (int)$qty;]]></search>
+            <add position="after"><![CDATA[
+                //BundleExpert
+                if(isset($this->registry)) {
+                if ($this->registry->has('bundle_expert')) {
+                $this->updateCartData();
+                }
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+        <operation error="skip">
+            <search><![CDATA[unset($this->session->data['cart'][$key]);]]></search>
+            <add position="after"><![CDATA[
+                //BundleExpert
+                if(isset($this->registry)) {
+                if ($this->registry->has('bundle_expert')) {
+                $this->updateCartData();
+                }
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+        <operation error="skip">
+            <search><![CDATA[$this->session->data['cart'] = array();]]></search>
+            <add position="after"><![CDATA[
+                //BundleExpert
+                if(isset($this->registry)) {
+                if ($this->registry->has('bundle_expert')) {
+                $this->updateCartData();
+                }
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+    <!-- 2101 <= v < 2200-->
+    <file path="system/library/cart.php">
+        <operation error="skip">
+            <search><![CDATA[$this->db->query("INSERT " . DB_PREFIX . "cart SET]]></search>
+            <add position="after"><![CDATA[
+                //BundleExpert
+                if(isset($this->registry)) {
+                if ($this->registry->has('bundle_expert')) {
+                $this->updateCartData();
+                }
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+        <operation error="skip">
+            <search><![CDATA[$this->db->query("INSERT INTO " . DB_PREFIX . "cart SET]]></search>
+            <add position="after"><![CDATA[
+                //BundleExpert
+                if(isset($this->registry)) {
+                if ($this->registry->has('bundle_expert')) {
+                $this->updateCartData();
+                }
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+        <operation error="skip">
+            <search><![CDATA[$this->db->query("UPDATE " . DB_PREFIX . "cart SET]]></search>
+            <add position="after"><![CDATA[
+                //BundleExpert
+                if(isset($this->registry)) {
+                if ($this->registry->has('bundle_expert')) {
+                $this->updateCartData();
+                }
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+        <operation error="skip">
+            <search><![CDATA[$this->db->query("DELETE FROM " . DB_PREFIX . "cart]]></search>
+            <add position="after"><![CDATA[
+                //BundleExpert
+                if(isset($this->registry)) {
+                if ($this->registry->has('bundle_expert')) {
+                $this->updateCartData();
+                }
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+    <!-- 2200 <= v -->
+    <file path="system/library/cart/cart.php">
+        <operation error="skip">
+            <search><![CDATA[$this->db->query("INSERT " . DB_PREFIX . "cart SET]]></search>
+            <add position="after"><![CDATA[
+                //BundleExpert
+                if(isset($this->registry)) {
+                if ($this->registry->has('bundle_expert')) {
+                $this->updateCartData();
+                }
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+        <operation error="skip">
+            <search><![CDATA[$this->db->query("UPDATE " . DB_PREFIX . "cart SET]]></search>
+            <add position="after"><![CDATA[
+                //BundleExpert
+                if(isset($this->registry)) {
+                if ($this->registry->has('bundle_expert')) {
+                $this->updateCartData();
+                }
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+        <operation error="skip">
+            <search><![CDATA[$this->db->query("DELETE FROM " . DB_PREFIX . "cart]]></search>
+            <add position="after"><![CDATA[
+                //BundleExpert
+                if(isset($this->registry)) {
+                if ($this->registry->has('bundle_expert')) {
+                $this->updateCartData();
+                }
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+
+    <!--  v <= 2031 -->
+    <file path="system/library/cart.php">
+        <operation error="skip">
+            <search><![CDATA[public function update($key, $qty) {]]></search>
+            <add position="after"><![CDATA[
+            //BundleExpert
+            if(isset($this->registry)) {
+            if ($this->registry->has('bundle_expert') && $this->bundle_expert->isEnabled()) {
+                $continue = $this->bundle_expert_cart->checkUpdateBeforeCartUpdate($key, $qty);
+                $this->updateCartData();
+                if (!$continue)
+                    return;
+            }
+            }
+            //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+    <!-- 2101 <= v <= 2102 -->
+    <file path="system/library/cart.php">
+        <operation error="skip">
+            <search><![CDATA[public function update($cart_id, $quantity) {]]></search>
+            <add position="after"><![CDATA[
+            //BundleExpert
+            if(isset($this->registry)) {
+            if ($this->registry->has('bundle_expert') && $this->bundle_expert->isEnabled()) {
+                $key_2 = $this->bundle_expert_cart->getCartKitKey($cart_id);
+                $continue = $this->bundle_expert_cart->checkUpdateBeforeCartUpdate($key_2, $quantity);
+                $this->updateCartData();
+                if (!$continue)
+                    return;
+            }
+            }
+            //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+    <!-- 2200 <= v -->
+    <file path="system/library/cart/cart.php">
+        <operation error="skip">
+            <search><![CDATA[public function update($cart_id, $quantity) {]]></search>
+            <add position="after"><![CDATA[
+            //BundleExpert
+            if(isset($this->registry)) {
+            if ($this->registry->has('bundle_expert') && $this->bundle_expert->isEnabled()) {
+                $key_2 = $this->bundle_expert_cart->getCartKitKey($cart_id);
+                $continue = $this->bundle_expert_cart->checkUpdateBeforeCartUpdate($key_2, $quantity);
+                $this->updateCartData();
+                if (!$continue)
+                    return;
+            }
+            }
+            //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+
+
+    <!--  v <= 2031 -->
+    <file path="system/library/cart.php">
+        <operation error="skip">
+            <search><![CDATA[public function remove($key) {]]></search>
+            <add position="after"><![CDATA[
+            //BundleExpert
+            if(isset($this->registry)) {
+            if ($this->registry->has('bundle_expert') && $this->bundle_expert->isEnabled()) {
+                //$this->getProducts();
+                $this->bundle_expert_cart->checkRemoveBeforeCartRemove($key);
+                $this->updateCartData();
+            }
+            }
+            //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+    <!-- 2101 <= v <= 2102 -->
+    <file path="system/library/cart.php">
+        <operation error="skip">
+            <search><![CDATA[public function remove($cart_id) {]]></search>
+            <add position="after"><![CDATA[
+            //BundleExpert
+            if(isset($this->registry)) {
+            if ($this->registry->has('bundle_expert') && $this->bundle_expert->isEnabled()) {
+                $key_2 = $this->bundle_expert_cart->getCartKitKey($cart_id);
+                //$this->getProducts();
+                $this->bundle_expert_cart->checkRemoveBeforeCartRemove($key_2);
+                $this->updateCartData();
+            }
+            }
+            //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+    <!-- 2200 <= v -->
+    <file path="system/library/cart/cart.php">
+        <operation error="skip">
+            <search><![CDATA[public function remove($cart_id) {]]></search>
+            <add position="after"><![CDATA[
+            //BundleExpert
+            if(isset($this->registry)) {
+            if ($this->registry->has('bundle_expert') && $this->bundle_expert->isEnabled()) {
+                $key_2 = $this->bundle_expert_cart->getCartKitKey($cart_id);
+                //$this->getProducts();
+                $this->bundle_expert_cart->checkRemoveBeforeCartRemove($key_2);
+                $this->updateCartData();
+            }
+            }
+            //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+
+
+    <!-- 2200 <= v -->
+    <file path="system/library/cart/cart.php">
+        <operation error="skip">
+            <search><![CDATA[public function hasStock() {]]></search>
+            <add position="after"><![CDATA[
+            //BundleExpert
+            if(isset($this->registry)) {
+            if ($this->registry->has('bundle_expert') && $this->bundle_expert->isEnabled()) {
+                $hasStock = $this->bundle_expert_cart->checkHasStock();
+                return $hasStock;
+            }
+            }
+            //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+
+    <!-- v <= 2102 -->
+    <file path="system/library/cart.php">
+        <operation error="skip">
+            <search><![CDATA[public function countProducts() {]]></search>
+            <add position="after"><![CDATA[
+            //BundleExpert
+            if(isset($this->registry)) {
+            if ($this->registry->has('bundle_expert') && $this->bundle_expert->isEnabled()) {
+                $product_total = $this->bundle_expert_cart->getCartCountProducts();
+                return $product_total;
+            }
+            }
+            //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+    <!-- 2200 <= v -->
+    <file path="system/library/cart/cart.php">
+        <operation error="skip">
+            <search><![CDATA[public function countProducts() {]]></search>
+            <add position="after"><![CDATA[
+            //BundleExpert
+            if(isset($this->registry)) {
+            if ($this->registry->has('bundle_expert') && $this->bundle_expert->isEnabled()) {
+                $product_total = $this->bundle_expert_cart->getCartCountProducts();
+                return $product_total;
+            }
+            }
+            //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+
+
+    <!-- 2101 <= v <=3020 -->
+    <file path="system/library/cart.php">
+        <operation error="skip">
+            <search><![CDATA[$tax_rates = $this->tax->getRates($product['price'], $product['tax_class_id']);]]></search>
+            <add position="after"><![CDATA[
+                //BundleExpert
+                if (isset($this->registry)) {
+                    if ($this->registry->has('bundle_expert') && $this->bundle_expert->isEnabled()) {
+                        $tax_rates_bundle = $this->bundle_expert->getTaxesDataForProductAsKit($product);
+                        if ($tax_rates_bundle !== null) {
+                            $tax_rates = $tax_rates_bundle;
+                        }
+                    }
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+    <file path="system/library/cart/cart.php">
+        <operation error="skip">
+            <search><![CDATA[$tax_rates = $this->tax->getRates($product['price'], $product['tax_class_id']);]]></search>
+            <add position="after"><![CDATA[
+                //BundleExpert
+                if (isset($this->registry)) {
+                    if ($this->registry->has('bundle_expert') && $this->bundle_expert->isEnabled()) {
+                        $tax_rates_bundle = $this->bundle_expert->getTaxesDataForProductAsKit($product);
+                        if ($tax_rates_bundle !== null) {
+                            $tax_rates = $tax_rates_bundle;
+                        }
+                    }
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+
+
+    <!--Оптимизация. Кэширование и ускорение-->
+    <file path="admin/model/catalog/product.php">
+        <operation error="skip">
+            <search><![CDATA[$this->db->query("DELETE FROM " . DB_PREFIX . "product_to_layout WHERE product_id = '" . (int)$product_id . "'");]]></search>
+            <add position="after"><![CDATA[
+                //BundleExpert
+                if($this->registry->has('bundle_expert')){
+                    $this->bundle_expert->onEditProduct($product_id);
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/model/checkout/order.php">
+        <operation error="skip">
+            <search><![CDATA[$this->cache->delete('product');]]></search>
+            <add position="before"><![CDATA[
+                //BundleExpert
+                if($this->registry->has('bundle_expert')){
+                    $this->bundle_expert->onChangeOrderStatus($order_id);
+                }
+                //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+    <!--Оптимизация. Кэширование и ускорение-->
+
+    <file path="catalog/controller/account/order.php">
+        <operation error="skip">
+            <search><![CDATA[$pagination = new Pagination();]]></search>
+            <add position="before"><![CDATA[
+        //BundleExpert
+        if ($this->registry->has('bundle_expert') && $this->bundle_expert->isEnabled()) {
+            foreach ($data['orders'] as $index => $order) {
+                $data['orders'][$index]['products'] = $this->bundle_expert->orderProductTotalPrepare($order['order_id']);
+            }
+        }
+        //BundleExpert
+              ]]></add>
+        </operation>
+    </file>
+
+    <file path="catalog/controller/product/category.php">
+        <operation error="skip">
+            <search><![CDATA[$data['header'] = $this->load->controller('common/header');]]></search>
+            <add position="after"><![CDATA[
+            //BundleExpert
+            if ($this->registry->has('bundle_expert') && $this->bundle_expert->isEnabled()) {
+                $data = $this->load->controller('module/bundle_expert/getCategoryKits', $data);
+            }
+            //BundleExpert
+
+              ]]></add>
+        </operation>
+    </file>
+
+    <file path="catalog/view/theme/*/template/product/category.tpl">
+        <operation error="skip">
+            <search><![CDATA[<?php if (!$categories && !$products) { ?>]]></search>
+            <add position="before"><![CDATA[
+                <!--BundleExpert-->
+                <?php if(isset($kits_list_html) && $kits_list_html){ echo $kits_list_html; $products=1;} ?>
+                <!--BundleExpert-->
+              ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/view/theme/*/template/product/category.twig">
+        <operation error="skip">
+            <search><![CDATA[{% if not categories and not products %}]]></search>
+            <add position="before"><![CDATA[
+                <!--BundleExpert-->
+                {% if (kits_list_html is defined and kits_list_html) %} {{ kits_list_html }} {% set products=1 %}{% endif %}
+                <!--BundleExpert-->
+              ]]></add>
+        </operation>
+    </file>
+
+    <file path="">
+        <operation error="skip">
+            <search><![CDATA[]]></search>
+            <add position="before"><![CDATA[
+
+              ]]></add>
+        </operation>
+    </file>
+
+    <file path="">
+        <operation error="skip">
+            <search><![CDATA[]]></search>
+            <add position="before"><![CDATA[
+
+              ]]></add>
+        </operation>
+    </file>
+
+    <file path="">
+        <operation error="skip">
+            <search><![CDATA[]]></search>
+            <add position="before"><![CDATA[
+
+              ]]></add>
+        </operation>
+    </file>
+
+    <file path="">
+        <operation error="skip">
+            <search><![CDATA[]]></search>
+            <add position="before"><![CDATA[
+
+              ]]></add>
+        </operation>
+    </file>
+</modification>

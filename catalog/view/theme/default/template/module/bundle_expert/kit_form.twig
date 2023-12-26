@@ -1,0 +1,172 @@
+<div class="kit-form be-css {% if (admin_mode) %} {{ 'admin-mode' }}{% endif %}" data-kit-id="{{ kit_id }}" data-main-product-id="{{ main_product_id }}" style=""  total-default="{{ total_default }}" total-default-new="{{ total_default_new }}" total-kit-old="{{ total_kit_old }}" total-kit="{{ total_kit }}">
+    <div class="kit-data">
+        <input type="hidden" name="kit_id" value="{{ kit_id }}">
+        <input type="hidden" name="kit_title" value="{{ title }}">
+        <input type="hidden" name="main_product_id" value="{{ main_product_id }}">
+        <input type="hidden" name="main_product_in_cart" value="">
+        <input type="hidden" name="cart_merge_confirm" value="">
+        <input type="hidden" name="cart_merge_enable" value="">
+        <input type="hidden" name="kit_from_cart" value="{{ kit_from_cart }}">
+        <input type="hidden" name="kit_from_cart_unique_id" value="{{ kit_unique_id }}">
+    </div>
+    <div class="active-product">
+
+    </div>
+    <div class="kit-form-product-container" style="">
+        <div class="loader-overlay" style="display: flex; align-items: center; justify-content: center;min-height: 300px">
+            <div><i class="fa fa-spinner fa-spin" style="font-size:24px"></i></div>
+        </div>
+
+
+        {% for products_html in products_form_html %}
+            {% set item_position=products_html[0]['item_position'] %}
+            <div class="kit-form-product-item-conatiner" data-item-position="{{ item_position }}" >
+
+                {% for product_id,product_html in products_html %}
+                    {{ product_html['html'] }}
+                {% endfor %}
+
+            </div>
+
+
+        {% endfor %}
+
+
+
+    </div>
+    <div class="bottom-block"  style="position: absolute;bottom: 0;left: 0;right: 0;      z-index: 10; ">
+
+        <div class="bottom-block-header" style=""></div>
+
+        <div class="bottom-block-content" style="background-color: #ffffff; border-top: 1px solid #e5e5e5;" data-image-width="{{ '80' }}">
+
+            <div class="kit-form-item-products-main-container" style="display: none; padding: 0 8px;text-align: center; padding-bottom: 8px">
+
+
+                <div class="kit-form-arrows" style="">
+                    <div  class="arrows-container">
+                        <button type="button" class="pull-left btn" onclick="bundle_expert_form.on_click_prev_button_select_mode(this);" ><i class="fa fa-arrow-left" style="cursor: pointer;font-size: 20px"></i></button>
+                        <button type="button" class="pull-right btn" onclick="bundle_expert_form.on_click_next_button_select_mode(this);"><i class="fa fa-arrow-right" style="cursor: pointer;font-size: 20px"></i></button>
+                        {% if (enable_search_filter) %}
+                            <button id="search-item-products-button" type="button" class="pull-right btn" onclick="bundle_expert_form.item_products_filter_click();" style="" ><i class="fa fa-search" style="font-size: 20px;"></i></button>
+                        {% endif %}
+                    </div>
+                    <div class="product-title-container" style="">
+                        <div class="text-center be-product-title" style="overflow: hidden;">
+                            {{ text_select_product_process }}
+                        </div>
+                        {% if (enable_search_filter) %}
+                            <div class="text-center be-product-title-filter hidden" style="overflow: hidden; position: relative">
+                                <div id="search-close-button" style=""><i class="fa fa-close" style="font-size: 20px;line-height: 26px;" onclick="bundle_expert_form.item_products_filter_reset();"></i></div>
+                                <input type="text" name="filter_title" value="" style="width: 100%; font-size: 14px; text-align: center;    line-height: 21px;" onkeypress="if(event.keyCode === 13){event.preventDefault(); bundle_expert_form.item_products_filter_click();}">
+                            </div>
+                        {% endif %}
+                    </div>
+
+                </div>
+
+                <div data-div-unique-id="f0efeaf12283452e447"></div>
+                <div class="loader-overlay" style="display: flex; align-items: center; justify-content: center;min-height: 160px">
+                    <div><i class="fa fa-spinner fa-spin" style="font-size:24px"></i></div>
+                </div>
+
+                <div class="kit-form-item-products-container" style="">
+
+                </div>
+
+                <div class="kit-form-item-products-buttons" style="display: inline-block">
+                    <button type="button" class="btn btn-primary" id="button-set-item-product-selected" onclick="bundle_expert_form.set_item_product_selected(this)">{{ text_to_select }}</button>
+                    <button type="button" class="btn" id="button-set-item-product-cancel" onclick="bundle_expert_form.hide_item_products(this)">{{ text_cancel }}</button>
+                </div>
+                <div data-div-unique-id="6aaadbf48e04015c559d7"></div>
+
+            </div>
+
+            <div class="kit-form-widget-main-container" style=""  >
+                <div class="kit-form-arrows" style="">
+
+                    <div class="arrows-container" style="">
+                        <button type="button" class="pull-left btn" onclick="bundle_expert_form.on_click_prev_button(this);" ><i class="fa fa-arrow-left" style="cursor: pointer;font-size: 20px"></i></button>
+                        <button type="button" class="pull-right btn" onclick="bundle_expert_form.on_click_next_button(this);"><i class="fa fa-arrow-right" style="cursor: pointer;font-size: 20px"></i></button>
+                    </div>
+
+                    <div style="text-align: center;margin: 0 28px;overflow: hidden;    position: relative;" class="be-product-title-container">
+                        <div class="text-center be-product-title" style="overflow: hidden;">
+                            center
+                        </div>
+                        <span class="text-center product-select-button" style="font-size: 20px; margin-left: 4px">
+                            <a onclick="bundle_expert_form.show_item_products(this);" style="cursor: pointer">({{ text_to_select }})</a>
+                        </span>
+                    </div>
+
+
+
+                </div>
+
+                <div class="kit-form-widget-container" style="position: relative">
+
+                    <div class="vertical-gradient-left" style="position: absolute;left: 0;top: 0;bottom: 0;width: 24px;">
+                    </div>
+                    <div class="vertical-gradient-right" style="position: absolute;right: 0;top: 0;bottom: 0;width: 24px;">
+                    </div>
+
+                    <div class="kit-items" style="display: flex;  align-items: flex-start;  justify-content: center; margin-bottom: 0px">
+
+                        {% set item_position=0 %}
+                        <div id="bundle-expert-form-widget-carousel" class="owl-carousel owl-carousel-bundle-expert" style=" padding-top: 16px;padding-bottom: 8px;">
+                            {% for index1,kit_item in kit_items %}
+
+                                {{ kit_item['item_html'] }}
+
+                                {% set item_position = item_position + 1 %}
+
+                            {% endfor %}
+
+                            {% for index1,html in free_products_add_button_html %}
+
+                                {{ html }}
+
+                            {% endfor %}
+
+                            <!--                            -->{# echo $free_products_add_button_html; #}
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <div class="row">
+                    <div class="stored-total-values-before-select-product hidden">
+                        <div class="stored-total-default"></div>
+                        <div class="stored-total-default-new"></div>
+                        <div class="stored-total-kit"></div>
+                        <div class="stored-total-kit-old"></div>
+                    </div>
+                    <div class="col-sm-6 col-xs-12 text-left total-row">
+                        <span class="" style="font-size: 18px;line-height: 32px;">{{ text_total }}: <span class="total-kit">{{ total_kit }}</span><span class="total">$1</span><i class="total-loading-icon fa fa-spinner fa-spin" style="display: none;"></i></span>
+                    </div>
+                    <div class="col-sm-6 col-xs-12  text-right buttons-row">
+                        <button id="close-kit-form-button" type="button" class="btn btn-default" data-dismiss="modal" data-bs-dismiss="modal">{{ text_close }}</button>
+                        {% if (not kit_from_cart) %}
+                            <button id="add-to-cart-button" type="button" class="btn btn-primary" onclick="bundle_expert_form.add_to_cart(this, false);" >{{ text_add_kit_to_cart }}</button>
+                        {% else %}
+                            <button id="add-to-cart-button" type="button" class="btn btn-primary" onclick="bundle_expert_form.add_to_cart(this, true);" >{{ text_update_kit_at_cart }}</button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <a onclick="bundle_expert_form.add_to_cart(this);" type="button" id="" data-loading-text="Loading..." class="hidden btn btn-primary btn-lg btn-block">{{ text_add_kit_to_cart }}</a>
+
+</div>
+
+<script >
+    // bundle_expert_form.prepare_kit_forms();
+</script>

@@ -1,0 +1,27 @@
+<div class="kit-form-item-products " data-item-position="{{ item_position }}" style="display: flex;  align-items: flex-start;  justify-content: center;   margin-top: 16px; margin-bottom: 16px" data-last-item-product-position="">
+
+    <div id="carousel-kit-form-item-products" class="owl-carousel owl-carousel-bundle-expert">
+
+        {% if (kit_item_products) %}
+            {% for index,item_product in kit_item_products %}
+                <div class="item text-center product-item">
+                    {{ item_product['html'] }}
+                </div>
+            {% endfor %}
+            {% if (enable_more_button) %}
+                <div class="item text-center item-more-button" style=" margin-top: 56px;">
+                    <div id="more-button" class="" style="       cursor: pointer;"
+                         onclick="bundle_expert_form.load_more_item_products(this);">{{ text_load_more }}</div>
+                    <div id="loading-spinner" style="display: none"><i class="fa fa-spinner fa-spin"
+                                                                       style="font-size:24px"></i></div>
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="item text-center empty-list-item" style="    line-height: 80px;">
+                <div>{{ text_empty_list }}</div>
+            </div>
+        {% endif %}
+    </div>
+
+</div>
+

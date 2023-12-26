@@ -1,0 +1,109 @@
+<div id="admin-bundle-expert-container"></div>
+
+{% if (add_bundle_expert_custom_js) %}
+    <script src="{{ https_catalog }}catalog/view/javascript/bundle-expert/bundle-expert-custom.js" type="text/javascript"></script>
+{% endif %}
+{% if (add_bundle_expert_custom_css) %}
+    <link href="{{ https_catalog }}catalog/view/theme/default/stylesheet/bundle_expert_custom.css" type="text/css" rel="stylesheet">
+{% endif %}
+
+<!--<script src="-->{# echo $https_catalog; #}<!--catalog/view/javascript/bundle-expert/bundle-expert-custom.js" type="text/javascript"></script>-->
+<script src="{{ https_catalog }}catalog/view/javascript/bundle-expert/bundle-expert.js?{{ script_version }}" type="text/javascript"></script>
+<link href="{{ https_catalog }}catalog/view/theme/default/stylesheet/bundle_expert.css?{{ script_version }}" type="text/css" rel="stylesheet">
+<script src="{{ https_catalog }}catalog/view/javascript/bundle-expert/owl.carousel.js" type="text/javascript"></script>
+<link href="{{ https_catalog }}catalog/view/javascript/bundle-expert/owl.carousel.min.css" type="text/css" rel="stylesheet">
+<link href="{{ https_catalog }}catalog/view/javascript/bundle-expert/owl.theme.default.min.css" type="text/css" rel="stylesheet">
+<!--<link href="-->{# echo HTTPS_CATALOG; #}<!--catalog/view/theme/default/stylesheet/stylesheet.css" type="text/css" rel="stylesheet">-->
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        BundleExpertMainInit.init();
+
+        bundle_expert.admin_mode = true;
+        bundle_expert.admin_token = '{{ token_value }}';
+        bundle_expert.api_token_name = '{{ api_token_name }}';
+        bundle_expert.api_token_value = '{{ api_token_value }}';
+        bundle_expert.button_remove_kit = '{{ button_remove_kit }}';
+        bundle_expert.button_edit_kit = '{{ button_edit_kit }}';
+        // bundle_expert.admin_token_api = token;
+
+        {% if (not is_new_api) %}
+        bundle_expert.admin_mode_new_api=false;
+        {% else %}
+        bundle_expert.admin_mode_new_api=true;
+        {% endif %}
+        bundle_expert.store_url='{{ store_url }}';
+
+        setInterval(bundle_expert.init_cart_kit_edit_button, 1000);
+
+        if (typeof token !== 'undefined' && token!==''){
+            bundle_expert.load_bundle_expert_to_order_form();
+        }
+
+        if (typeof token === 'undefined'){
+            bundle_expert.load_bundle_expert_to_order_form();
+        }
+
+    });
+
+    $('#button-kit-edit').click(function (element) {
+        bundle_expert.show_kit_form(element);
+    })
+
+    $('#tab-product input[name=order_kit]').autocomplete({
+        'source': function(request, response) {
+            var data = [];
+            data = $(data).add({name: 'filter_name', value: encodeURIComponent(request)});
+
+            $.ajax({
+                url: 'index.php?route=catalog/bundle_expert_widget/autocomplete_widget_kit&{{ token_name }}{{ token_value }}',
+                type: 'post',
+                data: data,
+                dataType: 'json',
+                success: function(json) {
+                    response($.map(json, function(item) {
+                        return {
+                            label: item['name'],
+                            value: item['kit_id'],
+                        }
+                    }));
+                }
+            });
+        },
+        'select': function(item) {
+            $('#tab-product input[name=\'order_kit\']').val(item['label']);
+            $('#tab-product input[name=\'order_kit_id\']').val(item['value']);
+
+
+        }
+    });
+
+    function add_key_to_products(products){
+        if(products.length>0) {
+            $('#cart tr').each(function (index, element) {
+                var product = products[index];
+                var order_id = $('input[name=order_id]').val();
+
+                html = '  <input type="hidden" name="product[' + index + '][key]" value="' + product['key'] + '" />';
+                html += '  <input type="hidden" name="product[' + index + '][order_id]" value="' + order_id + '" />';
+
+                $(element).find('td').first().append(html);
+
+                var product_as_kit_flag = product['product_as_kit_flag'];
+                if (product_as_kit_flag === 1) {
+                    $(element).attr('data-product-as-kit-flag',"1");
+                }
+            })
+        }
+    }
+
+    function disable_kit_quantity_field(){
+        $('.edit-cart-kit-button, .eckb').each(function (index, element) {
+            // $(element).closest('tr').find('input[name$="[quantity]"]').attr('disabled', 'disabled');
+            $(element).closest('tr[data-product-as-kit-flag!=1]').find('input[name$="[quantity]"]').attr('disabled', 'disabled');
+        })
+    }
+
+
+</script>

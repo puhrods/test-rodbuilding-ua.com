@@ -1,0 +1,99 @@
+{% if product_options_status is defined and product_options_status %}
+<script>
+ let options_pro = {{ product_options_pro|json_encode }};
+ let product_options = {{ options|json_encode }};
+ $(document).on('change', '#product [name^="option"]', function() {
+ /* ***** Magick is here ******* */
+     let cur_value = $(this).val();
+     let element_name = $(this).attr('name');
+     let all_selected = [];
+
+     $.each($('#product [name^="option"]'), function ($key,element){
+         if($(element).is(':selected') || $(element).is(':checked') ){
+             let val = $(element).val();
+             all_selected.push(val);
+         }
+     });
+
+     $.each($('#product [name^="option"] option'), function ($key,element){
+         if($(element).is(':selected') || $(element).is(':checked') ){
+             let val = $(element).val();
+             if(Number(val) > 0) all_selected.push(val);
+         }
+     });
+
+     $('#product [name^="option"]').attr('disabled','disabled');
+     $('#product select[name^="option"]').removeAttr('disabled');
+     $('#product select[name^="option"] option').attr('disabled','disabled');
+
+     let next_iteration = options_pro['json_array'];
+     $.each(all_selected,function (key,value) {
+         $('#product [name^="option"][value="'+value+'"]').removeAttr('disabled');
+         $('#product option[value="'+value+'"]').removeAttr('disabled');
+
+         if(typeof (next_iteration[value]) != 'undefined'){
+             next_iteration = next_iteration[value];
+         }
+     });
+   $.each(next_iteration, function (key,value) {
+       $('#product [name^="option"][value="'+key+'"]').removeAttr('disabled');
+       $('#product option[value="'+key+'"]').removeAttr('disabled');
+   });
+
+   // Надо проверить есть ли цена / картинка у этой комбинации
+     console.log(next_iteration);
+    if(typeof(next_iteration['article']) != 'undefined') {
+        $('.area-sku').html(next_iteration['article']);
+    }
+    if(typeof(next_iteration['price']) != 'undefined') {
+        $('.price-area').html(next_iteration['price']);
+    }
+    if(typeof(next_iteration['model']) != 'undefined') {
+        $('.area-sku').html(next_iteration['model']);
+    }
+    if(typeof(options_pro[cur_value]) != 'undefined' && typeof(options_pro[cur_value]['images']) != 'undefined' && options_pro[cur_value]['images'].length > 0) {
+        let img = options_pro[cur_value]['images'][0];
+        if(typeof(img['popup']) != 'undefined'){
+            $('img[data-main-image*="."]').attr('src',img['popup']);
+            $('.zoomWindowContainer').hide();
+        }
+    }
+
+   // Дадим возможность редактировать послдений выбор
+     if(all_selected.length == 1){
+         $('#product [name="'+element_name+'"]').removeAttr('disabled');
+         $('#product [name="'+element_name+'"] option').removeAttr('disabled');
+     } else {
+         all_selected.splice(all_selected.indexOf(cur_value),1);
+         next_iteration = options_pro['json_array'];
+         $.each(all_selected,function (key,value) {
+             next_iteration = next_iteration[value];
+         });
+         $.each(next_iteration, function (key,value) {
+             $('#product [name="'+element_name+'"][value="'+key+'"]').removeAttr('disabled')
+             $('#product option[value="'+key+'"]').removeAttr('disabled');
+         });
+     }
+ });
+
+ $("<a class='options-button-reset' onClick='resetOptions();'>{{ button_reset }}</a>").insertAfter($('#product [name^="option"]').last().closest('.form-group'));
+ $('#product [name^="option"]').closest('.form-group').wrapAll('<div class="options-block"></div>');
+
+ function resetOptions()
+ {
+     $('#product [name^="option"]').each(function () {
+         $(this).attr('disabled', false);
+         $(this).prop('checked', false);
+         $(this).prop('selected', false);
+     });
+     $('select[name^="option"]').each(function () {
+        // Для правильной работы с селектами
+         $(this).find("option:selected").removeAttr("selected");
+         $(this).val('');
+     });
+     $('#product select[name^="option"] option').removeAttr('disabled');
+     $('img[data-main-image*="."]').attr('src',$('img[data-main-image*="."]').first().attr('data-main-image'));
+ }
+
+</script>
+{% endif %}

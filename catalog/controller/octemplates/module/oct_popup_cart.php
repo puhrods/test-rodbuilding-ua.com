@@ -18,7 +18,36 @@ class ControllerOCTemplatesModuleOctPopupCart extends Controller {
 			}
 
 			if (isset($this->request->request['update'])) {
-				$this->cart->update($this->request->request['update'], $this->request->request['quantity']);
+
+                $this->load->model('extension/may/advanced_options');
+                $cart_product_data = $this->model_extension_may_advanced_options->getCartProductVariableData();
+
+
+
+                if(isset($cart_product_data['models'][$this->request->request['update']])) {
+
+                    $key = $cart_product_data['models'][$this->request->request['update']];
+
+                    $products = $this->cart->getProducts();
+
+                        foreach ($products as $product) {
+                            if($product['cart_id'] == $this->request->request['update']) {
+
+                                $max_quantity = $this->model_extension_may_advanced_options->getOptionQuantity($product['product_id'], $key);
+
+                                if($max_quantity && ($this->request->request['quantity'] > $max_quantity)) {
+                                    $data['error_warning']  = sprintf($this->language->get('error_limited_stock'), $max_quantity);
+                                }
+
+                            }
+
+                        }
+                }
+
+                if(!isset($data['error_warning'])) {
+                    $this->cart->update($this->request->request['update'], $this->request->request['quantity']);
+                }
+
 			}
 
 			if (isset($this->request->request['add'])) {

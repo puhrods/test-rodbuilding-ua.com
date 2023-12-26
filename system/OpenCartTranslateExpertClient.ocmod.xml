@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+	<code>OpenCartTranslateExpertClient.ocmod VH</code>
+	<name>OpenCartTranslateExpertClient.ocmod VH</name>
+	<version>02.06.1000</version>
+	<author>Volodymyr Hoshko</author>
+	<link>https://translator.codeguild.com.ua/</link>
+
+  <file path="admin/controller/common/header.php">
+    <operation>
+      <search position="after"><![CDATA[public function index(]]></search>
+      <add position="after"><![CDATA[
+			$data['client_translate_expert_is_enabled'] = $this->config->get('module_client_translate_expert_status');	  
+			$this->load->model('localisation/language');
+			$data['client_translate_expert_languages'] = json_encode($this->model_localisation_language->getLanguages());
+	  ]]></add>
+    </operation>
+  </file>  
+
+  <file path="admin/view/template/common/header.twig">
+    <operation>
+      <search position="before"><![CDATA[</head>]]></search>
+      <add position="before"><![CDATA[<!--OC15-TE-->
+<script type="text/javascript" src="view/javascript/client_translate_expert.js?v=02.06.1000"></script>
+<link type="text/css" rel="stylesheet" href="view/stylesheet/client_translate_expert.css?v=02.06.1000" />
+]]></add>
+    </operation>
+    <operation>
+      <search position="after"><![CDATA[<header ]]></search>
+      <add position="after"><![CDATA[
+<script>
+	document.js_const_client_translate_expert_is_enabled = {{ client_translate_expert_is_enabled }};
+	document.js_const_client_translate_expert_languages = {{ client_translate_expert_languages }};
+</script>
+	  ]]></add>
+    </operation>
+  </file>  
+
+</modification>
+
+
+
+
+
+

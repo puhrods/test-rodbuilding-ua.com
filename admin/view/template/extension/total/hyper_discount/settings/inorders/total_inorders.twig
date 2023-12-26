@@ -1,0 +1,140 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="container-fluid h-editor">
+    <div id="panel_top" class="affix col-sm-12">
+        <div class="text-title text-center"><i class="fa fa-opencart" aria-hidden="true"></i>
+            <span class="win-title">{{ hyper_discount_name }}</span>
+            <hr class="ht-min">
+            <span class="ht-title">{{ hyper_discount_title }}</span>
+        </div>
+        <h1>{{ name_total }}</h1>
+        <div id="panel_tops" class="pull-right">
+            <button type="submit" form="form-hyper_discount" data-toggle="tooltip" data-placement="bottom" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+            <a href="{{ cancel }}" data-toggle="tooltip" data-placement="bottom" title="{{ button_out }}" class="btn btn-default"><i class="fa fa-sign-out fa-lg"></i></a>
+        </div>
+    </div>
+    <div class="panel panel-default col-sm-12">
+        {% if (error_warning) %} 
+        <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ error_warning }} 
+          <button type="button" class="close" data-dismiss="alert">&times;</button>
+        </div>
+        {% endif %} 
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_edit }}</h3>
+            <button class="pull-right hm-help btn btn-primary btn-sm" data-toggle="modal" data-target="#Settings_Modal">
+                <i class="fa fa-info" aria-hidden="true"></i> - {{ help_name }} 
+            </button>
+          </div>
+          <div class="panel-body top-pad">
+            <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-hyper_discount" class="form-horizontal">
+              <div class="form-group">
+                <label class="col-sm-2 control-label" for="input-status">{{ entry_status }}</label>
+                <div class="col-sm-10">
+                  <select name="hyper_discount_status" id="input-status" class="form-control">
+                    {% if (hyper_discount_status) %} 
+                    <option value="1" selected="selected">{{ text_enabled }}</option>
+                    <option value="0">{{ text_disabled }}</option>
+                    {% else %} 
+                    <option value="1">{{ text_enabled }}</option>
+                    <option value="0" selected="selected">{{ text_disabled }}</option>
+                    {% endif %} 
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-sm-2 control-label" for="input-sort-order">{{ entry_sort_order }}</label>
+                <div class="col-sm-10">
+                  <input type="text" name="hyper_discount_sort_order" value="{{ hyper_discount_sort_order }}" placeholder="{{ entry_sort_order }}" id="input-sort-order" class="form-control" />
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="row">
+            <div class="col-sm-12">
+                <div class="text-center">
+                    <button form="help_modals" class="hm-info btn btn-primary btn-sm" data-toggle="modal" data-target="#Authors_Modal">
+                        {{ description_author_start }} 
+                    </button>
+                </div>
+                <hr>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+<!-- Start Modal HELPER Settings -->
+<div class="modal fade" id="Settings_Modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times" aria-hidden="true"></i></button>
+                <h4 class="modal-title" id="myModalLabel"><i class="fa fa-cogs"></i> {{ help_name_settings }}</h4>
+            </div>
+            <div class="modal-body">
+                <legend>{{ help_text }}</legend>
+                <div class="text-center">{{ help_first_settings }}</div>
+                <div class="helper-info">{{ help_second_settings }}</div>
+                <div class="text-center">{{ help_third_settings }}</div>
+                <div class="helper-info">{{ help_fourth_settings }}</div>
+                <div class="text-center">{{ help_warning }}</div>
+                <div class="helper-info">{{ help_end }}</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal"> {{ help_ok }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Start Modal HELPER Authors -->
+<div class="modal fade" id="Authors_Modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times" aria-hidden="true"></i></button>
+                <h4 class="modal-title" id="myModalLabel"><i class="fa fa-cogs"></i> {{ description_author }}</h4>
+            </div>
+            <div class="modal-body">
+                <legend>{{ description_copyright }}</legend>
+                <div class="text-center">{{ description_author_copyright }}</div>
+                <div class="text-center">{{ thank_you }}</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal"> {{ help_ok }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(".nav-tabs>li a").click(function () {
+
+        var href = $(this).attr('href');
+        href = href.substr(1);
+        $("#last_tab").val(href);
+    });
+
+    $(document).ready(function () {
+        $('body').addClass('hyper-page hm-edit-page hd-switch');
+    });
+
+    function Apply() {
+        $('#form_hyper_discount_main').attr('action', '{{ update_stay|replace({"&amp;": "&"}) }}');
+        $('#form_hyper_discount_main').submit();
+    }
+
+    $(function ()
+    {
+        $(".btn-danger").click(function (e) {
+            if (!confirm("Вы уверены?"))
+                e.preventDefault();
+
+
+
+        });
+    });
+
+
+</script>
+{{ footer }}

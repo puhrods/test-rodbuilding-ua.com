@@ -1,0 +1,65 @@
+{% for option in may_advanced_options %}
+<div class="form-group{{ option['required'] ? ' required' : '' }} type-{{ may_advanced_options_config['swatches'] ? 'swatches' : option['type'] }} may-advanced-option-level-{{ (option['advanced_option_id']|split('-'))|length }} {{ option['init_visible'] ? 'visible' : 'hidden' }}" data-advanced-option-id="{{ option['advanced_option_id'] }}">
+    {% if not may_advanced_options_config['swatches'] %}
+        {% if option['type'] == 'select' %}
+        <label class="control-label" for="input-option{{ option['product_option_id'] }}">{{ option['name'] }}</label>
+        <select for="#option-{{ option['product_option_id'] }}" id="input-option{{ option['product_option_id'] }}" data-advanced-option-id="{{ option['advanced_option_id'] }}" class="form-control may-advanced-option" {{ option['init_disable'] ? 'disabled' : '' }}>
+            <option value="">{{ text_select }}</option>
+            {% for option_value in option['product_option_value'] %}
+            <option value="{{ option_value['product_option_value_id'] }}" data-advanced-option-id="{{ option['advanced_option_id'] }}" data-option-value-id="{{ option_value['option_value_id'] }}" data-option-value='{{ option_value|json_encode|escape }}' class="{{ option_value['quantity'] > 0 or option_value['subtract'] == 0 ? 'in-stock' : 'out-of-stock' }}" {{ (option_value['quantity'] <= 0 and option_value['subtract'] == 1) ? 'disabled' : '' }}>{{ option_value['name'] }}
+                {% if may_advanced_options_config['show_option_price'] and option_value['price'] %}
+                ({{ option_value['price_prefix'] }}{{ option_value['price'] }})
+                {% endif %}
+            </option>
+            {% endfor %}
+        </select>
+        {% endif %}
+        {% if option['type'] == 'radio' %}
+        <label class="control-label">{{ option['name'] }}</label>
+        <div id="input-option{{ option['product_option_id'] }}">
+            {% for option_value in option['product_option_value'] %}
+            <div class="radio">
+            <label>
+                <input type="radio" name="may_advanced_option_{{ option['product_option_id'] }}" for="#option-{{ option['product_option_id'] }}" value="{{ option_value['product_option_value_id'] }}" data-advanced-option-id="{{ option['advanced_option_id'] }}" data-option-value-id="{{ option_value['option_value_id'] }}" class="may-advanced-option {{ option_value['quantity'] > 0 or option_value['subtract'] == 0 ? 'in-stock' : 'out-of-stock' }}" {% if option_value['product_images'] %}data-option-value-image-origin="{{ option_value['product_images'][0]['origin'] }}" data-option-value-image-popup="{{ option_value['product_images'][0]['popup'] }}" data-option-value-image-thumb="{{ option_value['product_images'][0]['thumb'] }}"{% endif %} {{ option['init_disable'] or (option_value['quantity'] <= 0 and option_value['subtract'] == 1) ? 'disabled' : '' }}  data-option-value='{{ option_value|json_encode|escape }}'/>
+                {% if option_value['image'] %}
+                <img src="{{ option_value['image'] }}" alt="{{ option_value['name'] }}{{ option_value['price'] ? " #{option_value['price_prefix']}#{option_value['price']}" : '' }}" /> 
+                {% endif %}
+                {{ option_value['name'] }}
+                {% if may_advanced_options_config['show_option_price'] and option_value['price'] %}
+                ({{ option_value['price_prefix'] }}{{ option_value['price'] }})
+                {% endif %}
+            </label>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    {% else %}
+    <label class="control-label">{{ option['name'] }}&nbsp;<span class="selected-option-label"></span></label>
+    <div id="input-option{{ option['product_option_id'] }}" class="may-swatches">
+        {% for option_value in option['product_option_value'] %}
+        <label>
+            <input type="radio" data-label="{{ option_value['name'] }}{% if may_advanced_options_config['show_option_price'] %}{{ (option_value['price']) ? "#{option_value['price_prefix']}#{option_value['price']}" : '' }}{% endif %}" name="may_advanced_option_{{ option['product_option_id'] }}" for="#option-{{ option['product_option_id'] }}" value="{{ option_value['product_option_value_id'] }}" data-advanced-option-id="{{ option['advanced_option_id'] }}" data-option-value-id="{{ option_value['option_value_id'] }}" class="may-advanced-option {{ option_value['quantity'] > 0 or option_value['subtract'] == 0 ? 'in-stock' : 'out-of-stock' }}"  {% if option_value['product_images'] %}data-option-value-image-origin="{{ option_value['product_images'][0]['origin'] }}" data-option-value-image-popup="{{ option_value['product_images'][0]['popup'] }}" data-option-value-image-thumb="{{ option_value['product_images'][0]['thumb'] }}"{% endif %} {{ option['init_disable'] ? 'disabled' : '' }} data-option-value='{{ option_value|json_encode|escape }}'/>
+            {% if may_advanced_options_config['swatch_image'] and option_value['product_images'] %}
+            <img src="{{ option_value['product_images'][0]['thumb'] }}" alt="{{ option_value['name'] }}{{ option_value['price'] ? " #{option_value['price_prefix']}#{option_value['price']}" : '' }}" data-toggle="tooltip" data-original-title="{{ option_value['name'] }}" /> 
+            {% elseif option_value['image'] and ('no_image' in option_value['image']) == false %}
+            <img src="{{ option_value['image'] }}" alt="{{ option_value['name'] }}{{ option_value['price'] ? "#{option_value['price_prefix']}#{option_value['price']}" : '' }}" data-toggle="tooltip" data-original-title="{{ option_value['name'] }}" /> 
+            {% else %}
+            <span>
+            {{ option_value['name'] }}
+                {% if may_advanced_options_config['show_option_price'] and option_value['price'] %}
+                ({{ option_value['price_prefix'] }}{{ option_value['price'] }})
+                {% endif %}
+            </span>
+            {% endif %}
+            {% if may_advanced_options_config['swatch_style_selected'] == 'checkmark' and (option_value['quantity'] > 0 or option_value['subtract'] == 0) %}
+            <i class="fa fa-check" aria-hidden="true"></i>
+            {% elseif option_value['quantity'] <= 0 and option_value['subtract'] %}
+            <i class="{{ may_advanced_options_config['swatch_style_out_of_stock'] }}" aria-hidden="true"></i>
+            {% endif %}
+        </label>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <input type="radio" class="may-advanced-option-hidden" name="option[{{ option['product_option_id'] }}]" id="option-{{ option['product_option_id'] }}" checked="checked" value="0" style="display: none !important;" />
+</div>
+{% endfor %}

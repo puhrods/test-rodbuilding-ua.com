@@ -1,0 +1,22 @@
+<div class="bootstrap-style row be-category-kits-container">
+    <div class="be-main-widgets-container be-lazy-load" data-widgets-container-unique-code="">
+        {% if (widget_info['slider_mode']) %}
+        <div id="" class="owl-carousel owl-carousel-bundle-expert bundle-expert-slideshow"
+             data-autoplay-status="{{ widget_info['slider_autoplay_status'] }}"
+             data-autoplay-time="{{ widget_info['slider_autoplay_time'] }} " style="opacity: 1;">
+            {% else %}
+        <div id="" class="bundle-expert-widget-items" style="opacity: 1;">
+        {% endif %}
+                {% for html in widgets_html %}
+                    {{ html }}
+                {% endfor %}
+
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-sm-6 text-left">{{ pagination }}</div>
+        <div class="col-sm-6 text-right">{{ results }}</div>
+    </div>
+</div>

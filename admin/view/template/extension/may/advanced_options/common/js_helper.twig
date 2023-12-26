@@ -1,0 +1,49 @@
+<script type="text/javascript">
+if (MayHelper === undefined) {
+    var MayHelper = {
+        Number: {
+            decimal_point: "{{ currency['decimal_point'] }}",
+            thousand_point: "{{ currency['thousand_point'] }}",
+
+            toI18nString: function(number, decimal_place) {
+                numberInt = Math.floor(number);
+                var result = numberInt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, this.thousand_point);
+                if (decimal_place != 0 && decimal_place != '') {
+                    numberDecimal = Math.round((number - numberInt) * Math.pow(10, decimal_place)) + Math.pow(10, decimal_place);
+                    result += this.decimal_point + numberDecimal.toString().substring(1);
+                }
+                return result;
+            }
+        },
+        Price: {
+            decimal_point: "{{ currency['decimal_point'] }}",
+            thousand_point: "{{ currency['thousand_point'] }}",
+            currency_position: "{{ currency['symbol_position'] }}",
+            currency_symbol: "{{ currency['symbol'] }}",
+            currency_decimal_place: "{{ currency['decimal_place'] }}",
+
+            toNumber: function(str) {
+                var result = str.replace(this.currency_symbol, "");
+                result = result.split(this.thousand_point).join('');
+                result = result.replace(this.decimal_point, '');
+                result = parseFloat(result) / Math.pow(10, this.currency_decimal_place);
+                return result;
+            },
+            toString: function(number) {
+                if (isNaN(number)) {
+                    return "";
+                }
+
+                var result = MayHelper.Number.toI18nString(number, this.currency_decimal_place);
+                if (this.currency_position == "left") {
+                    result = this.currency_symbol + result;
+                } else {
+                    result = result + this.currency_symbol;
+                }
+
+                return result;
+            }
+        }
+    }
+}
+</script>

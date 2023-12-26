@@ -33,14 +33,17 @@
 					<div class="row">
 						<div class="col-sm-6">
 							<div class="panel panel-default">
-								<div class="panel-heading">
-									<h3 class="panel-title">{{ text_sender }}</h3>
+								<div class="panel-heading clearfix" style="padding-top: 5px; padding-bottom: 5px;">
+									<h3 class="panel-title" style="padding-top: 5px;">{{ text_sender }}</h3>
+                                    <div class="btn-group pull-right" data-toggle="buttons">
+                                        <label class="btn btn-default btn-sm{{ sender_address_pick_up ? ' active' }}" data-toggle="tooltip" title="{{ button_address_pick_up }}"><input type="checkbox" name="sender_address_pick_up" id="input-sender_address_pick_up" value="1"{{ sender_address_pick_up ? ' checked' }}><i class="fa fa-home" aria-hidden="true"></i></label>
+                                    </div>
 								</div>
 								<div class="panel-body">
 									<div class="form-group">
 										<label class="col-sm-3 control-label" for="input-sender">{{ entry_sender }}</label>
 										<div class="col-sm-9">
-											<select name="sender" id="input-sender" class="form-control">
+											<select name="sender" id="input-sender" class="form-control selectpicker show-tick" data-live-search="true">
 												<option value="">{{ text_select }}</option>
 												{% for v in senders %}
 													<option value="{{ v.Ref }}"{{ v.Ref == sender ? ' selected="selected"' }}>{{ v.Description }}{{ v.CityDescription ? ', ' ~ v.CityDescription }}</option>
@@ -51,7 +54,7 @@
 									<div class="form-group">
 										<label class="col-sm-3 control-label" for="input-sender_contact_person">{{ entry_contact_person }}</label>
 										<div class="col-sm-9">
-											<select name="sender_contact_person" id="input-sender_contact_person" class="form-control">
+											<select name="sender_contact_person" id="input-sender_contact_person" class="form-control selectpicker show-tick" data-live-search="true">
 												<option value="">{{ text_select }}</option>
 												{% for v in sender_contact_persons %}
 													<option value="{{ v.Ref }}"{{ v.Ref == sender_contact_person ? ' selected="selected"' }}>{{ v.Description ~ ', ' ~ v.Phones }}</option>
@@ -70,24 +73,28 @@
 										<div class="col-sm-9">
 											<select name="sender_region" id="input-sender_region" class="form-control">
 												<option value="">{{ text_select }}</option>
-												{% for v in zones %}
-													<option value="{{ v.zone_id }}"{{ v.zone_id == sender_region ? ' selected="selected"' }}>{{ v.name }}</option>
+												{% for v in regions %}
+													<option value="{{ v.Ref }}"{{ v.Ref == sender_region ? ' selected="selected"' }}>{{ v.Description }}</option>
                                                 {% endfor %}
 											</select>
 										</div>
 									</div>
 									<div class="form-group">
-										<label class="col-sm-3 control-label" for="input-sender_city_name">{{ entry_city }}</label>
+										<label class="col-sm-3 control-label" for="input-sender_city">{{ entry_city }}</label>
 										<div class="col-sm-9">
-											<input type="text" name="sender_city_name" value="{{ sender_city_name }}" placeholder="{{ text_select }}" id="input-sender_city_name" class="form-control" />
-											<input type="hidden" name="sender_city" value="{{ sender_city }}" id="input-sender_city" />
+											<select name="sender_city" id="input-sender_city" class="form-control selectpicker show-tick" data-live-search="true"></select>
 										</div>
 									</div>
 									<div class="form-group">
-										<label class="col-sm-3 control-label" for="input-sender_address_name">{{ entry_address }}</label>
+										<label class="col-sm-3 control-label" for="input-sender_department">{{ entry_department }}</label>
 										<div class="col-sm-9">
-											<input type="text" name="sender_address_name" value="{{ sender_address_name }}" placeholder="{{ text_select }}" id="input-sender_address_name" class="form-control" />
-											<input type="hidden" name="sender_address" value="{{ sender_address }}" id="input-sender_address" />
+											<select name="sender_department" id="input-sender_department" class="form-control selectpicker show-tick" data-live-search="true"></select>
+										</div>
+									</div>
+									<div class="form-group" style="display: none;">
+										<label class="col-sm-3 control-label" for="input-sender_address">{{ entry_address }}</label>
+										<div class="col-sm-9">
+											<select name="sender_address" id="input-sender_address" class="form-control selectpicker show-tick" data-live-search="true"></select>
 										</div>
 									</div>
 								</div>
@@ -98,17 +105,21 @@
 								<div class="panel-heading clearfix" style="padding-top: 5px; padding-bottom: 5px;">
 									<h3 class="panel-title" style="padding-top: 5px;">{{ text_recipient }}</h3>
 									<div class="btn-group pull-right" data-toggle="buttons">
-										<label class="btn btn-default btn-sm{{ recipient_address_type == 'warehouse' ? ' active' }}" data-toggle="tooltip" title="{{ button_warehouse_delivery }}"><input type="radio" name="recipient_address_type" value="warehouse" id="input-recipient_address_type"{{ recipient_address_type == 'warehouse' ? ' checked' }}><i class="fa fa-map-marker" aria-hidden="true"></i></label>
+										<label class="btn btn-default btn-sm{{ recipient_address_type == 'department' ? ' active' }}" data-toggle="tooltip" title="{{ button_department_delivery }}"><input type="radio" name="recipient_address_type" value="department" id="input-recipient_address_type"{{ recipient_address_type == 'department' ? ' checked' }}><i class="fa fa-map-marker" aria-hidden="true"></i></label>
 										<label class="btn btn-default btn-sm{{ recipient_address_type == 'doors' ? ' active' }}" data-toggle="tooltip" title="{{ button_doors_delivery }}"><input type="radio" name="recipient_address_type" value="doors" id="input-recipient_address_type"{{ recipient_address_type == 'doors' ? ' checked' }}><i class="fa fa-home" aria-hidden="true"></i></label>
 										<label class="btn btn-default btn-sm{{ recipient_address_type == 'poshtomat' ? ' active' }}" data-toggle="tooltip" title="{{ button_poshtomat_delivery }}"><input type="radio" name="recipient_address_type" value="poshtomat" id="input-recipient_address_type"{{ recipient_address_type == 'poshtomat' ? ' checked' }}><i class="fa fa-building" aria-hidden="true"></i></label>
 									</div>
 								</div>
 								<div class="panel-body">
 									<div class="form-group">
-										<label class="col-sm-3 control-label" for="input-recipient_name">{{ entry_recipient }}</label>
+										<label class="col-sm-3 control-label" for="input-recipient">{{ entry_recipient }}</label>
 										<div class="col-sm-9">
-											<input type="text" name="recipient_name" value="{{ recipient_name }}" placeholder="{{ text_select }}" id="input-recipient_name" class="form-control" />
-											<input type="hidden" name="recipient" value="{{ recipient }}" id="input-recipient" />
+											<div class="input-group">
+												<select name="recipient" id="input-recipient" class="form-control selectpicker show-tick" data-live-search="true"></select>
+												<span class="input-group-btn">
+													<button type="button" id="button-add_recipient" data-toggle="modal" data-target="#modal-add-recipient" data-tooltip="true" title="{{ button_add }}" class="btn btn-default"><i class="fa fa-plus"></i></button>
+												</span>
+											</div>
 										</div>
 									</div>
 									<div class="form-group">
@@ -128,8 +139,8 @@
 										<div class="col-sm-9">
 											<select name="recipient_region" id="input-recipient_region" class="form-control">
 												<option value="">{{ text_select }}</option>
-												{% for v in zones %}
-													<option value="{{ v.zone_id }}"{{ v.zone_id == recipient_region ? ' selected="selected"' }}>{{ v.name }}</option>
+												{% for v in regions %}
+													<option value="{{ v.Ref }}"{{ v.Ref == recipient_region ? ' selected="selected"' }}>{{ v.Description }}</option>
 												{% endfor %}
 											</select>
 											<input type="hidden" name="recipient_region_name" value="{{ recipient_region_name }}" id="input-recipient_region_name" />
@@ -137,17 +148,28 @@
 										</div>
 									</div>
 									<div class="form-group">
-										<label class="col-sm-3 control-label" for="input-recipient_city_name">{{ entry_city }}</label>
+										<label class="col-sm-3 control-label" for="input-recipient_city">{{ entry_city }}</label>
 										<div class="col-sm-9">
-											<input type="text" name="recipient_city_name" value="{{ recipient_city_name }}" placeholder="{{ entry_city }}" id="input-recipient_city_name" class="form-control" />
-											<input type="hidden" name="recipient_city" value="{{ recipient_city }}" id="input-recipient_city" />
+											<select name="recipient_city" id="input-recipient_city" class="form-control selectpicker show-tick" data-live-search="true"></select>
 										</div>
 									</div>
 									<div class="form-group">
-										<label class="col-sm-3 control-label" for="input-recipient_warehouse_name">{{ entry_warehouse }}</label>
+										<label class="col-sm-3 control-label" for="input-recipient_department">{{ entry_department }}</label>
 										<div class="col-sm-9">
-											<input type="text" name="recipient_warehouse_name" value="{{ recipient_warehouse_name }}" placeholder="{{ entry_warehouse }}" id="input-recipient_warehouse_name" class="form-control" />
-											<input type="hidden" name="recipient_warehouse" value="{{ recipient_warehouse }}" id="input-recipient_warehouse" />
+											<select name="recipient_department" id="input-recipient_department" class="form-control selectpicker show-tick" data-live-search="true"></select>
+										</div>
+									</div>
+									<div class="form-group" style="display: none">
+										<label class="col-sm-3 control-label" for="input-recipient_poshtomat">{{ entry_poshtomat }}</label>
+										<div class="col-sm-9">
+											<select name="recipient_poshtomat" id="input-recipient_poshtomat" class="form-control selectpicker show-tick" data-live-search="true"></select>
+										</div>
+									</div>
+									<div class="form-group" style="display: none">
+										<label class="col-sm-3 control-label" for="input-recipient_settlement_name">{{ entry_settlement }}</label>
+										<div class="col-sm-9">
+											<input type="text" name="recipient_settlement_name" value="{{ recipient_settlement_name }}" placeholder="{{ entry_settlement }}" id="input-recipient_settlement_name" class="form-control" />
+											<input type="hidden" name="recipient_settlement" value="{{ recipient_settlement }}" id="input-recipient_settlement" />
 										</div>
 									</div>
 									<div class="form-group" style="display: none">
@@ -191,9 +213,9 @@
 										</div>
 									</div>
 									<div class="form-group">
-										<label class="col-sm-3 control-label" for="input-redbox_barcode">{{ entry_redbox_barcode }}</label>
+										<label class="col-sm-3 control-label" for="input-general_parameters">{{ entry_general_parameters }}</label>
 										<div class="col-sm-9">
-											<input type="text" name="redbox_barcode" value="{{ redbox_barcode }}" placeholder="{{ entry_redbox_barcode }}" id="input-redbox_barcode" class="form-control" />
+											<input type="checkbox" name="general_parameters" id="input-general_parameters" data-on="<i class='fa fa-check'></i>" data-off="<i class='fa fa-times'></i>" data-toggle="toggle" data-onstyle="info"{{ general_parameters ? ' checked' }}>
 										</div>
 									</div>
 									{% for t_and_w in references['tires_and_wheels'] %}
@@ -207,38 +229,78 @@
 										</div>
 									</div>
                                     {% endfor %}
+									{% for v in parcels %}
+									<legend style="display: none;" id="text-seat-{{ loop.index0 }}">{{ text_seat }} {{ loop.index0 + 1 }}</legend>
 									<div class="form-group" style="display: none;">
-										<label class="col-sm-3 control-label" for="input-width">{{ entry_width }}</label>
+										<label class="col-sm-3 control-label" for="input-weight-{{ loop.index0 }}">{{ entry_weight }}</label>
 										<div class="col-sm-9">
 											<div class="input-group">
-												<input type="text" name="width" value="{{ width }}" placeholder="{{ entry_width }}" id="input-width" class="form-control" />
+												<input type="text" name="parcels[{{ loop.index0 }}][weight]" value="{{ v['weight'] ? v['weight'] : 0 }}" placeholder="{{ entry_weight }}" id="input-weight-{{ loop.index0 }}" class="form-control" />
+												<span class="input-group-addon">{{ text_kg }}</span>
+											</div>
+										</div>
+									</div>
+									<div class="form-group" style="display: none;">
+										<label class="col-sm-3 control-label" for="input-length-{{ loop.index0 }}">{{ entry_length }}</label>
+										<div class="col-sm-9">
+											<div class="input-group">
+												<input type="text" name="parcels[{{ loop.index0 }}][length]" value="{{ v['length'] ? v['length'] : 0 }}" placeholder="{{ entry_length }}" id="input-length-{{ loop.index0 }}" class="form-control" />
 												<span class="input-group-addon">{{ text_cm }}</span>
 											</div>
 										</div>
 									</div>
 									<div class="form-group" style="display: none;">
-										<label class="col-sm-3 control-label" for="input-length">{{ entry_length }}</label>
+										<label class="col-sm-3 control-label" for="input-width-{{ loop.index0 }}">{{ entry_width }}</label>
 										<div class="col-sm-9">
 											<div class="input-group">
-												<input type="text" name="length" value="{{ length }}" placeholder="{{ entry_length }}" id="input-length" class="form-control" />
+												<input type="text" name="parcels[{{ loop.index0 }}][width]" value="{{ v['width'] ? v['width'] : 0 }}" placeholder="{{ entry_width }}" id="input-width-{{ loop.index0 }}" class="form-control" />
 												<span class="input-group-addon">{{ text_cm }}</span>
 											</div>
 										</div>
 									</div>
 									<div class="form-group" style="display: none;">
-										<label class="col-sm-3 control-label" for="input-height">{{ entry_height }}</label>
+										<label class="col-sm-3 control-label" for="input-height-{{ loop.index0 }}">{{ entry_height }}</label>
 										<div class="col-sm-9">
 											<div class="input-group">
-												<input type="text" name="height" value="{{ height }}" placeholder="{{ entry_height }}" id="input-height" class="form-control" />
+												<input type="text" name="parcels[{{ loop.index0 }}][height]" value="{{ v['height'] ? v['height'] : 0 }}" placeholder="{{ entry_height }}" id="input-height-{{ loop.index0 }}" class="form-control" />
 												<span class="input-group-addon">{{ text_cm }}</span>
 											</div>
 										</div>
 									</div>
 									<div class="form-group">
-										<label class="col-sm-3 control-label" for="input-weight">{{ entry_weight }}</label>
+										<label class="col-sm-3 control-label" for="input-volume_weight-{{ loop.index0 }}">{{ entry_volume_weight }}</label>
 										<div class="col-sm-9">
 											<div class="input-group">
-												<input type="text" name="weight" value="{{ weight }}" placeholder="{{ entry_weight }}" id="input-weight" class="form-control" />
+												<input type="text" name="parcels[{{ loop.index0 }}][volume_weight]" value="{{ v['volume_weight'] ? v['volume_weight'] : 0 }}" placeholder="{{ entry_volume_weight }}" id="input-volume_weight-{{ loop.index0 }}" class="form-control" readonly/>
+												<span class="input-group-addon">{{ text_kg }}</span>
+											</div>
+										</div>
+									</div>
+									<div class="form-group" style="display: none;">
+										<label class="col-sm-3 control-label" for="input-manual_processing-{{ loop.index0 }}">{{ entry_manual_processing }}</label>
+										<div class="col-sm-9">
+											<input type="checkbox" name="parcels[{{ loop.index0 }}][manual_processing]" id="input-manual_processing-{{ loop.index0 }}" data-on="<i class='fa fa-check'></i>" data-off="<i class='fa fa-times'></i>" data-toggle="toggle" data-onstyle="info"{{ v['manual_processing'] ? ' checked' }}>
+										</div>
+									</div>
+									<div class="form-group" style="display: none;">
+										<label class="col-sm-3 control-label" for="input-pack-{{ loop.index0 }}">{{ entry_pack_type }}</label>
+										<div class="col-sm-2">
+											<input type="checkbox" name="parcels[{{ loop.index0 }}][pack]" id="input-pack-{{ loop.index0 }}" data-on="<i class='fa fa-check'></i>" data-off="<i class='fa fa-times'></i>" data-toggle="toggle" data-onstyle="info"{{ v['pack'] ? ' checked' }}>
+										</div>
+										<div class="col-sm-7"{{ v['pack'] ? ' style="display: none;"' }}>
+											<select name="parcels[{{ loop.index0 }}][pack_type]" id="input-pack_type-{{ loop.index0 }}" class="form-control selectpicker show-tick" title="{{ text_select }}" data-live-search="true">
+											{% for p in references['pack_types'] %}
+											<option value="{{ p.Ref }}"{{ v['pack_type'] == p.Ref ? ' selected="selected"' }}>{{ p.Description }}</option>
+											{% endfor %}
+											</select>
+										</div>
+									</div>
+									{% endfor %}
+									<div class="form-group">
+										<label class="col-sm-3 control-label" for="input-weight_general">{{ entry_weight_general }}</label>
+										<div class="col-sm-9">
+											<div class="input-group">
+												<input type="text" name="weight_general" value="{{ weight_general }}" placeholder="{{ entry_weight_general }}" id="input-weight_general" class="form-control" />
 												<span class="input-group-addon">{{ text_kg }}</span>
 											</div>
 										</div>
@@ -253,22 +315,39 @@
 										</div>
 									</div>
 									<div class="form-group">
-										<label class="col-sm-3 control-label" for="input-volume_weight">{{ entry_volume_weight }}</label>
+										<label class="col-sm-3 control-label" for="input-volume_weight_general">{{ entry_volume_weight_general }}</label>
 										<div class="col-sm-9">
 											<div class="input-group">
-												<input type="text" name="volume_weight" value="{{ volume_weight }}" placeholder="{{ entry_volume_weight }}" id="input-volume_weight" class="form-control" readonly/>
+												<input type="text" name="volume_weight_general" value="{{ volume_weight_general }}" placeholder="{{ entry_volume_weight_general }}" id="input-volume_weight_general" class="form-control" readonly/>
 												<span class="input-group-addon">{{ text_kg }}</span>
 											</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-3 control-label" for="input-pack_general">{{ entry_pack_type }}</label>
+										<div class="col-sm-2">
+											<input type="checkbox" name="pack_general" id="input-pack_general" data-on="<i class='fa fa-check'></i>" data-off="<i class='fa fa-times'></i>" data-toggle="toggle" data-onstyle="info"{{ pack ? ' checked' }}>
+										</div>
+										<div class="col-sm-7"{{ not pack ? ' style="display: none;"' }}>
+											<select name="pack_type_general" id="input-pack_type_general" class="form-control selectpicker show-tick" title="{{ text_select }}" data-live-search="true">
+												{% for p in references['pack_types'] %}
+													<option value="{{ p.Ref }}"{{ parcels[0]['pack_type'] == p.Ref ? ' selected="selected"' }}>{{ p.Description }}</option>
+												{% endfor %}
+											</select>
 										</div>
 									</div>
 									<div class="form-group">
 										<label class="col-sm-3 control-label" for="input-seats_amount">{{ entry_seats_amount }}</label>
 										<div class="col-sm-9">
 											<div class="input-group">
-												<span class="input-group-btn">
-													<button type="button" id="button-options_seat" data-toggle="modal" data-target="#modal-options-seat" data-tooltip="true" title="{{ button_options_seat }}" class="btn btn-default"><i class="fa fa-cubes"></i></button>
-												</span>
+													<span class="input-group-btn">
+														<button type="button" id="button-options_seat_calc" data-toggle="modal" data-target="#modal-options-seat-calc" data-tooltip="true" title="{{ button_options_seat_calc }}" class="btn btn-default"><i class="fa fa-calculator"></i></button>
+													</span>
 												<input type="text" name="seats_amount" value="{{ seats_amount }}" placeholder="{{ entry_seats_amount }}" id="input-seats_amount" class="form-control" />
+												<span class="input-group-btn">
+														<button type="button" id="button-seat_plus" onclick="addSeat();" class="btn btn-default"><i class="fa fa-plus" aria-hidden="true"></i></button>
+														<button type="button" id="button-seat_minus" onclick="deleteSeat();" class="btn btn-default"><i class="fa fa-minus" aria-hidden="true"></i></button>
+													</span>
 												<span class="input-group-addon">{{ text_pc }}</span>
 											</div>
 										</div>
@@ -277,9 +356,9 @@
 										<label class="col-sm-3 control-label" for="input-declared_cost">{{ entry_declared_cost }}</label>
 										<div class="col-sm-9">
 											<div class="input-group">
-												<span class="input-group-btn">
-													<button type="button" id="button-components_list" data-toggle="modal" data-target="#modal-totals-list" data-tooltip="true" title="{{ button_components_list }}" class="btn btn-default"><i class="fa fa-list" aria-hidden="true"></i></button>
-												</span>
+													<span class="input-group-btn">
+														<button type="button" id="button-components_list" data-toggle="modal" data-target="#modal-totals-list" data-tooltip="true" title="{{ button_components_list }}" class="btn btn-default"><i class="fa fa-list" aria-hidden="true"></i></button>
+													</span>
 												<input type="text" name="declared_cost" value="{{ declared_cost }}" placeholder="{{ entry_declared_cost }}" id="input-declared_cost" class="form-control" />
 												<span class="input-group-addon">{{ text_grn }}</span>
 											</div>
@@ -303,16 +382,23 @@
 									<div class="form-group">
 										<label class="col-sm-3 control-label" for="input-delivery_payer">{{ entry_delivery_payer }}</label>
 										<div class="col-sm-9">
-											<select name="delivery_payer" id="input-delivery_payer" class="form-control">
-												<option value="0">{{ text_select }}</option>
+											<div class="btn-group" data-toggle="buttons">
 												{% for v in references['payer_types'] %}
 													{% if v.Ref == 'ThirdPerson' and not sender_options['CanPayTheThirdPerson'] %}
-														<option value="{{ v.Ref }}" disabled>{{ v.Description }}</option>
+												<label class="btn btn-default disabled">
+													<input type="radio" name="delivery_payer" value="{{ v.Ref }}" id="input-delivery_payer-{{ v.Ref }}">{{ v.Description }}
+												</label>
+													{% elseif v.Ref == delivery_payer %}
+												<label class="btn btn-default active">
+													<input type="radio" name="delivery_payer" value="{{ v.Ref }}" id="input-delivery_payer-{{ v.Ref }}" checked>{{ v.Description }}
+												</label>
 													{% else %}
-														<option value="{{ v.Ref }}"{{ v.Ref == delivery_payer ? ' selected="selected"' }}>{{ v.Description }}</option>
+												<label class="btn btn-default">
+													<input type="radio" name="delivery_payer" value="{{ v.Ref }}" id="input-delivery_payer-{{ v.Ref }}">{{ v.Description }}
+												</label>
 													{% endif %}
 												{% endfor %}
-											</select>
+											</div>
 										</div>
 									</div>
 									<div class="form-group" style="display: none">
@@ -329,12 +415,19 @@
 									<div class="form-group">
 										<label class="col-sm-3 control-label" for="input-payment_type">{{ entry_payment_type }}</label>
 										<div class="col-sm-9">
-											<select name="payment_type" id="input-payment_type" class="form-control">
-												<option value="0">{{ text_select }}</option>
+											<div class="btn-group" data-toggle="buttons">
 												{% for v in references['payment_types'] %}
-													<option value="{{ v.Ref }}"{{ v.Ref == payment_type ? ' selected="selected"' }}>{{ v.Description }}</option>
-                                                {% endfor %}
-											</select>
+													{% if v.Ref == payment_type %}
+												<label class="btn btn-default active">
+													<input type="radio" name="payment_type" value="{{ v.Ref }}" id="input-payment_type-{{ v.Ref }}" checked>{{ v.Description }}
+												</label>
+												{% else %}
+												<label class="btn btn-default">
+													<input type="radio" name="payment_type" value="{{ v.Ref }}" id="input-payment_type-{{ v.Ref }}">{{ v.Description }}
+												</label>
+												{% endif %}
+												{% endfor %}
+											</div>
 										</div>
 									</div>
 									<div class="form-group">
@@ -361,34 +454,19 @@
 									<div class="form-group" style="display: none">
 										<label class="col-sm-3 control-label" for="input-backward_delivery_payer">{{ entry_backward_delivery_payer }}</label>
 										<div class="col-sm-9">
-											<select name="backward_delivery_payer" id="input-backward_delivery_payer" class="form-control">
-												<option value="0">{{ text_select }}</option>
-                                                {% for v in references['backward_delivery_payers'] %}
-													<option value="{{ v.Ref }}"{{ v.Ref == backward_delivery_payer ? ' selected="selected"' }}>{{ v.Description }}</option>
-                                                {% endfor %}
-											</select>
-										</div>
-									</div>
-									<div class="form-group" style="display: none">
-										<label class="col-sm-3 control-label" for="input-money_transfer_method">{{ entry_money_transfer_method }}</label>
-										<div class="col-sm-9">
-											<select name="money_transfer_method" id="input-money_transfer_method" class="form-control">
-												<option value="0">{{ text_select }}</option>
-                                                {% for k, v in money_transfer_methods %}
-													<option value="{{ k }}"{{ k == money_transfer_method ? ' selected="selected"' }}>{{ v }}</option>
-                                                {% endfor %}
-											</select>
-										</div>
-									</div>
-									<div class="form-group" style="display: none">
-										<label class="col-sm-3 control-label" for="input-payment_card">{{ entry_payment_card }}</label>
-										<div class="col-sm-9">
-											<select name="payment_card" id="input-payment_card" class="form-control">
-												<option value="">{{ text_select }}</option>
-                                                {% for v in references['payment_cards'] %}
-													<option value="{{ v.Ref }}"{{ v.Ref == payment_card ? ' selected="selected"' }}>{{ v.Description }}</option>
-                                                {% endfor %}
-											</select>
+											<div class="btn-group" data-toggle="buttons">
+												{% for v in references['backward_delivery_payers'] %}
+													{% if v.Ref == backward_delivery_payer %}
+												<label class="btn btn-default active">
+													<input type="radio" name="backward_delivery_payer" value="{{ v.Ref }}" id="input-backward_delivery_payer-{{ v.Ref }}" checked>{{ v.Description }}
+												</label>
+													{% else %}
+												<label class="btn btn-default">
+													<input type="radio" name="backward_delivery_payer" value="{{ v.Ref }}" id="input-backward_delivery_payer-{{ v.Ref }}">{{ v.Description }}
+												</label>
+													{% endif %}
+												{% endfor %}
+											</div>
 										</div>
 									</div>
 									<div class="form-group">
@@ -446,23 +524,29 @@
 											</div>
 										</div>
 										<div class="form-group">
-											<label class="col-sm-3 control-label" for="input-sales_order_number">{{ entry_sales_order_number }}</label>
+											<label class="col-sm-3 control-label" for="input-order_number">{{ entry_order_number }}</label>
 											<div class="col-sm-9">
-												<input type="text" name="sales_order_number" value="{{ sales_order_number }}" placeholder="{{ entry_sales_order_number }}" id="input-sales_order_number" class="form-control" />
+												<input type="text" name="order_number" value="{{ order_number }}" placeholder="{{ entry_order_number }}" id="input-order_number" class="form-control" />
 											</div>
 										</div>
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label" for="input-packing_number">{{ entry_packing_number }}</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" name="packing_number" value="{{ packing_number }}" placeholder="{{ entry_packing_number }}" id="input-packing_number" class="form-control" />
+                                            </div>
+                                        </div>
 									</div>
 									<div class="col-sm-6">
-										<div class="form-group">
-											<label class="col-sm-3 control-label" for="input-packing_number">{{ entry_packing_number }}</label>
-											<div class="col-sm-9">
-												<input type="text" name="packing_number" value="{{ packing_number }}" placeholder="{{ entry_packing_number }}" id="input-packing_number" class="form-control" />
-											</div>
-										</div>
 										<div class="form-group">
 											<label class="col-sm-3 control-label" for="input-additional_information">{{ entry_departure_additional_information }}</label>
 											<div class="col-sm-9">
 												<textarea name="additional_information" rows="3" id="input-additional_information" maxlength="100" class="form-control">{{ additional_information }}</textarea>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-3 control-label" for="input-avia_delivery">{{ entry_avia_delivery }}</label>
+											<div class="col-sm-9">
+												<input type="checkbox" name="avia_delivery" id="input-avia_delivery" data-on="<i class='fa fa-check'></i>" data-off="<i class='fa fa-times'></i>" data-toggle="toggle" data-onstyle="info"{{ avia_delivery ? ' checked' }}>
 											</div>
 										</div>
 										<div class="form-group">
@@ -474,9 +558,7 @@
 										<div class="form-group">
 											<label class="col-sm-3 control-label" for="input-elevator">{{ entry_elevator }}</label>
 											<div class="col-sm-9">
-												<label class="radio-inline">
-													<input type="checkbox" name="elevator" id="input-elevator" class="form-control"{{ elevator ? ' checked' }}>
-												</label>
+												<input type="checkbox" name="elevator" id="input-elevator" data-on="<i class='fa fa-check'></i>" data-off="<i class='fa fa-times'></i>" data-toggle="toggle" data-onstyle="info"{{ elevator ? ' checked' }}>
 											</div>
 										</div>
 									</div>
@@ -485,814 +567,1058 @@
 						</div>
 					</div>
 
-					<!-- Modal seats START -->
-					<div class="modal fade" id="modal-options-seat" tabindex="-1" role="dialog" aria-labelledby="option-seat-label">
-						<div class="modal-dialog modal-lg" role="document" style="width: 85%;">
-							<div class="modal-content">
-								<div class="modal-header">
-									<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-									<h4 class="modal-title" id="options-seat-label">{{ heading_options_seat }}</h4>
-								</div>
-								<div class="modal-body">
-									<div class="table-responsive">
-										<table class="table table-striped" id="table-seats">
-											<thead>
-												<tr>
-													<td class="text-center">{{ column_number }}</td>
-													<td class="text-center">{{ column_volume }}</td>
-													<td class="text-center"></td>
-													<td class="text-center">{{ column_width }}</td>
-													<td class="text-center">{{ column_length }}</td>
-													<td class="text-center">{{ column_height }}</td>
-													<td class="text-center">{{ column_weight }}</td>
-													<td class="text-center">{{ column_volume_weight }}</td>
-													<td class="text-center" width="100px">{{ column_action }}</td>
-												</tr>
-											</thead>
-											<tbody>
-											</tbody>
-											<tfoot>
-												<tr>
-													<td colspan="8"></td>
-													<td class="text-center">
-														<button type="button" onclick="addSeat();" data-toggle="modal"  data-tooltip=true title="{{ button_add }}" class="btn btn-primary"><i class="fa fa-plus-circle"></i></button>
-													</td>
-												</tr>
-											</tfoot>
-										</table>
-									</div>
-								</div>
-								<div class="modal-footer">
-									<button type="button" onclick="saveSeats();" class="btn btn-primary"><i class="fa fa-check"></i></button>
-									<button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i></button>
-								</div>
-							</div>
-						</div>
-					</div>
-					<!-- Modal seats END -->
+                    <!-- Modal Recipient START -->
+                    <div class="modal fade" id="modal-add-recipient" tabindex="-1" role="dialog" aria-labelledby="add-recipient-label">
+                        <div class="modal-dialog modal-sm" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title" id="options-seat-label">{{ heading_adding_recipient }}</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-group clearfix">
+                                        <label class="col-sm-4 control-label" for="input-recipient_edrpou">{{ entry_edrpou }}</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" name="recipient_edrpou" value="{{ recipient_edrpou }}" placeholder="{{ entry_edrpou }}"  id="input-recipient_edrpou" class="form-control" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" onclick="addRecipient();" class="btn btn-primary"><i class="fa fa-check"></i></button>
+                                    <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Modal Recipient END -->
 
-					<!-- Modal of totals list START -->
-					<div class="modal fade" id="modal-totals-list" tabindex="-1" role="dialog" aria-labelledby="totals-list-label">
-						<div class="modal-dialog" role="document">
-							<div class="modal-content">
-								<div class="modal-header">
-									<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-									<h4 class="modal-title" id="totals-list-label">{{ heading_components_list }}</h4>
-								</div>
-								<div class="modal-body">
-									<div class="table-responsive">
-										<table class="table table-striped" id="table-totals_list">
-											<thead>
-												<tr>
-													<td>{{ column_description }}</td>
-													<td class="text-center">{{ column_price }}</td>
-													<td class="text-center">{{ column_action }}</td>
-												</tr>
-											</thead>
-											<tbody>
-												{% for v in totals %}
-													<tr>
-														<td>{{ v.title }}</td>
-														<td class="text-center">{{ v.price }} {{ text_grn }}</td>
-														<td class="text-center">
-															{% if v.status %}
-																<button type="button" class="btn btn-danger btn-xs" id="button-total_declared_cost_minus"><i class="fa fa-minus"></i></button>
-															{% else %}
-																<button type="button" class="btn btn-success btn-xs" id="button-total_declared_cost_plus"><i class="fa fa-plus"></i></button>
-															{% endif %}
-														</td>
-													</tr>
-												{% endfor %}
-											</tbody>
-											<tfoot>
-												<tr>
-													<td><strong>{{ text_declared_cost }}</strong></td>
-													<td class="text-center" id="td-declared_cost_total"><strong>{{ declared_cost }} {{ text_grn }}</strong></td>
-													<td></td>
-												</tr>
-											</tfoot>
-										</table>
-									</div>
-								</div>
-								<div class="modal-footer">
-									<button type="button" onclick="saveDeclaredCost();" class="btn btn-primary"><i class="fa fa-check"></i></button>
-									<button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i></button>
-								</div>
-							</div>
-						</div>
-					</div>
-					<!-- Modal of totals list END -->
+                    <!-- Modal Seats START -->
+                    <div class="modal fade" id="modal-options-seat-calc" tabindex="-1" role="dialog" aria-labelledby="options-seat-calc-label">
+                        <div class="modal-dialog modal-lg" role="document" style="width: 85%;">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title" id="options-seat-calc-label">{{ heading_options_seat_calc }}</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped" id="table-seats-calc">
+                                            <thead>
+                                            <tr>
+                                                <td class="text-center">{{ column_number }}</td>
+                                                <td class="text-center">{{ column_weight }}</td>
+                                                <td class="text-center">{{ column_length }}</td>
+                                                <td class="text-center">{{ column_width }}</td>
+                                                <td class="text-center">{{ column_height }}</td>
+                                                <td class="text-center"></td>
+                                                <td class="text-center">{{ column_volume }}</td>
+                                                <td class="text-center">{{ column_volume_weight }}</td>
+                                                <td class="text-center" width="100px">{{ column_action }}</td>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            </tbody>
+                                            <tfoot>
+                                            <tr>
+                                                <td colspan="8"></td>
+                                                <td class="text-center">
+                                                    <button type="button" onclick="addCalcSeat();" data-toggle="modal"  data-tooltip=true title="{{ button_add }}" class="btn btn-primary"><i class="fa fa-plus-circle"></i></button>
+                                                </td>
+                                            </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" onclick="saveCalcSeats();" class="btn btn-primary"><i class="fa fa-check"></i></button>
+                                    <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Modal Seats END -->
+
+                    <!-- Modal Totals list START -->
+                    <div class="modal fade" id="modal-totals-list" tabindex="-1" role="dialog" aria-labelledby="totals-list-label">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title" id="totals-list-label">{{ heading_components_list }}</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped" id="table-totals_list">
+                                            <thead>
+                                            <tr>
+                                                <td>{{ column_description }}</td>
+                                                <td class="text-center">{{ column_price }}</td>
+                                                <td class="text-center">{{ column_action }}</td>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for total in totals %}
+                                            <tr>
+                                                <td>{{ total.title }}</td>
+                                                <td class="text-center">{{ total.price }} {{ text_grn }}</td>
+                                                <td class="text-center">
+													{% if total.status %}
+                                                    <button type="button" class="btn btn-danger btn-xs" id="button-total_declared_cost_minus"><i class="fa fa-minus"></i></button>
+													{% else %}
+                                                    <button type="button" class="btn btn-success btn-xs" id="button-total_declared_cost_plus"><i class="fa fa-plus"></i></button>
+													{% endif %}
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                            <tfoot>
+                                            <tr>
+                                                <td><strong>{{ text_declared_cost }}</strong></td>
+                                                <td class="text-center" id="td-declared_cost_total"><strong>{{ declared_cost }} {{ text_grn }}</strong></td>
+                                                <td></td>
+                                            </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" onclick="saveDeclaredCost();" class="btn btn-primary"><i class="fa fa-check"></i></button>
+                                    <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Modal Totals list END -->
 
 				</form>
 			</div>
 		</div>
 	</div>
 </div>
+<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/i18n/defaults-{{ translations_code }}.min.js"></script>
 <script type="text/javascript"><!--
-    function validateForm(element) {
-        var post_data = element.name + '=' + encodeURIComponent(element.value);
+	function validateForm(element) {
+		var post_data = element.name + '=' + encodeURIComponent(element.value);
 
-        if (element.name == 'sender_contact_person') {
-            post_data += '&f_sender=' + encodeURIComponent($('#input-sender').val());
-        } else if (element.name == 'sender_city_name') {
-            post_data += '&sender_city=' + encodeURIComponent($('#input-sender_city').val());
-        } else if (element.name == 'sender_address_name') {
-            post_data += '&sender_address=' + encodeURIComponent($('#input-sender_address').val()) + '&f_sender=' + encodeURIComponent($('#input-sender').val()) + '&sender_city=' + encodeURIComponent($('#input-sender_city').val());
-        } else if (element.name == 'recipient_city_name') {
-            post_data += '&recipient_city=' + encodeURIComponent($('#input-recipient_city').val());
-        } else if (element.name == 'recipient_warehouse_name') {
-            post_data += '&recipient_warehouse=' + encodeURIComponent($('#input-recipient_warehouse').val());
-        } else if (element.name == 'recipient_street_name') {
-            post_data += '&recipient_street=' + encodeURIComponent($('#input-recipient_street').val());
-        }  else if (element.name == 'backward_delivery_total') {
-            post_data += '&backward_delivery=' + encodeURIComponent($('#input-backward_delivery').val());
-        }
+		if (element.name == 'sender_contact_person') {
+			post_data += '&f_sender=' + encodeURIComponent($('#input-sender').val());
+		} else if (element.name == 'sender_address') {
+			post_data += '&f_sender=' + encodeURIComponent($('#input-sender').val()) + '&sender_city=' + encodeURIComponent($('#input-sender_city').val());
+		} else if (element.name == 'recipient_settlement_name') {
+			post_data += '&recipient_settlement=' + encodeURIComponent($('#input-recipient_settlement').val());
+		} else if (element.name == 'recipient_street_name') {
+			post_data += '&recipient_street=' + encodeURIComponent($('#input-recipient_street').val());
+		}  else if (element.name == 'backward_delivery_total') {
+			post_data += '&backward_delivery=' + encodeURIComponent($('#input-backward_delivery').val());
+		}
 
-        $.ajax( {
-            url: 'index.php?route=extension/shipping/novaposhta/getCNForm&user_token={{ user_token }}',
-            type: 'POST',
-            data: post_data,
-            dataType: 'json',
-            success: function(json) {
-                checkErrors(json);
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                console.log(textStatus);
-            }
-        } );
-    }
-
-    function checkErrors(array) {
-        if (array['warning']) {
-            if (array['warning'] instanceof Array) {
-                for(var w in array['warning']) {
-                    $('.container-fluid:eq(1)').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + array['warning'][w] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
-                }
-            } else {
-                $('.container-fluid:eq(1)').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + array['warning'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
-            }
-        }
-
-        for(var field in array['errors']) {
-            $('div.form-group').has('label[for="input-' + field + '"]').removeClass('has-success').addClass('has-error');
-            $('#span-' + field).remove('.help-block');
-            $('div.form-group > div[class^="col-sm"]').has('#input-' + field).append('<span id="span-' + field + '" class="help-block">' + array['errors'][field] + '</span>');
-        }
-
-        for(var field in array['success']) {
-            $('div.form-group').has('label[for="input-' + field + '"]').removeClass('has-error').addClass('has-success');
-            $('#span-' + field).remove('.help-block');
-        }
-    }
-
-	function addSeat() {
-		var row = '<tr>';
-	
-		row += '<td>' + ($('#table-seats tbody tr').length + 1) + '</td>';
-		row += '<td><div class="input-group"><input type="text" name="volume" value="" id="input-seat-volume" class="form-control" /><span class="input-group-addon">{{ text_cubic_meter }}</span></div></td>';
-		row += '<td><label class="col-sm-12 control-label">{{ text_or }}</label></td>';
-		row += '<td><div class="input-group"><input type="text" name="width" value="" id="input-seat-width" class="form-control" /><span class="input-group-addon">{{ text_cm }}</span></div></td>';
-		row += '<td><div class="input-group"><input type="text" name="length" value="" id="input-seat-length" class="form-control" /><span class="input-group-addon">{{ text_cm }}</span></div></td>';
-		row += '<td><div class="input-group"><input type="text" name="height" value="" id="input-seat-height" class="form-control" /><span class="input-group-addon">{{ text_cm }}</span></div></td>';
-		row += '<td><div class="input-group"><input type="text" name="actual_weight" value="" id="input-seat-actual-weight" class="form-control" /><span class="input-group-addon">{{ text_kg }}</span></div></td>';
-		row += '<td><div class="input-group"><input type="text" name="volume_weight" value="" id="input-seat-volume-weight" class="form-control" readonly/><span class="input-group-addon">{{ text_kg }}</span></div></td>';
-		row += '<td class="text-center"><button type="button" onclick="$(this).parents(\'tr\').remove()" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>';
-		row += '</tr>';
-	
-		$('#table-seats tbody').append(row);
+		$.ajax({
+			url: 'index.php?route=extension/shipping/novaposhta/getCNForm&user_token={{ user_token }}',
+			type: 'POST',
+			data: post_data,
+			dataType: 'json',
+			beforeSend: function () {
+			},
+			complete: function () {
+			},
+			success: function(json) {
+				checkErrors(json);
+			}
+		});
 	}
 
-    function saveSeats() {
-        var trs = $('#table-seats tbody tr');
-        var seats = trs.length, weight = 0, volume = 0, volume_weight = 0;
+	function checkErrors(array) {
+		if (array['warning']) {
+			if (array['warning'] instanceof Array) {
+				for(var w in array['warning']) {
+					$('.container-fluid:eq(2)').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + array['warning'][w] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+				}
+			} else {
+				$('.container-fluid:eq(2)').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + array['warning'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+			}
+		}
 
-        trs.each(function(i, element){
-            tr = $(element);
+		for(var field in array['errors']) {
+			$('div.form-group').has('label[for="input-' + field + '"]').addClass('has-error');
+			$('#span-' + field).remove('.help-block');
+			$('div.form-group > div[class^="col-sm"]').has('#input-' + field).append('<span id="span-' + field + '" class="help-block">' + array['errors'][field] + '</span>');
+		}
 
-            weight += +tr.find('#input-seat-actual-weight').val();
-            volume += +tr.find('#input-seat-volume').val();
-            volume_weight += +tr.find('#input-seat-volume-weight').val();
-        } );
+		for(var field in array['success']) {
+			$('div.form-group').has('label[for="input-' + field + '"]').removeClass('has-error');
+			$('#span-' + field).remove('.help-block');
+		}
 
-        $('#input-seats_amount').val(seats);
-        $('#input-weight').val(weight);
-        $('#input-volume_general').val(volume);
-        $('#input-volume_weight').val(volume_weight);
+		if (array['errors'] && array['errors']['parcels']) {
+			for (var i in array['errors']['parcels']) {
+				for (var field in array['errors']['parcels'][i]) {
+					$('div.form-group').has('label[for="input-' + field + '-' + i + '"]').addClass('has-error');
+					$('#span-' + field + '-' + i).remove('.help-block');
+					$('div.form-group > div[class^="col-sm"]').has('#input-' + field + '-' + i).append('<span id="span-' + field + '-' + i + '" class="help-block">' + array['errors']['parcels'][i][field] + '</span>');
+				}
+			}
+		}
 
-        $('#modal-options-seat').modal('hide');
-    }
+		if (array['success'] && array['success']['parcels']) {
+			for (var i in array['success']['parcels']) {
+				for (var field in array['success']['parcels'][i]) {
+					$('div.form-group').has('label[for="input-' + field + '-' + i + '"]').removeClass('has-error');
+					$('#span-' + field + '-' + i).remove('.help-block');
+				}
+			}
+		}
+	}
 
-    function saveDeclaredCost() {
-        $('#input-declared_cost').val(parseInt($('#td-declared_cost_total')[0].outerText));
+	function addRecipient() {
+		$.ajax({
+			url: 'index.php?route=extension/shipping/novaposhta/addRecipient&user_token={{ user_token }}',
+			type: 'POST',
+			data: 'edrpou=' + encodeURIComponent($('#input-recipient_edrpou').val()),
+			dataType: 'json',
+			complete: function () {
+				var $alerts = $('.alert-danger, .alert-success');
 
-        $('#modal-totals-list').modal('hide');
-    }
+				if ($alerts.length !== 0) {
+					setTimeout(function() { $alerts.fadeOut(); }, 5000);
+				}
 
-    function formHandler(element) {
-        switch(element.id) {
-            case 'input-sender':
-                $.ajax( {
-                    url: 'index.php?route=extension/shipping/novaposhta/getNPData&user_token={{ user_token }}',
-                    type: 'POST',
-                    data: 'action=getContactPerson&filter=' + encodeURIComponent(element.value),
-                    dataType: 'json',
-                    success: function (json) {
-                        var html = '<option value="">{{ text_select }}</option>';
+				$('body').fadeTo('fast', 1)
+				$('#ocmax-loader').remove();
+			},
+			success: function (json) {
+				if(json['error']) {
+					$('.container-fluid:eq(2)').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+				}
 
-                        for (var i in json) {
-                            if (json[i]['Ref'] == "{{ sender_contact_person }}") {
-                                html += '<option value="' + json[i]['Ref'] + '" selected="selected">' + json[i]['Description'] + ', ' + json[i]['Phones'] + '</option>';
-                            } else {
-                                html += '<option value="' + json[i]['Ref'] + '">' + json[i]['Description'] + ', ' + json[i]['Phones'] + '</option>';
-                            }
-                        }
+				if (json['success']) {
+					$('.container-fluid:eq(2)').prepend('<div class="alert alert-success"><i class="fa fa-check-circle"></i> ' + json['success'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
 
-                        $('#input-sender_contact_person').html(html).trigger('change');
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        console.log(textStatus);
-                    }
-                } );
+					getRecipients();
+				}
 
-                $.ajax( {
-                    url: 'index.php?route=extension/shipping/novaposhta/getNPData&user_token={{ user_token }}',
-                    type: 'post',
-                    data: 'action=getSenderOptions&filter=' + encodeURIComponent(element.value),
-                    dataType: 'json',
-                    success: function (json) {
-                        if (json['CanPayTheThirdPerson']) {
-                            $('#input-delivery_payer > option[value="ThirdPerson"]').prop('disabled', false).trigger('change');
-                        } else {
-                            $('#input-delivery_payer > option[value="ThirdPerson"]').prop('disabled', true).trigger('change');
-                        }
+				$('html, body').animate({ scrollTop: 0 }, 'slow');
+			}
+		});
 
-                        if (json['CanAfterpaymentOnGoodsCost']) {
-                            $('[for="input-payment_control"]').filter(':hidden').parent().fadeIn();
-                        } else {
-                            $('[for="input-payment_control"]').filter(':visible').parent().fadeOut();
-                        }
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        console.log(textStatus);
-                    }
-                } );
+		$('#modal-add-recipient').modal('hide');
+	}
 
-                break;
+	function addSeat() {
+		var
+				html = '',
+				$seats = $('#input-seats_amount'),
+				departure_type = $('#input-departure_type').val(),
+				count = $('input[id^="input-weight-"]').length;
 
-            case 'input-sender_contact_person':
-                var phone = element.selectedOptions[0].label.substr(element.selectedOptions[0].label.indexOf(', ') + 2);
+		if ((departure_type == 'Parcel' || departure_type == 'Cargo') && !$('#input-general_parameters').is(':checked')) {
+			html += '<legend id="text-seat-' + count + '">{{ text_seat }} ' + (count + 1) + '</legend>';
+			html += '<div class="form-group"><label class="col-sm-3 control-label" for="input-weight-' + count + '">{{ entry_weight }}</label><div class="col-sm-9"><div class="input-group"><input type="text" name="parcels[' + count + '][weight]" value="0" placeholder="{{ entry_weight }}" id="input-weight-' + count + '" class="form-control" /><span class="input-group-addon">{{ text_kg }}</span></div></div></div>';
+			html += '<div class="form-group"><label class="col-sm-3 control-label" for="input-length-' + count + '">{{ entry_length }}</label><div class="col-sm-9"><div class="input-group"><input type="text" name="parcels[' + count + '][length]" value="0" placeholder="{{ entry_length }}" id="input-length-' + count + '" class="form-control" /><span class="input-group-addon">{{ text_cm }}</span></div></div></div>';
+			html += '<div class="form-group"><label class="col-sm-3 control-label" for="input-width-' + count + '">{{ entry_width }}</label><div class="col-sm-9"><div class="input-group"><input type="text" name="parcels[' + count + '][width]" value="0" placeholder="{{ entry_width }}" id="input-width-' + count + '" class="form-control" /><span class="input-group-addon">{{ text_cm }}</span></div></div></div>';
+			html += '<div class="form-group"><label class="col-sm-3 control-label" for="input-height-' + count + '">{{ entry_height }}</label><div class="col-sm-9"><div class="input-group"><input type="text" name="parcels[' + count + '][height]" value="0" placeholder="{{ entry_height }}" id="input-height-' + count + '" class="form-control" /><span class="input-group-addon">{{ text_cm }}</span></div></div></div>';
+			html += '<div class="form-group"><label class="col-sm-3 control-label" for="input-volume_weight-' + count + '">{{ entry_volume_weight }}</label><div class="col-sm-9"><div class="input-group"><input type="text" name="parcels[' + count + '][volume_weight]" value="0" placeholder="{{ entry_volume_weight }}" id="input-volume_weight-' + count + '" class="form-control" readonly><span class="input-group-addon">{{ text_cm }}</span></div></div></div>';
+			html += '<div class="form-group"><label class="col-sm-3 control-label" for="input-manual_processing-' + count + '">{{ entry_manual_processing }}</label><div class="col-sm-9"><input type="checkbox" name="parcels[' + count + '][manual_processing]" id="input-manual_processing-' + count + '" data-on="<i class=\'fa fa-check\'></i>" data-off="<i class=\'fa fa-times\'></i>" data-toggle="toggle" data-onstyle="info"{{ manual_processing ? ' checked' }}></div></div>';
+			html += '<div class="form-group"><label class="col-sm-3 control-label" for="input-pack-' + count + '">{{ entry_pack_type }}</label><div class="col-sm-2"><input type="checkbox" name="parcels[' + count + '][pack]" id="input-pack-' + count + '" data-on="<i class=\'fa fa-check\'></i>" data-off="<i class=\'fa fa-times\'></i>" data-toggle="toggle" data-onstyle="info"{{ pack ? ' checked' }}></div><div class="col-sm-7"{{ not pack ? ' style="display: none;"' }}><select name="parcels[' + count + '][pack_type]" id="input-pack_type-' + count + '" class="form-control selectpicker show-tick" title="{{ text_select }}" data-live-search="true">{% for p in references['pack_types'] %}<option value="{{ p.Ref }}">{{ p.Description }}</option>{% endfor %}</select></div></div>';
 
-                $('#input-sender_contact_person_phone').val(phone);
+			$('input[id^="input-pack-"]:last').parents('div.form-group').after(html);
+			$('#input-manual_processing-' + count + ', #input-pack-' + count).bootstrapToggle();
+			$('#input-pack_type-' + count).selectpicker('refresh');
+		} else {
+			$('[for="input-pack_general"]').filter(':visible').parent().fadeOut();
+		}
 
-                break;
+		$seats.val(+$seats.val() + 1).trigger('change');
+	}
 
-            case 'input-sender_region':
-                $('#input-sender_city_name').val('').trigger('change');
+	function deleteSeat() {
+		var
+				$seats = $('#input-seats_amount'),
+				count = $('input[id^="input-weight-"]').length;
 
-            case 'input-sender_city_name':
-                $('#input-sender_city, #input-sender_address, #input-sender_address_name').val('').trigger('change');
+		if (count > 1) {
+			$('legend[id^="text-seat-"]:last').remove();
+			$('input[id^="input-weight-"]:last').parents('div.form-group').remove();
+			$('input[id^="input-length-"]:last').parents('div.form-group').remove();
+			$('input[id^="input-width-"]:last').parents('div.form-group').remove();
+			$('input[id^="input-height-"]:last').parents('div.form-group').remove();
+			$('input[id^="input-volume_weight-"]:last').parents('div.form-group').remove();
+			$('input[id^="input-manual_processing-"]:last').parents('div.form-group').remove();
+			$('input[id^="input-pack-"]:last').parents('div.form-group').remove();
+		}
 
-                break;
+		if ($seats.val() == 2 && $('#input-general_parameters').is(':checked')) {
+			$('[for="input-pack_general"]').filter(':hidden').parent().fadeIn();
+		}
+
+		if ($seats.val() > 1) {
+			$seats.val(+$seats.val() - 1).trigger('change');
+		}
+	}
+
+	function addCalcSeat() {
+		var
+				row = '<tr>',
+				count = $('#table-seats-calc tbody tr').length;
+
+		row += '<td>' + (count + 1) + '</td>';
+		row += '<td><div class="input-group"><input type="text" name="seat_calc_weight[' + count + ']" value="" id="input-seat-calc-weight-' + count + '" class="form-control" /><span class="input-group-addon">{{ text_kg }}</span></div></td>';
+		row += '<td><div class="input-group"><input type="text" name="seat_calc_length[' + count + ']" value="" id="input-seat-calc-length-' + count + '" class="form-control" /><span class="input-group-addon">{{ text_cm }}</span></div></td>';
+		row += '<td><div class="input-group"><input type="text" name="seat_calc_width[' + count + ']" value="" id="input-seat-calc-width-' + count + '" class="form-control" /><span class="input-group-addon">{{ text_cm }}</span></div></td>';
+		row += '<td><div class="input-group"><input type="text" name="seat_calc_height[' + count + ']" value="" id="input-seat-calc-height-' + count + '" class="form-control" /><span class="input-group-addon">{{ text_cm }}</span></div></td>';
+		row += '<td><label class="col-sm-12 control-label">{{ text_or }}</label></td>';
+		row += '<td><div class="input-group"><input type="text" name="seat_calc_volume[' + count + ']" value="" id="input-seat-calc-volume-' + count + '" class="form-control" /><span class="input-group-addon">{{ text_cubic_meter }}</span></div></td>';
+		row += '<td><div class="input-group"><input type="text" name="seat_calc_volume_weight[' + count + ']" value="" id="input-seat-calc-volume_weight-' + count + '" class="form-control" readonly/><span class="input-group-addon">{{ text_kg }}</span></div></td>';
+		row += '<td class="text-center"><button type="button" onclick="$(this).parents(\'tr\').remove()" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>';
+		row += '</tr>';
+
+		$('#table-seats-calc tbody').append(row);
+	}
+
+	function saveCalcSeats() {
+		var
+				$trs = $('#table-seats-calc tbody tr'),
+				seats = $trs.length,
+				weight = 0,
+				volume = 0;
+
+		$trs.each(function(i, element) {
+			var c_tr = $(element);
+
+			if (!$('#input-weight-' + i).length) {
+				addSeat();
+			}
+
+			$('#input-weight-' + i).val(c_tr.find('#input-seat-calc-weight-' + i).val());
+			$('#input-length-' + i).val(c_tr.find('#input-seat-calc-length-' + i).val());
+			$('#input-width-' + i).val(c_tr.find('#input-seat-calc-width-' + i).val());
+			$('#input-height-' + i).val(c_tr.find('#input-seat-calc-height-' + i).val());
+			$('#input-volume_weight-' + i).val(c_tr.find('#input-seat-calc-volume_weight-' + i).val());
+
+			weight += +c_tr.find('#input-seat-calc-weight-' + i).val();
+			volume += +c_tr.find('#input-seat-calc-volume-' + i).val();
+		});
+
+		$('#input-weight_general').val(weight);
+		$('#input-volume_general').val(volume.toFixed(3)).trigger('change');
+		$('#input-seats_amount').val(seats);
+
+		$('#modal-options-seat-calc').modal('hide');
+	}
+
+	function saveDeclaredCost() {
+		$('#input-declared_cost').val(parseInt($('#td-declared_cost_total')[0].outerText));
+
+		$('#modal-totals-list').modal('hide');
+	}
+
+	function formHandler(element) {
+		switch(element.id) {
+			case 'input-sender_address_pick_up':
+				if (element.checked) {
+					$('label[for="input-sender_department"]').parent().fadeOut();
+					$('label[for="input-sender_address"]').parent().fadeIn();
+				} else {
+					$('label[for="input-sender_department"]').parent().fadeIn();
+					$('label[for="input-sender_address"]').parent().fadeOut();
+				}
+
+				break;
+
+			case 'input-sender':
+				$.ajax({
+					url: 'index.php?route=extension/shipping/novaposhta/getNPData&user_token={{ user_token }}',
+					type: 'POST',
+					data: 'action=getSenderContactPersons&filter=' + encodeURIComponent(element.value),
+					dataType: 'json',
+					success: function (json) {
+						var
+								checked = "{{ sender_contact_person }}",
+								html = '<option value="">{{ text_select }}</option>';
+
+						for (var i in json) {
+							if (json[i]['Ref'] == checked) {
+								html += '<option value="' + json[i]['Ref'] + '" selected="selected">' + json[i]['Description'] + ', ' + json[i]['Phones'] + '</option>';
+							} else {
+								html += '<option value="' + json[i]['Ref'] + '">' + json[i]['Description'] + ', ' + json[i]['Phones'] + '</option>';
+							}
+						}
+
+						$('#input-sender_contact_person').html(html).selectpicker('refresh').trigger('change');
+					}
+				});
+
+				$.ajax({
+					url: 'index.php?route=extension/shipping/novaposhta/getNPData&user_token={{ user_token }}',
+					type: 'post',
+					data: 'action=getSenderOptions&filter=' + encodeURIComponent(element.value),
+					dataType: 'json',
+					beforeSend: function () {
+					},
+					complete: function () {
+					},
+					success: function (json) {
+						if (json['CanPayTheThirdPerson']) {
+							$('#input-payer > option[value="ThirdPerson"]').prop('disabled', false).trigger('change');
+						} else {
+							$('#input-payer > option[value="ThirdPerson"]').prop('disabled', true).trigger('change');
+						}
+
+						if (json['CanAfterpaymentOnGoodsCost']) {
+							$('[for="input-payment_control"]').filter(':hidden').parent().fadeIn();
+						} else {
+							$('[for="input-payment_control"]').filter(':visible').parent().fadeOut();
+						}
+					}
+				});
+
+				break;
+
+			case 'input-sender_contact_person':
+				var phone = element.selectedOptions[0].label.substr(element.selectedOptions[0].label.indexOf(', ') + 2);
+
+				$('#input-sender_contact_person_phone').val(phone);
+
+				break;
+
+			case 'input-sender_region':
+				$.ajax({
+					url: 'index.php?route=extension/shipping/novaposhta/getNPData&user_token={{ user_token }}',
+					type: 'POST',
+					data: 'action=getCities&filter=' + encodeURIComponent(element.value),
+					dataType: 'json',
+					success: function (json) {
+						if (json instanceof Array) {
+							var
+									subtext,
+									option_s,
+									html = '<option value="">{{ text_select }}</option>';
+
+							for(var i in json) {
+								if (!element.value) {
+									subtext = ' data-subtext="' + json[i]['region_description'] + '"';
+								} else {
+									subtext = '';
+								}
+
+								if (json[i]['Ref'] == '{{ sender_city }}') {
+									option_s = ' selected="selected"';
+								} else {
+									option_s = '';
+								}
+
+								html += '<option value="' + json[i]['Ref'] + '"' + subtext + option_s + '>' + json[i]['description'] + '</option>'
+							}
+
+							$('#input-sender_city').html(html).selectpicker('refresh').trigger('change');
+						}
+					}
+				});
+
+				break;
+
+			case 'input-sender_city':
+				$.ajax({
+					url: 'index.php?route=extension/shipping/novaposhta/getNPData&user_token={{ user_token }}',
+					type: 'POST',
+					data: 'action=getDepartments&filter=' + encodeURIComponent(element.value),
+					dataType: 'json',
+					success: function (json) {
+						if (json instanceof Array || json instanceof Object) {
+							var
+									option_s,
+									html = '<option value="">{{ text_select }}</option>';
+
+							for(var i in json) {
+								if (json[i]['Ref'] == '{{ sender_department }}') {
+									option_s = ' selected="selected"';
+								} else {
+									option_s = '';
+								}
+
+								html += '<option data-tokens="' + json[i]['Number'] + '" value="' + json[i]['Ref'] + '"' + option_s + '>' + json[i]['description'] + '</option>'
+							}
+
+							$('#input-sender_department').html(html).selectpicker('refresh').trigger('change');
+						}
+					}
+				});
+
+				$.ajax({
+					url: 'index.php?route=extension/shipping/novaposhta/getNPData&user_token={{ user_token }}',
+					type: 'POST',
+					data: 'action=getAddress&filter=' + encodeURIComponent(element.value) + '&sender=' + encodeURIComponent($('#input-sender').val()),
+					dataType: 'json',
+					success: function (json) {
+						if (json instanceof Array || json instanceof Object) {
+							var
+									option_s,
+									html = '<option value="">{{ text_select }}</option>';
+
+							for(var i in json) {
+								if (json[i]['Ref'] == '{{ sender_address }}') {
+									option_s = ' selected="selected"';
+								} else {
+									option_s = '';
+								}
+
+								html += '<option data-tokens="' + json[i]['Number'] + '" value="' + json[i]['Ref'] + '"' + option_s + '>' + json[i]['description'] + '</option>'
+							}
+
+							$('#input-sender_address').html(html).selectpicker('refresh').trigger('change');
+						}
+					}
+				});
+
+				break;
 
 			case 'input-recipient_address_type':
 				if (element.value == 'doors') {
-					$('[for="input-recipient_warehouse_name"], [for="input-width"], [for="input-length"], [for="input-height"]').filter(':visible').parent().fadeOut();
-					$('[for="input-recipient_street_name"], [for="input-recipient_house"], [for="input-recipient_flat"], [for="input-rise_on_floor"], [for="input-elevator"]').filter(':hidden').parent().fadeIn();
-					$('#input-departure_type > option[value="TiresWheels"], #input-departure_type > option[value="Pallet"], #input-volume_general, #input-seats_amount, #button-options_seat').attr('disabled', false);
+					$('[for="input-recipient_city"], [for="input-recipient_department"], [for="input-recipient_poshtomat"]').filter(':visible').parent().fadeOut();
+					$('[for="input-recipient_settlement_name"], [for="input-recipient_street_name"], [for="input-recipient_house"], [for="input-recipient_flat"], [for="input-preferred_delivery_date"], [for="input-rise_on_floor"], [for="input-elevator"]').filter(':hidden').parent().fadeIn();
+					$('#input-departure_type > option[value="TiresWheels"], #input-departure_type > option[value="Pallet"]').attr('disabled', false);
 
 					if ($('#input-preferred_delivery_date').val()) {
 						$('[for="input-time_interval"]').filter(':hidden').parent().fadeIn();
 					}
 				} else if (element.value == 'poshtomat') {
-					var departure_type = $('#input-departure_type').val();
-
-					if (departure_type == 'Parcel') {
-						$('[for="input-width"], [for="input-length"], [for="input-height"]').filter(':hidden').parent().fadeIn();
-					} else if (departure_type == 'Cargo' || departure_type == 'TiresWheels' || departure_type == 'Pallet'){
-						$('#input-departure_type').val('Parcel').trigger('change');
-					}
-
-					$('[for="input-recipient_warehouse_name"]').filter(':hidden').parent().fadeIn();
-					$('[for="input-recipient_street_name"], [for="input-recipient_house"], [for="input-recipient_flat"], [for="input-time_interval"], [for="input-rise_on_floor"], [for="input-elevator"]').filter(':visible').parent().fadeOut();
-					$('#input-departure_type > option[value="TiresWheels"], #input-departure_type > option[value="Pallet"], #input-volume_general, #input-seats_amount, #button-options_seat').attr('disabled', true);
-					$('#input-seats_amount').val('1');
+					$('[for="input-recipient_city"], [for="input-recipient_poshtomat"]').filter(':hidden').parent().fadeIn();
+					$('[for="input-recipient_settlement_name"], [for="input-recipient_department"], [for="input-recipient_street_name"], [for="input-recipient_house"], [for="input-recipient_flat"], [for="input-preferred_delivery_date"], [for="input-time_interval"], [for="input-rise_on_floor"], [for="input-elevator"]').filter(':visible').parent().fadeOut();
+					$('#input-departure_type > option[value="TiresWheels"], #input-departure_type > option[value="Pallet"]').attr('disabled', true);
 				} else {
-					$('[for="input-recipient_warehouse_name"]').filter(':hidden').parent().fadeIn();
-					$('[for="input-recipient_street_name"], [for="input-recipient_house"], [for="input-recipient_flat"], [for="input-width"], [for="input-length"], [for="input-height"], [for="input-time_interval"], [for="input-rise_on_floor"], [for="input-elevator"]').filter(':visible').parent().fadeOut();
+					$('[for="input-recipient_city"], [for="input-recipient_department"]').filter(':hidden').parent().fadeIn();
+					$('[for="input-recipient_poshtomat"], [for="input-recipient_settlement_name"], [for="input-recipient_street_name"], [for="input-recipient_house"], [for="input-recipient_flat"], [for="input-preferred_delivery_date"], [for="input-time_interval"], [for="input-rise_on_floor"], [for="input-elevator"]').filter(':visible').parent().fadeOut();
 					$('#input-departure_type > option[value="TiresWheels"], #input-departure_type > option[value="Pallet"], #input-volume_general, #input-seats_amount, #button-options_seat').attr('disabled', false);
 				}
 
 				break;
 
-            case 'input-recipient_name':
-                $('#input-recipient').val('');
+			case 'input-recipient_region':
+				$.ajax({
+					url: 'index.php?route=extension/shipping/novaposhta/getNPData&user_token={{ user_token }}',
+					type: 'POST',
+					data: 'action=getCities&filter=' + encodeURIComponent(element.value),
+					dataType: 'json',
+					success: function (json) {
+						if (json instanceof Array) {
+							var
+									subtext,
+									option_s,
+									html = '<option value="">{{ text_select }}</option>';
 
-                break;
+							for(var i in json) {
+								if (!element.value) {
+									subtext = ' data-subtext="' + json[i]['region_description'] + '"';
+								} else {
+									subtext = '';
+								}
 
-            case 'input-recipient_region':
-                $('#input-recipient_region_name, #input-recipient_district_name').val('');
+								if (json[i]['Ref'] == '{{ recipient_city }}') {
+									option_s = ' selected="selected"';
+								} else {
+									option_s = '';
+								}
 
-            case 'input-recipient_city_name':
-                var
-                    address_type = $('#input-recipient_address_type:checked').val(),
-                    delivery_date = $('#input-preferred_delivery_date').val();
+								html += '<option value="' + json[i]['Ref'] + '"' + subtext + option_s + '>' + json[i]['description'] + '</option>'
+							}
 
-                if (address_type == 'doors' && delivery_date) {
-                    $.ajax( {
-                        url: 'index.php?route=extension/shipping/novaposhta/getNPData&user_token={{ user_token }}',
-                        type: 'post',
-                        data: 'action=getTimeIntervals&filter=' + encodeURIComponent(element.value) + '&delivery_date=' + encodeURIComponent(delivery_date),
-                        dataType: 'json',
-                        success: function (json) {
-                            var html = '<option value="">{{ text_during_day }}</option>';
+							$('#input-recipient_city').html(html).selectpicker('refresh').trigger('change');
+						}
+					}
+				});
 
-                            for (var i in json) {
-                                html += '<option value="' + json[i]['Number'] + '">' + json[i]['Start'] + ' - ' + json[i]['End'] + '</option>';
-                            }
+				$('#input-recipient_region_name, #input-recipient_district_name').val('');
 
-                            $('#input-time_interval').html(html);
-                        }
-                    } );
-                }
+				break;
 
-                break;
+			case 'input-recipient_city':
+				var option_s;
 
-			case 'input-recipient_warehouse_name':
-				if (element.value.match(/почтомат|поштомат/i)) {
-					$('input[value="poshtomat"]').prop('checked', true).trigger('change').parent().addClass('active').siblings().removeClass('active').children().removeAttr('checked');
-				} else {
-					$('input[value="warehouse"]').prop('checked', true).trigger('change').parent().addClass('active').siblings().removeClass('active').children().removeAttr('checked');
+				$.ajax({
+					url: 'index.php?route=extension/shipping/novaposhta/getNPData&user_token={{ user_token }}',
+					type: 'POST',
+					data: 'action=getDepartments&filter=' + encodeURIComponent(element.value),
+					dataType: 'json',
+					success: function (json) {
+						if (json instanceof Array || json instanceof Object) {
+							var html = '<option value="">{{ text_select }}</option>';
+
+							for(var i in json) {
+								if (json[i]['Ref'] == '{{ recipient_department }}') {
+									option_s = ' selected="selected"';
+								} else {
+									option_s = '';
+								}
+
+								html += '<option data-tokens="' + json[i]['Number'] + '" value="' + json[i]['Ref'] + '"' + option_s + '>' + json[i]['description'] + '</option>'
+							}
+
+							$('#input-recipient_department').html(html).selectpicker('refresh').trigger('change');
+						}
+					}
+				});
+
+				$.ajax({
+					url: 'index.php?route=extension/shipping/novaposhta/getNPData&user_token={{ user_token }}',
+					type: 'POST',
+					data: 'action=getPoshtomats&filter=' + encodeURIComponent(element.value),
+					dataType: 'json',
+					success: function (json) {
+						if (json instanceof Array || json instanceof Object) {
+							var html = '<option value="">{{ text_select }}</option>';
+
+							for(var i in json) {
+								if (json[i]['Ref'] == '{{ recipient_poshtomat }}') {
+									option_s = ' selected="selected"';
+								} else {
+									option_s = '';
+								}
+
+								html += '<option data-tokens="' + json[i]['Number'] + '" value="' + json[i]['Ref'] + '"' + option_s + '>' + json[i]['description'] + '</option>'
+							}
+
+							$('#input-recipient_poshtomat').html(html).selectpicker('refresh').trigger('change');
+						}
+					}
+				});
+
+				break;
+
+			case 'input-recipient_settlement_name':
+				var
+						address_type = $('#input-recipient_address_type:checked').val(),
+						delivery_date = $('#input-preferred_delivery_date').val();
+
+				if (address_type == 'doors' && delivery_date) {
+					$.ajax({
+						url: 'index.php?route=extension/shipping/novaposhta/getNPData&user_token={{ user_token }}',
+						type: 'post',
+						data: 'action=getTimeIntervals&filter=' + encodeURIComponent(element.value) + '&delivery_date=' + encodeURIComponent(delivery_date),
+						dataType: 'json',
+						beforeSend: function () {
+						},
+						complete: function () {
+						},
+						success: function (json) {
+							var html = '<option value="">{{ text_during_day }}</option>';
+
+							for (var i in json) {
+								html += '<option value="' + json[i]['Number'] + '">' + json[i]['Start'] + ' - ' + json[i]['End'] + '</option>';
+							}
+
+							$('#input-time_interval').html(html);
+						}
+					});
 				}
 
 				break;
 
-            case 'input-departure_type':
-                var recipient_warehouse = $('#input-recipient_warehouse_name').val();
+			case 'input-departure_type':
+				if (element.value == 'Parcel' || element.value == 'Cargo') {
+					var html = '<input type="text" name="weight" value="{{ weight_general }}" placeholder="{{ entry_weight }}" id="input-weight" class="form-control" />';
 
-                if (element.value == 'Parcel' || element.value == 'Cargo') {
-                    var html = '<input type="text" name="weight" value="{{ weight }}" placeholder="{{ entry_weight }}" id="input-weight" class="form-control" />';
+					$('#input-weight').replaceWith(html);
 
-                    $('#input-weight').replaceWith(html);
+					$('[for*="input-tires_and_wheels"]').filter(':visible').parent().fadeOut();
+					$('[for="input-general_parameters"], [for="input-weight"], [for="input-volume_weight"], [for="input-volume_general"], [for="input-seats_amount"]').filter(':hidden').parent().fadeIn();
+					$('#input-departure_description').attr('disabled', false);
+				} else if (element.value == 'Documents') {
+					var html = '<select name="weight" id="input-weight" class="form-control"><option value="">{{ text_select }}</option><option value="0.1">0.1</option><option value="0.5">0.5</option><option value="1">1</option></select>';
 
-                    $('[for*="input-tires_and_wheels"]').filter(':visible').parent().fadeOut();
-                    $('[for="input-weight"], [for="input-volume_weight"], [for="input-volume_general"]').filter(':hidden').parent().fadeIn();
-                    $('#button-options_seat, #input-seats_amount, #input-departure_description').attr('disabled', false);
+					$('#input-weight').replaceWith(html);
 
-                    if (recipient_warehouse.match(/почтомат|поштомат/i)) {
-                        $('[for="input-width"], [for="input-length"], [for="input-height"]').filter(':hidden').parent().fadeIn();
-                        $('#button-options_seat, #input-seats_amount').attr('disabled', true);
-                        $('#input-seats_amount').val('1');
-                    }
+					$('[for="input-general_parameters"], [for*="input-tires_and_wheels"], [for="input-volume_weight"], [for="input-volume_general"]').filter(':visible').parent().fadeOut();
+					$('[for="input-weight"], [for="input-seats_amount"]').filter(':hidden').parent().fadeIn();
+					$('#input-departure_description').attr('disabled', true).val('Документи');
+				} else if (element.value == 'TiresWheels') {
+					$('[for="input-general_parameters"], [for="input-width"], [for="input-length"], [for="input-height"], [for="input-weight"], [for="input-volume_weight"], [for="input-volume_general"], [for="input-seats_amount"]').filter(':visible').parent().fadeOut();
+					$('[for*="input-tires_and_wheels"]').filter(':hidden').parent().fadeIn();
+					$('#input-departure_description').attr('disabled', true);
+					$('#input-departure_description').val('Шини та диски');
+				}
 
-                    if (element.value == 'Cargo') {
-                        $('[for="input-redbox_barcode"]').filter(':visible').parent().fadeOut();
-                    } else {
-                        $('[for="input-redbox_barcode"]').filter(':hidden').parent().fadeIn();
-                        $('#input-redbox_barcode').trigger('change');
-                    }
-                } else if (element.value == 'Documents') {
-                    var html = '<select name="weight" id="input-weight" class="form-control"><option value="">{{ text_select }}</option><option value="0.1">0.1</option><option value="0.5">0.5</option><option value="1">1</option></select>';
+				break;
 
-                    $('#input-weight').replaceWith(html);
+			case 'input-general_parameters':
+				if ($(element).is(':checked')) {
+					$('[for*="input-weight-"], [for*="input-length-"], [for*="input-width-"], [for*="input-height-"], [for*="input-volume_weight-"], [for*="input-manual_processing-"], [for*="input-pack-"]').filter(':visible').parent().fadeOut();
+					$('[for="input-weight_general"], [for="input-volume_general"], [for*="input-volume_weight_general"]').filter(':hidden').parent().fadeIn();
+					$('[id*="text-seat-"]').filter(':visible').fadeOut();
 
-                    $('[for="input-redbox_barcode"], [for*="input-tires_and_wheels"], [for="input-volume_weight"], [for="input-volume_general"]').filter(':visible').parent().fadeOut();
-                    $('[for="input-weight"]').filter(':hidden').parent().fadeIn();
-                    $('#button-options_seat, #input-seats_amount').attr('disabled', false);
-                    $('#input-departure_description').attr('disabled', true).val('Документи');
-
-                    if (recipient_warehouse.match(/почтомат|поштомат/i)) {
-                        $('[for="input-width"], [for="input-length"], [for="input-height"]').filter(':visible').parent().fadeOut();
-                        $('#button-options_seat, #input-seats_amount').attr('disabled', true);
-                        $('#input-seats_amount').val('1');
-                    }
-                } else if (element.value == 'TiresWheels') {
-                    $('[for="input-redbox_barcode"], [for="input-width"], [for="input-length"], [for="input-height"], [for="input-weight"], [for="input-volume_weight"], [for="input-volume_general"]').filter(':visible').parent().fadeOut();
-                    $('[for*="input-tires_and_wheels"]').filter(':hidden').parent().fadeIn();
-                    $('#button-options_seat, #input-seats_amount, #input-departure_description').attr('disabled', true);
-                    $('#input-departure_description').val('Шини та диски');
-                }
-
-                break;
-
-            case 'input-redbox_barcode':
-                if (element.value) {
-                    $('[for="input-weight"], [for="input-volume_general"], [for="input-volume_weight"]').filter(':visible').parent().fadeOut();
-                    $('#button-options_seat, #input-seats_amount').attr('disabled', true);
-                    $('#input-seats_amount').val('1');
-                } else {
-                    $('[for="input-weight"], [for="input-volume_general"], [for="input-volume_weight"]').filter(':hidden').parent().fadeIn();
-                    $('#button-options_seat, #input-seats_amount').attr('disabled', false);
-                }
-
-                break;
-
-            case (element.id.match(/input-tires_and_wheels_/) || {}).input:
-                var c = 0;
-
-                $('input[id^="input-tires_and_wheels"]').each(function() {
-                    c += +this.value;
-                } );
-
-                $('#input-seats_amount').val(c);
-
-                break;
-
-            case 'input-volume_general':
-                $('#input-volume_weight').val((element.value * 250).toFixed(3));
-
-                break;
-
-            case 'input-width':
-            case 'input-length':
-            case 'input-height':
-                $('#input-volume_general').val(($('#input-width').val() * $('#input-length').val() * $('#input-height').val() / 1000000).toFixed(3)).trigger('change');
-
-                break;
-
-            case 'input-seat-volume':
-                $(element).parents('tr').find('#input-seat-volume-weight').val((element.value * 250).toFixed(3));
-
-                break;
-
-            case 'input-seat-width':
-            case 'input-seat-length':
-            case 'input-seat-height':
-                var
-                    row = $(element).parents('tr'),
-                    width = row.find('#input-seat-width').val(),
-                    length = row.find('#input-seat-length').val(),
-                    height = row.find('#input-seat-height').val();
-
-                row.find('#input-seat-volume').val((width * length * height / 1000000).toFixed(3)).trigger('change');
-
-                break;
-
-            case 'input-declared_cost':
-                var $backward_delivery_total = $('#input-backward_delivery_total');
-
-                if (+element.value < +$backward_delivery_total.val() && $backward_delivery_total.is(':visible')) {
-                    element.value = $backward_delivery_total.val();
-                }
-
-                break;
-
-            case 'input-delivery_payer':
-                if (element.value == 'ThirdPerson') {
-                    $('[for="input-third_person"]').filter(':hidden').parent().fadeIn();
-                    $('#input-payment_type > option[value ="NonCash"]').prop('selected', true);
-                    $('#input-payment_type > option[value="Cash"]').prop({'disabled': true, 'selected': false});
-                } else {
-                    $('[for="input-third_person"]').filter(':visible').parent().fadeOut();
-                    $('#input-payment_type > option[value="Cash"]').prop('disabled', false);
-                }
-
-                $('#input-payment_type').trigger('change');
-
-                break;
-
-            case 'input-backward_delivery':
-                if (element.value == 'Money') {
-                    $('[for="input-backward_delivery_total"], [for="input-backward_delivery_payer"], [for="input-money_transfer_method"]').filter(':hidden').parent().fadeIn();
-
-                    $('#input-money_transfer_method').trigger('change');
-                } else {
-                    $('[for="input-backward_delivery_total"], [for="input-backward_delivery_payer"], [for="input-money_transfer_method"], [for="input-payment_card"]').filter(':visible').parent().fadeOut();
-                }
-
-                break;
-
-            case 'input-backward_delivery_total':
-                var $declared_cost = $('#input-declared_cost');
-
-                if (+element.value > +$declared_cost.val()) {
-                    $declared_cost.val(element.value);
-                }
-
-                break;
-
-            case 'input-money_transfer_method':
-                if (element.value == 'to_payment_card') {
-                    $('[for="input-payment_card"]').filter(':hidden').parent().fadeIn();
-                } else {
-                    $('[for="input-payment_card"]').filter(':visible').parent().fadeOut();
-                }
-
-                break;
-
-            case 'input-payment_control':
-                if (element.value) {
-                    $('#input-backward_delivery > option[value ="N"]').prop('selected', true).trigger('change');
-                } else {
-                    $('#input-backward_delivery > option[value ="Money"]').prop('selected', true).trigger('change');
-                }
-
-                break;
-
-            case 'input-preferred_delivery_date':
-                if (element.value && $('#input-recipient_address_type:checked').val() == 'doors') {
-                    $('[for="input-time_interval"]').filter(':hidden').parent().fadeIn();
-                    $('#input-recipient_city_name').trigger('change')
-                } else {
-                    $('[for="input-time_interval"]').filter(':visible').parent().fadeOut();
-                }
-
-                break;
-
-            case 'input-elevator':
-                if ($('#input-elevator:checked').val()) {
-                    $('#input-rise_on_floor').attr('disabled', true);
-                } else {
-                    $('#input-rise_on_floor').attr('disabled', false);
-                }
-
-                break;
-        }
-    }
-
-    $( function () {
-        $('[data-tooltip=true]').tooltip();
-
-        $('.date').datetimepicker( {pickTime: false} ).on('change', function () {
-            var input = $(this).find('input')[0];
-
-            formHandler(input);
-            validateForm(input);
-        } );
-
-        $('form').on('change', 'input, select, textarea', function() {
-            setTimeout(formHandler, 100, this);
-            setTimeout(validateForm, 200, this);
-        } );
-
-        $('#input-sender, input-sender_contact_person, #input-recipient_address, #input-recipient_address_type:checked, #input-departure_type, #input-delivery_payer, #input-backward_delivery, #input-elevator').each(function() {
-            formHandler(this);
-        } );
-
-        // Change totals list
-        $('#modal-totals-list').on('click', '#button-total_declared_cost_minus, #button-total_declared_cost_plus', function (e) {
-            var b = $(e.currentTarget),
-                cost = parseInt(b.parents('tr').find('td:eq(1)').text()),
-                total = $('#td-declared_cost_total')[0].outerText;
-
-            if (e.currentTarget.id == 'button-total_declared_cost_minus') {
-                b.replaceWith('<button type="button" class="btn btn-success btn-xs" id="button-total_declared_cost_plus"><i class="fa fa-plus"></i></button>');
-
-                total = total.replace(/-?\d+/, parseInt(total) - cost);
-            } else {
-                b.replaceWith('<button type="button" class="btn btn-danger btn-xs" id="button-total_declared_cost_minus"><i class="fa fa-minus"></i></button>');
-
-                total = total.replace(/-?\d+/, parseInt(total) + cost);
-            }
-
-            $('#td-declared_cost_total').html('<strong>' + total + '</strong>');
-        } );
-
-        // Search sender city
-        $('#input-sender_city_name').autocomplete( {
-            source: function(request, response) {
-                var post_data = 'city=' + encodeURIComponent(request) + '&region=' + encodeURIComponent($('#input-sender_region').val());
-
-                $.ajax( {
-                    url: 'index.php?route=extension/shipping/novaposhta/autocomplete&user_token={{ user_token }}',
-                    type: 'post',
-                    data: post_data,
-                    dataType: 'json',
-                    success: function(json) {
-                        response($.map(json, function(item) {
-                            return {
-                                label: item['FullDescription'],
-                                value: item['Description'],
-                                ref:  item['Ref']
-                            }
-                        } ));
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        console.log(textStatus);
-                    }
-                } );
-            },
-            select: function(item) {
-                $(this).val(item['value']).trigger('change');
-                setTimeout(function() { $('#input-sender_city').val(item['ref']); }, 150);
-            }
-        } );
-
-        // Search address
-        $('#input-sender_address_name').autocomplete( {
-            source: function(request, response) {
-                $.ajax( {
-                    url: 'index.php?route=extension/shipping/novaposhta/autocomplete&user_token={{ user_token }}',
-                    type: 'POST',
-                    data: 'address=' + encodeURIComponent(request) + '&filter=' + encodeURIComponent($('#input-sender_city').val()) + '&sender=' + encodeURIComponent($('#input-sender').val()),
-                    dataType: 'json',
-                    success: function(json) {
-                        response($.map(json, function(item) {
-                            return {
-                                label: item['Description'],
-                                value: item['Ref']
-                            }
-                        } ));
-                    }
-                } );
-            },
-            select: function(item) {
-                $(this).val(item['label']).trigger('change');
-                $(this).siblings('input[type="hidden"]').val(item['value']);
-            }
-        } );
-
-        // Search recipient
-        $('#input-recipient_name').autocomplete( {
-            source: function(request, response) {
-                $.ajax( {
-                    url: 'index.php?route=extension/shipping/novaposhta/autocomplete&user_token={{ user_token }}',
-                    type: 'POST',
-                    data: 'recipient_name=' + encodeURIComponent(request),
-                    dataType: 'json',
-                    success: function(json) {
-                        response($.map(json, function(item) {
-                            return {
-                                label: item['FullDescription'],
-                                value: item['Description'],
-                                ref:   item['Ref']
-                            }
-                        }));
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        console.log(textStatus);
-                    }
-                } );
-            },
-            select: function(item) {
-                $(this).val(item['value']).trigger('change');
-                setTimeout(function() { $('#input-recipient').val(item['ref']); }, 150);
-            }
-        } );
-
-        // Search recipient city
-        $('#input-recipient_city_name').autocomplete( {
-            source: function(request, response) {
-                var post_data;
-
-                if ($('#input-recipient_address_type:checked').val() == 'doors') {
-                	post_data = 'settlement=' + encodeURIComponent(request)
-
-					if ($('#input-recipient_region').val()) {
-						post_data += encodeURIComponent(' ' + $('#input-recipient_region option:selected').text());
+					if ($('#input-seats_amount').val() > 1) {
+						$('[for="input-pack_general"]').filter(':visible').parent().fadeOut();
+					} else {
+						$('[for="input-pack_general"]').filter(':hidden').parent().fadeIn();
 					}
-                } else {
-					post_data = 'city=' + encodeURIComponent(request) + '&region=' + encodeURIComponent($('#input-recipient_region').val());
-                }
+				} else {
+					$('[for*="input-weight-"], [for*="input-length-"], [for*="input-width-"], [for*="input-height-"], [for*="input-volume_weight-"], [for*="input-manual_processing-"], [for*="input-pack-"]').filter(':hidden').parent().fadeIn();
+					$('[for="input-weight_general"], [for="input-volume_general"], [for*="input-volume_weight_general"]').filter(':visible').parent().fadeOut();
+					$('[id*="text-seat-"]').filter(':hidden').fadeIn();
+					$('[for="input-pack_general"]').filter(':visible').parent().fadeOut();
+				}
 
-                $.ajax( {
-                    url: 'index.php?route=extension/shipping/novaposhta/autocomplete&user_token={{ user_token }}',
-                    type: 'post',
-                    data: post_data,
-                    dataType: 'json',
-                    success: function(json) {
-                        response($.map(json, function(item) {
-                            return {
-                                label:		  item['FullDescription'],
-                                value:		  item['Ref'],
-                                name:		  item['Description'],
-                                region_name:  item['Area'] || '',
-                                distric_name: item['Region'] || '',
-                            }
-                        } ));
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        console.log(textStatus);
-                    }
-                } );
-            },
-            select: function(item) {
-                $(this).val(item['name']).trigger('change');
-                $('#input-recipient_city').val(item['value']);
-                $('#input-recipient_region_name').val(item['region_name']);
-                $('#input-recipient_district_name').val(item['distric_name']);
-            }
-        } );
+				break;
 
-        // Search warehouse
-        $('#input-recipient_warehouse_name').autocomplete( {
-            source: function(request, response) {
-                $.ajax( {
-                    url: 'index.php?route=extension/shipping/novaposhta/autocomplete&user_token={{ user_token }}',
-                    type: 'POST',
-                    data: 'filter=' + encodeURIComponent($('#input-recipient_city').val()) + '&warehouse=' + encodeURIComponent(request),
-                    dataType: 'json',
-                    success: function(json) {
-                        response($.map(json, function(item) {
-                            return {
-                                label: item['Description'],
-                                value: item['Description'],
-                                ref:   item['Ref']
-                            }
-                        } ));
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        console.log(textStatus);
-                    }
-                } );
-            },
-            select: function(item) {
-                $(this).val(item['value']).trigger('change');
-                $(this).siblings('input[type="hidden"]').val(item['ref']);
-            }
-        } );
+			case 'input-pack_general':
+			case (element.id.match(/input-pack-/) || {}).input:
+				if ($(element).is(':checked')) {
+					$(element).parents('.col-sm-2').siblings('.col-sm-7').filter(':hidden').fadeIn();
+				} else {
+					$(element).parents('.col-sm-2').siblings('.col-sm-7').filter(':visible').fadeOut();
+				}
 
-        // Search street
-        $('#input-recipient_street_name').autocomplete( {
-            source: function(request, response) {
-                $.ajax( {
-                    url: 'index.php?route=extension/shipping/novaposhta/autocomplete&user_token={{ user_token }}',
-                    type: 'POST',
-                    data: 'filter=' + encodeURIComponent($('#input-recipient_city').val()) + '&street=' + encodeURIComponent(request),
-                    dataType: 'json',
-                    success: function(json) {
-                        response($.map(json, function(item) {
-                            return {
-                                label: item['Description'],
-                                value: item['Description'],
-                                ref:   item['Ref']
-                            }
-                        } ));
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        console.log(textStatus);
-                    }
-                } );
-            },
-            select: function(item) {
-                $(this).val(item['value']).trigger('change');
-                $(this).siblings('input[type="hidden"]').val(item['ref']);
-            }
-        } );
+				break;
 
-        // Departure description
-        $('#input-departure_description').autocomplete({
-            source: function(request, response) {
-                $.ajax( {
-                    url: 'index.php?route=extension/shipping/novaposhta/autocomplete&user_token={{ user_token }}',
-                    type: 'post',
-                    data: 'departure_description=' + encodeURIComponent(request),
-                    dataType: 'json',
-                    success: function(json) {
-                        response($.map(json, function(item) {
-                            return {
-                                label: item['Description'],
-                                value: item['Description'],
-                            }
-                        } ));
-                    }
-                } );
-            },
-            select: function(item) {
-                $(this).val(item['value']).triggerHandler('change');
-            }
-        } );
+			case (element.id.match(/input-tires_and_wheels_/) || {}).input:
+				var c = 0;
 
-        // Save CN
-        $('#button-save').on('click', function () {
-            var $post_data = $('input[type="text"], input[type="radio"]:checked, input[type="checkbox"]:checked, select, textarea').filter(':visible').add('input[type="hidden"]');
+				$('input[id^="input-tires_and_wheels"]').each(function() {
+					c += +this.value;
+				} );
 
-            $.ajax( {
-                url: 'index.php?route=extension/shipping/novaposhta/saveCN&order_id={{ order_id }}&cn_ref={{ cn_ref }}&user_token={{ user_token }}',
-                type: 'POST',
-                data: $post_data,
-                dataType: 'json',
-                beforeSend: function() {
-                    $('body').fadeTo('fast', 0.8).prepend('<div id="ocmax-loader" style="position: fixed; top: 50%;	left: 50%; z-index: 9999;"><i class="fa fa-spinner fa-spin fa-3x fa-fw"></i></div>');
-                },
-                complete: function(json){
-                    var $alerts = $('.alert-danger, .alert-success');
+				$('#input-seats_amount').val(c);
 
-                    if ($alerts.length !== 0) {
-                        setTimeout(function() { $alerts.remove(); }, 15000);
-                    }
+				break;
 
-                    if (json['errors'] != 'undefined' || json['warning'] != 'undefined') {
-                        $('html, body').animate({ scrollTop: $('.has-error, .alert').offset().top }, 1000);
-                    }
+			case 'input-volume_general':
+				$('#input-volume_weight_general').val((element.value * 250).toFixed(3));
 
-                    $('body').fadeTo('fast', 1)
-                    $('#ocmax-loader').remove();
-                },
-                success: function(json) {
-                    if (json['success']) {
-                        location.href = 'index.php?route=extension/shipping/novaposhta/getCNList&filter_departure_date_from=' + json['success'] + '&user_token={{ user_token }}';
-                    } else {
-                        $('.help-block').remove();
-                        $('div').removeClass('has-error has-success');
+				break;
 
-                        checkErrors(json);
-                    }
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    console.log(textStatus);
-                },
-            } );
-        } );
-    } );
+			case (element.id.match(/input-length-/) || {}).input:
+			case (element.id.match(/input-width-/) || {}).input:
+			case (element.id.match(/input-height-/) || {}).input:
+				var i = parseInt(element.id.match(/\d+/));
+				$('#input-volume_weight-' + i).val(($('#input-length-' + i).val() * $('#input-width-' + i).val() * $('#input-height-' + i).val() / 1000000 * 250).toFixed(3)).trigger('change');
+
+				break;
+
+			case (element.id.match(/input-seat-calc-volume-/) || {}).input:
+				$(element).parents('tr').find('input[id^="input-seat-calc-volume_weight-"]').val((element.value * 250).toFixed(3));
+
+				break;
+
+			case (element.id.match(/input-seat-calc-length-/) || {}).input:
+			case (element.id.match(/input-seat-calc-width-/) || {}).input:
+			case (element.id.match(/input-seat-calc-height-/) || {}).input:
+				var
+						$row = $(element).parents('tr'),
+						length = $row.find('input[id^="input-seat-calc-length-"]').val(),
+						width = $row.find('input[id^="input-seat-calc-width-"]').val(),
+						height = $row.find('input[id^="input-seat-calc-height-"]').val();
+
+				$row.find('input[id^="input-seat-calc-volume-"]').val((width * length * height / 1000000).toFixed(3)).trigger('change');
+
+				break;
+
+			case 'input-declared_cost':
+				var $backward_delivery_total = $('#input-backward_delivery_total');
+
+				if (+element.value < +$backward_delivery_total.val() && $backward_delivery_total.is(':visible')) {
+					element.value = $backward_delivery_total.val();
+				}
+
+				break;
+
+			case 'input-payer':
+				if (element.value == 'ThirdPerson') {
+					$('[for="input-third_person"]').filter(':hidden').parent().fadeIn();
+					$('#input-payment_type > option[value ="NonCash"]').prop('selected', true);
+					$('#input-payment_type > option[value="Cash"]').prop({'disabled': true, 'selected': false});
+				} else {
+					$('[for="input-third_person"]').filter(':visible').parent().fadeOut();
+					$('#input-payment_type > option[value="Cash"]').prop('disabled', false);
+				}
+
+				$('#input-payment_type').trigger('change');
+
+				break;
+
+			case 'input-backward_delivery':
+				if (element.value == 'Money') {
+					$('[for="input-backward_delivery_total"], [for="input-backward_delivery_payer"]').filter(':hidden').parent().fadeIn();
+				} else {
+					$('[for="input-backward_delivery_total"], [for="input-backward_delivery_payer"]').filter(':visible').parent().fadeOut();
+				}
+
+				break;
+
+			case 'input-backward_delivery_total':
+				var $declared_cost = $('#input-declared_cost');
+
+				if (+element.value > +$declared_cost.val()) {
+					$declared_cost.val(element.value);
+				}
+
+				break;
+
+			case 'input-payment_control':
+				if (element.value) {
+					$('#input-backward_delivery > option[value ="N"]').prop('selected', true).trigger('change');
+				} else {
+					$('#input-backward_delivery > option[value ="Money"]').prop('selected', true).trigger('change');
+				}
+
+				break;
+
+			case 'input-preferred_delivery_date':
+				if (element.value && $('#input-recipient_address_type:checked').val() == 'doors') {
+					$('[for="input-time_interval"]').filter(':hidden').parent().fadeIn();
+					$('#input-recipient_settlement_name').trigger('change')
+				} else {
+					$('[for="input-time_interval"]').filter(':visible').parent().fadeOut();
+				}
+
+				break;
+
+			case 'input-elevator':
+				if ($('#input-elevator:checked').val()) {
+					$('#input-rise_on_floor').attr('disabled', true);
+				} else {
+					$('#input-rise_on_floor').attr('disabled', false);
+				}
+
+				break;
+		}
+	}
+
+	function getRecipients() {
+		$.ajax({
+			url: 'index.php?route=extension/shipping/novaposhta/getNPData&user_token={{ user_token }}',
+			type: 'POST',
+			data: 'action=getRecipients',
+			dataType: 'json',
+			success: function (json) {
+				var
+						descr,
+						option_s,
+						html = '<option value="">{{ text_select }}</option>';
+
+				for (var i in json) {
+					if (json[i]['CounterpartyType'] == 'Organization') {
+						descr = json[i]['Description'] + ' {{ entry_edrpou }} ' + json[i]['EDRPOU'];
+					} else {
+						descr = json[i]['Description'];
+					}
+
+					if (($('#input-recipient_edrpou').val() && json[i]['EDRPOU'] == $('#input-recipient_edrpou').val()) || (json[i]['Ref'] && json[i]['Ref'] == '{{ recipient }}') || (!json[i]['Ref'] && json[i]['Description'] == '{{ recipient_name }}')) {
+						option_s = ' selected="selected"';
+					} else {
+						option_s = '';
+					}
+
+					html += '<option value="' + json[i]['Ref'] + '"' + option_s + '>' + descr + '</option>';
+				}
+
+				$('#input-recipient').html(html).selectpicker('refresh').trigger('change');
+			}
+		});
+	}
+
+	$( function () {
+		/* START Preparation */
+		$.ajaxSetup({
+			beforeSend: function () {
+				$('body').fadeTo('fast', 0.7).prepend('<div id="ocmax-loader" style="position: fixed; top: 50%;	left: 50%; z-index: 9999;"><i class="fa fa-spinner fa-spin fa-3x fa-fw"></i></div>');
+			},
+			complete: function () {
+				$('body').fadeTo('fast', 1);
+				$('#ocmax-loader').remove();
+			},
+			error: function (jqXHR, textStatus, errorThrown) {
+				console.log(textStatus);
+			}
+		});
+
+		getRecipients();
+
+		$('.selectpicker').selectpicker({
+			liveSearchStyle: 'startsWith',
+			iconBase: 'fa',
+			tickIcon: 'fa-check'
+		});
+
+		$('[data-tooltip=true]').tooltip();
+
+		$('.date').datetimepicker( {pickTime: false} ).on('change', function () {
+			var input = $(this).find('input')[0];
+
+			formHandler(input);
+			validateForm(input);
+		});
+
+		$('form').on('change', 'input, select, textarea', function() {
+			setTimeout(formHandler, 100, this);
+			setTimeout(validateForm, 200, this);
+		});
+
+		$('#input-sender_address_pick_up, #input-sender, #input-sender_contact_person, #input-sender_region, #input-recipient_address_type:checked, #input-recipient, #input-recipient_region, #input-departure_type, #input-general_parameters, #input-pack_general, input[id^="input-pack-"], #input-delivery_payer, #input-backward_delivery, #input-elevator').each(function() {
+			formHandler(this);
+		});
+		/* END Preparation */
+
+		/* START Change totals list */
+		$('#modal-totals-list').on('click', '#button-total_declared_cost_minus, #button-total_declared_cost_plus', function (e) {
+			var b = $(e.currentTarget),
+					cost = parseInt(b.parents('tr').find('td:eq(2)').text()),
+					total = $('#td-declared_cost_total')[0].outerText;
+
+			if (e.currentTarget.id == 'button-total_declared_cost_minus') {
+				b.replaceWith('<button type="button" class="btn btn-success btn-xs" id="button-total_declared_cost_plus"><i class="fa fa-plus"></i></button>');
+
+				total = total.replace(/-?\d+/, parseInt(total) - cost);
+			} else {
+				b.replaceWith('<button type="button" class="btn btn-danger btn-xs" id="button-total_declared_cost_minus"><i class="fa fa-minus"></i></button>');
+
+				total = total.replace(/-?\d+/, parseInt(total) + cost);
+			}
+
+			$('#td-declared_cost_total').html('<strong>' + total + '</strong>');
+		});
+		/* END Change totals list */
+
+		/* START Search recipient settlement */
+		$('#input-recipient_settlement_name').autocomplete({
+			source: function(request, response) {
+				var post_data;
+
+				post_data = 'settlement=' + encodeURIComponent(request)
+
+				if ($('#input-recipient_region').val()) {
+					post_data += encodeURIComponent(' ' + $('#input-recipient_region option:selected').text());
+				}
+
+				$.ajax({
+					url: 'index.php?route=extension/shipping/novaposhta/autocomplete&user_token={{ user_token }}',
+					type: 'post',
+					data: post_data,
+					dataType: 'json',
+					beforeSend: function () {
+					},
+					complete: function () {
+					},
+					success: function(json) {
+						response($.map(json, function(item) {
+							return {
+								label:		  item['FullDescription'],
+								value:		  item['Ref'],
+								name:		  item['Description'],
+								region_name:  item['Area'] || '',
+								distric_name: item['Region'] || '',
+							}
+						} ));
+					}
+				});
+			},
+			select: function(item) {
+				$(this).val(item['name']).trigger('change');
+				$('#input-recipient_settlement').val(item['value']);
+				$('#input-recipient_region_name').val(item['region_name']);
+				$('#input-recipient_district_name').val(item['distric_name']);
+			}
+		});
+		/* END Search recipient settlement */
+
+		/* START Search street */
+		$('#input-recipient_street_name').autocomplete({
+			source: function(request, response) {
+				$.ajax( {
+					url: 'index.php?route=extension/shipping/novaposhta/autocomplete&user_token={{ user_token }}',
+					type: 'POST',
+					data: 'filter=' + encodeURIComponent($('#input-recipient_settlement').val()) + '&street=' + encodeURIComponent(request),
+					dataType: 'json',
+					beforeSend: function () {
+					},
+					complete: function () {
+					},
+					success: function(json) {
+						response($.map(json, function(item) {
+							return {
+								label: item['Description'],
+								value: item['Description'],
+								ref:   item['Ref']
+							}
+						} ));
+					}
+				});
+			},
+			select: function(item) {
+				$(this).val(item['value']).trigger('change');
+				$('#input-recipient_street').val(item['ref']);
+			}
+		});
+		/* END Search street */
+
+		/* START Search departure description */
+		$('#input-departure_description').autocomplete({
+			source: function(request, response) {
+				$.ajax({
+					url: 'index.php?route=extension/shipping/novaposhta/autocomplete&user_token={{ user_token }}',
+					type: 'post',
+					data: 'departure_description=' + encodeURIComponent(request),
+					dataType: 'json',
+					beforeSend: function () {
+					},
+					complete: function () {
+					},
+					success: function(json) {
+						response($.map(json, function(item) {
+							return {
+								label: item['Description'],
+								value: item['Description'],
+							}
+						}));
+					}
+				});
+			},
+			select: function(item) {
+				$(this).val(item['value']).triggerHandler('change');
+			}
+		});
+		/* END Search departure description */
+
+		/* START Save CN */
+		$('#button-save').on('click', function () {
+			var $post_data = $('input[type="text"], input[type="radio"]:checked, input[type="checkbox"]:checked, select, textarea').filter(':visible').add('input[type="hidden"]').add('div.toggle:visible input[type="checkbox"]:checked');
+
+			$.ajax({
+				url: 'index.php?route=extension/shipping/novaposhta/saveCN&order_id={{ order_id }}&cn_ref={{ cn_ref }}&user_token={{ user_token }}',
+				type: 'POST',
+				data: $post_data,
+				dataType: 'json',
+				beforeSend: function() {
+					$('body').fadeTo('fast', 0.8).prepend('<div id="ocmax-loader" style="position: fixed; top: 50%;	left: 50%; z-index: 9999;"><i class="fa fa-spinner fa-spin fa-3x fa-fw"></i></div>');
+				},
+				complete: function(json){
+					var $alerts = $('.alert-danger, .alert-success');
+
+					if ($alerts.length !== 0) {
+						setTimeout(function() { $alerts.remove(); }, 15000);
+					}
+
+					if (json['errors'] != 'undefined' || json['warning'] != 'undefined') {
+						$('html, body').animate({ scrollTop: $('.has-error, .alert').offset().top }, 1000);
+					}
+
+					$('body').fadeTo('fast', 1)
+					$('#ocmax-loader').remove();
+				},
+				success: function(json) {
+					if (json['success']) {
+						location.href = 'index.php?route=extension/shipping/novaposhta/getCNList&filter_departure_date_from=' + json['success'] + '&user_token={{ user_token }}';
+					} else {
+						$('.help-block').remove();
+						$('div').removeClass('has-error has-success');
+
+						checkErrors(json);
+					}
+				}
+			});
+		});
+		/* END Save CN */
+	});
 //--></script>
 {{ footer }}

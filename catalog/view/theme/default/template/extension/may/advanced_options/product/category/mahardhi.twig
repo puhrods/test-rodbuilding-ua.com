@@ -1,0 +1,167 @@
+{{ may_advanced_options_template.options_in_list }}
+{% if route != 'product/product' %}
+{{ may_advanced_options_template.style }}
+{% endif %}
+<style type="text/css">
+.in-list-view {
+    display: none;
+}
+.product-list .in-list-view {
+    display: block;
+}
+.product-list .in-grid-view {
+    display: none;
+}
+.product-grid .in-grid-view {
+    display: block;
+    text-align: center;
+}
+.may-swatches.in-grid-view {
+    padding-top: 15px;
+}
+.may-swatches.in-list-view {
+    padding-top: 0;
+    padding-bottom: 15px;
+}
+</style>
+{% if route != 'product/product' %}
+{{ may_advanced_options_template.js_helper }}
+{% endif %}
+<script type="text/javascript">
+var MayAdvancedOptionsList = function(itemWrapperSelector) {
+    $('#may-advanced-options-for-list .may-swatches').each(function() {
+        // for list view
+        var $clone = $(this).clone();
+        var $wrapper = $('.image a[href="' + $(this).data('product-link') + '"]').closest(itemWrapperSelector).find('div.caption');
+        $wrapper.addClass('may-swatches-wrapper');
+        $clone.addClass('in-list-view');
+        $clone.appendTo($wrapper);
+        // for grid view
+        var $wrapper = $('.image a[href="' + $(this).data('product-link') + '"]').closest(itemWrapperSelector).find('div.thumb-description');
+        $wrapper.addClass('may-swatches-wrapper');
+        $(this).addClass('in-grid-view');
+        $(this).prependTo($wrapper);
+    });
+    setTimeout(function() {
+        $(itemWrapperSelector + ' .may-swatches input[type="radio"]').each(function() {
+            $(this).prop('checked', false);
+        });
+    }, 500);
+    $('#may-advanced-options-for-list').remove();
+    
+    $(document).on('{{ may_advanced_options_config.option_select_effect_in_list ? 'mouseenter' : 'click' }}', itemWrapperSelector + ' .may-swatches label', function() {
+        var $wrapper = $(this).closest(itemWrapperSelector);
+        var option = $(this).find('.may-advanced-option').data('option');
+      
+        var preselected_option_value_ids = JSON.parse(localStorage.getItem('preselected_option_value_ids')) || {};
+        preselected_option_value_ids['product_' + option.product_id] = option.option_value_id;
+        localStorage.setItem('preselected_option_value_ids', JSON.stringify(preselected_option_value_ids));
+
+        $wrapper.find('.button-group button.addcart').each(function() {
+            $(this).get(0).onclick = function() {
+                var params = [
+                    'option[' + option.product_option_id + ']=' + option.product_option_value_id,
+                    'option[model]=' + option.model,
+                    'option[sku]=' + option.sku,
+                    'option[upc]=' + option.upc,
+                    'option[ean]=' + option.ean,
+                    'option[jan]=' + option.jan,
+                    'option[isbn]=' + option.isbn,
+                    'option[location]=' + option.location
+                    //'option[dimension_l]=' + parseFloat(option.dimension_l),
+                    //'option[dimension_w]=' + parseFloat(option.dimension_w),
+                    //'option[dimension_h]=' + parseFloat(option.dimension_h),
+                    //'option[weight]=' + parseFloat(option.weight),
+                    //'option[weight_unit]=' + $wrapper.find('.may-swatches').data('weight-unit'),
+                    //'option[length_unit]=' + $wrapper.find('.may-swatches').data('length-unit')
+                ];
+                if (option.image.length) {
+                    params.push('option[image]=' + option.image[0].origin);
+                }
+
+                cart.add(option.product_id, '1&' + params.join('&'));
+                return false;
+            }
+        });
+
+        // Image
+        if (option.image.length) {
+            $wrapper.find('a[href="' + $(this).closest('.may-swatches').data('product-link') + '"] img').attr('src', option.image[0].popup);
+        }
+
+        // Price
+        var price = MayHelper.Price.toNumber($(this).closest('.may-swatches').data('price'));
+        var special = MayHelper.Price.toNumber($(this).closest('.may-swatches').data('special'));
+        var base_price = MayHelper.Price.toNumber($(this).closest('.may-swatches').data('tax'));
+
+        if (option['price_prefix'] == "+") {
+            if (option['price']) {
+                price = price + MayHelper.Price.toNumber(option['price']);
+                special = special + MayHelper.Price.toNumber(option['price']);
+            }
+            if (option['base_price']) {
+                base_price = base_price + MayHelper.Price.toNumber(option['base_price']);
+            }
+        } else if (option['price_prefix'] == "-") {
+            if (option['price']) {
+                price = price - MayHelper.Price.toNumber(option['price']);
+                special = special - MayHelper.Price.toNumber(option['price']);
+            }
+            if (option['base_price']) {
+                base_price = base_price - MayHelper.Price.toNumber(option['base_price']);
+            }
+        }
+
+        price = MayHelper.Price.toString(price);
+        special = MayHelper.Price.toString(special);
+        base_price = MayHelper.Price.toString(base_price);
+
+        var tax_html = "";
+        if ($wrapper.find('.price-tax').length) {
+            tax_html = '<span class="price-tax">{{ text_tax }} ' + base_price + '</span>';
+        }
+
+        if ($wrapper.find('.price-new').length) {
+            $wrapper.find('.price-new').html(special);
+            $wrapper.find('.price-old').html(price);
+            $wrapper.find('.price-tax').replaceWith(tax_html);
+        } else {
+            $wrapper.find('.price').html(price + ' ' + tax_html);
+        }
+    });
+    {% if may_advanced_options_config.option_select_effect_in_list == 1 %}
+    $(document).on('mouseleave', itemWrapperSelector + ' .may-swatches', function() {
+        var $wrapper = $(this).closest(itemWrapperSelector);
+
+        $('a[href="' + $(this).data('product-link') + '"]').find('img').attr('src', $(this).data('thumb-origin'));
+
+        var price = $(this).data('price');
+        var special = $(this).data('special');
+        var base_price = $(this).data('tax');
+
+        var tax_html = "";
+        if ($wrapper.find('.price-tax').length) {
+            tax_html = '<span class="price-tax">{{ text_tax }} ' + base_price + '</span>';
+        }
+
+        if ($wrapper.find('.price-new').length) {
+            $wrapper.find('.price-new').html(special);
+            $wrapper.find('.price-old').html(price);
+            $wrapper.find('.price-tax').replaceWith(tax_html);
+        } else {
+            $wrapper.find('.price').html(price + ' ' + tax_html);
+        }
+    });
+    $(document).on('click', itemWrapperSelector + ' .may-advanced-option', function() {
+        var product_link = $(this).closest('.may-swatches').data('product-link');
+        var option = $(this).data('option');
+        var params = {};
+        params[$(this).closest('.may-swatches').data('option-name')] = option.name;
+        location.href = product_link + ((product_link.indexOf('?') !== -1) ? '&' : '?') + $.param(params).toLowerCase();
+    });
+    {% endif %}
+}
+
+localStorage.removeItem('preselected_option_value_ids');
+MayAdvancedOptionsList('.product-thumb');
+</script>

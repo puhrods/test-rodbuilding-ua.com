@@ -1,0 +1,108 @@
+{% if check_license != true %}
+	{% if status != 2 %}
+<legend>{{ text_license_request }}</legend>
+<div class="alert alert-info" role="alert">{{ text_about_license }}</div>
+<div class="form-group">
+	<label class="col-sm-2 control-label" for="email"><span data-toggle="tooltip" title="{{ help_email }}">{{ entry_email }}</span></label>
+	<div class="col-sm-4">
+		<input type="text" name="email" value="{{ email }}" placeholder="{{ entry_email }}" id="email" class="form-control" />
+	</div>
+	<label class="col-sm-2 control-label" for="domain"><span data-toggle="tooltip" title="{{ help_domain }}">{{ entry_domain }}</span></label>
+	<div class="col-sm-4">
+		<textarea rows="1" name="domain" id="domain" class="form-control">{{ domain }}</textarea></p>
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-sm-2 control-label" for="market"><span data-toggle="tooltip" title="{{ help_market }}">{{ entry_market }}</span></label>
+	<div class="col-sm-4">
+		<select name="market" id="market" class="form-control">
+			<option value="">{{ text_select }}</option>
+			<option value="opencartforum.com">opencartforum.com</option>
+			<option value="oc-max.com">oc-max.com</option>
+			<option value="opencart.com">opencart.com</option>
+		</select>
+	</div>
+	<label class="col-sm-2 control-label" for="payment_id"><span data-toggle="tooltip" title="{{ help_payment_id }}">{{ entry_payment_id }}</span></label>
+	<div class="col-sm-4">
+		<input type="text" name="check" value="" placeholder="{{ entry_payment_id }}" id="payment_id" class="form-control" />
+	</div>
+</div>
+<div class="form-group">
+    <div class="col-sm-12">
+        <a onclick="purchase('send');" id="send-purchase" data-toggle="tooltip" title="" class="btn btn-info btn-block col-sm-6" data-original-title="{{ help_send }}"><i class="fa fa-envelope-o fa-2x"></i></a>
+    </div>	
+</div>
+	{% endif %}
+<legend>{{ text_license }}</legend>
+<div class="form-group">
+	<label class="col-sm-2 control-label" for="input-license"><span data-toggle="tooltip" title="{{ help_license }}">{{ entry_license }}</span></label>
+	<div class="col-sm-10">
+		<div class="input-group">
+			<input type="text" name="{{ extension }}_license" value="{{ license }}" placeholder="{{ entry_license }}" id="input-license" class="form-control"/>
+			<span class="input-group-btn">
+				<a onclick="purchase('activate');" id="activate" data-toggle="tooltip" title="" class="btn btn-primary" data-original-title="{{ help_activate }}"><i class="fa fa-key"></i></a>
+			</span>
+		</div>
+	</div>
+</div>
+{% else %}
+<input type="hidden" name="{{ extension }}_license" value="{{ license }}" id="input-license" class="form-control" />
+{% endif %}
+<legend>{{ text_contacts }}</legend>
+<p>{{ text_about_support }}</p>
+<ul style="list-style-type: none;">
+	<li><i class="fa fa-weixin" aria-hidden="true"></i> {{ text_support_telegram }}</li>
+	<li><i class="fa fa-envelope" aria-hidden="true"></i> {{ text_support_email }}</li>
+	<li><i class="fa fa-link" aria-hidden="true"></i> <a href="http://{{ text_support_site }}" target="_blank">{{ text_support_site }}</a></li>
+</ul>
+<script type="text/javascript"><!--
+	function purchase(action) {
+		var post_data = 'action=' + action;
+
+		if (action == 'send') {
+			post_data += '&email=' + encodeURIComponent($('#email').val()) + '&domain=' + encodeURIComponent($('#domain').val()) + '&market=' + encodeURIComponent($('#market').val()) + '&payment_id=' + encodeURIComponent($('#payment_id').val());
+		} else if (action == 'activate') {
+			post_data += '&license=' + $('#input-license').val();
+		}
+
+		$.ajax({
+			url: '{{ action }}&user_token={{ user_token }}',
+			type: 'POST',
+			data: post_data,
+			dataType: 'json',
+			beforeSend: function () {
+				$('.alert').remove();
+				$('body').fadeTo('fast', 0.7).prepend('<div id="ocmax-loader" style="position: fixed; top: 50%;	left: 50%; z-index: 9999;"><i class="fa fa-spinner fa-spin fa-3x fa-fw"></i></div>');
+			},
+			complete: function () {
+				var $alerts = $('.alert-danger, .alert-success');
+
+				if ($alerts.length !== 0) {
+					setTimeout(function() { $alerts.fadeOut(); }, 5000);
+				}
+
+				$('body').fadeTo('fast', 1)
+				$('#ocmax-loader').remove();
+			},
+			success: function (json) {
+				if (json['error']) {
+					$('.container-fluid:eq(2)').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+				}
+
+				if (json['success']) {
+					$('.container-fluid:eq(2)').prepend('<div class="alert alert-success"><i class="fa fa-check-circle"></i> ' + json['success'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+				}
+
+				$('html, body').animate({ scrollTop: 0 }, 'slow');
+
+				if (json['redirect']) {
+					setTimeout(function() { location.reload(); }, 1000);
+				}
+			},
+			error: function (jqXHR, textStatus, errorThrown) {
+				console.log(textStatus);
+				alert(errorThrown);
+			}
+		});
+	}
+//--></script>

@@ -1,0 +1,105 @@
+<legend>
+    <i class="fa fa-star-o" aria-hidden="true"></i> {{ tab_name_settings_statuses }} 
+    <button form="help_modals" class="pull-right hm-help btn btn-primary btn-sm" data-toggle="modal" data-target="#Statuses_Modal">
+        <i class="fa fa-info" aria-hidden="true"></i> - {{ help_name }} 
+    </button>
+</legend>
+<div class="row">
+    <div class="panel-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead>
+                <tr>
+                    <td class="text-left name">
+                        <label class="control-label">
+                        <span data-toggle="tooltip" title="" data-original-title="{{ column_name_titles }}">
+                            {{ column_name }} 
+                        </span>
+                        </label>
+                    </td>
+                    <td class="text-left">
+                        <label class="control-label">
+                        <span data-toggle="tooltip" title="" data-original-title="{{ column_description_titles }}">
+                            {{ column_description }} 
+                        </span>
+                        </label>
+                    </td>
+                    <td class="text-center mini-style">
+                        <label class="control-label">
+                        <span data-toggle="tooltip" title="" data-original-title="{{ column_edit_titles }}">
+                            {{ column_edit }} 
+                        </span>
+                        </label>
+                    </td>
+                    <td class="text-center mini-style">
+                        <label class="control-label">
+                        <span data-toggle="tooltip" title="" data-original-title="{{ column_delete_titles }}">
+                           {{ column_delete }} 
+                        </span>
+                        </label>
+                    </td>
+                </tr>
+                </thead>
+                <tbody>
+                {% if (settings_statuses) %}
+                    {% set settings_statuses_counter = 1 %} 
+                    {% for setting_statuses in settings_statuses %} 
+                        <input type="hidden" name="setting_statuses[{{ settings_statuses_counter }}][statuses_id]" value="{{ setting_statuses['statuses_id'] }}">
+                <tr>
+                    <td class="text-left">{{ setting_statuses['name'] }}</td>
+                    <td class="text-left">{{ setting_statuses['description'] }}</td>
+                    <td class="text-center"><a href="{{ setting_statuses['edit'] }}" data-toggle="tooltip" title="{{ button_edit }}" class="btn btn-primary"><i class="fa fa-pencil"></i></a></td>
+                    <td class="text-center"><a href="{{ setting_statuses['delete'] }}" data-toggle="tooltip" title="{{ button_delete }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></a></td>
+                </tr>
+                {% set settings_statuses_counter = settings_statuses_counter + 1 %} 
+                    {% endfor %} 
+                {% endif %} 
+                </tbody>
+                <tfoot>
+                <tr>
+                    <td colspan="3"></td>
+                    <td class="text-center">
+                        <a href="{{ add_setting_statuses }}" data-toggle="tooltip" title="{{ button_add }}" class="btn btn-primary"><i class="fa fa-plus-circle"></i></a>
+                    </td>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Start Modal Statuses -->
+<div class="modal fade" id="Statuses_Modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times" aria-hidden="true"></i></button>
+                <h4 class="modal-title" id="myModalLabel"><i class="fa fa-star-o" aria-hidden="true"></i> {{ help_name_statuses }}</h4>
+            </div>
+            <div class="modal-body">
+                <div class="text-center">{{ help_text }}</div>
+                <div class="helper-info">{{ help_description_statuses }}</div>
+                <div class="text-center">{{ help_third_statuses }}</div>
+                <div class="helper-info">{{ help_fourth_statuses }}</div>
+                <div class="text-center">{{ help_fifth_statuses }}</div>
+                <div class="helper-info">{{ help_sixth_statuses }}</div>
+                <div class="text-center">{{ help_seventh_statuses }}</div>
+                <div class="helper-info">{{ help_eighth_statuses }}</div>
+                <div class="text-center">{{ help_thirteenth_statuses }}</div>
+                <div class="helper-info">{{ help_fourteenth_statuses }}</div>
+                <div class="text-center">{{ help_first_statuses }}</div>
+                <div class="helper-info">{{ help_second_statuses }}</div>
+                <div class="text-center">{{ help_warning }}</div>
+                <div class="helper-info">{{ help_end }}</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal"> {{ help_ok }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END Modal Help Statuses -->
+
+<script type="text/javascript">
+    $('.bootstrap-switcher').bootstrapSwitch();
+</script>

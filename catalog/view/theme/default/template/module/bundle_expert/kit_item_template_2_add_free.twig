@@ -1,0 +1,111 @@
+<div class="col-sm-12 kit-item free-product-add-button free-product-template" data-empty-item="1" data-item-position="{{ item_position }}" data-item-position-free="-1" data-is-main-product-position="0">
+    <div class="kit-item-product hidden {% if (display_options_input) %} {{ 'display-options-input' }}{% endif %} " style="padding: 0;position:relative;" data-item-position="{{ item_position }}" data-item-position-free="-1" data-item-product-position="{{ item_product_position }}" data-product-id="-1" >
+        <input type="hidden" name="kit_items[{{ item_position }}][product_id]" data-id="input-product-id" value="-1">
+        <input type="hidden" name="kit_items[{{ item_position }}][item_position]" data-id="input-item-position" value="{{ item_position }}">
+        <input type="hidden" name="kit_items[{{ item_position }}][item_position_free]" data-id="input-item-position-free" value="-1">
+        <input type="hidden" name="kit_items[{{ item_position }}][quantity]" data-id="input-quantity" value="">
+        <input type="hidden" name="kit_items[{{ item_position }}][quantity_edit]" data-id="input-for-quantity-edit" value="">
+        <input type="hidden" name="kit_items[{{ item_position }}][empty_mode_item_is_empty]" data-id="input-is-item-is-empty" value="1">
+        <input type="hidden" name="kit_items[{{ item_position }}][is_free_product]" data-id="input-is-free-product" value="1">
+        <input type="hidden" name="kit_items[{{ item_position }}][free_product_in_kit]" data-id="input-free-product-in-kit" value="0">
+        <div class="row be-product-thumb transition " style="border: none; margin-bottom: 0; overflow: visible;padding-left: 8px;" onclick="bundle_expert_form.set_active_product(this);">
+            <div class="be-product-thumb-overlay">
+            </div>
+
+            <div class="col-xs-12 col-sm-2 be-image">
+                <a>
+                    <div style="display: inline-block; position: relative;">
+                        <img src="" alt="" title="" class="img-responsive" />
+                        <div class="active-item-underline"></div>
+
+                        <div class="item-quantity hidden" style=""></div>
+
+                        <div class="item-price-discount hidden" style=""></div>
+
+                    </div>
+                </a>
+
+
+            </div>
+            <div class="col-xs-12 col-sm-5 text-left text-xs-center" style="padding: 0 8px;">
+                <h4 class="be-product-title" style="margin-bottom: 4px"><a style="">{{ '' }}</a></h4>
+
+                <div class="product-options-list" style="margin-bottom: 4px">
+
+                </div>
+
+                <div class="product-options-values" style="display: none">
+
+
+                </div>
+
+            </div>
+
+
+
+            <div class="col-xs-12 col-sm-3 text-right text-xs-center table-item-quantity " style="text-align: center">
+                <span class="quantity-buttons">
+                    <span class="edit-buttons-enable-container ">
+                        <a class="btn btn-xs be-btn-minus" onclick="bundle_expert.on_click_change_quantity(this,-1);event.stopPropagation()"><i class="fa fa-minus" style="font-size: 12px;margin: 0px"></i></a>
+                        <input name="kit_items[{{ item_position }}][quantity_field]" class="input-quantity-field" type="text" size="2"  onchange="bundle_expert.on_click_change_quantity(this,0)" value="0" style="text-align: center" onclick="event.stopPropagation();">
+
+                        <a class="btn btn-xs be-btn-plus" onclick="bundle_expert.on_click_change_quantity(this,1);event.stopPropagation()"><i class="fa fa-plus"  style="font-size: 12px;margin: 0px"></i></a>
+                    </span>
+                    <span class="edit-buttons-disable-container hidden">
+                        <span style="padding: 0 4px">x </span>
+                    </span>
+                </span>
+
+                <div style="margin-top: 8px;z-index: 10">
+                        <span class="remove-item-button" style="" onclick="bundle_expert.on_click_remove_product_button(this);event.stopPropagation()" >
+                            {{ text_remove_from_kit }}
+                        </span>
+                </div>
+            </div>
+
+            <div class="col-xs-12 col-sm-2 text-right text-xs-center " style="">
+                <p class="be-price" style="">
+                    <span class="be-price-old">{{ '' }}</span> <span class="be-price-new">{{ '' }}</span>
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!--    -->{# if($item_product['item_empty_mode']['enable']){ #}
+    {% if (1) %}
+        <div class="empty-kit-item-product" style="min-height: 64px;padding: 0;position:relative;" data-item-position="{{ item_position }}" data-item-product-position="{{ item_product_position }}" data-product-id="" >
+            <div class="row be-product-thumb transition " style="border: none; margin-bottom: 0; overflow: visible;padding-left: 8px;" onclick="bundle_expert_form.set_active_product($(this).closest('.kit-item').find('.kit-item-product .be-product-thumb'));">
+                <div class="be-product-thumb-overlay1">
+                </div>
+                <div class="col-xs-12 col-sm-2 be-image">
+                    <a>
+                        <div style="display: inline-block; position: relative;">
+                            <img class="bundle-expert-transparent img-responsive" src="{{ empty_image_name }}" alt="{{ '' }}" title="{{ '' }}"  />
+                        </div>
+                    </a>
+                </div>
+                <div class="col-xs-12 col-sm-10 text-left text-xs-center" style="padding: 0 8px;">
+                    <h4 class="be-product-title" style="margin-bottom: 4px"><a style="white-space: nowrap;    text-overflow: ellipsis;">{{ free_item_title }}</a></h4>
+                    <span class="selectable-item empty-item-add-button" style="margin-top: 0px;" onclick="bundle_expert_form.on_click_select_item_product_button(this);event.stopPropagation()" >
+                        {{ text_add_product }}
+                    </span>
+                </div>
+
+            </div>
+        </div>
+    {% endif %}
+
+    <!--    -->{# if($item_product['is_free_product'] || $item_product['item_empty_mode']['enable'] ){ #}
+    <!--    -->{# if(1){ #}
+    <!--        <div style="position: absolute;bottom: 0;right: 0">-->
+    <!--                        <span class="remove-item-button" style="" onclick="bundle_expert.on_click_remove_product_button(this);event.stopPropagation()" >-->
+    <!--                            -->{# echo $text_remove_from_kit #}
+    <!--                        </span>-->
+    <!--        </div>-->
+    <!--    -->{# } #}
+
+
+</div>

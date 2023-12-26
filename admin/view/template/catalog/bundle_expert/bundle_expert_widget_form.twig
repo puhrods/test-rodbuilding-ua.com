@@ -1,0 +1,1527 @@
+{{ header }}
+<style type="text/css">
+    .control-label-sub{
+        font-weight: normal;
+    }
+    select option:disabled{
+
+        color: #00000029;
+    }
+    #content #form-group-link-product-combine-mode{
+        margin-top: 8px;
+    }
+
+    #content .select-product-products-combine-mode-form{
+        margin-top: 8px;
+    }
+    #content .active-combine-mode-button{
+        background-color: #1e91cf;
+        background-color: #8fbb6c;
+        background-color: #949494;
+        color: #fff;
+    }
+
+    #content .btn{
+        outline: none !important;
+    }
+
+    legend ~ .form-group  {
+        border-top: unset;
+    }
+    .form-group  {
+        border-top: 1px solid #ededed;
+    }
+</style>
+{{ column_left }}
+
+
+
+<div id="content">
+    <div class="page-header">
+
+        {{ bundle_expert_navigation }}
+
+        <div class="container-fluid">
+            <div class="pull-right">
+                <button type="submit" form="form-kit" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+                <!--        <a onclick="save();"  title="-->{# echo $button_save; #}<!--" class="btn btn-primary"><i class="fa fa-save"></i></a>-->
+                <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
+            <h1>{{ heading_title }}</h1>
+            <ul class="breadcrumb">
+                {% for breadcrumb in breadcrumbs %}
+                    <li><a href="{{ breadcrumb['href'] }}">{{ breadcrumb['text'] }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="container-fluid">
+        {% if (error_warning) %}
+            <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+        {% endif %}
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_form }}</h3>
+            </div>
+            <div class="panel-body">
+                <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-kit" class="form-horizontal">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a href="#tab-general" data-toggle="tab">{{ tab_general }}</a></li>
+                        <li class="active1 tab-kits"><a href="#tab-data" data-toggle="tab">{{ text_kits }}</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active in" id="tab-general">
+
+                            <fieldset>
+
+                                <legend>{{ text_widget_name }}</legend>
+
+                                <div class="form-group required">
+                                    <label class="col-sm-2 control-label" for="input-name0">{{ entry_name }}</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" name="name" value="{{ name is defined ? name : '' }}"
+                                               placeholder="{{ entry_name }}" id="input-name0" class="form-control"/>
+                                        {% if (error_name is not empty) %}
+                                            <div class="text-danger">{{ error_name }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <div class="form-group form-group-widget-description ">
+                                    <label class="col-sm-2 control-label" for="input-title">{{ entry_title_description }}</label>
+                                    <div class="col-sm-10">
+                                        <ul class="nav nav-tabs" id="language">
+                                            {% for language in languages %}
+                                                <li><a href="#language{{ language['language_id'] }}" data-toggle="tab"><img src="{{ language['image_url'] }}" title="{{ language['name'] }}" /> {{ language['name'] }}</a></li>
+                                            {% endfor %}
+                                        </ul>
+
+                                        <div class="tab-content">
+                                            {% for language in languages %}
+                                                <div class="tab-pane" id="language{{ language['language_id'] }}">
+                                                    <div class="form-group required">
+                                                        <div class="col-sm-12">
+                                                            <input type="text" name="widget_description[{{ language['language_id'] }}][title]" value="{{ widget_description[language['language_id']] is defined ? widget_description[language['language_id']]['title'] : '' }}" placeholder="{{ entry_name }}" id="input-title{{ language['language_id'] }}" class="form-control" />
+                                                            <div class="widget-name-error-container{{ language['language_id'] }}"></div>
+                                                            {% if (error_name[language['language_id']] is defined) %}
+                                                                <div class="text-danger">{{ error_name[language['language_id']] }}</div>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group hidden">
+                                                        <div class="col-sm-12">
+                                                            <textarea name="widget_description[{{ language['language_id'] }}][description]" placeholder="{{ entry_description }}" id="input-description{{ language['language_id'] }}" class="form-control">{{ widget_description[language['language_id']] is defined ? widget_description[language['language_id']]['description'] : '' }}</textarea>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </fieldset>
+
+                            <fieldset>
+
+                                <legend>{{ text_widget_mode_fieldset }}</legend>
+
+                                <div class="form-group ">
+                                    <label class="col-sm-2 control-label" for="input-main_mode">{{ text_main_mode }}</label>
+                                    <div class="col-sm-10">
+                                        <select name="main_mode" id="input-main-mode" class="form-control" onchange="update_widget_views();">
+                                            {% for index,value in main_mode_values %}
+                                                <option value="{{ index }}" {% if (main_mode == index) %} {{ 'selected' }}{% endif %} >{{ value }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group-product-from-kit-container">
+
+                                    <div class="form-group hidden1 form-group-product-from-kit-mode-product-source ">
+                                        <label class="col-sm-2 control-label" for="input-product-from-kit-mode-product-source">{{ text_product_from_kit_mode_product_source }}</label>
+                                        <div class="col-sm-10">
+                                            <select name="product_from_kit_mode_product_source" id="product-from-kit-mode-product-source" class="form-control" onchange="update_widget_views();">
+                                                {% for index,value in product_from_kit_mode_product_source_values %}
+                                                    <option value="{{ index }}" {% if (product_from_kit_mode_product_source == index) %} {{ 'selected' }}{% endif %} >{{ value }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group" id="form-group-link-product">
+                                        <label class="col-sm-2 control-label" for="input-link-product">{{ text_link_to_products }}</label>
+                                        <div class="col-sm-10" id="kit-product-link" style="">
+                                            <input type="text" name="link_product_name" value="" placeholder="{{ text_input_name }}" id="input-link-product" class="form-control" />
+                                            <div id="link-product" class="well well-sm" style="height: 150px; overflow: auto;margin-bottom: 0">
+                                                {% set row_link_product=0 %}
+                                                {% for link_product in link_products %}
+                                                    <div id="link-product{{ row_link_product }}"><i class="fa fa-minus-circle"></i> {{ link_product['name'] }}
+                                                        <!--                                    <input type="hidden" name="link_product[-->{# echo $link_product['id']; #}<!--][id]" value="-->{# echo $link_product['id']; #}<!--" />-->
+                                                        <!--                                    <input type="hidden" name="link_product[-->{# echo $link_product['id']; #}<!--][kit_id]" value="-->{# echo $link_product['kit_id']; #}<!--" />-->
+                                                        <input type="hidden" name="link_product[{{ row_link_product }}][item_type]" value="{{ link_product['item_type'] }}" />
+                                                        <input type="hidden" name="link_product[{{ row_link_product }}][item_id]" value="{{ link_product['item_id'] }}" />
+                                                        <input type="hidden" name="link_product[{{ row_link_product }}][item_value]" value="{{ link_product['item_value'] }}" />
+
+                                                        <input type="hidden" name="link_product[{{ row_link_product }}][name]" value="{{ link_product['name'] }}" />
+                                                        <input type="hidden" name="link_product[{{ row_link_product }}][has_options]" value="{{ link_product['has_options'] }}" />
+                                                    </div>
+                                                    {% set row_link_product = row_link_product + 1 %}
+                                                {% endfor %}
+                                            </div>
+
+                                            <div class="hide-for-series1" id="form-group-link-product-combine-mode" style="margin-top: 8px">
+                                                <div class="btn-group btn-group-sm" role="group" aria-label="...">
+                                                    {% for product_combine_mode_value_key,product_combine_mode_value in product_combine_mode_values %}
+                                                        <button type="button" data-key-value="{{ product_combine_mode_value_key }}" class="btn btn-default mode-{{ product_combine_mode_value_key }}" onclick="on_click_link_product_combine_mode(this);">{{ product_combine_mode_value }}</button>
+                                                    {% endfor %}
+                                                </div>
+                                                <div class="hidden">
+                                                    <select name="link_products_combine_mode" id="input-link-products-combine-mode" onchange="//update_items_empty_mode_info(this)" class="form-control" style="">
+                                                        {% for product_combine_mode_value_key,product_combine_mode_value in product_combine_mode_values %}
+                                                            <option value="{{ product_combine_mode_value_key }}" {% if (product_combine_mode_value_key == link_products_combine_mode) %} {{ 'selected="selected"' }}{% endif %} >{{ product_combine_mode_value }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="kit-link-product-error-container"></div>
+                                            {% if (error_link_product is defined) %}
+                                                <div class="text-danger">{{ error_link_product }}</div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group form-group-product-from-kit-mode-kits ">
+                                        <label class="col-sm-2 control-label" for="input-product-from-kit-mode-kits">{{ text_product_from_kit_mode_kits }}</label>
+                                        <div class="col-sm-10">
+                                            <select name="product_from_kit_mode_kits" id="input-product-from-kit-mode-kits" class="form-control" onchange="update_widget_views();">
+                                                {% for index,value in product_from_kit_mode_kits_values %}
+                                                    <option value="{{ index }}" {% if (product_from_kit_mode_kits == index) %} {{ 'selected' }}{% endif %} >{{ value }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group form-group-product-from-kit-mode hidden1">
+                                        <label class="col-sm-2 control-label" for="input-product-from-kit-mode-items">{{ text_product_from_kit_mode_items }}</label>
+                                        <div class="col-sm-10">
+                                            <select name="product_from_kit_mode_items" id="input-product-from-kit-mode-items" class="form-control" onchange="update_widget_views();">
+                                                {% for index,value in product_from_kit_mode_items_values %}
+                                                    <option value="{{ index }}" {% if (product_from_kit_mode_items == index) %} {{ 'selected' }}{% endif %} >{{ value }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group ">
+
+                                    </div>
+
+
+
+
+                            </fieldset>
+
+                            <fieldset>
+
+                                <legend>{{ text_display_settings }}</legend>
+
+
+
+
+                                <div class="form-group display-mode-view">
+                                    <label class="col-sm-2 control-label" for="input-display-mode">{{ text_display_mode }}</label>
+                                    <div class="col-sm-10">
+                                        <select name="display_mode" id="input-display-mode" class="form-control" onchange="update_widget_views();">
+                                            {% for index,value in display_mode_list %}
+                                                <option value="{{ index }}" {% if (display_mode == index) %} {{ 'selected' }}{% endif %} >{{ value }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group" id="form-group-link-category">
+                                    <label class="col-sm-2 control-label" for="input-link-category">{{ text_link_to_categories }}</label>
+                                    <div class="col-sm-10" id="kit-product-link" style="">
+                                        <input type="text" name="link_category_name" value="" placeholder="{{ text_input_name }}" id="input-link-category" class="form-control" />
+                                        <div id="link-category" class="well well-sm" style="height: 150px; overflow: auto;margin-bottom: 0">
+                                            {% set row_link_category=0 %}
+                                            {% for link_category_item in link_category %}
+                                                <div id="link-category{{ row_link_category }}"><i class="fa fa-minus-circle"></i> {{ link_category_item['name'] }}
+                                                    <input type="hidden" name="link_category[{{ row_link_category }}][category_id]" value="{{ link_category_item['category_id'] }}" />
+                                                </div>
+                                                {% set row_link_category = row_link_category + 1 %}
+                                            {% endfor %}
+                                        </div>
+
+
+
+                                        <div class="kit-link-category-error-container"></div>
+                                        {% if (error_link_category is defined) %}
+                                            <div class="text-danger">{{ error_link_category }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <div class="form-group form-input-link-category-filter-kits">
+                                    <label class="col-sm-2 control-label" for="input-link-category-filter-kits">{{ text_link_category_filter_kits }}</label>
+                                    <div class="col-sm-10">
+                                        <select name="link_category_filter_kits" id="input-link-category-filter-kits" class="form-control" onchange="update_widget_views();">
+                                            {% for index,value in link_category_filter_kits_values %}
+                                                <option value="{{ index }}" {% if (link_category_filter_kits == index) %} {{ 'selected' }}{% endif %} >{{ value }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group form-group-kits-per-category-page">
+                                    <label class="col-sm-2 control-label" for="input-kits-per-category-page">{{ text_kits_per_category_page }}</label>
+                                    <div class="col-sm-10" style="" id="input-kits-per-category-page">
+                                        <input type="text" name="kits_per_category_page" value="{{ kits_per_category_page }}" placeholder="{{ text_kits_per_category_page }}" id="kits-per-category-page" class="form-control" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group slider-mode-view">
+                                    <label class="col-sm-2 control-label" for="input-slider-mode">{{ text_slider_mode }}</label>
+                                    <div class="col-sm-10">
+                                        <select name="slider_mode" id="input-slider-mode" class="form-control" onchange="update_widget_views();">
+                                            {% if (slider_mode) %}
+                                                <option value="1" selected="selected">{{ text_yes }}</option>
+                                                <option value="0">{{ text_no }}</option>
+                                            {% else %}
+                                                <option value="1">{{ text_yes }}</option>
+                                                <option value="0" selected="selected">{{ text_no }}</option>
+                                            {% endif %}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group slider-mode-view slider-autoplay-status-view">
+                                    <label class="col-sm-2 control-label" for="input-slider-autoplay-status">{{ text_slider_autoplay_status }}</label>
+                                    <div class="col-sm-10">
+                                        <select name="slider_autoplay_status" id="input-slider-autoplay-status" class="form-control" onchange="update_widget_views();">
+                                            {% if (slider_autoplay_status) %}
+                                                <option value="1" selected="selected">{{ text_yes }}</option>
+                                                <option value="0">{{ text_no }}</option>
+                                            {% else %}
+                                                <option value="1">{{ text_yes }}</option>
+                                                <option value="0" selected="selected">{{ text_no }}</option>
+                                            {% endif %}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group slider-mode-view slider-autoplay-time-view">
+                                    <label class="col-sm-2 control-label" for="input-slider-autoplay-time">{{ text_slider_autoplay_time }}</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" name="slider_autoplay_time" value="{{ slider_autoplay_time }}" placeholder="{{ text_slider_autoplay_time }}" id="input-slider-autoplay-time" class="form-control" />
+                                    </div>
+                                </div>
+
+
+
+                                <!--Настройки Product Page-->
+                                <div id="display-mode-config-product-page">
+
+                                    <div class="form-group hidden">
+                                        <label class="col-sm-2 control-label" for="input-display-method">{{ text_display_method }}</label>
+                                        <div class="col-sm-10">
+                                            <select name="config_product_page[display_method]" id="input-display-method" class="form-control" onchange="update_widget_views();">
+                                                {% for index,value in display_method_list %}
+                                                    <option value="{{ index }}" {% if (config_product_page['display_method'] == index) %} {{ 'selected' }}{% endif %} >{{ value }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div id="display-mode-config-product-page-method-block">
+
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label" for="input-selector-default-list">{{ text_selector_preset }}</label>
+                                            <div class="col-sm-5">
+                                                <select name="" id="input-selector-default-list" class="form-control input-selector-list" onchange="update_selector_product_page(this);">
+                                                    <option value="custom">{{ text_custom_selector }}</option>
+                                                    {% for index,selector in selector_default_list_product_page %}
+                                                        <option value="{{ selector['selector_value'] }}" selector-mode="{{ selector['selector_mode'] }}">{{ selector['selector_title'] }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <div class="col-sm-1 text-left">
+                                                <a class="btn btn-default settings-button" onclick="toggle_setting_form('setting-form-selector-product-page');"  title=""  style=""><i class="fa fa-cog"></i></a>
+                                            </div>
+                                        </div>
+
+
+
+                                        <div class="form-group setting-form-selector-product-page" style="display: none">
+                                            <label class="col-sm-2 control-label control-label-sub" for="input-selector">{{ text_selector_value }}</label>
+                                            <div class="col-sm-10">
+                                                <input onchange="update_widget_views();" type="text" name="config_product_page[selector]" value="{{ config_product_page['selector'] }}" placeholder="{{ 'selector...' }}" id="input-selector" class="form-control" />
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group setting-form-selector-product-page" style="display: none">
+                                            <label class="col-sm-2 control-label control-label-sub" for="input-selector-mode">{{ text_selector_mode }}</label>
+                                            <div class="col-sm-10">
+                                                <select name="config_product_page[selector_mode]" id="input-selector-mode" class="form-control" onchange="update_widget_views(this);">
+                                                    {% for index,value in selector_mode_list %}
+                                                        <option value="{{ index }}" {% if (config_product_page['selector_mode'] == index) %} {{ 'selected' }}{% endif %} >{{ value }}</option>
+                                                    {% endfor %}
+                                                </select>
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    <div id="display-mode-config-product-page-method-popup">
+
+                                        <div class="form-group popup-position-view">
+                                            <label class="col-sm-2 control-label" for="input-popup-position">{{ text_popup_position }}</label>
+                                            <div class="col-sm-10">
+                                                <select name="config_product_page[popup_position]" id="input-popup-position" class="form-control" onchange="update_widget_views();">
+                                                    {% for index,value in popup_position_list %}
+                                                        <option value="{{ index }}"  {% if (config_product_page['popup_position'] == index) %} {{ 'selected' }}{% endif %}>{{ value }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                <!--Настройки Category Page-->
+                                <div id="display-mode-config-category-page">
+
+                                    <div class="form-group hidden">
+                                        <label class="col-sm-2 control-label" for="input-display-method">{{ text_display_method }}</label>
+                                        <div class="col-sm-10">
+                                            <select name="config_category_page[display_method]" id="input-display-method" class="form-control" onchange="update_widget_views();">
+                                                {% for index,value in display_method_list %}
+                                                    <option value="{{ index }}" {% if (config_category_page['display_method'] == index) %} {{ 'selected' }}{% endif %} >{{ value }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div id="display-mode-config-category-page-method-block">
+
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label" for="input-selector-default-list">{{ text_selector_preset }}</label>
+                                            <div div-unique-id="f0efeaf12283452e447"></div>
+                                            <div class="col-sm-5">
+                                                <select name="" id="input-selector-default-list" class="form-control input-selector-list" onchange="update_selector_category_page(this);">
+                                                    <option value="custom">Custom selector</option>
+                                                    {% for index,selector in selector_default_list_category_page %}
+                                                        <option value="{{ selector['selector_value'] }}" selector-mode="{{ selector['selector_mode'] }}">{{ selector['selector_title'] }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <div class="col-sm-1 text-left">
+                                                <a class="btn btn-default settings-button" onclick="toggle_setting_form('setting-form-selector-category-page');"  title=""  style=""><i class="fa fa-cog"></i></a>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group setting-form-selector-category-page" style="display: none">
+                                            <div div-unique-id="6aaadbf48e04015c559d7"></div>
+                                            <label class="col-sm-2 control-label control-label-sub" for="input-selector">{{ text_selector_value }}</label>
+                                            <div class="col-sm-10">
+                                                <input onchange="update_widget_views();" type="text" name="config_category_page[selector]" value="{{ config_category_page['selector'] }}" placeholder="{{ 'selector...' }}" id="input-selector" class="form-control" />
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group setting-form-selector-category-page" style="display: none">
+                                            <label class="col-sm-2 control-label control-label-sub" for="input-selector-mode">{{ text_selector_mode }}</label>
+                                            <div class="col-sm-10">
+                                                <select name="config_category_page[selector_mode]" id="input-selector-mode" class="form-control" onchange="update_widget_views();">
+                                                    {% for index,value in selector_mode_list %}
+                                                        <option value="{{ index }}" {% if (config_category_page['selector_mode'] == index) %} {{ 'selected' }}{% endif %} >{{ value }}</option>
+                                                    {% endfor %}
+                                                </select>
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    <div id="display-mode-config-category-page-method-popup">
+
+                                        <div class="form-group popup-position-view">
+                                            <label class="col-sm-2 control-label" for="input-popup-position">{{ text_popup_position }}</label>
+                                            <div class="col-sm-10">
+                                                <select name="config_category_page[popup_position]" id="input-popup-position" class="form-control" onchange="update_widget_views();">
+                                                    {% for index,value in popup_position_list %}
+                                                        <option value="{{ index }}"  {% if (config_category_page['popup_position'] == index) %} {{ 'selected' }}{% endif %}>{{ value }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                <!--Настройки Module-->
+                                <div id="display-mode-config-module">
+                                    <input type="hidden" name="config_module[module_id]" value="{{ config_module['module_id'] }}"/>
+
+                                    <div class="form-group hidden">
+                                        <label class="col-sm-2 control-label" for="input-display-method">{{ text_layout }}</label>
+                                        <div class="col-sm-10">
+                                            <select name="config_module[layout_id]" id="input-layout-id" class="form-control" onchange="">
+                                                {% for index,layout in layouts %}
+                                                    <option value="{{ layout['layout_id'] }}" {% if (config_module['layout_id'] == layout['layout_id']) %} {{ 'selected' }}{% endif %} >{{ layout['name'] }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group hidden">
+                                        <label class="col-sm-2 control-label" for="input-position">{{ text_cart_free_product_mode }}</label>
+                                        <div class="col-sm-10">
+                                            <select name="config_module[cart_free_product_mode]" id="input-for-cart-free-product-mode" class="form-control" onchange="update_widget_views();">
+                                                {% if (config_module['cart_free_product_mode']) %}
+                                                    <option value="1" selected="selected">{{ text_yes }}</option>
+                                                    <option value="0">{{ text_no }}</option>
+                                                {% else %}
+                                                    <option value="1">{{ text_yes }}</option>
+                                                    <option value="0" selected="selected">{{ text_no }}</option>
+                                                {% endif %}
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group hidden">
+                                        <label class="col-sm-2 control-label" for="input-position">{{ text_position }}</label>
+                                        <div class="col-sm-10">
+                                            <select name="config_module[position]" id="input-position" class="form-control" onchange="">
+                                                {% if (config_module['position'] == 'content_top') %}
+                                                    <option value="content_top" selected="selected">{{ text_content_top }}</option>
+                                                {% else %}
+                                                    <option value="content_top">{{ text_content_top }}</option>
+                                                {% endif %}
+                                                {% if (config_module['position'] == 'content_bottom') %}
+                                                    <option value="content_bottom" selected="selected">{{ text_content_bottom }}</option>
+                                                {% else %}
+                                                    <option value="content_bottom">{{ text_content_bottom }}</option>
+                                                {% endif %}
+                                                {% if (config_module['position'] == 'column_left') %}
+                                                    <option value="column_left" selected="selected">{{ text_column_left }}</option>
+                                                {% else %}
+                                                    <option value="column_left">{{ text_column_left }}</option>
+                                                {% endif %}
+                                                {% if (config_module['position'] == 'column_right') %}
+                                                    <option value="column_right" selected="selected">{{ text_column_right }}</option>
+                                                {% else %}
+                                                    <option value="column_right">{{ text_column_right }}</option>
+                                                {% endif %}
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group hidden">
+                                        <label class="col-sm-2 control-label" for="input-sort-order">{{ 'Sort order' }}</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" name="config_module[sort_order]" value="{{ config_module['sort_order'] }}" placeholder="{{ entry_sort_order }}" class="form-control" />
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <!--Настройки Custom Page-->
+                                <div id="display-mode-config-custom-page">
+
+                                    <div class="group-custom-page-view">
+                                        <div class="form-group custom-page-mode-view">
+                                            <label class="col-sm-2 control-label" for="input-custom-page-mode">{{ text_specific_page_target }}</label>
+                                            <div class="col-sm-10">
+                                                <select name="config_custom_page[custom_page_mode]" id="input-custom-page-mode" class="form-control" onchange="update_widget_views();">
+                                                    {% for index,value in custom_page_mode_list %}
+                                                        <option value="{{ index }}" {% if (config_custom_page['custom_page_mode'] == index) %} {{ 'selected' }}{% endif %}>{{ value }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+
+                                        </div>
+
+
+                                        <div class="form-group custom-page-layout-view" id="config-custom-page-layout-view">
+                                            <label class="col-sm-2 control-label control-label-sub" for="input-config-custom-page-layout">{{ text_layout }}</label>
+                                            <div class="col-sm-10">
+                                                <select name="config_custom_page[custom_page_layout_id]" id="input-layout-id" class="form-control" onchange="">
+                                                    {% for index,layout in layouts %}
+                                                        <option value="{{ layout['layout_id'] }}" {% if (config_custom_page['custom_page_layout_id'] == layout['layout_id']) %} {{ 'selected' }}{% endif %} >{{ layout['name'] }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="form-group custom-page-url-view" id="config-custom-page-url-view">
+                                            <label class="col-sm-2 control-label control-label-sub" for="input-custom-page-url">{{ text_page_url }}</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" name="config_custom_page[custom_page_url]" value="{{ config_custom_page['custom_page_url'] }}" placeholder="{{ text_page_url~'...' }}" id="input-custom-page-url" class="form-control" />
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group custom-page-route-view hidden">
+                                            <label class="col-sm-2 control-label control-label-sub" for="input-custom-page-route">{{ text_page_route }}</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" name="config_custom_page[custom_page_route]" value="{{ config_custom_page['custom_page_route'] }}" placeholder="{{ text_page_route~'...' }}" id="input-custom-page-route" class="form-control" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group hidden">
+                                        <label class="col-sm-2 control-label" for="input-display-method">{{ text_display_method }}</label>
+                                        <div class="col-sm-10">
+                                            <select name="config_custom_page[display_method]" id="input-display-method" class="form-control" onchange="update_widget_views();">
+                                                {% for index,value in display_method_list %}
+                                                    <option value="{{ index }}" {% if (config_custom_page['display_method'] == index) %} {{ 'selected' }}{% endif %} >{{ value }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div id="display-mode-config-custom-page-method-block">
+
+
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label control-label-sub" for="input-selector">{{ text_selector_value }}</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" name="config_custom_page[selector]" value="{{ config_custom_page['selector'] }}" placeholder="{{ 'selector...' }}" id="input-selector" class="form-control" />
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label control-label-sub" for="input-selector-mode">{{ text_selector_mode }}</label>
+                                            <div class="col-sm-10">
+                                                <select name="config_custom_page[selector_mode]" id="input-custom-mode" class="form-control" onchange="update_widget_views();">
+                                                    {% for index,value in selector_mode_list %}
+                                                        <option value="{{ index }}" {% if (config_custom_page['selector_mode'] == index) %} {{ 'selected' }}{% endif %} >{{ value }}</option>
+                                                    {% endfor %}
+                                                </select>
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    <div id="display-mode-config-custom-page-method-popup">
+
+                                        <div class="form-group popup-position-view">
+                                            <label class="col-sm-input-selector-default-list2 control-label" for="input-popup-position">{{ text_popup_position }}</label>
+                                            <div class="col-sm-5">
+                                                <select name="config_custom_page[popup_position]" id="input-popup-position" class="form-control" onchange="update_widget_views();">
+                                                    {% for index,value in popup_position_list %}
+                                                        <option value="{{ index }}"  {% if (config_custom_page['popup_position'] == index) %} {{ 'selected' }}{% endif %}>{{ value }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+
+
+                                        </div>
+
+                                    </div>
+
+                                    <div class="form-group hidden">
+                                        <label class="col-sm-2 control-label" for="input-position">{{ text_cart_free_product_mode }}</label>
+                                        <div class="col-sm-10">
+                                            <select name="config_custom_page[cart_free_product_mode]" id="input-for-cart-free-product-mode" class="form-control" onchange="update_widget_views();">
+                                                {% if (config_custom_page['cart_free_product_mode']) %}
+                                                    <option value="1" selected="selected">{{ text_yes }}</option>
+                                                    <option value="0">{{ text_no }}</option>
+                                                {% else %}
+                                                    <option value="1">{{ text_yes }}</option>
+                                                    <option value="0" selected="selected">{{ text_no }}</option>
+                                                {% endif %}
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <!--Шаблон виджета-->
+                                <div class="form-group template-view">
+                                    <label class="col-sm-2 control-label" for="input-template">{{ text_display_template }}</label>
+                                    <div class="col-sm-10">
+                                        <select name="template" id="input-template" class="form-control" onchange="update_widget_views();">
+                                            {% for index,value in display_template_list %}
+                                                <option value="{{ index }}" {% if (template == index) %} {{ 'selected' }}{% endif %} data-type="{{ value['type'] }}">{{ value['name'] }}</option>
+                                            {% endfor %}
+                                            {% if (display_template_list_custom is not empty) %}
+                                                <option style="font-weight: bold" value="" disabled >{{ text_custom_template }}</option>
+                                                {% for index,value in display_template_list_custom %}
+                                                    <option value="{{ value['template_name'] }}" {% if (template == index) %} {{ 'selected' }}{% endif %}>{{ value['template_name'] }}</option>
+                                                {% endfor %}
+                                            {% endif %}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group hidden ">
+                                    <label class="col-sm-2 control-label" for="input-template">checkbox mode</label>
+                                    <div class="col-sm-10">
+                                        <select name="checkbox_mode" id="input-checkbox-mode" class="form-control" onchange="">
+                                            {% if (checkbox_mode) %}
+                                                <option value="1" selected="selected">{{ text_yes }}</option>
+                                                <option value="0">{{ text_no }}</option>
+                                            {% else %}
+                                                <option value="1">{{ text_yes }}</option>
+                                                <option value="0" selected="selected">{{ text_no }}</option>
+                                            {% endif %}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div></div>
+
+                                <!--Режим "Таблица" для свободного товара-->
+                                <div class="free-product-table-mode">
+                                    <div class="form-group hidden">
+                                        <label class="col-sm-2 control-label" for="input-template">{{ text_free_product_table_mode }}</label>
+                                        <div class="col-sm-10">
+                                            <select name="table_mode_config[free_product_table_mode]" id="input-free-product-table-mode" class="form-control" onchange="">
+                                                {% if (table_mode_config['free_product_table_mode']) %}
+                                                    <option value="1" selected="selected">{{ text_yes }}</option>
+                                                    <option value="0">{{ text_no }}</option>
+                                                {% else %}
+                                                    <option value="1">{{ text_yes }}</option>
+                                                    <option value="0" selected="selected">{{ text_no }}</option>
+                                                {% endif %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div></div>
+                                    <div class="form-group display-options-input-form">
+                                        <label class="col-sm-2 control-label" for="input-template">{{ text_display_options_input }}</label>
+                                        <div class="col-sm-10">
+                                            <select name="table_mode_config[display_options_input]" id="input-display-options-input" class="form-control" onchange="">
+                                                {% if (table_mode_config['display_options_input']) %}
+                                                    <option value="1" selected="selected">{{ text_yes }}</option>
+                                                    <option value="0">{{ text_no }}</option>
+                                                {% else %}
+                                                    <option value="1">{{ text_yes }}</option>
+                                                    <option value="0" selected="selected">{{ text_no }}</option>
+                                                {% endif %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group form-group-input-product-click-mode">
+                                    <label class="col-sm-2 control-label" for="input-product_click_mode">{{ text_product_click_mode }}</label>
+                                    <div class="col-sm-10">
+                                        <select name="product_click_mode" id="input-product_click_mode" class="form-control" onchange="">
+                                            {% for index,value in product_click_mode_values %}
+                                                <option value="{{ value['value'] }}" {% if (product_click_mode == value['value']) %} {{ 'selected' }}{% endif %}>{{ value['name'] }}</option>
+                                            {% endfor %}
+
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group html-element-action-view">
+                                    <label class="col-sm-2 control-label" for="input-html-element-action">{{ text_html_element_action }}</label>
+                                    <div class="col-sm-5">
+                                        <select name="html_element_action" id="input-html-element-action" class="form-control" onchange="update_widget_views();">
+                                            {% for index,value in html_element_action_values %}
+                                                <option value="{{ index }}" {% if (html_element_action == index) %} {{ 'selected' }}{% endif %} >{{ value }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-1 text-left">
+                                        <a class="btn btn-default settings-button" onclick="toggle_setting_form('setting-form-html-element-action-selector');"  title=""  style=""><i class="fa fa-cog"></i></a>
+                                    </div>
+                                </div>
+                                <div class="form-group setting-form-html-element-action-selector" style="display: none">
+                                    <label class="col-sm-2 control-label control-label-sub" for="input-element-action-selector">{{ text_selector_value }}</label>
+                                    <div class="col-sm-10">
+                                        <input onchange="update_widget_views();" type="text" name="html_element_action_selector" value="{{ html_element_action_selector }}" placeholder="{{ 'selector...' }}" id="input-element-action-selector" class="form-control" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group ">
+
+                                </div>
+
+                            </fieldset>
+
+                            <fieldset>
+
+                                <legend>{{ text_main_settings }}</legend>
+
+                                <div class="form-group form-group-widget-width-mode">
+                                    <label class="col-sm-2 control-label" for="input-status">{{ text_limit_width }}</label>
+                                    <div class="col-sm-2">
+                                        <select name="widget_width_mode[limit]" id="input-widget-width-mode" class="form-control" onchange="update_widget_views();">
+                                            {% if (widget_width_mode['limit']) %}
+                                                <option value="1" selected="selected">{{ text_yes }}</option>
+                                                <option value="0">{{ text_no }}</option>
+                                            {% else %}
+                                                <option value="1">{{ text_yes }}</option>
+                                                <option value="0" selected="selected">{{ text_no }}</option>
+                                            {% endif %}
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-2" style="display: none" id="widget-width-mode-value-form">
+                                        <input type="text" name="widget_width_mode[value]" value="{{ widget_width_mode['value'] is defined ? widget_width_mode['value'] : '0' }}" placeholder="{{ text_width }}" id="input-widget-width-mode-value" class="form-control" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group hidden">
+                                    <label class="col-sm-2 control-label" for="input-status">{{ text_image_size }}</label>
+                                    <div class="col-sm-2">
+                                        <select name="set_image_size_mode[mode]" id="input-set-image-size-mode" class="form-control" onchange="update_widget_views();">
+                                            {% if (set_image_size_mode['mode']) %}
+                                                <option value="1" selected="selected">{{ text_yes }}</option>
+                                                <option value="0">{{ text_no }}</option>
+                                            {% else %}
+                                                <option value="1">{{ text_yes }}</option>
+                                                <option value="0" selected="selected">{{ text_no }}</option>
+                                            {% endif %}
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-2" style="display: none" id="set-image-size-mode-value-form-width">
+                                        <input type="text" name="set_image_size_mode[width]" value="{{ set_image_size_mode['width'] is defined ? set_image_size_mode['width'] : '80' }}" placeholder="{{ text_width~'...' }}" id="input-set-image-size-mode-value-width" class="form-control" />
+                                    </div>
+                                    <div class="col-sm-2" style="display: none" id="set-image-size-mode-value-form-height">
+                                        <input type="text" name="set_image_size_mode[height]" value="{{ set_image_size_mode['height'] is defined ? set_image_size_mode['height'] : '80' }}" placeholder="{{ text_heigth~'...' }}" id="input-set-image-size-mode-value-height" class="form-control" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group form-group-set-background-image-size-mode">
+                                    <label class="col-sm-2 control-label" for="input-status">{{ text_background_image_size }}</label>
+                                    <div class="col-sm-2">
+                                        <select name="background_image_size[mode]" id="input-set-background-image-size-mode" class="form-control" onchange="update_widget_views();">
+                                            {% if (background_image_size['mode']) %}
+                                                <option value="1" selected="selected">{{ text_yes }}</option>
+                                                <option value="0">{{ text_no }}</option>
+                                            {% else %}
+                                                <option value="1">{{ text_yes }}</option>
+                                                <option value="0" selected="selected">{{ text_no }}</option>
+                                            {% endif %}
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-2" style="display: none" id="set-background-image-size-mode-value-form-width">
+                                        <input type="text" name="background_image_size[width]" value="{{ background_image_size['width'] }}" placeholder="{{ text_width~'...' }}" id="input-set-background-image-size-mode-value-width" class="form-control" />
+                                    </div>
+                                    <div class="col-sm-2" style="display: none" id="set-background-image-size-mode-value-form-height">
+                                        <input type="text" name="background_image_size[height]" value="{{ background_image_size['height'] }}" placeholder="{{ text_heigth~'...' }}" id="input-set-background-image-size-mode-value-height" class="form-control" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">{{ entry_store }}</label>
+                                    <div class="col-sm-10">
+                                        <div class="well well-sm" style="height: 150px; overflow: auto;">
+                                            <div class="checkbox">
+                                                <label>
+                                                    {% if (store_default_in_widget_store) %}
+                                                        <input type="checkbox" name="widget_store[]" value="0" checked="checked" />
+                                                        {{ text_default }}
+                                                    {% else %}
+                                                        <input type="checkbox" name="widget_store[]" value="0" />
+                                                        {{ text_default }}
+                                                    {% endif %}
+                                                </label>
+                                            </div>
+                                            {% for store in stores %}
+                                                <div class="checkbox">
+                                                    <label>
+                                                        {% if (store['in_widget_store']) %}
+                                                            <input type="checkbox" name="widget_store[]" value="{{ store['store_id'] }}" checked="checked" />
+                                                            {{ store['name'] }}
+                                                        {% else %}
+                                                            <input type="checkbox" name="widget_store[]" value="{{ store['store_id'] }}" />
+                                                            {{ store['name'] }}
+                                                        {% endif %}
+                                                    </label>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label" for="input-sort-order">{{ entry_sort_order }}</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" name="sort_order" value="{{ sort_order }}" placeholder="{{ entry_sort_order }}" id="input-sort-order" class="form-control" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label" for="input-status">{{ entry_status }}</label>
+                                    <div class="col-sm-10">
+
+                                        <select name="status" id="input-status" class="form-control">
+                                            {% if (status) %}
+                                                <option value="1" selected="selected">{{ text_enabled }}</option>
+                                                <option value="0">{{ text_disabled }}</option>
+                                            {% else %}
+                                                <option value="1">{{ text_enabled }}</option>
+                                                <option value="0" selected="selected">{{ text_disabled }}</option>
+                                            {% endif %}
+                                        </select>
+                                    </div>
+                                </div>
+
+                            </fieldset>
+
+                        </div>
+
+                        <div class="tab-pane active1 in" id="tab-data">
+
+                            <table id="widget-kits" class="table table-striped table-bordered table-hover">
+                                <thead>
+                                <tr>
+                                    <td class="text-left required">{{ text_kit }}</td>
+                                    <td class="hidden text-right">{{ entry_sort_order }}</td>
+                                    <td class=""></td>
+                                    <td></td>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% set widget_kit_row = 0 %}
+                                {% for widget_kit in widget_kits %}
+                                    <tr id="widget-kit-row{{ widget_kit_row }}">
+                                        <td class="text-left">
+                                            <input type="hidden" name="widget_kits[{{ widget_kit_row }}][kit_id]" value="{{ widget_kit['kit_id'] }}" class="form-control input-kit-id" />
+                                            <input type="text" name="widget_kits[{{ widget_kit_row }}][name]" value="{{ widget_kit['name'] is defined ? widget_kit['name'] : '' }}" placeholder="{{ text_kit }}" class="form-control input-kit-name" />
+                                        </td>
+
+
+                                        <td class=" hidden text-right"><input type="text" name="widget_kits[{{ widget_kit_row }}][sort_order]" value="{{ widget_kit['sort_order'] }}" class="form-control" /></td>
+                                        <td class="text-right">
+                                            <a href="{{ widget_kit['href'] }}" data-toggle="tooltip" title="{{ '' }}" class="btn btn-default"><i class="fa fa-pencil"></i></a>
+                                        </td>
+                                        <td class="text-right">
+                                            <button type="button" onclick="$('#widget-kit-row{{ widget_kit_row }}').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button>
+                                        </td>
+                                    </tr>
+                                    {% set widget_kit_row = widget_kit_row + 1 %}
+                                {% endfor %}
+                                </tbody>
+                                <tfoot>
+                                <tr>
+                                    <td colspan="2"></td>
+                                    <td class="text-right">
+                                        <button type="button" onclick="addWidgetKit();" data-toggle="tooltip" title="{{ '' }}" class="btn btn-primary"><i class="fa fa-plus-circle"></i></button>
+                                    </td>
+                                </tr>
+                                </tfoot>
+                            </table>
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <script type="text/javascript"><!--
+        var editor = '{{ editor }}';
+        {% for language in languages %}
+        if(editor==='summernote'){
+            $('#input-description{{ language['language_id'] }}').summernote({
+                height: 300
+            });
+        }else{
+            ckeditorInit('input-description{{ language['language_id'] }}', getURLVar('token'));
+        }
+        {% endfor %}
+        //--></script>
+
+
+    <script type="text/javascript"><!--
+        $('#language a:first').tab('show');
+        $('#cart-language a:first').tab('show');
+        //--></script>
+
+    <script type="text/javascript"><!--
+
+        function init_autocomplete_widget_kit(element) {
+            $(element).autocomplete({
+                'source': function (request, response) {
+                    var data = [];
+
+                    var data = $('#widget-kits').find('input.input-kit-id').serializeArray();
+
+                    data = $(data).add({name: 'filter_name', value: encodeURIComponent(request)});
+
+                    $.ajax({
+                        url: 'index.php?route=catalog/bundle_expert_widget/autocomplete_widget_kit&{{ token_name }}{{ token_value }}',
+                        type: 'post',
+                        data: data,
+                        dataType: 'json',
+                        success: function (json) {
+                            response($.map(json, function (item, index) {
+                                return {
+                                    kit_id: item['kit_id'],
+                                    label: item['name'],
+                                    href: item['href'],
+                                    value: index,
+                                }
+                            }));
+                        }
+                    });
+                },
+                'select': function (item) {
+                    $(element).parent().find('.input-kit-id').val(item['kit_id']);
+                    $(element).parent().find('.input-kit-name').val(item['label']);
+                    $(element).closest('[id^=widget-kit-row]').find('.input-kit-href').attr('href', item['href']);
+                }
+            });
+
+
+        }
+
+        $('[id^=widget-kit-row] input.input-kit-name').each(function (index, element) {
+            init_autocomplete_widget_kit(element);
+        })
+
+        var widget_kit_row = {{ widget_kit_row }};
+
+        function addWidgetKit() {
+
+            html = '<tr id="widget-kit-row' + widget_kit_row + '">';
+            html += ' <td><input type="hidden" name="widget_kits[' + widget_kit_row + '][kit_id]" value="" class="form-control input-kit-id" />';
+            html += '  <input type="text" name="widget_kits[' + widget_kit_row + '][name]" value="" placeholder="" class="form-control input-kit-name" />';
+            html += ' </td>';
+            // html += '  <td class="text-right"><input type="text" name="widget_kits[' + widget_kit_row + '][sort_order]" value="" class="form-control" /></td>';
+            html += '  <td class="text-right"><a data-toggle="tooltip" title="" class="btn btn-default input-kit-href"><i class="fa fa-pencil"></i></a> </td>';
+
+            html += '  <td class="text-right"><button type="button" onclick="$(\'#widget-kit-row' + widget_kit_row + '\').remove();" data-toggle="tooltip" title="" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>';
+            html += '</tr>';
+
+            $('#widget-kits tbody').append(html);
+
+            init_autocomplete_widget_kit($('#widget-kits tbody .input-kit-name').last());
+
+            widget_kit_row++;
+        }
+
+        //--></script>
+
+
+    <script type="text/javascript"><!--
+
+        function update_widget_views() {
+
+            var display_mode = $('#input-display-mode').val();
+            // var custom_page_mode = $('#input-custom-page-mode').val();
+            // var display_method = $('#input-display-method').val();
+            // var selector_default = $('#input-selector-default-list :selected').val();
+            // var selector = $('#input-selector').val();
+
+            $('[id^=display-mode-config-]').hide();
+
+            if (display_mode === 'module') {
+                $('[id^=display-mode-config-module]').show();
+            }
+
+            if (display_mode === 'product_page') {
+                var root_element = $('[id^=display-mode-config-product-page]').show();
+
+                display_method = $(root_element).find('#input-display-method :selected').val();
+
+                switch (display_method){
+                    case 'block':
+                        $(root_element).find('#display-mode-config-product-page-method-block').show();
+                        $(root_element).find('#display-mode-config-product-page-method-popup').hide();
+                        break;
+                    case 'popup':
+                        $(root_element).find('#display-mode-config-product-page-method-block').hide();
+                        $(root_element).find('#display-mode-config-product-page-method-popup').show();
+                        break;
+                }
+
+                //Обновляем селекторы
+                let selector_value = $(root_element).find('#input-selector').val();
+                let selector_mode = $(root_element).find('#input-selector-mode').val();
+
+                let finded = $(root_element).find('#input-selector-default-list [value="'+selector_value+'"][selector-mode="'+selector_mode+'"]').first();
+
+                if ($(finded).length > 0) {
+                    $(root_element).find('#input-selector-default-list').val($(finded).val());
+                } else {
+                    $(root_element).find('#input-selector-default-list').val('custom');
+                }
+
+            }
+
+            if (display_mode === 'category_page') {
+                var root_element = $('[id^=display-mode-config-category-page]').show();
+
+                display_method = $(root_element).find('#input-display-method :selected').val();
+
+                switch (display_method){
+                    case 'block':
+                        $(root_element).find('#display-mode-config-category-page-method-block').show();
+                        $(root_element).find('#display-mode-config-category-page-method-popup').hide();
+                        break;
+                    case 'popup':
+                        $(root_element).find('#display-mode-config-category-page-method-block').hide();
+                        $(root_element).find('#display-mode-config-category-page-method-popup').show();
+                        break;
+                }
+
+                //Обновляем селекторы
+                let selector_value = $(root_element).find('#input-selector').val();
+                let selector_mode = $(root_element).find('#input-selector-mode').val();
+
+                let finded = $(root_element).find('#input-selector-default-list [value="'+selector_value+'"][selector-mode="'+selector_mode+'"]').first();
+
+                if ($(finded).length > 0) {
+                    $(root_element).find('#input-selector-default-list').val($(finded).val());
+                } else {
+                    $(root_element).find('#input-selector-default-list').val('custom');
+                }
+            }
+
+            if (display_mode === 'custom_page') {
+                var root_element = $('[id^=display-mode-config-custom-page]').show();
+
+                custom_page_mode =  $(root_element).find('#input-custom-page-mode :selected').val()
+                switch (custom_page_mode){
+                    case 'url':
+                        $(root_element).find('#config-custom-page-url-view').show();
+                        $(root_element).find('#config-custom-page-layout-view').hide();
+                        break;
+                    case 'layout':
+                        $(root_element).find('#config-custom-page-url-view').hide();
+                        $(root_element).find('#config-custom-page-layout-view').show();
+                        break;
+                }
+
+                display_method = $(root_element).find('#input-display-method :selected').val();
+
+                switch (display_method){
+                    case 'block':
+                        $(root_element).find('#display-mode-config-custom-page-method-block').show();
+                        $(root_element).find('#display-mode-config-custom-page-method-popup').hide();
+                        break;
+                    case 'popup':
+                        $(root_element).find('#display-mode-config-custom-page-method-block').hide();
+                        $(root_element).find('#display-mode-config-custom-page-method-popup').show();
+                        break;
+                }
+
+                //Обновляем селекторы
+                let selector_value = $(root_element).find('#input-selector').val();
+                let selector_mode = $(root_element).find('#input-selector-mode').val();
+
+                let selected = $(root_element).find('#input-selector-default-list :selected').first();
+                if($(selected).val()!==selector_value || $(selected).attr('selector-mode')!==selector_mode ){
+                    $(root_element).find('#input-selector-default-list').val('custom');
+                }
+
+
+            }
+
+
+
+
+            var value = $('select#input-widget-width-mode').val();
+            if(value==1){
+                $('#widget-width-mode-value-form').show();
+            }else{
+                $('#widget-width-mode-value-form').hide();
+            }
+
+            var value = $('select#input-set-image-size-mode').val();
+            if(value==1){
+                $('#set-image-size-mode-value-form-width').show();
+                $('#set-image-size-mode-value-form-height').show();
+            }else{
+                $('#set-image-size-mode-value-form-width').hide();
+                $('#set-image-size-mode-value-form-height').hide();
+            }
+
+            var value = $('select#input-set-background-image-size-mode').val();
+            if(value==1){
+                $('#set-background-image-size-mode-value-form-width').show();
+                $('#set-background-image-size-mode-value-form-height').show();
+            }else{
+                $('#set-background-image-size-mode-value-form-width').hide();
+                $('#set-background-image-size-mode-value-form-height').hide();
+            }
+
+            var value = $('select#input-slider-mode').val();
+            if(value==1){
+                $('.slider-autoplay-status-view').show();
+            }else{
+                $('.slider-autoplay-status-view').hide();
+            }
+
+            var value = $('select#input-slider-autoplay-status').val();
+            if(value==1){
+                $('.slider-autoplay-time-view').show();
+            }else{
+                $('.slider-autoplay-time-view').hide();
+            }
+
+            $('.input-selector-list').each(function (index, element) {
+
+                var value = $(element).find(':selected').val();
+
+                if(value==='custom'){
+                }
+            })
+
+            var template = $('select#input-template').val();
+            if(template!=="widget_template_1" && template!=="widget_template_3" && template!=="widget_template_4"){
+                $('.free-product-table-mode').show();
+            }else{
+                $('.free-product-table-mode').hide();
+
+            }
+
+            //Режим работы виджета
+            var main_mode = $('select#input-main-mode').val();
+            if(main_mode=='product_from_kit'){
+                $('.form-group-widget-description').show();
+
+                $('.form-group-product-from-kit-container').show();
+                // $('.form-group-product-from-kit-mode-product-source').show();
+                // $('.form-group-product-from-kit-mode-kits').show();
+                // $('.form-group-product-from-kit-mode').show();
+            }else{
+                $('.form-group-widget-description').hide();
+
+                $('.form-group-product-from-kit-container').hide();
+                // $('.form-group-product-from-kit-mode-product-source').hide();
+                // $('.form-group-product-from-kit-mode-kits').hide();
+                // $('.form-group-product-from-kit-mode').hide();
+            }
+
+            var value = $('select#product-from-kit-mode-product-source').val();
+            if(value=='list'){
+                $('#form-group-link-product').show();
+                // $('#filter-button').show();
+            }else{
+                $('#form-group-link-product').hide();
+                // $('#filter-button').hide();
+            }
+
+            var value_kits = $('select#input-product-from-kit-mode-kits').val();
+            if(main_mode!='product_from_kit' || (main_mode=='product_from_kit' && value_kits=='linked_kits')){
+
+                $('.tab-kits').show();
+            }else{
+                $('.tab-kits').hide();
+            }
+            var value_items = $('select#input-product-from-kit-mode-items').val();
+            if( main_mode=='product_from_kit' && value_items=='show_simple_kit'){
+                // $('.template-view').hide();
+                // $('.display-options-input-form').hide();
+                // $('.form-group-input-product-click-mode').hide();
+                // $('.form-group-widget-width-mode').hide();
+                // $('.form-group-set-background-image-size-mode').hide();
+                // $('.form-group-widget-description').hide();
+            }else{
+                // $('.template-view').show();
+                // $('.display-options-input-form').show();
+                // $('.form-group-input-product-click-mode').show();
+                // $('.form-group-widget-width-mode').show();
+                // $('.form-group-set-background-image-size-mode').show();
+                // $('.form-group-widget-description').show();
+            }
+
+            if (display_mode === 'category_list') {
+                $('#form-group-link-category').show();
+                $('.form-group-kits-per-category-page').show();
+                $('.form-input-link-category-filter-kits').show();
+                // $('.tab-kits').hide();
+                if($('#input-link-category-filter-kits').val()=="selected"){
+                    $('.tab-kits').show();
+                }else{
+                    $('.tab-kits').hide();
+                }
+            }else{
+                $('#form-group-link-category').hide();
+                $('.form-group-kits-per-category-page').hide();
+                $('.form-input-link-category-filter-kits').hide();
+                //$('.tab-kits').show();
+            }
+
+            //Доступные шаблоны
+            var value = $('#input-main-mode').val();
+            if(value=='default'){
+                $('#input-template option').prop('disabled', false);
+            }
+            if(value=='kit'){
+                $('#input-template option[data-type=kit]').prop('disabled', false);
+                $('#input-template option[data-type=series]').prop('disabled', 'disabled');
+                $('#input-template option[data-type=product_from_kit]').prop('disabled', 'disabled');
+            }
+            if(value=='series'){
+                $('#input-template option[data-type=kit]').prop('disabled', 'disabled');
+                $('#input-template option[data-type=series]').prop('disabled', false);
+                $('#input-template option[data-type=product_from_kit]').prop('disabled', 'disabled');
+            }
+            if(value=='product_from_kit'){
+                $('#input-template option[data-type=kit]').prop('disabled', 'disabled');
+                $('#input-template option[data-type=series]').prop('disabled', 'disabled');
+                $('#input-template option[data-type=product_from_kit]').prop('disabled', false);
+            }
+            var mode_items = $('select#input-product-from-kit-mode-items').val();
+            if(value=='product_from_kit' && mode_items=='show_simple_kit'){
+                $('#input-template option[data-type=kit]').prop('disabled', false);
+                $('#input-template option[data-type=series]').prop('disabled', false);
+                $('#input-template option[data-type=product_from_kit]').prop('disabled', 'disabled');
+            }
+
+            // var ttt=$('#input-main-mode option:selected');
+            // var ttt2=$('#input-main-mode option:selected').prop('disabled');
+            // var ttt3=$('#input-main-mode').val();
+            if($('#input-template option:selected').prop('disabled') == true){
+                var first_enabled = $("#input-template option:not([disabled])").first();
+                $("#input-template").val(first_enabled.val());
+            }
+
+            update_link_product_combine_mode_buttons();
+            // var value = $('select#input-link-products-combine-mode').val();
+            // if(value=='product_from_kit' && mode_items=='show_simple_kit'){
+            //     $('#input-template option[data-type=kit]').prop('disabled', false);
+            //     $('#input-template option[data-type=series]').prop('disabled', false);
+            //     $('#input-template option[data-type=product_from_kit]').prop('disabled', 'disabled');
+            // }
+
+        }
+
+        function update_selector_product_page(element) {
+            var root_element = $('[id^=display-mode-config-product-page]');
+
+            var selector_value = $(root_element).find('#input-selector-default-list :selected').val();
+            var selector_mode = $(root_element).find('#input-selector-default-list :selected').attr('selector-mode');
+
+            if(selector_value==='custom'){
+                $(root_element).find('#input-selector').closest('.form-group').show();
+                $(root_element).find('#input-selector-mode').closest('.form-group').show();
+            }else{
+                $(root_element).find('#input-selector').closest('.form-group').hide();
+                $(root_element).find('#input-selector-mode').closest('.form-group').hide();
+            }
+
+            if(selector_value==='custom') {
+                selector_value='';
+            }
+
+            $(root_element).find('#input-selector').val(selector_value);
+            $(root_element).find('#input-selector-mode').val(selector_mode);
+
+            update_widget_views();
+
+        }
+
+        function update_selector_category_page(element) {
+            var root_element = $('[id^=display-mode-config-category-page]');
+
+            var selector_value = $(root_element).find('#input-selector-default-list :selected').val();
+            var selector_mode = $(root_element).find('#input-selector-default-list :selected').attr('selector-mode');
+
+            if(selector_value==='custom'){
+                $(root_element).find('#input-selector').closest('.form-group').show();
+                $(root_element).find('#input-selector-mode').closest('.form-group').show();
+            }else{
+                $(root_element).find('#input-selector').closest('.form-group').hide();
+                $(root_element).find('#input-selector-mode').closest('.form-group').hide();
+            }
+
+            if(selector_value==='custom') {
+                selector_value='';
+            }
+
+            $(root_element).find('#input-selector').val(selector_value);
+            $(root_element).find('#input-selector-mode').val(selector_mode);
+
+
+
+            update_widget_views();
+
+        }
+
+        function update_selector_cart_page(element) {
+            var root_element = $('[id^=display-mode-config-cart-page]');
+
+            var selector_value = $(root_element).find('#input-selector-default-list :selected').val();
+            var selector_mode = $(root_element).find('#input-selector-default-list :selected').attr('selector-mode');
+
+            $(root_element).find('#input-selector').val(selector_value);
+            $(root_element).find('#input-selector-mode').val(selector_mode);
+
+            update_widget_views();
+
+        }
+
+        function update_selector_checkout_page(element) {
+            var root_element = $('[id^=display-mode-config-checkout-page]');
+
+            var selector_value = $(root_element).find('#input-selector-default-list :selected').val();
+            var selector_mode = $(root_element).find('#input-selector-default-list :selected').attr('selector-mode');
+
+            $(root_element).find('#input-selector').val(selector_value);
+            $(root_element).find('#input-selector-mode').val(selector_mode);
+
+            update_widget_views();
+
+        }
+
+        update_widget_views();
+
+
+        function toggle_setting_form(selector) {
+            $('.'+selector).toggle();
+        }
+
+        var link_product_row_index = {{ row_link_product }} ;
+
+        //main product aoytcomplete
+        $('input[name=\'link_product_name\']').autocomplete({
+            'source': function (request, response) {
+
+                filter_only_product = 0;
+
+                var input_element = this;
+
+                $.ajax({
+                    url: 'index.php?route=catalog/bundle_expert_kit/autocomplete_product&{{ token_name }}{{ token_value }}&filter_name=' + encodeURIComponent(request) + '&filter_only_product=' + filter_only_product,
+                    dataType: 'json',
+                    success: function (json) {
+                        if ($(input_element).is(":focus")) {
+                            response($.map(json, function (item, index) {
+                                return {
+                                    label: item['name'],
+                                    value: index,
+                                    item_id: item['item_id'],
+                                    item_value: item['item_value'],
+                                    has_options: item['has_options'],
+                                    type: item['type']
+                                }
+                            }));
+                        } else {
+                            false;
+                        }
+
+                    }
+                });
+            },
+            'select': function (item) {
+
+                link_product_row_index++;
+
+                $('input[name=\'link_product_name\']').val('');
+
+                $('#link-product').append('<div id="link-product' + link_product_row_index + '"><i class="fa fa-minus-circle"></i> ' + item['label'] + '<input type="hidden" name="link_product[' + link_product_row_index + '][item_type]" value="' + item['type'] + '" /> <input type="hidden" name="link_product[' + link_product_row_index + '][item_id]" value="' + item['item_id'] + '" /> <input type="hidden" name="link_product[' + link_product_row_index + '][item_value]" value="' + item['item_value'] + '" /><input type="hidden" name="link_product[' + link_product_row_index + '][name]" value="' + item['label'] + '" /><input type="hidden" name="link_product[' + link_product_row_index + '][has_options]" value="' + item['has_options'] + '" /></div>');
+
+                update_link_product_combine_mode_buttons();
+            }
+        });
+
+        $('#link-product').delegate('.fa-minus-circle', 'click', function () {
+            $(this).parent().remove();
+
+            update_link_product_combine_mode_buttons();
+        });
+
+        function on_click_link_product_combine_mode(element) {
+            var value = $(element).attr('data-key-value');
+
+            var form = $(element).closest('#form-group-link-product-combine-mode');
+
+            var input = $(form).find('#input-link-products-combine-mode');
+
+            $(input).val(value);
+
+            //update_items_empty_mode_info();
+
+            update_link_product_combine_mode_buttons();
+        }
+
+        function update_link_product_combine_mode_buttons() {
+            var form = $('#form-group-link-product-combine-mode')
+            var input = $(form).find('#input-link-products-combine-mode');
+            var value = $(input).val();
+
+            var show = true;
+            if ($('#link-product').find('[id^=link-product]').length > 1) {
+                show = true;
+            } else {
+                show = false;
+            }
+            if (show) {
+                $(form).show();
+            } else {
+                $(form).hide();
+            }
+
+            //Меняем цвет активной кнопки
+
+
+            var buttons = $(form).find('button');
+            $(buttons).removeClass('active-combine-mode-button');
+            var active_button = $(form).find('button[data-key-value=' + value + ']');
+            $(active_button).addClass('active-combine-mode-button');
+        }
+
+
+        var link_category_row_index = {{ row_link_category }} ;
+
+        //main product aoytcomplete
+        $('input[name=\'link_category_name\']').autocomplete({
+            'source': function (request, response) {
+
+                filter_only_product = 0;
+
+                var input_element = this;
+
+                var filter_by_type = "category";
+
+                $.ajax({
+                    url: 'index.php?route=catalog/bundle_expert_kit/autocomplete_product&{{ token_name }}{{ token_value }}&filter_name=' + encodeURIComponent(request) + '&filter_only_product=' + filter_only_product+ '&filter_by_type=' + filter_by_type,
+                    dataType: 'json',
+                    success: function (json) {
+                        if ($(input_element).is(":focus")) {
+                            response($.map(json, function (item, index) {
+                                return {
+                                    label: item['name'],
+                                    value: index,
+                                    item_id: item['item_id'],
+                                    item_value: item['item_value'],
+                                    has_options: item['has_options'],
+                                    type: item['type']
+                                }
+                            }));
+                        } else {
+                            false;
+                        }
+
+                    }
+                });
+            },
+            'select': function (item) {
+
+                link_category_row_index++;
+
+                $('input[name=\'link_category_name\']').val('');
+
+                $('#link-category').append('<div id="link-category' + link_category_row_index + '"><i class="fa fa-minus-circle"></i> ' + item['label'] + '<input type="hidden" name="link_category[' + link_category_row_index + '][category_id]" value="' + item['item_id'] + '" /> </div>');
+
+                //update_link_product_combine_mode_buttons();
+            }
+        });
+
+        $('#link-category').delegate('.fa-minus-circle', 'click', function () {
+            $(this).parent().remove();
+
+            //update_link_product_combine_mode_buttons();
+        });
+
+
+        //--></script>
+
+</div>
+{{ footer }}

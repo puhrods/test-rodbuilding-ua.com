@@ -3,15 +3,26 @@ class ModelShippingNovaPoshta extends Model {
     protected $extension = 'novaposhta';
 
     public function creatTables() {
+        $this->db->query('CREATE TABLE IF NOT EXISTS `' . DB_PREFIX . $this->extension . '_regions` (
+   			`Ref` varchar(36) NOT NULL,
+   			`AreasCenter` varchar(36) NOT NULL,
+   			`Description` varchar(50) NOT NULL, 
+   			`DescriptionRu` varchar(50) NOT NULL,    
+   			PRIMARY KEY (`Ref`)
+   			) ENGINE=MyISAM DEFAULT CHARSET=utf8'
+        );
+
         $this->db->query('CREATE TABLE IF NOT EXISTS `' . DB_PREFIX . $this->extension . '_cities` (
    			`CityID` int(11) NOT NULL,
    			`Ref` varchar(36) NOT NULL,
    			`Description` varchar(200) NOT NULL, 
    			`DescriptionRu` varchar(200) NOT NULL,    
    			`Area` varchar(36) NOT NULL,
+   			`AreaDescription` varchar(50) NOT NULL, 
+   			`AreaDescriptionRu` varchar(50) NOT NULL, 
    			`SettlementType` varchar(36) NOT NULL,
-   			`SettlementTypeDescription` varchar(200) NOT NULL, 
-   			`SettlementTypeDescriptionRu` varchar(200) NOT NULL,
+   			`SettlementTypeDescription` varchar(50) NOT NULL, 
+   			`SettlementTypeDescriptionRu` varchar(50) NOT NULL,
    			`Delivery1` tinyint(1) NOT NULL,
    			`Delivery2` tinyint(1) NOT NULL,
    			`Delivery3` tinyint(1) NOT NULL,
@@ -19,18 +30,15 @@ class ModelShippingNovaPoshta extends Model {
    			`Delivery5` tinyint(1) NOT NULL,
    			`Delivery6` tinyint(1) NOT NULL,
    			`Delivery7` tinyint(1) NOT NULL,
-   			`Conglomerates` text NOT NULL,
    			`PreventEntryNewStreetsUser` text NOT NULL,
    			`IsBranch` tinyint(1) NOT NULL,
    			`SpecialCashCheck` tinyint(1) NOT NULL,
-   			INDEX (`CityID`),
    			INDEX (`Area`),		
-   			INDEX (`SettlementType`), 			
    			PRIMARY KEY (`Ref`)
    			) ENGINE=MyISAM DEFAULT CHARSET=utf8'
         );
 
-        $this->db->query('CREATE TABLE IF NOT EXISTS `' . DB_PREFIX . $this->extension . '_warehouses` (
+        $this->db->query('CREATE TABLE IF NOT EXISTS `' . DB_PREFIX . $this->extension . '_departments` (
    			`SiteKey` int(11) NOT NULL,
    			`Ref` varchar(36) NOT NULL,
    			`Description` varchar(500) NOT NULL, 
@@ -40,7 +48,12 @@ class ModelShippingNovaPoshta extends Model {
    			`TypeOfWarehouse` varchar(36) NOT NULL,
    			`CityRef` varchar(36) NOT NULL,
    			`CityDescription` varchar(200) NOT NULL,
-   			`CityDescriptionRu` varchar(200) NOT NULL,  
+   			`CityDescriptionRu` varchar(200) NOT NULL,
+   			`SettlementRef` varchar(36) NOT NULL,
+   			`SettlementDescription` varchar(200) NOT NULL,
+   			`SettlementAreaDescription` varchar(200) NOT NULL,  
+   			`SettlementRegionsDescription` varchar(200) NOT NULL,
+   			`SettlementTypeDescription` varchar(50) NOT NULL,  
    			`Number` int(11) NOT NULL, 	
    			`Phone` varchar(50) NOT NULL,  					
    			`Longitude` double NOT NULL,
@@ -50,15 +63,42 @@ class ModelShippingNovaPoshta extends Model {
    			`PaymentAccess` tinyint(1) NOT NULL,
    			`POSTerminal` tinyint(1) NOT NULL,
    			`InternationalShipping` tinyint(1) NOT NULL,
+   			`SelfServiceWorkplacesCount` tinyint(1) NOT NULL,
    			`TotalMaxWeightAllowed` int(11) NOT NULL,
    			`PlaceMaxWeightAllowed` int(11) NOT NULL,
-   			`Reception` text NOT NULL,
-   			`Delivery` text NOT NULL,
-   			`Schedule` text NOT NULL,
+   			`SendingLimitationsOnDimensions_length` int(11) NOT NULL,
+   			`SendingLimitationsOnDimensions_width` int(11) NOT NULL,
+   			`SendingLimitationsOnDimensions_height` int(11) NOT NULL,
+   			`ReceivingLimitationsOnDimensions_length` int(11) NOT NULL,
+   			`ReceivingLimitationsOnDimensions_width` int(11) NOT NULL,
+   			`ReceivingLimitationsOnDimensions_height` int(11) NOT NULL,
+   			`Reception_monday` varchar(20) NOT NULL,
+   			`Reception_tuesday` varchar(20) NOT NULL,
+   			`Reception_wednesday` varchar(20) NOT NULL,
+   			`Reception_thursday` varchar(20) NOT NULL,
+   			`Reception_friday` varchar(20) NOT NULL,
+   			`Reception_saturday` varchar(20) NOT NULL,
+   			`Reception_sunday` varchar(20) NOT NULL,
+   			`Delivery_monday` varchar(20) NOT NULL,
+   			`Delivery_tuesday` varchar(20) NOT NULL,
+   			`Delivery_wednesday` varchar(20) NOT NULL,
+   			`Delivery_thursday` varchar(20) NOT NULL,
+   			`Delivery_friday` varchar(20) NOT NULL,
+   			`Delivery_saturday` varchar(20) NOT NULL,
+   			`Delivery_sunday` varchar(20) NOT NULL,
+   			`Schedule_monday` varchar(20) NOT NULL,
+   			`Schedule_tuesday` varchar(20) NOT NULL,
+   			`Schedule_wednesday` varchar(20) NOT NULL,
+   			`Schedule_thursday` varchar(20) NOT NULL,
+   			`Schedule_friday` varchar(20) NOT NULL,
+   			`Schedule_saturday` varchar(20) NOT NULL,
+   			`Schedule_sunday` varchar(20) NOT NULL,
    			`DistrictCode` varchar(20) NOT NULL,
    			`WarehouseStatus` varchar(20) NOT NULL,
+   			`WarehouseStatusDate` varchar(20) NOT NULL,
    			`CategoryOfWarehouse` varchar(20) NOT NULL,
-   			INDEX (`SiteKey`),
+   			`Direct` varchar(20) NOT NULL,
+   			`RegionCity` varchar(20) NOT NULL,
    			INDEX (`TypeOfWarehouse`),
    			INDEX (`CityRef`),
    			PRIMARY KEY (`Ref`)
@@ -83,7 +123,7 @@ class ModelShippingNovaPoshta extends Model {
     }
 
     public function deleteTables() {
-        $this->db->query("DROP TABLE `" . DB_PREFIX . $this->extension . "_cities`,  `" . DB_PREFIX  . $this->extension . "_warehouses`, `" . DB_PREFIX  . $this->extension . "_references`");
+        $this->db->query("DROP TABLE  `" . DB_PREFIX . $this->extension . "_regions`,  `" . DB_PREFIX . $this->extension . "_cities`,  `" . DB_PREFIX  . $this->extension . "_departments`, `" . DB_PREFIX  . $this->extension . "_references`");
     }
 
     public function getOrder($order_id) {

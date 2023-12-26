@@ -1,0 +1,204 @@
+<div id="bundle-expert-container" class="bootstrap-style" style="">
+
+    <div class="bundle-expert-widgets-container" style="display: none !important;">
+        {% for html in widgets_html %}
+            {{ html }}
+        {% endfor %}
+    </div>
+
+    <div class="bundle-expert-forms-container" style="display: none !important;">
+    </div>
+
+    <div class="bundle-expert-forms-container-from-cart" style="display: none !important;">
+    </div>
+
+    <!-- /.modal-dialog -->
+    <div class="modal modal-bundle-expert be-css-popup fade1" id="bundle-expert-form-modal" >
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">...</h4>
+                    <div data-div-unique-id="f0efeaf12283452e447"></div>
+                </div>
+
+                <div class="modal-body" style="overflow: unset; min-height: 300px;">
+                    <div class="kit-form-loading-overlay" style="display: flex; align-items: center; justify-content: center;">
+                    </div>
+                    <div class="body-content">
+                    </div>
+                    <div class="cart-merge-popup-message" style="display: none">
+                        {{ text_cart_merge_message }}
+
+                        <div style="margin-top: 16px">
+                            <button type="button" class="btn btn-default" onclick="bundle_expert_form.hide_cart_merge_question()">{{ text_cancel }}</button>
+                            <button type="button" class="btn btn-success" onclick="bundle_expert_form.set_cart_merge_mode(1);">{{ text_to_merge }}</button>
+                            <button type="button" class="btn btn-primary" onclick="bundle_expert_form.set_cart_merge_mode(0);" >{{ text_to_add }}</button>
+                        </div>
+                    </div>
+
+
+                </div>
+                <div class="modal-footer hidden ">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" data-bs-dismiss="modal">{{ text_close }}</button>
+                </div>
+                <div data-div-unique-id="6aaadbf48e04015c559d7"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal modal-bundle-expert be-css-popup fade1" id="bundle-expert-question" >
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header hidden">
+                    <button type="button" class="close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">{{ text_bundle_expert_name }}</h4>
+                </div>
+                <div class="modal-body" style="overflow: unset; min-height: 0px" >
+                    <div class="body-content">
+                        {{ text_setup_kit_message }}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" id="setup-kit-button">{{ text_setup_kit }}</button>
+                    <button type="button" class="btn btn-primary" id="add-kit-to-cart-button" >{{ text_add_kit_to_cart }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal modal-bundle-expert be-css-popup fade1" id="bundle-expert-message" >
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">{{ text_bundle_expert_name }}</h4>
+                </div>
+                <div class="modal-body" style="overflow: unset; min-height: 0px" >
+                    <div class="body-content" style="font-size: 17px">
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" data-bs-dismiss="modal">{{ text_close }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal modal-bundle-expert be-css-popup fade1" id="bundle-expert-cart-merge-question" >
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header hidden">
+                    <button type="button" class="close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">{{ text_bundle_expert_name }}</h4>
+                </div>
+                <div class="modal-body" style="overflow: unset; min-height: 0px" >
+                    <div class="body-content">
+                        {{ text_cart_merge_message }}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" data-bs-dismiss="modal">{{ text_close }}</button>
+                    <button type="button" class="btn btn-success" id="add-to-cart-merge-button">{{ text_to_merge }}</button>
+                    <button type="button" class="btn btn-primary" id="add-to-cart-simple-button" >{{ text_add_kit_to_cart }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal modal-bundle-expert be-css-popup fade1" id="bundle-expert-remove-kit-from-cart-question" >
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">{{ text_kit }}</h4>
+                </div>
+                <div class="modal-body" style="overflow: unset; min-height: 0px" >
+                    <div class="body-content" style="font-size: 16px">
+                        {{ text_remove_kit_from_cart_question }}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" data-bs-dismiss="modal">{{ text_close }}</button>
+                    <button type="button" class="btn btn-primary" id="remove-kit-from-cart-modal-button">{{ button_remove_kit }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="hidden" id="widgets-json-container">{{ widgets_data_json }}</div>
+    <div class="hidden" id="selectors-json-container">{{ selectors_data_json }}</div>
+
+    <div class="hidden" id="currency-json-container">{{ currency_data_json }}</div>
+    <div class="hidden" id="category-products-json-container">{{ category_products_data_json }}</div>
+
+    <div id="bundle-expert-class-data">
+        <div id="becd-reload_item_products">{{ reload_item_products }}</div>
+        <div id="becd-is_some_checkout_page">{{ is_some_checkout_page }}</div>
+        <div id="becd-disable_cart_kit_edit_button">{{ disable_cart_kit_edit_button }}</div>
+        <div id="becd-animate_price">{{ animate_price }}</div>
+        <div id="becd-button_remove_kit">{{ button_remove_kit }}</div>
+        <div id="becd-button_edit_kit">{{ button_edit_kit }}</div>
+        <div id="becd-cart-product-parent-row-selector">tr</div>
+        <div id="becd-control-change-quantity-by-stock">{{ control_change_quantity_by_stock }}</div>
+
+    </div>
+
+
+
+    {% if (add_js_css) %}
+        {% for style in css_files %}
+    <link href="{{ style }}" type="text/css" rel="stylesheet" media="screen"/>
+        {% endfor %}
+        {% for script in js_files %}
+        <script src="{{ script }}" type="text/javascript" {% if (js_defer) %} {{ "defer" }}{% endif %} ></script>
+        {% endfor %}
+    {% endif %}
+
+    {% if (js_defer) %}
+
+        <script type="text/javascript" src="catalog/view/javascript/bundle-expert/bundle-expert-main-init.js" defer></script>
+
+    {% else %}
+
+        <script>
+
+
+            $(document).ready(function () {
+
+                $('#bundle-expert-container:not(:first)').replaceWith('');
+
+                {% if (not bundle_expert_settings['smart_js_2']) %}
+
+                if ($('#bundle-expert-container #widgets-json-container').html() !== '[]' || $('.be-category-kits-container').length>0 || $('.bundle-expert-direct-output-container').length>0) {
+                    BundleExpertMainInit.init();
+                }
+                BundleExpertMainInit.init_cart_kit_edit_button();
+
+                setInterval(BundleExpertMainInit.init_cart_kit_edit_button, 1000);
+
+                {% endif %}
+
+                {% if (bundle_expert_settings['smart_js_2']) %}
+
+                if ($('#bundle-expert-container #widgets-json-container').html() !== '[]' || $('.be-category-kits-container').length>0 || $('.bundle-expert-direct-output-container').length>0) {
+                    BundleExpertMini.init();
+                }
+                //BundleExpertMini.init_cart_kit_edit_button();
+
+                //setInterval(BundleExpertMini.init_cart_kit_edit_button, 1000);
+                {% endif %}
+
+            });
+
+        </script>
+    {% endif %}
+
+
+
+
+
+
+
+</div>

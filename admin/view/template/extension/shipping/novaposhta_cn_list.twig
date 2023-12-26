@@ -16,22 +16,28 @@
 					<button type="button" id="button-html-caret" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" disabled="disabled"><span class="caret"></span></button>
 					<ul class="dropdown-menu dropdown-menu-right">
 						<li class="dropdown-header"><i class="fa fa-file-pdf-o fa-fw"></i> {{ text_download_pdf }}</li>
-						<li><a href="{{ print_cn_pdf }}" target="_blank" id="button-pdf-cn-2">{{ text_cn }}</a></li>
-						<li><a href="{{ print_markings_pdf }}" target="_blank" id="button-pdf-m">{{ text_mark }}</a></li>
-						<li><a href="{{ print_markings_zebra_pdf }}" target="_blank" id="button-pdf-mz">{{ text_mark_zebra }}</a></li>
-						<li><a href="{{ print_markings_zebra_100_100_pdf }}" target="_blank" id="button-pdf-mz100x100">{{ text_mark_zebra_100_100 }}</a></li>
+						<li><a href="{{ print_cn_a4_pdf }}" target="_blank" id="button-pdf-cn-a4">{{ text_cn_a4 }}</a></li>
+						<li><a href="{{ print_cn_a5_pdf }}" target="_blank" id="button-pdf-cn-a5">{{ text_cn_a5 }}</a></li>
+						<li><a href="{{ print_mark_85_85_pdf }}" target="_blank" id="button-pdf-m85x85">{{ text_mark_85_85 }}</a></li>
+						<li><a href="{{ print_mark_100_100_pdf }}" target="_blank" id="button-pdf-m100x100">{{ text_mark_100_100 }}</a></li>
 						<li role="separator" class="divider"></li>
 						<li class="dropdown-header"><i class="fa fa-print fa-fw"></i> {{ text_print_html }}</li>
-						<li><a href="{{ print_cn_html }}" target="_blank" id="button-html-cn-2">{{ text_cn }}</a></li>
-						<li><a href="{{ print_markings_html }}" target="_blank" id="button-html-m">{{ text_mark }}</a></li>
-						<li><a href="{{ print_markings_zebra_html }}" target="_blank" id="button-html-mz">{{ text_mark_zebra }}</a></li>
-						<li><a href="{{ print_markings_zebra_100_100_html }}" target="_blank" id="button-html-mz100x100">{{ text_mark_zebra_100_100 }}</a></li>
-						<li role="separator" class="divider"></li>
+						<li><a href="{{ print_cn_a4_html }}" target="_blank" id="button-html-cn-a4">{{ text_cn_a4 }}</a></li>
+						<li><a href="{{ print_cn_a5_html }}" target="_blank" id="button-html-cn-a5">{{ text_cn_a5 }}</a></li>
+						<li><a href="{{ print_mark_85_85_html }}" target="_blank" id="button-html-m85x85">{{ text_mark_85_85 }}</a></li>
+						<li><a href="{{ print_mark_100_100_html }}" target="_blank" id="button-html-m100x100">{{ text_mark_100_100 }}</a></li>
+					</ul>
+				</div>
+				<div class="btn-group">
+					<button type="button" class="btn btn-default dropdown-toggle" id="button-service" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" disabled="disabled"><i class="fa fa-cog" aria-hidden="true"></i> <span class="caret"></span></button>
+					<ul class="dropdown-menu dropdown-menu-right">
+						<li><a onclick="addToRegistry(this);" style="cursor: pointer;" id="button-add-to-registry"><i class="fa fa-indent text-info fa-fw" aria-hidden="true"></i> {{ text_add_to_registry }}</a></li>
+						<li><a onclick="deleteFromRegistry(this);" style="cursor: pointer;" id="button-delete-from-registry"><i class="fa fa-outdent text-warning fa-fw" aria-hidden="true"></i> {{ text_delete_from_registry }}</a></li>
 						<li><a onclick="printSettings(this);" style="cursor: pointer;" id="button-print"><i class="fa fa-print fa-fw"></i> {{ text_print_settings }}</a></li>
+						<li><a onclick="deleteCN(this);" style="cursor: pointer;" id="button-delete"><i class="fa fa-trash-o text-danger fa-fw"></i> {{ text_delete }}</a></li>
 					</ul>
 				</div>
 				<a href="{{ add }}" data-toggle="tooltip" title="{{ button_add }}" class="btn btn-primary" role="button"><i class="fa fa-plus"></i></a>
-				<button type="button" id="button-delete" onclick="deleteCN(this);" data-toggle="tooltip" data-value="" title="{{ button_delete }}" class="btn btn-danger" disabled="disabled"><i class="fa fa-trash-o"></i></button>
 				<a href="{{ back_to_orders }}" data-toggle="tooltip" title="{{ button_back_to_orders }}" class="btn btn-default"><i class="fa fa-reply"></i></a>
 			</div>
 		</div>
@@ -96,7 +102,7 @@
 					</div>
 				</div>
 				<form method="post" enctype="multipart/form-data" id="form">
-					<div class="table-responsive">
+					<div class="table-responsive" style="overflow-y:visible; overflow-x:visible;">
 						<table class="table table-bordered table-hover">
 							<thead>
 								<tr>
@@ -108,6 +114,9 @@
                                     {% if 'order_number' in displayed_information %}
 										<td>{{ column_order_number }}</td>
                                     {% endif %}
+									{% if 'registry' in displayed_information %}
+										<td>{{ column_registry }}</td>
+									{% endif %}
                                     {% if 'create_date' in displayed_information %}
 										<td>{{ column_create_date }}</td>
                                     {% endif %}
@@ -129,12 +138,18 @@
                                     {% if 'sender' in displayed_information %}
 										<td>{{ column_sender }}</td>
                                     {% endif %}
+									{% if 'sender_contact_person' in displayed_information %}
+										<td>{{ column_sender_contact_person }}</td>
+									{% endif %}
                                     {% if 'sender_address' in displayed_information %}
 										<td>{{ column_sender_address }}</td>
                                     {% endif %}
                                     {% if 'recipient' in displayed_information %}
 										<td>{{ column_recipient }}</td>
                                     {% endif %}
+									{% if 'recipient_contact_person' in displayed_information %}
+										<td>{{ column_recipient_contact_person }}</td>
+									{% endif %}
                                     {% if 'recipient_address' in displayed_information %}
 										<td>{{ column_recipient_address }}</td>
                                     {% endif %}
@@ -207,6 +222,10 @@
 											{% endif %}
 										</td>
 									{% endif %}
+									<td{{ 'registry' not in displayed_information ? ' style="display: none"' }}>
+										{{ cn.ScanSheetNumber }}
+										<input type="hidden" name="registry[]" value="{{ cn.ScanSheetNumber }}" />
+									</td>
 									{% if 'create_date' in displayed_information %}
 										<td>{{ cn.create_date }}</td>
 									{% endif %}
@@ -228,11 +247,17 @@
 									{% if 'sender' in displayed_information %}
 										<td>{{ cn.sender }}</td>
 									{% endif %}
+									{% if 'sender_contact_person' in displayed_information %}
+										<td>{{ cn.sender_contact_person }}</td>
+									{% endif %}
 									{% if 'sender_address' in displayed_information %}
 										<td>{{ cn.sender_address }}</td>
 									{% endif %}
 									{% if 'recipient' in displayed_information %}
 										<td>{{ cn.recipient }}</td>
+									{% endif %}
+									{% if 'recipient_contact_person' in displayed_information %}
+										<td>{{ cn.recipient_contact_person }}</td>
 									{% endif %}
 									{% if 'recipient_address' in displayed_information %}
 										<td>{{ cn.recipient_address }}</td>
@@ -285,21 +310,28 @@
 											<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="caret"></span></button>
 											<ul class="dropdown-menu dropdown-menu-right">
 												<li class="dropdown-header"><i class="fa fa-file-pdf-o fa-fw"></i> {{ text_download_pdf }}</li>
-												<li><a href="{{ print_cn_pdf ~ '/orders[]/' ~ cn.IntDocNumber }}" target="_blank">{{ text_cn }}</a></li>
-												<li><a href="{{ print_markings_pdf ~ '/orders[]/' ~ cn.IntDocNumber }}" target="_blank">{{ text_mark }}</a></li>
-												<li><a href="{{ print_markings_zebra_pdf ~ '/orders[]/' ~ cn.IntDocNumber }}" target="_blank">{{ text_mark_zebra }}</a></li>
-												<li><a href="{{ print_markings_zebra_100_100_pdf ~ '/orders[]/' ~ cn.IntDocNumber }}" target="_blank">{{ text_mark_zebra_100_100 }}</a></li>
+												<li><a href="{{ print_cn_a4_pdf ~ '/orders[]/' ~ cn.IntDocNumber }}" target="_blank">{{ text_cn_a4 }}</a></li>
+												<li><a href="{{ print_cn_a5_pdf ~ '/orders[]/' ~ cn.IntDocNumber }}" target="_blank">{{ text_cn_a5 }}</a></li>
+												<li><a href="{{ print_mark_85_85_pdf ~ '/orders[]/' ~ cn.IntDocNumber }}" target="_blank">{{ text_mark_85_85 }}</a></li>
+												<li><a href="{{ print_mark_100_100_pdf ~ '/orders[]/' ~ cn.IntDocNumber }}" target="_blank">{{ text_mark_100_100 }}</a></li>
+												<li><a href="{{ print_registry_pdf ~ '/refs[]/' ~ cn.ScanSheetNumber }}" target="_blank">{{ text_registry }}</a></li>
 												<li role="separator" class="divider"></li>
 												<li class="dropdown-header"><i class="fa fa-print fa-fw"></i> {{ text_print_html }}</li>
-												<li><a href="{{ print_cn_html ~ '/orders[]/' ~ cn.IntDocNumber }}" target="_blank">{{ text_cn }}</a></li>
-												<li><a href="{{ print_markings_html ~ '/orders[]/' ~ cn.IntDocNumber }}" target="_blank">{{ text_mark }}</a></li>
-												<li><a href="{{ print_markings_zebra_html ~ '/orders[]/' ~ cn.IntDocNumber }}" target="_blank">{{ text_mark_zebra }}</a></li>
-												<li><a href="{{ print_markings_zebra_100_100_html ~ '/orders[]/' ~ cn.IntDocNumber }}" target="_blank">{{ text_mark_zebra_100_100 }}</a></li>
+												<li><a href="{{ print_cn_a4_html ~ '/orders[]/' ~ cn.IntDocNumber }}" target="_blank">{{ text_cn_a4 }}</a></li>
+												<li><a href="{{ print_cn_a5_html ~ '/orders[]/' ~ cn.IntDocNumber }}" target="_blank">{{ text_cn_a5 }}</a></li>
+												<li><a href="{{ print_mark_85_85_html ~ '/orders[]/' ~ cn.IntDocNumber }}" target="_blank">{{ text_mark_85_85 }}</a></li>
+												<li><a href="{{ print_mark_100_100_html ~ '/orders[]/' ~ cn.IntDocNumber }}" target="_blank">{{ text_mark_100_100 }}</a></li>
+												<li><a href="{{ print_registry_html ~ '/refs[]/' ~ cn.ScanSheetNumber }}" target="_blank">{{ text_registry }}</a></li>
 											</ul>
 										</div>
 										<div class="btn-group">
 											<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-cog" aria-hidden="true"></i> <span class="caret"></span></button>
 											<ul class="dropdown-menu dropdown-menu-right">
+												{% if cn.ScanSheetNumber %}
+												<li><a onclick="deleteFromRegistry(this);" style="cursor: pointer;"><i class="fa fa-outdent text-warning fa-fw" aria-hidden="true"></i> {{ text_delete_from_registry }}</a></li>
+												{% else %}
+												<li><a onclick="addToRegistry('{{ cn.IntDocNumber }}');" style="cursor: pointer;"><i class="fa fa-indent text-info fa-fw" aria-hidden="true"></i> {{ text_add_to_registry }}</a></li>
+												{% endif %}
 												<li><a href="{{ add ~ '&cn_ref=' ~ cn.Ref }}"><i class="fa fa-pencil text-primary fa-fw"></i> {{ text_edit }}</a></li>
 												{% if not cn.order %}
 												<li><a onclick="assignmentOrder('{{ cn.IntDocNumber }}', '{{ cn.Ref }}');" style="cursor: pointer;"><i class="fa fa-plus-square text-success fa-fw" aria-hidden="true"></i> {{ text_assignment_order }}</a></li>
@@ -326,7 +358,7 @@
 			</div>
 		</div>
 	</div>
-	<!-- START Modal assignment order to CN -->
+	<!-- Modal assignment order to CN START -->
 	<div class="modal fade" id="modal-assignment-order-to-cn" tabindex="-1" role="dialog" aria-labelledby="modal-assignment-order-to-cn-label">
 		<div class="modal-dialog modal-sm" role="document">
 			<div class="modal-content">
@@ -351,7 +383,49 @@
 			</div>
 		</div>
 	</div>
-	<!-- END Modal assignment order to CN -->
+	<!-- Modal assignment order to CN END -->
+	<!-- Add to registry START -->
+	<div class="modal fade" id="modal-add-to-registry" tabindex="-1" role="dialog" aria-labelledby="modal-add-to-registry-label">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="modal-add-to-registry-label">{{ heading_adding_to_registry }}</h4>
+				</div>
+				<div class="modal-body">
+					<input type="hidden" name="cn_number_registry" value="" id="input-cn_number_registry">
+					<div class="form-group">
+						<label class="control-label" for="input-registry">{{ entry_registry }}</label>
+						<div class="col-sm-12 input-group">
+							<select name="registry" id="input-registry" class="form-control selectpicker show-tick">
+								<option value="">{{ text_add }}</option>
+								{% for v in registers %}
+								<option value="{{ v.Ref }}">{{ v.Number ~ ' (' ~ v.DateTime ~ ')' }}</option>
+								{% endfor %}
+							</select>
+							<span class="input-group-btn" style="display: none;">
+								<button type="button" id="button-delete-registry" data-toggle="tooltip" title="{{ button_delete_registry }}" class="btn btn-danger" onclick="deleteRegistry();"><i class="fa fa-trash-o fa-fw"></i></button>
+							</span>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label" for="input-registry_date">{{ entry_create_date }}</label>
+						<div class="input-group date">
+							<input type="text" name="registry_date" value="" placeholder="{{ entry_create_date }}" data-date-format="DD.MM.YYYY" id="input-registry_date" class="form-control" />
+							<span class="input-group-btn">
+								<button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
+							</span>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" onclick="addToRegistry();"><i class="fa fa-check"></i></button>
+					<button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i></button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Add to registry END -->
 	<!-- START Print settings -->
 	<div class="modal fade" id="modal-print-settings" tabindex="-1" role="dialog" aria-labelledby="modal-print-settings-label">
 		<div class="modal-dialog" role="document">
@@ -406,14 +480,14 @@
 						<label class="col-sm-4 control-label" for="input-print_start">{{ entry_print_start }}</label>
 						<div class="col-sm-8">
 							<div class="btn-group-vertical" id="div-vertical-1" data-toggle="buttons">
-                                {% for i in 1..8 %}
+                                {% for i in 1..6 %}
 								<label class="btn btn-default">
 									<input type="radio" name="print_start" value="{{ i }}" id="input-print_start-{{ i }}" autocomplete="off">{{ i }}
 								</label>
                                 {% endfor %}
 							</div>
 							<div class="btn-group-vertical" id="div-vertical-2" data-toggle="buttons">
-                                {% for i in 1..8 %}
+                                {% for i in 1..6 %}
 									<label class="btn btn-default">
 										<input type="radio" name="print_start" value="{{ i }}" id="input-print_start-{{ i }}" autocomplete="off">{{ i }}
 									</label>
@@ -431,279 +505,466 @@
 	</div>
 	<!-- END Print settings -->
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/i18n/defaults-{{ translations_code }}.min.js"></script>
 <script type="text/javascript"><!--
-    function assignmentOrder(number, ref) {
-        if ($('#modal-assignment-order-to-cn').is(':hidden')) {
-            $('#input-cn_number').val(number);
-            $('#input-cn_ref').val(ref)
+	function assignmentOrder(number, ref) {
+		if ($('#modal-assignment-order-to-cn').is(':hidden')) {
+			$('#input-cn_number').val(number);
+			$('#input-cn_ref').val(ref);
 
-            $('#modal-assignment-order-to-cn').modal('show');
-        } else {
-            var post_data = 'order_id=' + $('#input-order_number').val() + '&cn_number=' + encodeURIComponent($('#input-cn_number').val()) + '&cn_ref=' + encodeURIComponent($('#input-cn_ref').val());
+			$('#modal-assignment-order-to-cn').modal('show');
+		} else {
+			var post_data = 'order_id=' + $('#input-order_number').val() + '&cn_number=' + encodeURIComponent($('#input-cn_number').val()) + '&cn_ref=' + encodeURIComponent($('#input-cn_ref').val());
 
-            $.ajax( {
-                url: 'index.php?route=extension/shipping/novaposhta/addCNToOrder&user_token={{ user_token }}',
-                type: 'POST',
-                data: post_data,
-                dataType: 'json',
-                beforeSend: function () {
-                    $('body').fadeTo('fast', 0.7).prepend('<div id="ocmax-loader" style="position: fixed; top: 50%;	left: 50%; z-index: 9999;"><i class="fa fa-spinner fa-spin fa-3x fa-fw"></i></div>');
-                },
-                complete: function () {
-                    var $alerts = $('.alert-danger, .alert-success');
+			$.ajax({
+				url: 'index.php?route=extension/shipping/novaposhta/addCNToOrder&user_token={{ user_token }}',
+				type: 'POST',
+				data: post_data,
+				dataType: 'json',
+				success: function(json) {
+					if(json['error']) {
+						$('.container-fluid:eq(2)').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+					}
 
-                    if ($alerts.length !== 0) {
-                        setTimeout(function() { $alerts.fadeOut(); }, 5000);
-                    }
+					if (json['success']) {
+						$('.container-fluid:eq(2)').prepend('<div class="alert alert-success"><i class="fa fa-check-circle"></i> ' + json['success'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
 
-                    $('body').fadeTo('fast', 1)
-                    $('#ocmax-loader').remove();
-                },
-                success: function(json) {
-                    if(json['error']) {
-                        $('.container-fluid:eq(1)').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
-                    }
+						setTimeout(function() { location.reload(); }, 5000);
+					}
 
-                    if (json['success']) {
-                        $('.container-fluid:eq(1)').prepend('<div class="alert alert-success"><i class="fa fa-check-circle"></i> ' + json['success'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+					$('html, body').animate({ scrollTop: 0 }, 'slow');
+				}
+			});
 
-                        setTimeout(function() {
-                                location.reload();
-                            },
-                            2000
-                        );
-                    }
+			$('#modal-assignment-order-to-cn').modal('hide');
+		}
+	}
 
-                    $('html, body').animate({ scrollTop: 0 }, 'slow');
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    console.log(textStatus);
-                }
-            } );
+	function addToRegistry(cn_number) {
+		if ($('#modal-add-to-registry').is(':hidden')) {
+			$('#input-cn_number_registry').val(cn_number);
+			$('#input-registry > option:eq(1)').prop('selected', true).trigger('change');
+			$('#modal-add-to-registry').modal('show');
+		} else {
+			if (!confirm('{{ text_confirm }}')) {
+				return false;
+			}
 
-            $('#modal-assignment-order-to-cn').modal('hide');
-        }
-    }
+			var
+					$selected_cn_mumbers = $('input[name^="selected"]:checked');
+			post_data = '&action=add&registry=' + $('#input-registry').val() + '&date=' + encodeURIComponent($('#input-registry_date').val());
 
-    function printSettings(self) {
-        if ($('#modal-print-settings').is(':hidden')) {
-            var p_id;
+			if ($selected_cn_mumbers.length > 0) {
+				$selected_cn_mumbers.each(function(i) {
+					post_data += '&cns[]=' + $(this).val();
+				});
+			} else {
+				post_data += '&cns[]=' + $('#input-cn_number_registry').val();
+			}
 
-            if (self.id == 'button-print') {
-                p_id = $(self).parents('div.btn-group').find('#button-customized-printing')[0].id;
-            } else {
-                p_id = $(self).parents('tr').find('a[id^="button-customized-printing"]')[0].id;
-            }
+			$.ajax({
+				type: 'POST',
+				url: 'index.php?route=extension/shipping/novaposhta/registryCN&user_token={{ user_token }}',
+				data: post_data,
+				dataType: 'json',
+				success: function(json) {
+					if (json['error'] && json['error'] instanceof Array) {
+						for(var i in json['error']) {
+							$('.container-fluid:eq(2)').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error'][i] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+						}
+					}
 
-            $('#input-print_button_id').val(p_id);
+					if (json['success']) {
+						$('.container-fluid:eq(2)').prepend('<div class="alert alert-success"><i class="fa fa-check-circle"></i> ' + json['success']['text'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
 
-            $('#modal-print-settings').modal('show');
-        } else {
-            var
-                print_format,
-                page_format,
-                print_direction,
-                position,
-                new_href;
+						if (json['success']['cns'] instanceof Array) {
+							for(var i in json['success']['cns']) {
+								$('tr:contains("' + json['success']['cns'][i] + '")').addClass('info');
+							}
+						}
+					}
+				}
+			});
 
-            if ($('#input-print_format').val() == 'document_A4') {
-                print_format = 'printDocument';
-                page_format = 'A4';
-            } else if ($('#input-print_format').val() == 'document_A5') {
-                print_format = 'printDocument';
-                page_format = 'A5';
-            } else if ($('#input-print_format').val() == 'markings_A4') {
-                print_format = 'printMarkings';
-                page_format = 'A4';
+			$('#modal-add-to-registry').modal('hide');
+		}
+	}
 
-                if ($('#input-template_type').val() == 'html') {
-                    print_direction = $('#input-print_type').val();
-                    position = $('input[id^="input-print_start"]:checked').val();
-                }
-            }
+	function deleteFromRegistry(self) {
+		if (!confirm('{{ text_confirm }}')) {
+			return false;
+		}
 
-            new_href = 'https://my.novaposhta.ua/orders/' + print_format + '/apiKey/{{ key_api }}/type/' + $('#input-template_type').val() + '/pageFormat/' + page_format + '/copies/' + $('#input-number_of_copies').val();
+		var post_data = '&action=delete';
 
-            if (print_direction) {
-                new_href += '/printDirection/' + print_direction + '/position/' + position;
-            }
+		if (self.id == 'button-delete-from-registry') {
+			$('input[name^="selected"]:checked').each(function(i) {
+				post_data += '&cns[]=' + $(this).val();
+			});
+		} else {
+			post_data += '&cns[]=' + $(self).parents('tr').find('input[name^="selected"]').val();
+		}
 
-            if ($('#input-print_button_id').val() == 'button-customized-printing') {
-                setTimeout(function() { $('input[name^="selected"]').trigger('change'); }, 1000);
-            } else {
-                new_href += '/orders[]/' + parseInt($('#input-print_button_id').val().replace(/\D/g,''));
-            }
+		$.ajax({
+			type: 'POST',
+			url: 'index.php?route=extension/shipping/novaposhta/registryCN&user_token={{ user_token }}',
+			data: post_data,
+			dataType: 'json',
+			success: function(json) {
+				if (json['error'] && json['error'] instanceof Array) {
+					for(var i in json['error']) {
+						$('.container-fluid:eq(2)').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error'][i] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+					}
+				}
 
-            $('#' + $('#input-print_button_id').val()).attr('href', new_href);
+				if (json['success']) {
+					$('.container-fluid:eq(2)').prepend('<div class="alert alert-success"><i class="fa fa-check-circle"></i> ' + json['success']['text'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
 
-            $('#modal-print-settings').modal('hide');
-        }
-    }
+					if (json['success']['cns'] instanceof Array) {
+						for(var i in json['success']['cns']) {
+							$('tr:contains("' + json['success']['cns'][i] + '")').addClass('warning');
+						}
+					}
+				}
+			}
+		});
+	}
 
-    function deleteCN(self) {
-        if (!confirm('{{ text_confirm }}')) {
-            return false;
-        }
+	function deleteRegistry() {
+		if (!confirm('{{ text_confirm }}')) {
+			return false;
+		}
 
-        var post_data;
+		var post_data = '&action=delete_registry&registry=' + $('#input-registry').val();
 
-        if (self.id == 'button-delete') {
-            post_data = $('input[name^="selected"]:checked').parents('tr').find('input[name^="refs"]').serialize();
+		$.ajax({
+			type: 'POST',
+			url: 'index.php?route=extension/shipping/novaposhta/registryCN&user_token={{ user_token }}',
+			data: post_data,
+			dataType: 'json',
+			success: function(json) {
+				if (json['error'] && json['error'] instanceof Array) {
+					for(var i in json['error']) {
+						$('.container-fluid:eq(2)').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error'][i] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+					}
+				}
 
-            $('input[name^="selected"]:checked').parents('tr').find('a[href*="order_id"]').each(function(i) {
-                post_data += '&orders[]=' + $(this).text();
-            } );
-        } else {
-            post_data = $(self).parents('tr').find('input[name^="refs"]').serialize();
-            post_data += '&orders[]=' + $(self).parents('tr').find('a[href*="order_id"]').text();
-        }
+				if (json['success']) {
+					$('.container-fluid:eq(2)').prepend('<div class="alert alert-success"><i class="fa fa-check-circle"></i> ' + json['success']['text'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
 
-        $.ajax( {
-            type: 'POST',
-            url: 'index.php?route=extension/shipping/novaposhta/deleteCN&user_token={{ user_token }}',
-            data: post_data,
-            dataType: 'json',
-            beforeSend: function () {
-                $(self).find('i').addClass('fa-spin');
-                $(self).parents('div.btn-group').find('i').addClass('fa-spin');
-            },
-            complete: function () {
-                var $alerts = $('.alert-danger, .alert-success');
+					if (json['success']['cns'] instanceof Array) {
+						for(var i in json['success']['sheets']) {
+							$('tr:contains("' + json['success']['sheets'][i] + '")').addClass('warning');
+						}
+					}
+				}
+			}
+		});
+	}
 
-                if ($alerts.length !== 0) {
-                    setTimeout(function() { $alerts.fadeOut(); }, 5000);
-                }
+	function printSettings(self) {
+		if ($('#modal-print-settings').is(':hidden')) {
+			var p_id;
 
-                $(self).find('i').removeClass('fa-spin');
-                $(self).parents('div.btn-group').find('i').removeClass('fa-spin');
-            },
-            success: function(json) {
-                if (json['success']) {
-                    for(var i in json['success']['refs']) {
-                        $('input[value ="' + json['success']['refs'][i]['Ref'] + '"]').parents('tr').fadeOut('slow');
-                    }
+			if (self.id == 'button-print') {
+				p_id = 'button-customized-printing';
+			} else {
+				p_id = $(self).parents('tr').find('a[id^="button-customized-printing"]')[0].id;
+			}
 
-                    $('.container-fluid:eq(1)').prepend('<div class="alert alert-success"><i class="fa fa-check-circle"></i> ' + json['success']['text'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
-                }
+			$('#input-print_button_id').val(p_id);
 
-                if (json['warning']) {
-                    for(var w in json['warning']) {
-                        $('.container-fluid:eq(1)').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['warning'][w] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
-                    }
-                }
-            }
-        } );
-    }
+			$('#modal-print-settings').modal('show');
+		} else {
+			var
+					print_type,
+					print_format,
+					page_format,
+					copies,
+					print_direction,
+					position,
+					new_href,
+					selected_format = $('#input-print_format').val(),
+					template_type = $('#input-template_type').val(),
+					number_of_copies = $('#input-number_of_copies').val() || '1';
 
-    function formHandler(element) {
-        switch (element.id) {
-            case 'input-print_format':
-            case 'input-template_type':
-                var
-                    print_format = $('#input-print_format').val(),
-                    template_type = $('#input-template_type').val();
+			if (selected_format == 'document_A4') {
+				print_type = 'orders';
+				print_format = 'printDocument';
+				page_format = 'A4';
+				copies = '/copies/' + number_of_copies;
+			} else if (selected_format == 'document_A5') {
+				print_type = 'orders';
+				print_format = 'printDocument';
+				page_format = 'A5';
+				copies = '/copies/' + number_of_copies;
+			} else if (selected_format == 'mark_85_85') {
+				print_type = 'orders';
+				print_format = 'printMarking85x85';
+				copies = '/copies/' + number_of_copies;
 
-                if (print_format == 'markings_A4' && template_type == 'html') {
-                    $('#input-print_type, input[id^="input-print_start"]').parents('div.form-group').fadeIn();
-                } else {
-                    $('#input-print_type, input[id^="input-print_start"]').parents('div.form-group').fadeOut();
-                }
+				if (template_type == 'html') {
+					print_direction = $('#input-print_type').val();
+					position = $('input[id^="input-print_start"]:checked').val();
+				}
+			} else if (selected_format == 'mark_100_100') {
+				print_type = 'orders';
+				print_format = 'printMarking100x100';
+				copies = '/copies/' + number_of_copies;
 
-                break;
+				if (template_type == 'html') {
+					print_direction = $('#input-print_type').val();
+					position = $('input[id^="input-print_start"]:checked').val();
+				}
+			} else if (selected_format == 'registry') {
+				print_type = 'scanSheet';
+				print_format = 'printScanSheet';
+			}
 
-            case 'input-print_type':
-                var
-                    $print_start_1 = $('#div-vertical-1'),
-                    $print_start_2 = $('#div-vertical-2')
+			new_href = 'https://my.novaposhta.ua/' + print_type + '/' + print_format + '/apiKey/{{ key_api }}/type/' + template_type;
 
-                if (element.value == 'horPrint') {
-                    $print_start_1.find('label:odd').hide();
-                    $print_start_1.find('label:even').show();
-                    $print_start_2.find('label:odd').show();
-                    $print_start_2.find('label:even').hide();
-                } else {
-                    $print_start_1.find('label:lt(4)').show();
-                    $print_start_1.find('label:gt(3)').hide();
-                    $print_start_2.find('label:lt(4)').hide();
-                    $print_start_2.find('label:gt(3)').show();
-                }
+			if (page_format) {
+				new_href += '/pageFormat/' + page_format;
+			}
 
-                break;
-        }
-    }
+			if (print_direction) {
+				new_href += '/printDirection/' + print_direction + '/position/' + position;
+			}
 
-    $(function() {
-        $('.date').datetimepicker({
-            pickTime: false
-        } );
+			if (copies) {
+				new_href += copies;
+			}
 
-        if ('{{ cn_number }}') {
-            $('tr:contains("{{ cn_number }}")').addClass('success');
-        }
+			if ($('#input-print_button_id').val() == 'button-customized-printing') {
+				setTimeout(function () {
+					$('input[name^="selected"]').trigger('change');
+				}, 1000);
+			} else {
+				var cn_number = parseInt($('#input-print_button_id').val().replace(/\D/g, ''));
 
-        $('input[name^="selected"]').on('change', function(e) {
-            var
-                orders = '',
-                selected = $('input[name^="selected"]:checked');
+				if (selected_format == 'registry') {
+					new_href += '/refs[]/' + $('input[value="' + cn_number + '"]').parents('tr').find('input[name="registry[]"]').val();
+				} else {
+					new_href += '/orders[]/' + cn_number;
+				}
+			}
 
-            for(var i = 0; i < selected.length; i++) {
-                orders += '/orders[]/' + selected[i].value;
-            }
+			$('#' + $('#input-print_button_id').val()).attr('href', new_href);
 
-            $('#button-customized-printing, a[id^="button-pdf"], a[id^="button-html"]').each( function(indx) {
-                $(this).attr('href', $(this).attr('href').replace(/\/orders\[\]\/.*/g, ''));
-                $(this).attr('href', $(this).attr('href') + orders);
-            });
+			$('#modal-print-settings').modal('hide');
+		}
+	}
 
-            if (selected.length) {
-                $('#button-customized-printing, [id^="button-pdf"], [id^="button-html"], #button-delete').attr('disabled', false);
-            } else {
-                $('#button-customized-printing, [id^="button-pdf"], [id^="button-html"], #button-delete').attr('disabled', true);
-            }
-        } );
+	function deleteCN(self) {
+		if (!confirm('{{ text_confirm }}')) {
+			return false;
+		}
 
-        $('#button-filter').on('click', function() {
-            var
-                url = 'index.php?route=extension/shipping/novaposhta/getCNList&user_token={{ user_token }}',
-                filter_cn_number = $('#input-filter_cn_number').val(),
-                filter_cn_type = $('#input-filter_cn_type').val(),
-                filter_departure_date_from = $('#input-filter_departure_date_from').val(),
-                filter_departure_date_to = $('#input-filter_departure_date_to').val();
+		var post_data;
 
-            if (filter_cn_number) {
-                url += '&filter_cn_number=' + encodeURIComponent(filter_cn_number);
-            }
+		if (self.id == 'button-delete') {
+			post_data = $('input[name^="selected"]:checked').parents('tr').find('input[name^="refs"]').serialize();
 
-            if (filter_cn_type) {
-                for (var i in filter_cn_type) {
-                    url += '&filter_cn_type[]=' + encodeURIComponent(filter_cn_type[i]);
-                }
-            }
+			$('input[name^="selected"]:checked').parents('tr').find('a[href*="order_id"]').each(function(i) {
+				post_data += '&orders[]=' + $(this).text();
+			});
+		} else {
+			post_data = $(self).parents('tr').find('input[name^="refs"]').serialize();
+			post_data += '&orders[]=' + $(self).parents('tr').find('a[href*="order_id"]').text();
+		}
 
-            if (filter_departure_date_from) {
-                url += '&filter_departure_date_from=' + encodeURIComponent(filter_departure_date_from);
-            }
+		$.ajax({
+			type: 'POST',
+			url: 'index.php?route=extension/shipping/novaposhta/deleteCN&user_token={{ user_token }}',
+			data: post_data,
+			dataType: 'json',
+			beforeSend: function () {
+				$(self).find('i').addClass('fa-spin');
+				$(self).parents('div.btn-group').find('i').addClass('fa-spin');
+			},
+			complete: function () {
+				var $alerts = $('.alert-danger, .alert-success');
 
-            if (filter_departure_date_to) {
-                url += '&filter_departure_date_to=' + encodeURIComponent(filter_departure_date_to);
-            }
+				if ($alerts.length !== 0) {
+					setTimeout(function() { $alerts.fadeOut(); }, 5000);
+				}
 
-            location = url;
-        } );
+				$(self).find('i').removeClass('fa-spin');
+				$(self).parents('div.btn-group').find('i').removeClass('fa-spin');
+			},
+			success: function(json) {
+				if (json['success']) {
+					for(var i in json['success']['refs']) {
+						$('input[value ="' + json['success']['refs'][i]['Ref'] + '"]').parents('tr').fadeOut('slow');
+					}
 
-        $('#input-print_format, #input-template_type, #input-print_type').each(function() {
-            formHandler(this);
-        } );
+					$('.container-fluid:eq(2)').prepend('<div class="alert alert-success"><i class="fa fa-check-circle"></i> ' + json['success']['text'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+				}
 
-        $('input, select, textarea').on('change', function(e) {
-            formHandler(e.currentTarget);
-        } );
+				if (json['warning']) {
+					for(var w in json['warning']) {
+						$('.container-fluid:eq(2)').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['warning'][w] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+					}
+				}
+			}
+		});
+	}
 
-        $('#div-vertical-1, #div-vertical-2').on('click', function (e) {
-            $('#div-vertical-1, #div-vertical-2').not('#' + e.currentTarget.id).find('label').removeClass('active').find('input').removeAttr('checked');
-        } );
-    } );
+	function formHandler(element) {
+		switch (element.id) {
+			case 'input-registry':
+				if (element.value) {
+					$('label[for="input-registry_date"]').parent('.form-group').filter(':visible').fadeOut();
+					$('#button-delete-registry').parents('span').filter(':hidden').fadeIn();
+				} else {
+					$('label[for="input-registry_date"]').parent('.form-group').filter(':hidden').fadeIn();
+					$('#button-delete-registry').parents('span').filter(':visible').fadeOut();
+				}
+
+				break;
+			case 'input-print_format':
+			case 'input-template_type':
+				var
+						print_format = $('#input-print_format').val(),
+						template_type = $('#input-template_type').val();
+
+				if (print_format == 'mark_85_85' || print_format == 'mark_100_100') {
+					$('#input-number_of_copies, #input-template_type').parents('div.form-group').fadeIn();
+
+					if (template_type == 'html') {
+						$('#input-print_type, input[id^="input-print_start"]').parents('div.form-group').fadeIn();
+					} else {
+						$('#input-print_type, input[id^="input-print_start"]').parents('div.form-group').fadeOut();
+					}
+				} else if (print_format == 'registry') {
+					$('#input-number_of_copies, #input-print_type, input[id^="input-print_start"]').parents('div.form-group').fadeOut();
+				} else {
+					$('#input-number_of_copies, #input-template_type').parents('div.form-group').fadeIn();
+					$('#input-print_type, input[id^="input-print_start"]').parents('div.form-group').fadeOut();
+				}
+
+				break;
+
+			case 'input-print_type':
+				var
+						$print_start_1 = $('#div-vertical-1'),
+						$print_start_2 = $('#div-vertical-2')
+
+				if (element.value == 'horPrint') {
+					$print_start_1.find('label:odd').hide();
+					$print_start_1.find('label:even').show();
+					$print_start_2.find('label:odd').show();
+					$print_start_2.find('label:even').hide();
+				} else {
+					$print_start_1.find('label:lt(3)').show();
+					$print_start_1.find('label:gt(2)').hide();
+					$print_start_2.find('label:lt(3)').hide();
+					$print_start_2.find('label:gt(2)').show();
+				}
+
+				break;
+		}
+	}
+
+	$(function() {
+		/* START Preparation */
+		$.ajaxSetup({
+			beforeSend: function () {
+				$('body').fadeTo('fast', 0.7).prepend('<div id="ocmax-loader" style="position: fixed; top: 50%;	left: 50%; z-index: 9999;"><i class="fa fa-spinner fa-spin fa-3x fa-fw"></i></div>');
+			},
+			complete: function () {
+				var $alerts = $('.alert-danger, .alert-success');
+
+				if ($alerts.length !== 0) {
+					setTimeout(function() { $alerts.fadeOut(); }, 10000);
+				}
+
+				$('body').fadeTo('fast', 1);
+				$('#ocmax-loader').remove();
+			},
+			error: function (jqXHR, textStatus, errorThrown) {
+				console.log(textStatus);
+			}
+		});
+
+		$('.selectpicker').selectpicker({
+			liveSearchStyle: 'startsWith',
+			iconBase: 'fa',
+			tickIcon: 'fa-check'
+		});
+
+		$('.date').datetimepicker({
+			pickTime: false
+		});
+		/* END Preparation */
+
+		if ('{{ cn_number }}') {
+			$('tr:contains("{{ cn_number }}")').addClass('success');
+		}
+
+		$('input[name^="selected"]').on('change', function(e) {
+			var
+					orders = '',
+					selected = $('input[name^="selected"]:checked');
+
+			for(var i = 0; i < selected.length; i++) {
+				orders += '/orders[]/' + selected[i].value;
+			}
+
+			$('#button-customized-printing, a[id^="button-pdf"], a[id^="button-html"]').each( function(indx) {
+				$(this).attr('href', $(this).attr('href').replace(/\/orders\[\]\/.*/g, ''));
+				$(this).attr('href', $(this).attr('href') + orders);
+			});
+
+			if (selected.length) {
+				$('#button-customized-printing, [id^="button-pdf"], [id^="button-html"], #button-service').attr('disabled', false);
+			} else {
+				$('#button-customized-printing, [id^="button-pdf"], [id^="button-html"], #button-service').attr('disabled', true);
+			}
+		});
+
+		$('#button-filter').on('click', function() {
+			var
+					url = 'index.php?route=extension/shipping/novaposhta/getCNList&user_token={{ user_token }}',
+					filter_cn_number = $('#input-filter_cn_number').val(),
+					filter_cn_type = $('#input-filter_cn_type').val(),
+					filter_departure_date_from = $('#input-filter_departure_date_from').val(),
+					filter_departure_date_to = $('#input-filter_departure_date_to').val();
+
+			if (filter_cn_number) {
+				url += '&filter_cn_number=' + encodeURIComponent(filter_cn_number);
+			}
+
+			if (filter_cn_type) {
+				for (var i in filter_cn_type) {
+					url += '&filter_cn_type[]=' + encodeURIComponent(filter_cn_type[i]);
+				}
+			}
+
+			if (filter_departure_date_from) {
+				url += '&filter_departure_date_from=' + encodeURIComponent(filter_departure_date_from);
+			}
+
+			if (filter_departure_date_to) {
+				url += '&filter_departure_date_to=' + encodeURIComponent(filter_departure_date_to);
+			}
+
+			location = url;
+		});
+
+		$('#input-print_format, #input-template_type, #input-print_type').each(function() {
+			formHandler(this);
+		});
+
+		$('input, select, textarea').on('change', function(e) {
+			setTimeout(formHandler, 200, this);
+		});
+
+		$('#div-vertical-1, #div-vertical-2').on('click', function (e) {
+			$('#div-vertical-1, #div-vertical-2').not('#' + e.currentTarget.id).find('label').removeClass('active').find('input').removeAttr('checked');
+		});
+	} );
 //--></script>
 {{ footer }}

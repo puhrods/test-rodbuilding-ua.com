@@ -1,0 +1,129 @@
+{{ header }}{{ column_left }}
+<div id="content">
+
+    <div class="page-header">
+        <div class="container-fluid">
+            <div class="pull-right">
+                {% if license_error is not defined %}
+                <button type="submit" name="action" value="save" form="form" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i> {{ button_save }}</button>
+                <a onclick="$('#form').attr('action', '{{ save_and_close }}'); $('#form').submit();" class="btn btn-primary"><i class="fa fa-save"></i>&nbsp;{{ button_save_and_close }}</a>
+                {% else %}
+                <a href="{{ recheck }}" data-toggle="tooltip" title="{{ button_recheck }}"class="btn btn-primary" /><i class="fa fa-check"></i> {{ button_recheck }}</a>
+                {% endif %}
+                <a href="{{ close }}" data-toggle="tooltip" title="{{ button_close }}" class="btn btn-default"><i class="fa fa-close"></i> {{ button_close }}</a>
+            </div>
+            <img width="36" height="36" style="float:left" src="view/image/neoseo.png" alt=""/>
+            <h1>{{ heading_title_raw }} {{ text_module_version }}</h1>
+            <ul class="breadcrumb">
+                {% for breadcrumb in breadcrumbs %}
+                <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        {% if error_warning is defined and error_warning %}
+        <div class="alert alert-danger">
+            <i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+        </div>
+        {% endif %}
+        {% if success is defined and success %}
+        <div class="alert alert-success">
+            <i class="fa fa-check-circle"></i>
+            {{ success }}
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+        </div>
+        {% endif %}
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#tab-general" data-toggle="tab">{{ tab_general }}</a></li>
+                    {% if license_error is not defined %}
+                    <li><a href="#tab-logs" data-toggle="tab">{{ tab_logs }}</a></li>
+                    {% endif %}
+                    <li><a href="#tab-support" data-toggle="tab">{{ tab_support }}</a></li>
+                    {% if license_error is not defined %}
+                    <li><a href="#tab-usefull" data-toggle="tab">{{ tab_usefull }}</a></li>
+                    {% endif %}
+                    <li><a href="#tab-license" data-toggle="tab">{{ tab_license }}</a></li>
+                </ul>
+                <form action="{{ save }}" method="post" enctype="multipart/form-data" id="form">
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="tab-general">
+                            {% if license_error is not defined %}
+                                {{ widgets.dropdown('status',{0:text_disabled, 1 : text_enabled }) }}
+                                {{ widgets.dropdown('product_list_status',{0:text_disabled, 1 : text_enabled }) }}
+                                {{ widgets.dropdown('product_base_price',{0:text_disabled, 1 : text_enabled }) }}
+                            {% else %}
+                                {{ license_error }}
+                            {% endif %}
+
+                        </div>
+                        {% if license_error is not defined %}
+                            <div class="tab-pane" id="tab-logs">
+                                {{widgets.debug_download_logs('debug',{ 0: text_disabled, 1: text_enabled }, clear, download, button_clear_log, button_download_log)}}
+                                <textarea style="width: 100%; height: 300px; padding: 5px; border: 1px solid #CCCCCC; background: #FFFFFF; overflow: scroll;">{{ logs }}</textarea>
+                            </div>
+                        {% endif %}
+
+                        <div class="tab-pane" id="tab-support">
+                            {{ mail_support }}
+                        </div>
+                        <div class="tab-pane" id="tab-usefull">
+                            {{ widgets.usefullLinks() }}
+                        </div>
+                        <div class="tab-pane" id="tab-license">
+                            {{ widgets.licenseField() }}
+                            {{ module_licence }}
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript"><
+    if (window.location.hash.indexOf('#tab') == 0 && $("[href=" + window.location.hash + "]").length) {
+        $(".panel-body > .nav-tabs li").removeClass("active");
+        $("[href=" + window.location.hash + "]").parents('li').addClass("active");
+        $(".panel-body:first .tab-content:first .tab-pane:first").removeClass("active");
+        $(window.location.hash).addClass("active");
+    }
+    $(".nav-tabs li a").click(function () {
+        var url = $(this).prop('href');
+        window.location.hash = url.substring(url.indexOf('#'));
+    });
+
+    // Специальный фикс системной функции, поскольку даниель понятия не имеет о том что в url может быть еще и hash
+    // и по итогу этот hash становится частью user_token
+    function getURLVar(key) {
+        var value = [];
+
+        var url = String(document.location);
+        if( url.indexOf('#') != -1 ) {
+            url = url.substring(0, url.indexOf('#'));
+        }
+        var query = url.split('?');
+
+        if (query[1]) {
+            var part = query[1].split('&');
+
+            for (i = 0; i < part.length; i++) {
+                var data = part[i].split('=');
+
+                if (data[0] && data[1]) {
+                    value[data[0]] = data[1];
+                }
+            }
+
+            if (value[key]) {
+                return value[key];
+            } else {
+                return '';
+            }
+        }
+    }
+</script>
+{{ footer }}

@@ -1,0 +1,118 @@
+<legend>
+    <i class="fa fa-users" aria-hidden="true"></i> {{ tab_name_settings_group }} 
+    <button form="help_modals" class="pull-right hm-help btn btn-primary btn-sm" data-toggle="modal" data-target="#Group_Modal">
+        <i class="fa fa-info" aria-hidden="true"></i> - {{ help_name }} 
+    </button>
+</legend>
+<div class="row">
+    <div class="panel-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead>
+                <tr>
+                    <td class="text-left name">
+                        <label class="control-label">
+                        <span data-toggle="tooltip" title="" data-original-title="{{ column_name_titles }}">
+                            {{ column_name }} 
+                        </span>
+                        </label>
+                    </td>
+                    <td class="text-left">
+                        <label class="control-label">
+                        <span data-toggle="tooltip" title="" data-original-title="{{ column_description_titles }}">
+                            {{ column_description }} 
+                        </span>
+                        </label>
+                    </td>
+                    <td class="text-center mini-style">
+                        <label class="control-label">
+                        <span data-toggle="tooltip" title="" data-original-title="{{ column_edit_titles }}">
+                            {{ column_edit }} 
+                        </span>
+                        </label>
+                    </td>
+                    <td class="text-center mini-style">
+                        <label class="control-label">
+                        <span data-toggle="tooltip" title="" data-original-title="{{ column_status_titles }}">
+                            {{ column_status }} 
+                        </span>
+                        </label>
+                    </td>
+                    <td class="text-center mini-style">
+                        <label class="control-label">
+                        <span data-toggle="tooltip" title="" data-original-title="{{ column_delete_titles }}">
+                           {{ column_delete }} 
+                        </span>
+                        </label>
+                    </td>
+                </tr>
+                </thead>
+                <tbody>
+                <!--{% if (settings_group) %}
+                    {% set settings_group_counter = 1 %} 
+                    {% for setting_group in settings_group %} 
+                        <input type="hidden" name="settings_group[{{ settings_group_counter }}][group_id]" value="{{ setting_group['group_id'] }}">-->
+                        <tr>
+                            <td class="text-left">{{ setting_group['name'] }}</td>
+                            <td class="text-left">{{ setting_group['description'] }}</td>
+                            <td class="text-center"><a href="{{ setting_group['edit'] }}" data-toggle="tooltip" title="{{ button_edit }}" class="btn btn-primary"><i class="fa fa-pencil"></i></a></td>
+                            <td class="text-center widht-small">
+                                <input class="bootstrap-switcher" type="checkbox" value="1" name="setting_group[{{ settings_group_counter }}][status]" data-size="small" data-on-color="success"
+                                    {% if (setting_group['status']) %} {{ 'checked' }}{% endif %} >
+                            </td>
+                            <td class="text-center"><a href="{{ setting_group['delete'] }}" data-toggle="tooltip" title="{{ button_delete }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></a></td>
+                        </tr>
+                        <!--{% set settings_group_counter = settings_group_counter + 1 %} 
+                    {% endfor %} 
+                {% endif %}-->
+                </tbody>
+                <tfoot>
+                <tr>
+                    <td colspan="4"></td>
+                    <td class="text-center">
+                        <a href="{{ add_settings_group }}" data-toggle="tooltip" title="{{ button_add }}" class="btn btn-primary"><i class="fa fa-plus-circle"></i></a>
+                    </td>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Start Modal Help Group -->
+<div class="modal fade" id="Group_Modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times" aria-hidden="true"></i></button>
+                <h4 class="modal-title" id="myModalLabel"><i class="fa fa-cogs"></i> {{ help_name_group }}</h4>
+            </div>
+            <div class="modal-body">
+                <legend>{{ help_text }}</legend>
+                <div class="helper-info">{{ help_description_group }}</div>
+                <div class="text-center">{{ help_third_group }}</div>
+                <div class="helper-info">{{ help_fourth_group }}</div>
+                <div class="text-center">{{ help_fifth_group }}</div>
+                <div class="helper-info">{{ help_sixth_group }}</div>
+                <div class="text-center">{{ help_seventh_group }}</div>
+                <div class="helper-info">{{ help_eighth_group }}</div>
+                <div class="text-center">{{ help_eleventh_group }}</div>
+                <div class="helper-info">{{ help_twelfth_group }}</div>
+                <div class="text-center">{{ help_thirteenth_group }}</div>
+                <div class="helper-info">{{ help_fourteenth_group }}</div>
+                <div class="text-center">{{ help_first_group }}</div>
+                <div class="helper-info">{{ help_second_group }}</div>
+                <div class="text-center">{{ help_warning }}</div>
+                <div class="helper-info">{{ help_end }}</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal"> {{ help_ok }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END Modal Help Group -->
+
+<script type="text/javascript">
+    $('.bootstrap-switcher').bootstrapSwitch();
+</script>

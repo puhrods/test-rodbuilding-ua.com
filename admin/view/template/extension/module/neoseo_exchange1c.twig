@@ -1,0 +1,847 @@
+{{header}}{{column_left}}
+
+<div id="content">
+	<div class="page-header">
+		<div class="container-fluid">
+			<div class="pull-right">
+				{% if license_error is not defined %}
+					{% if neoseo_exchange1c_exchange_control is defined  and neoseo_exchange1c_exchange_control  %}
+						{% if exchange_control_status %}
+							<button id="exchange_stop" value="exchange_stop" form="form" data-toggle="tooltip"
+									onclick="window.location.href='{{ exchange_control_link_clear }}'; return false;" class="btn btn-warning"><i
+										class="fa fa-stop"></i> {{button_exchange_control}} {{exch_time}} {{button_exchange_control_minut}}</button>
+						{% else %}
+							<button id="exchange_wait" value="exchange_wait" form="form" data-toggle="tooltip"
+									onclick="window.location.href='{{ exchange_control_link_clear }}'; return false;" class="btn btn-success"><i
+										class="fa fa-exchange"></i> {{button_exchange_control_wait}}</button>
+						{% endif %}
+					{% endif %}
+					<button type="submit" name="action" value="save" form="form" data-toggle="tooltip"
+						title="{{button_save}}" class="btn btn-primary"><i
+							class="fa fa-save"></i> {{button_save}}</button>
+					<button type="submit" name="action" value="save_and_close" form="form" data-toggle="tooltip"
+						title="{{button_save_and_close}}" class="btn btn-default"><i
+							class="fa fa-save"></i> {{button_save_and_close}}</button>
+					{% else %}
+					<a href="{{recheck}}" data-toggle="tooltip" title="{{button_recheck}}"
+					   class="btn btn-primary"/><i class="fa fa-check"></i> {{button_recheck}}</a>
+				{% endif %}
+				<a href="{{close}}" data-toggle="tooltip" title="{{button_close}}"
+				   class="btn btn-default"><i class="fa fa-close"></i> {{button_close}}</a>
+			</div>
+			<img width="36" height="36" style="float:left" src="view/image/neoseo.png" alt=""/>
+			<h1>{{heading_title_raw ~ ' ' ~ text_module_version}}</h1>
+			<ul class="breadcrumb">
+				{% for breadcrumb in breadcrumbs %}
+					<li><a href="{{breadcrumb.href}}">{{breadcrumb.text}}</a></li>
+					{% endfor %}
+			</ul>
+		</div>
+	</div>
+	<div class="container-fluid">
+		{% if error_warning %}
+			<div class="alert alert-danger">
+				<i class="fa fa-exclamation-circle"></i> {{error_warning}}
+				<button type="button" class="close" data-dismiss="alert">&times;</button>
+			</div>
+		{% endif %}
+		{% if success is defined and  success is not empty %}
+			<div class="alert alert-success">
+				<i class="fa fa-check-circle"></i>
+				{{success}}
+				<button type="button" class="close" data-dismiss="alert">&times;</button>
+			</div>
+		{% endif %}
+		<div class="panel panel-default">
+			<div class="panel-body">
+
+				<ul class="nav nav-tabs">
+					<li class="active"><a href="#tab-general" data-toggle="tab">{{tab_general}}</a></li>
+						{% if license_error is not defined %}
+						<li><a href="#tab-order" data-toggle="tab">{{tab_order}}</a></li>
+						<li><a href="#tab-product" data-toggle="tab">{{tab_product}}</a></li>
+						<li><a href="#tab-price" data-toggle="tab">{{tab_price}}</a></li>
+						<li><a href="#tab-quantity" data-toggle="tab">{{tab_quantity}}</a></li>
+						<li><a href="#tab-category" data-toggle="tab">{{tab_category}}</a></li>
+						<li><a href="#tab-manufacturer" data-toggle="tab">{{tab_manufacturer}}</a></li>
+						<li><a href="#tab-attribute" data-toggle="tab">{{tab_attribute}}</a></li>
+						<li><a href="#tab-option" data-toggle="tab">{{tab_option}}</a></li>
+						<li><a href="#tab-filter" data-toggle="tab">{{tab_filter}}</a></li>
+						<li><a href="#tab-counterparties" data-toggle="tab">{{tab_counterparties}}</a></li>
+						<li><a href="#tab-logs" data-toggle="tab">{{tab_logs}}</a></li>
+						{% endif %}
+					<li><a href="#tab-support" data-toggle="tab">{{tab_support}}</a></li>
+					<li><a href="#tab-license" data-toggle="tab">{{tab_license}}</a></li>
+				</ul>
+
+				<form action="{{save}}" method="post" enctype="multipart/form-data" id="form">
+					<div class="tab-content">
+						<div class="tab-pane active" id="tab-general">
+							{% if license_error is not defined %}
+
+								{{widgets.dropdown('status',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('enable_zip',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('commerce_ml_version',{ 2: "V2", 3: "V3" })}}
+								{{widgets.dropdown('commerce_ml_version_order',{ 2: "V2", 3: "V3" })}}
+								{{widgets.dropdown('exchange_control',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.input('exchange_control_time')}}
+								{{widgets.dropdown('decimal_separator',{ 'dot': text_dot, 'comma': text_comma })}}
+								{{widgets.dropdown('delete_offers',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('user_answer_for_moy_sklad',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('wait_import_command',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('clear_system_cache',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('clear_image_cache',{ 0: text_disabled, 1: text_enabled })}}
+
+								{{widgets.text('link')}}
+								{{widgets.input('username')}}
+								{{widgets.password('password')}}
+								{{widgets.text('cron_command')}}
+
+								{{widgets.textarea('ip_list')}}
+
+								{{widgets.textarea('sql_before')}}
+								{{widgets.textarea('sql_after')}}
+
+							{% else %}
+
+								{{license_error}}
+
+							{% endif %}
+						</div>
+
+						{% if license_error is not defined %}
+							<div class="tab-pane" id="tab-order">
+								{{widgets.dropdown('order_export_type', { 0: text_export_status, 1: text_export_mark })}}
+								{{widgets.checklist('order_statuses',order_statuses)}}
+								{{widgets.dropdown('final_order_status',order_statuses)}}
+								{{widgets.textarea('final_list_order_statuses')}}
+								{{widgets.input('order_comment')}}
+								{{widgets.input('limit_orders')}}
+								{{widgets.dropdown('control_order_status', { 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('set_auto_tag_order', { 0: text_disabled, 1: text_enabled })}}
+								{{widgets.checklist('exclude_auto_tag_order',order_statuses)}}
+								{{widgets.dropdown('totals_positive', { 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('extra_comment', { 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('customer_phone', { 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('order_utf8', { 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('order_utf8_bom', { 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('get_from_naclad',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('order_status_notify', { 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('order_status_override', { 0: text_disabled, 1: text_enabled })}}
+								<div class="order-status-completed" style="border: 1px solid;">
+									{{widgets.input('order_status_completed')}}
+									{{widgets.input('order_status_not_completed')}}
+									{{widgets.input('order_status_completed_status')}}
+								</div>
+								{{widgets.dropdown('order_manufacturer', { 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('model_in_id', { 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('transaction_status', transaction_statuses)}}
+								{{widgets.dropdown('get_orders_from_1c', { 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('use_two_side_products_exchange', { 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('import_external_orders', { 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('external_orders_status', order_statuses)}}
+								{{widgets.dropdown('options_as_product', { 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('options_in_product', { 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('export_discount_as_element', { 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('export_discount_tag_value', { 0: 'false', 1: 'false' })}}
+								{{widgets.dropdown('tax_list', tax_list)}}
+								{{widgets.input('order_currency')}}
+								{{widgets.input('customer_name_empty')}}
+								{{widgets.textarea('order_currency_route')}}
+								{{widgets.input('order_customer')}}
+								{{widgets.input('extra_document_download_tag')}}
+								{{widgets.textarea('extra_document_tag')}}
+								{{widgets.textarea('extra_customer')}}
+								{{widgets.textarea('extra_property')}}
+								{{widgets.textarea('extra_totals_property')}}
+								{{widgets.textarea('extra_address')}}
+								{{widgets.textarea('product_extra_property')}}
+								{{widgets.textarea('product_extra_full')}}
+								{{widgets.textarea('order_status_marge_list')}}
+								{{widgets.textarea('order_shipping_links')}}
+								{{widgets.textarea('order_payment_links')}}
+								{{widgets.textarea('order_total_links')}}
+								{{widgets.textarea('unit_links')}}
+								{{widgets.dropdown('import_orders_disable_curl', { 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('skip_without_id', { 0: text_disabled, 1: text_enabled })}}
+								{{widgets.input('import_orders_comment_field')}}
+								{{widgets.input('field_for_1c_order_id')}}
+								{{widgets.input('export_order_special_price_tag')}}
+								{{widgets.dropdown('no_address', { 0: text_disabled, 1: text_enabled })}}
+								{{widgets.button(export, button_export)}}
+								{{widgets.button(delete_orders, button_delete_orders)}}
+								<div class="form-group" style="display: inline-block; width: 100%;">
+									<div class="col-sm-12">
+										<a class="btn btn-default" id="delete_export_list_orders">{{button_delete_export_list_orders}}</a>
+									</div>
+								</div>
+							</div>
+
+							<div class="tab-pane" id="tab-product">
+								{{widgets.dropdown('lookup_product', { 3 : text_disabled, 0 : text_bysku, 1 : text_byname, 2 : text_bymodel, 4 : text_bycode, 5 : text_bycode_name, 6 : text_byean, 9 : text_bymodel_name, 10 : text_byproduct_id_offer_id, 12 : text_code_nomenclatures })}}
+								{{widgets.dropdown('only_add_new_products', { 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('create_product', { 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('product_status', { 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('product_stock_status', stock_statuses)}}
+								{{widgets.input('sync_missing_status')}}
+								<br>
+								{{widgets.dropdown('default_missing_status', stock_statuses)}}
+								{{widgets.dropdown('update_name', { 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('update_description', { 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('description_column', product_description_columns)}}
+								{{widgets.input('unit_field')}}
+								{{widgets.dropdown('unit_field_offer', { 0: text_disabled, 1: text_enabled })}}
+								{{widgets.input('code_field')}}
+								{{widgets.input('barcode_field')}}
+								{{widgets.input('seo_url_field')}}
+								{{widgets.dropdown('update_sku', { 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('update_images', { 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('update_additional_images', { 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('use_tree_delete', { 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('update_related_products', { 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('update_related_products_mode', { 0: text_byupc, 1: text_bymodel, 2: text_bysku })}}
+								{{widgets.dropdown('product_fullname',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('product_fulldescription',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('product_dimension',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('product_export_model_to_sku',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('zero_quantity_missing_goods',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.input('disable_missing_tag')}}
+								{{widgets.input('disable_missing_tag_remove')}}
+								{{widgets.dropdown('delete_by_mark',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.textarea('export_product_field_attr')}}
+								{{widgets.dropdown('product_update_avaro',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('product_kit_status',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.input('product_kit_tag')}}
+								{{widgets.input('product_kit_field')}}
+								{{widgets.checklist('disable_missing',disable_missing)}}
+								{{widgets.checklist('product_languages',product_languages)}}
+								{{widgets.checklist('product_tags_languages',product_languages)}}
+								{{text_tools}}
+
+								<div class="form-group" style="display: inline-block; width: 100%;">
+									<div class="col-sm-12">
+										<div style="float:left">
+											<input type="file" name="filename" />
+										</div>
+										<a class="btn btn-default" onclick="if (confirm('{{text_import_warning}}')) {
+													$('#form').attr('action', '{{import}}');
+													$('#form').submit()
+												}">{{button_import}}</a>
+										<a class="btn btn-default" href="{{export_product}}"><span>{{button_export_product}}</span></a>
+									</div>
+								</div>
+
+								<div id="progress-orders" class="progress" style="margin-top:20px; display:none">
+									<div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%">0%</div>
+								</div>
+								{{widgets.button(delete_products, button_delete_products)}}
+								{{widgets.button(delete_1c_products, button_delete_1c_products)}}
+								{{widgets.button(delete_links, button_delete_links)}}
+							</div>
+
+
+							<div class="tab-pane" id="tab-category">
+								{{widgets.dropdown('create_category',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('category_status',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('category_top_status',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('category_update_name',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.checklist('category_languages',product_languages)}}
+								{{widgets.dropdown('update_categories',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('update_only_main_product_category',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('fill_parent_cats',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('update_parent_cats',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('category_forced',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('category_forced_id',categories)}}
+								{{widgets.textarea('category_links')}}
+
+								{{widgets.button(delete_categories, button_delete_categories)}}
+							</div>
+
+
+							<div class="tab-pane" id="tab-manufacturer">
+								{{widgets.dropdown('create_manufacturer',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('add_manufacturer_to_attribute',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.input('alternative_manufacturer_tag')}}
+
+								{{widgets.button(delete_manufacturers, button_delete_manufacturers)}}
+							</div>
+
+
+							<div class="tab-pane" id="tab-attribute">
+								{{widgets.dropdown('create_attribute',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('update_attribute',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('update_attribute_group',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('clear_attribute',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('update_attribute_product_sort',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.input('attribute_group_prefix')}}
+								{{widgets.textarea('ignore_attributes')}}
+								{{widgets.textarea('attribute_routing')}}
+								{{widgets.textarea('attribute_label')}}
+								{{widgets.input('attribute_file_name')}}
+								{{widgets.textarea('attribute_links')}}
+								{{widgets.textarea('attribute_routing_download_files')}}
+								{{widgets.button(delete_attributes, button_delete_attributes)}}
+							</div>
+
+							<div class="tab-pane" id="tab-option">
+								{{widgets.dropdown('create_option',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('update_option',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('update_option_import',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('update_option_images',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.textarea('forbidden_options')}}
+								{{widgets.dropdown('save_forbidden_options',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('change_to_zero_option',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('delete_zero_option',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('clear_product_option',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('use_related_options',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('use_single_related_options',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('option_price',{ 0 : text_default, 1 : text_product_min, 2 : text_product_max})}}
+								{{widgets.dropdown('option_not_zero',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('option_type',{ 0 : text_option_type_select, 1 : text_option_type_radio, 2 : text_option_type_input_qty})}}
+								{{widgets.dropdown('option_required',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.textarea('option_exclude_required_name')}}
+								{{widgets.dropdown('option_quantity',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('option_source',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('option_by_box',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('search_option_for_sku',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('product_for_option_discount_price',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.input('option_field_sku')}}
+								{{widgets.input('option_field_ean')}}
+								{{widgets.dropdown('option_sku_add_product_sku',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.input('option_sku_symbol_add_product_sku')}}
+								<span {% if isOptionsHasSpecial == 0 %} style="display:none;" {% endif %}>
+									{{widgets.dropdown('use_options_special',{ 0: text_disabled, 1: text_enabled })}}
+									{{widgets.input('options_special_price')}}
+								</span>
+
+									<legend>{{text_setting_option_discount_price_type}}</legend>
+									{{text_setting_option_discount_price_type_desc}}
+									<table id="exchange1c_option_discount_price_type_id" class="table table-bordered table-hover">
+										<thead>
+											<tr>
+												<td class="left">{{entry_config_price_type}}</td>
+												<td class="left">{{entry_customer_group}}</td>
+												<td class="right">{{entry_priority}}</td>
+												<td></td>
+											</tr>
+										</thead>
+										<tbody>
+											{% set option_discount_price_row = 0 %}
+											{% for obj in neoseo_exchange1c_option_discount_price_type %}
+													<tr id="exchange1c_option_discount_price_type_row{{option_discount_price_row}}">
+														<td class="left">
+															<input class="form-control" type="text" name="neoseo_exchange1c_option_discount_price_type[{{option_discount_price_row}}][keyword]" value="{{obj['keyword']}}" />
+														</td>
+														<td class="left">
+															<select class="form-control" name="neoseo_exchange1c_option_discount_price_type[{{option_discount_price_row}}][customer_group_id]">
+																{% for customer_group in customer_groups %}
+																	{% if customer_group.customer_group_id == obj.customer_group_id %}
+																		<option value="{{customer_group.customer_group_id}}" selected="selected">{{customer_group.name}}</option>
+																	{% else %}
+																		<option value="{{customer_group.customer_group_id}}">{{customer_group.name}}</option>
+																	{% endif %}
+																{% endfor %}
+															</select></td>
+														<td class="center">
+															<input class="form-control" type="text" name="neoseo_exchange1c_option_discount_price_type[{{option_discount_price_row}}][priority]" value="{{obj['priority']}}" size="5" />
+														</td>
+														<td class="center">
+															<a onclick="$('#exchange1c_option_discount_price_type_row{{option_discount_price_row}}').remove();" class="btn btn-danger"  data-toggle="tooltip" data-original-title="{{button_remove}}"><i class="fa fa-trash-o"></i></a>
+														</td>
+													</tr>
+												{% set option_discount_price_row = option_discount_price_row +1 %}
+											{% endfor %}
+										</tbody>
+										<tfoot>
+											<tr>
+												<td colspan="3"></td>
+												<td class="left"><a onclick="addOptionDiscountPriceType();" class="btn btn-primary">{{button_insert}}</a></td>
+											</tr>
+										</tfoot>
+									</table>
+
+								{{widgets.button(delete_options, button_delete_options)}}
+							</div>
+
+							<div class="tab-pane" id="tab-price">
+									{{widgets.dropdown('update_price',{ 0: text_disabled, 1: text_enabled })}}
+									{{widgets.input('currency_convertor')}}
+									{{widgets.dropdown('update_currency_plus',{ 0: text_disabled, 1: text_enabled })}}
+									{{widgets.input('new_price_column')}}
+									{{widgets.dropdown('delete_special_price',{ 0: text_disabled, 1: text_enabled })}}
+									{{widgets.dropdown('delete_discount_price',{ 0: text_disabled, 1: text_enabled })}}
+									{{widgets.dropdown('zero_special_discount',{ 0: text_disabled, 1: text_enabled })}}
+									{{widgets.dropdown('multy_currency', { 0: text_disabled, 1: text_enabled })}}
+									{{widgets.dropdown('multy_currency_price', { 0: text_disabled, 1: text_enabled })}}
+									{{widgets.input('currency_convertor_multy')}}
+									{{widgets.input('currency_convertor_multy_main_price')}}
+									{{widgets.textarea('price_routing')}}
+									{{widgets.dropdown('ignore_table_quantities',{ 0: text_disabled, 1: text_enabled })}}
+									{{widgets.dropdown('update_price_special_option',{ 0: text_disabled, 1: text_enabled })}}
+									<legend>{{text_setting_price_type}}</legend>
+									<table id="exchange1c_price_type_id" class="table table-bordered table-hover">
+										<thead>
+											<tr>
+												<td class="left">{{entry_config_price_type}}</td>
+												<td class="left">{{entry_customer_group}}</td>
+												<td class="right">{{entry_quantity}}</td>
+												<td class="right">{{entry_priority}}</td>
+												<td></td>
+											</tr>
+										</thead>
+										<tbody>
+											{% set price_row = 0 %}
+											{% for obj in neoseo_exchange1c_price_type %}
+												{% if price_row == 0 %}
+													<tr id="exchange1c_price_type_row{{price_row}}">
+														<td class="left">
+															<input type="text" class="form-control" name="neoseo_exchange1c_price_type[{{price_row}}][keyword]" value="{{obj['keyword']}}" />
+														</td>
+														<td class="left">
+															{{text_price_default}}
+															<input type="hidden" name="neoseo_exchange1c_price_type[{{price_row}}][customer_group_id]" value="0" />
+														</td>
+														<td class="center">-<input type="hidden" name="neoseo_exchange1c_price_type[{{price_row}}][quantity]" value="0" /></td>
+														<td class="center">-<input type="hidden" name="neoseo_exchange1c_price_type[{{price_row}}][priority]" value="0" /></td>
+														<td class="left">&nbsp;</td>
+													</tr>
+												{% else %}
+													<tr id="exchange1c_price_type_row{{price_row}}">
+														<td class="left">
+															<input class="form-control" type="text" name="neoseo_exchange1c_price_type[{{price_row}}][keyword]" value="{{obj['keyword']}}" />
+														</td>
+														<td class="left">
+															<select class="form-control" name="neoseo_exchange1c_price_type[{{price_row}}][customer_group_id]">
+																{% for customer_group in customer_groups %}
+																	{% if customer_group.customer_group_id == obj.customer_group_id %}
+																		<option value="{{customer_group.customer_group_id}}" selected="selected">{{customer_group.name}}</option>
+																	{% else %}
+																		<option value="{{customer_group.customer_group_id}}">{{customer_group.name}}</option>
+																	{% endif %}
+																{% endfor %}
+															</select></td>
+														<td class="center">
+															<input class="form-control" type="text" name="neoseo_exchange1c_price_type[{{price_row}}][quantity]" value="{{obj['quantity']}}" size="10" />
+														</td>
+														<td class="center">
+															<input class="form-control" type="text" name="neoseo_exchange1c_price_type[{{price_row}}][priority]" value="{{obj['priority']}}" size="5" />
+														</td>
+														<td class="center">
+															<a onclick="$('#exchange1c_price_type_row{{price_row}}').remove();" class="btn btn-danger"  data-toggle="tooltip" data-original-title="{{button_remove}}"><i class="fa fa-trash-o"></i></a>
+														</td>
+													</tr>
+												{% endif %}
+												{% set price_row = price_row +1 %}
+											{% endfor %}
+										</tbody>
+										<tfoot>
+											<tr>
+												<td colspan="4"></td>
+												<td class="left"><a onclick="addConfigPriceType();" class="btn btn-primary">{{button_insert}}</a></td>
+											</tr>
+										</tfoot>
+									</table>
+
+									<legend>{{text_setting_special_price_type}}</legend>
+									{{widgets.input('special_price_tag_date_start')}}
+									{{widgets.input('special_price_tag_date_end')}}
+									{{widgets.dropdown('special_price_to_custom_table',{ 0: text_disabled, 1: text_enabled })}}
+									<table id="exchange1c_special_price_type_id" class="table table-bordered table-hover">
+										<thead>
+											<tr>
+												<td class="left">{{entry_config_price_type}}</td>
+												<td class="left">{{entry_customer_group}}</td>
+												<td class="right">{{entry_priority}}</td>
+												<td></td>
+											</tr>
+										</thead>
+										<tbody>
+											{% set special_price_row = 0 %}
+											{% for obj in neoseo_exchange1c_special_price_type %}
+													<tr id="exchange1c_special_price_type_row{{special_price_row}}">
+														<td class="left">
+															<input class="form-control" type="text" name="neoseo_exchange1c_special_price_type[{{special_price_row}}][keyword]" value="{{obj['keyword']}}" />
+														</td>
+														<td class="left">
+															<select class="form-control" name="neoseo_exchange1c_special_price_type[{{special_price_row}}][customer_group_id]">
+																{% for customer_group in customer_groups %}
+																	{% if customer_group.customer_group_id == obj.customer_group_id %}
+																		<option value="{{customer_group.customer_group_id}}" selected="selected">{{customer_group.name}}</option>
+																	{% else %}
+																		<option value="{{customer_group.customer_group_id}}">{{customer_group.name}}</option>
+																	{% endif %}
+																{% endfor %}
+															</select></td>
+														<td class="center">
+															<input class="form-control" type="text" name="neoseo_exchange1c_special_price_type[{{special_price_row}}][priority]" value="{{obj['priority']}}" size="5" />
+														</td>
+														<td class="center">
+															<a onclick="$('#exchange1c_special_price_type_row{{special_price_row}}').remove();" class="btn btn-danger"  data-toggle="tooltip" data-original-title="{{button_remove}}"><i class="fa fa-trash-o"></i></a>
+														</td>
+													</tr>
+												{% set special_price_row = special_price_row +1 %}
+											{% endfor %}
+										</tbody>
+										<tfoot>
+											<tr>
+												<td colspan="3"></td>
+												<td class="left"><a onclick="addSpecialPriceType();" class="btn btn-primary">{{button_insert}}</a></td>
+											</tr>
+										</tfoot>
+									</table>
+
+									{% if(cprice_module_status) %}
+									<legend>{{text_setting_cprice_type}}</legend>
+									<table id="exchange1c_cprice_type_id" class="table table-bordered table-hover">
+										<thead>
+											<tr>
+												<td class="left">{{entry_config_price_type}}</td>
+												<td class="left">{{entry_customer_group}}</td>
+												<td class="right">{{entry_priority}}</td>
+												<td></td>
+											</tr>
+										</thead>
+										<tbody>
+											{% set cprice_type_row = 0 %}
+											{% for obj in neoseo_exchange1c_cprice_type %}
+													<tr id="exchange1c_cprice_type_row{{cprice_type_row}}">
+														<td class="left">
+															<input class="form-control" type="text" name="neoseo_exchange1c_cprice_type[{{cprice_type_row}}][keyword]" value="{{obj['keyword']}}" />
+														</td>
+														<td class="left">
+															<select class="form-control" name="neoseo_exchange1c_cprice_type[{{cprice_type_row}}][customer_group_id]">
+																{% for customer_group in customer_groups %}
+																	{% if customer_group.customer_group_id == obj.customer_group_id %}
+																		<option value="{{customer_group.customer_group_id}}" selected="selected">{{customer_group.name}}</option>
+																	{% else %}
+																		<option value="{{customer_group.customer_group_id}}">{{customer_group.name}}</option>
+																	{% endif %}
+																{% endfor %}
+															</select></td>
+														<td class="center">
+															<input class="form-control" type="text" name="neoseo_exchange1c_cprice_type[{{cprice_type_row}}][priority]" value="{{obj['priority']}}" size="5" />
+														</td>
+														<td class="center">
+															<a onclick="$('#exchange1c_cprice_type_row{{cprice_type_row}}').remove();" class="btn btn-danger"  data-toggle="tooltip" data-original-title="{{button_remove}}"><i class="fa fa-trash-o"></i></a>
+														</td>
+													</tr>
+												{% set cprice_type_row = cprice_type_row +1 %}
+											{% endfor %}
+										</tbody>
+										<tfoot>
+											<tr>
+												<td colspan="3"></td>
+												<td class="left"><a onclick="addCpriceType();" class="btn btn-primary">{{button_insert}}</a></td>
+											</tr>
+										</tfoot>
+									</table>
+									{% endif %}
+									<script>$("#tab-price table tr:first td:first").css("width", "40%");</script>
+
+							</div>
+
+							<div class="tab-pane" id="tab-quantity">
+
+								{{widgets.dropdown('update_quantity',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('use_fraction_quantity',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('product_subtract',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('missing_quantity_is_zero',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('use_warehouse',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('related_product_quantity_sum',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.textarea('exclude_warehouses')}}
+								{{widgets.textarea('warehouses_multistore')}}
+								{{widgets.dropdown('update_date',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.input('main_warehouse')}}
+								{{widgets.checkList('categories_reset_quantity', categories)}}
+
+								{{widgets.button(delete_products_warehouses, button_delete_products_warehouses)}}
+								<script>$("#tab-quantity table tr:first td:first").css("width", "40%");</script>
+							</div>
+
+							<div class="tab-pane" id="tab-filter">
+								{{widgets.dropdown('use_filter', filters )}}
+								{{widgets.dropdown('update_filter',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('update_filter_offers',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('update_option_product_filter',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('clear_neoseo_filter_cache',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('update_auto_filter',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('update_auto_neoseo_filter_warehouse',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.dropdown('filter_import_clear',{ 0: text_disabled, 1: text_enabled })}}
+								{{widgets.textarea('option_product_filter')}}
+							</div>
+
+							<div class="tab-pane" id="tab-counterparties">
+								{{widgets.dropdown('counterparties_exchange', { 0: text_disabled, 1: text_enabled } )}}
+								{{widgets.dropdown('counterparties_update_fio', { 0: text_disabled, 1: text_enabled } )}}
+								{{widgets.dropdown('counterparties_create_new', { 0: text_disabled, 1: text_enabled } )}}
+								{{widgets.dropdown('counterparties_import_address', { 0: text_disabled, 1: text_enabled } )}}
+								{{widgets.dropdown('counterparties_method', {'phone' : text_counterparties_method_phone, 'email' : text_counterparties_method_email, 'fio' : text_counterparties_fio , 'mixed' : text_counterparties_mixed} )}}
+								{{widgets.input('counterparties_fio_field' )}}
+								{{widgets.input('counterparties_phone_field' )}}
+								{{widgets.input('counterparties_email_field' )}}
+								{{widgets.dropdown('counterparties_new_group', customer_groups_special )}}
+								{{widgets.button(counterparties_download, text_counterparties_download )}}
+								{{widgets.button(counterparties_delete, text_counterparties_delete )}}
+								{{widgets.button(counterparties_delete_links, text_counterparties_delete_links )}}
+							</div>
+
+							<div class="tab-pane" id="tab-logs">
+								{{widgets.debug_download_logs('debug',{ 0: text_disabled, 1: text_enabled }, clear, download, button_clear_log, button_download_log)}}
+								<textarea style="width: 100%; height: 300px; padding: 5px; border: 1px solid #CCCCCC; background: #FFFFFF; overflow: scroll;">{{logs}}</textarea>
+							</div>
+
+						{% endif %}
+
+						<div class="tab-pane" id="tab-support">
+							{{mail_support}}
+						</div>
+
+						<div class="tab-pane" id="tab-license">
+							{{ widgets.licenseField() }}
+							{{ module_licence }}
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+	<script type="text/javascript"><!--
+		if( window.location.hash.indexOf('#tab') == 0 && $("[href=" + window.location.hash + "]").length ) {
+			$(".panel-body > .nav-tabs li").removeClass("active");
+			$("[href=" + window.location.hash + "]").parents('li').addClass("active");
+			$(".panel-body:first .tab-content:first .tab-pane:first").removeClass("active");
+			$(window.location.hash).addClass("active");
+		}
+		$(".nav-tabs li a").click(function(){
+			var url = $(this).prop('href');
+			window.location.hash = url.substring(url.indexOf('#'));
+		});
+		// Специальный фикс системной функции, поскольку даниель понятия не имеет о том что в url может быть еще и hash
+		// и по итогу этот hash становится частью user_token
+		function getURLVar(key) {
+			var value = [];
+
+			var url = String(document.location);
+			if (url.indexOf('#') != -1) {
+				url = url.substring(0, url.indexOf('#'));
+			}
+			var query = url.split('?');
+
+			if (query[1]) {
+				var part = query[1].split('&');
+
+				for (i = 0; i < part.length; i++) {
+					var data = part[i].split('=');
+
+					if (data[0] && data[1]) {
+						value[data[0]] = data[1];
+					}
+				}
+
+				if (value[key]) {
+					return value[key];
+				} else {
+					return '';
+				}
+			}
+		}
+//--></script>
+	<script>
+		$(document).delegate('#button-ip-add', 'click', function() {
+			$.ajax({
+				url: 'index.php?route=user/api/addip&user_token={{user_token}}&api_id={{api_id}}',
+				type: 'post',
+				data: 'ip={{api_ip}}',
+				dataType: 'json',
+				beforeSend: function() {
+					$('#button-ip-add').button('loading');
+				},
+				complete: function() {
+					$('#button-ip-add').button('reset');
+				},
+				success: function(json) {
+					$('.alert').remove();
+
+					if (json['error']) {
+						$('#content > .container-fluid').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+					}
+
+					if (json['success']) {
+						$('#content > .container-fluid').prepend('<div class="alert alert-success"><i class="fa fa-check-circle"></i> ' + json['success'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+						$('#button-edit').removeAttr('disabled');
+					}
+				},
+				error: function(xhr, ajaxOptions, thrownError) {
+					alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+				}
+			});
+		});
+
+		var orders = [];
+		var ordersCurrent = [];
+		var generateProgressId = 0;
+		function deleteNext() {
+			var order = ordersCurrent.shift();
+			if (!order) {
+				$(generateProgressId).hide();
+				return;
+			}
+
+			var index = orders.length - ordersCurrent.length;
+			var total = orders.length;
+			var percent = Number(index * 100 / total).toFixed(0);
+			$(generateProgressId + " .progress-bar").prop("aria-valuenow", percent);
+			$(generateProgressId + " .progress-bar").css("width", percent + "%");
+			$(generateProgressId + " .progress-bar").html(index + " из " + total);
+
+			$.ajax({
+				url: '{{store}}index.php?route=api/order/delete&api_token={{api_token}}&order_id=' + order,
+				dataType: 'json',
+				crossDomain: true
+			}).done(function () {
+				deleteNext();
+			});
+		}
+
+		$('[href*=delete_orders]').on('click', function(e) {
+			e.preventDefault();
+			if (confirm('{{text_confirm}}')) {
+
+				var generateUrl = '{{get_orders | replace({'&amp;': "&", "," : "."})}}';
+				generateProgressId = '#progress-orders';
+				$(generateProgressId).show();
+
+				$.ajax({
+					url: generateUrl,
+					dataType: 'json'
+				}).done(function (json) {
+					orders = json;
+					ordersCurrent = orders.slice(0);
+					deleteNext();
+				});
+			}
+		});
+
+
+		$('#delete_export_list_orders').on('click', function(e) {
+			e.preventDefault();
+			if (confirm('{{text_confirm}}')) {
+				$.ajax({
+					'type': "POST",
+					'url': "{{delete_export_list_orders|escape}}",
+					'data': {
+						orders: "all"
+					},
+					'dataType': 'json',
+					success: function (response) {
+						alert(response.message);
+					}
+				});
+			}
+		});
+
+		var price_row = {{price_row}};
+		function addConfigPriceType() {
+			html  = '';
+			html += '  <tr id="exchange1c_price_type_row' + price_row + '">';
+			html += '	<td class="left"><input type="text" class="form-control" name="neoseo_exchange1c_price_type[' + price_row + '][keyword]" value="" /></td>';
+			html += '	<td class="left"><select class="form-control" name="neoseo_exchange1c_price_type[' + price_row + '][customer_group_id]">';
+			{% for customer_group in customer_groups %}
+			html += '	  <option value="{{customer_group['customer_group_id']}}">{{customer_group['name']}}</option>';
+			{% endfor %}
+			html += '	</select></td>';
+			html += '	<td class="center"><input type="text" class="form-control" name="neoseo_exchange1c_price_type[' + price_row + '][quantity]" value="0" size="10" /></td>';
+			html += '	<td class="center"><input type="text" class="form-control" name="neoseo_exchange1c_price_type[' + price_row + '][priority]" value="0" size="5" /></td>';
+			html += '	<td class="center"><a onclick="$(\'#exchange1c_price_type_row' + price_row + '\').remove();" class="btn btn-danger"  data-toggle="tooltip" data-original-title="{{button_remove}}"><i class="fa fa-trash-o"></i></a></td>';
+			html += '  </tr>';
+
+			$('#exchange1c_price_type_id tbody').append(html);
+
+			price_row++;
+		}
+
+		var special_price_row = {{special_price_row}};
+		function addSpecialPriceType() {
+			html  = '';
+			html += '  <tr id="exchange1c_special_price_type_row' + special_price_row + '">';
+			html += '	<td class="left"><input type="text" class="form-control" name="neoseo_exchange1c_special_price_type[' + special_price_row + '][keyword]" value="" /></td>';
+			html += '	<td class="left"><select class="form-control" name="neoseo_exchange1c_special_price_type[' + special_price_row + '][customer_group_id]">';
+			{% for customer_group in customer_groups %}
+			html += '	  <option value="{{customer_group['customer_group_id']}}">{{customer_group['name']}}</option>';
+			{% endfor %}
+			html += '	</select></td>';
+			html += '	<td class="center"><input type="text" class="form-control" name="neoseo_exchange1c_special_price_type[' + special_price_row + '][priority]" value="0" size="5" /></td>';
+			html += '	<td class="center"><a onclick="$(\'#exchange1c_special_price_type_row' + special_price_row + '\').remove();" class="btn btn-danger"  data-toggle="tooltip" data-original-title="{{button_remove}}"><i class="fa fa-trash-o"></i></a></td>';
+			html += '  </tr>';
+
+			$('#exchange1c_special_price_type_id tbody').append(html);
+
+			special_price_row++;
+		}
+
+		var option_discount_price_row = {{option_discount_price_row}};
+		function addOptionDiscountPriceType() {
+			html  = '';
+			html += '  <tr id="exchange1c_option_discount_price_type_row' + option_discount_price_row + '">';
+			html += '	<td class="left"><input type="text" class="form-control" name="neoseo_exchange1c_option_discount_price_type[' + option_discount_price_row + '][keyword]" value="" /></td>';
+			html += '	<td class="left"><select class="form-control" name="neoseo_exchange1c_option_discount_price_type[' + option_discount_price_row + '][customer_group_id]">';
+			{% for customer_group in customer_groups %}
+			html += '	  <option value="{{customer_group['customer_group_id']}}">{{customer_group['name']}}</option>';
+			{% endfor %}
+			html += '	</select></td>';
+			html += '	<td class="center"><input type="text" class="form-control" name="neoseo_exchange1c_option_discount_price_type[' + option_discount_price_row + '][priority]" value="0" size="5" /></td>';
+			html += '	<td class="center"><a onclick="$(\'#exchange1c_option_discount_price_type_row' + option_discount_price_row + '\').remove();" class="btn btn-danger"  data-toggle="tooltip" data-original-title="{{button_remove}}"><i class="fa fa-trash-o"></i></a></td>';
+			html += '  </tr>';
+
+			$('#exchange1c_option_discount_price_type_id tbody').append(html);
+
+			option_discount_price_row++;
+		}
+
+		{% if(cprice_module_status) %}
+		var cprice_type_row = {{cprice_type_row}};
+		function addCpriceType() {
+			html  = '';
+			html += '  <tr id="exchange1c_cprice_type_row' + cprice_type_row + '">';
+			html += '	<td class="left"><input type="text" class="form-control" name="neoseo_exchange1c_cprice_type[' + cprice_type_row + '][keyword]" value="" /></td>';
+			html += '	<td class="left"><select class="form-control" name="neoseo_exchange1c_cprice_type[' + cprice_type_row + '][customer_group_id]">';
+			{% for customer_group in customer_groups %}
+			html += '	  <option value="{{customer_group['customer_group_id']}}">{{customer_group['name']}}</option>';
+			{% endfor %}
+			html += '	</select></td>';
+			html += '	<td class="center"><input type="text" class="form-control" name="neoseo_exchange1c_cprice_type[' + cprice_type_row + '][priority]" value="0" size="5" /></td>';
+			html += '	<td class="center"><a onclick="$(\'#exchange1c_cprice_type_row' + cprice_type_row + '\').remove();" class="btn btn-danger" data-toggle="tooltip" data-original-title="{{button_remove}}"><i class="fa fa-trash-o"></i></a></td>';
+			html += '  </tr>';
+
+			$('#exchange1c_cprice_type_id tbody').append(html);
+
+			cprice_type_row++;
+		}
+		{% endif %}
+
+		$(document).ready(function(){
+			if($('#neoseo_exchange1c_order_export_type').val() == '1'){
+				$('#field_order_statuses').hide();
+				$('#field_final_order_status').hide();
+
+			}else{
+				$('#field_order_statuses').show();
+				$('#field_final_order_status').show();
+			}
+		});
+
+		$('#neoseo_exchange1c_order_export_type').on('change', function(e){
+			if($(this).val() == '1'){
+				$('#field_order_statuses').hide();
+				$('#field_final_order_status').hide();
+			}else{
+				$('#field_order_statuses').show();
+				$('#field_final_order_status').show();
+			}
+		});
+		$('a:contains("Удалить")').click(function(){
+			return confirm("{{ text_confirm }}");
+		})
+	</script>
+{{footer}}

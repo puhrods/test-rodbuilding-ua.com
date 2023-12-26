@@ -96,3 +96,13 @@ $_['text_summary_shipping_address']  = 'Адреса доставки';
 $_['text_summary_payment_address']   = 'Адреса платника';
 
 ?>
+
+<?php
+
+/*
+Translated with
+Массовый автоматический перевод текстов, товаров, категорий, статей и тд с Google translate API
+https://translator.codeguild.com.ua/
+*/
+$_['text_clear_cart'] = "Очистити корзину";
+$_['text_clear_cart_question'] = "Очистити корзину?";

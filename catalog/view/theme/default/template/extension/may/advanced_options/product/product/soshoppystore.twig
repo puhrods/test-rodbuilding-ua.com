@@ -1,0 +1,407 @@
+{% if may_advanced_options %}
+<div id="may-advanced-options" class="hidden">
+{{ may_advanced_options_template.hidden }}
+{% if not options or options|length == 0 %}
+<hr>
+<h3>{{ text_option }}</h3>
+{% endif %}
+{{ may_advanced_options_template.options }}
+</div>
+{{ may_advanced_options_template.style }}
+{{ may_advanced_options_template.js_helper }}
+{{ may_advanced_options_template.js_plugin }}
+<script type="text/javascript"><!--
+$('#product{{ is_quick_view ? '-quick' : '' }} .form-group').eq(0).before($('#may-advanced-options').html());
+$('#may-advanced-options').remove();
+
+$('#product{{ is_quick_view ? '-quick' : '' }}').mayAdvancedOptions({
+	prices: {
+		price: MayHelper.Price.toNumber("{{ price }}"),
+		special: MayHelper.Price.toNumber("{{ special }}"),
+		base: MayHelper.Price.toNumber("{{ tax }}")
+	},
+	point: parseInt("{{ points ? points : 0 }}"),
+	weight: parseFloat("{{ weight_value ? weight_value : 0 }}"),
+
+	actionButtonSelector: ['#button-cart'],
+	quantityErrorBefore: $('input[name="quantity"]'),
+	quantityErrorMessage: "{{ may_advanced_options_language['error_option_stock'] }}",
+
+	preselect: {
+		id: {{ preselected_option_value_id ?: 0 }},
+		wait: 0
+	},
+
+	currentProductId: {{ product_id }},
+	selectFirstOption: {{ may_advanced_options_config['select_first_option'] }}
+},{
+	model: function(option) {
+		if (option.model != undefined && option.model != "") {
+			var $elem = $('.product-box-desc .model');
+			if ($elem.length) {
+				$elem.html('<span>{{ text_model }} </span> ' + option.model);
+			}
+			$('input:hidden[name=\'option[model]\']').val(option.model);
+
+			return true;
+		}
+
+		return false;
+	},
+	sku: function(option) {
+		if (option.sku != undefined && option.sku != "") {
+			{% if not may_advanced_options_config['hide_pp_sku'] %}
+			var $elem = $('.product-box-desc .product-sku span.value');
+			if ($elem.length) {
+				$elem.html(option.sku);
+			} else {
+				$('.product-box-desc .stock').before('<div class="product-sku"><span>{{ may_advanced_options_language['text_sku'] }} </span> <span class="value">' + option.sku + '</span></div>');
+			}
+			{% endif %}
+			$('input:hidden[name=\'option[sku]\']').val(option.sku);
+
+			return true;
+		}
+
+		return false;
+	},
+	upc: function(option) {
+		if (option.upc != undefined && option.upc != "") {
+			{% if not may_advanced_options_config['hide_pp_upc'] %}
+			var $elem = $('.product-box-desc .product-upc span.value');
+			if ($elem.length) {
+				$elem.html(option.upc);
+			} else {
+				$('.product-box-desc .stock').before('<div class="product-upc"><span>{{ may_advanced_options_language['text_upc'] }} </span> <span class="value">' + option.upc + '</span></div>');
+			}
+			{% endif %}
+			$('input:hidden[name=\'option[upc]\']').val(option.upc);
+
+			return true;
+		}
+
+		return false;
+	},
+	ean: function(option) {
+		if (option.ean != undefined && option.ean != "") {
+			{% if not may_advanced_options_config['hide_pp_ean'] %}
+			var $elem = $('.product-box-desc .product-ean span.value');
+			if ($elem.length) {
+				$elem.html(option.ean);
+			} else {
+				$('.product-box-desc .stock').before('<div class="product-ean"><span>{{ may_advanced_options_language['text_ean'] }} </span> <span class="value">' + option.ean + '</span></div>');
+			}
+			{% endif %}
+
+			$('input:hidden[name=\'option[ean]\']').val(option.ean);
+
+			return true;
+		}
+
+		return false;
+	},
+	jan: function(option) {
+		if (option.jan != undefined && option.jan != "") {
+			{% if not may_advanced_options_config['hide_pp_jan'] %}
+			var $elem = $('.product-box-desc .product-jan span.value');
+			if ($elem.length) {
+				$elem.html(option.jan);
+			} else {
+				$('.product-box-desc .stock').before('<div class="product-jan"><span>{{ may_advanced_options_language['text_jan'] }} </span> <span class="value">' + option.jan + '</span></div>');
+			}
+			{% endif %}
+			$('input:hidden[name=\'option[jan]\']').val(option.jan);
+
+			return true;
+		}
+
+		return false;
+	},
+	isbn: function(option) {
+		if (option.isbn != undefined && option.isbn != "") {
+			{% if not may_advanced_options_config['hide_pp_isbn'] %}
+			var $elem = $('.product-box-desc .product-isbn span.value');
+			if ($elem.length) {
+				$elem.html(option.isbn);
+			} else {
+				$('.product-box-desc .stock').before('<div class="product-isbn"><span>{{ may_advanced_options_language['text_isbn'] }} </span> <span class="value">' + option.isbn + '</span></div>');
+			}
+			{% endif %}
+			$('input:hidden[name=\'option[isbn]\']').val(option.isbn);
+
+			return true;
+		}
+
+		return false;
+	},
+	mpn: function(option) {
+		if (option.mpn != undefined && option.mpn != "") {
+			{% if not may_advanced_options_config['hide_pp_mpn'] %}
+			var $elem = $('.product-box-desc .product-mpn span.value');
+			if ($elem.length) {
+				$elem.html(option.mpn);
+			} else {
+				$('.product-box-desc .stock').before('<div class="product-mpn"><span>{{ may_advanced_options_language['text_mpn'] }} </span> <span class="value">' + option.mpn + '</span></div>');
+			}
+			{% endif %}
+			$('input:hidden[name=\'option[mpn]\']').val(option.mpn);
+
+			return true;
+		}
+
+		return false;
+	},
+	location: function(option) {
+		if (option.location != undefined && option.location != "") {
+			{% if not may_advanced_options_config['hide_pp_location'] %}
+			var $elem = $('.product-box-desc .product-location span.value');
+			if ($elem.length) {
+				$elem.html(option.location);
+			} else {
+				$('.product-box-desc .stock').before('<div class="product-location"><span>{{ may_advanced_options_language['text_location'] }} </span> <span class="value">' + option.location + '</span></div>');
+			}
+			{% endif %}
+			$('input:hidden[name=\'option[location]\']').val(option.location);
+
+			return true;
+		}
+
+		return false;
+	},
+	dimension: function(option) {
+		if (option.dimension_l != undefined && option.dimension_l != "") {
+			var dimension = MayHelper.Number.toI18nString(option.dimension_l, 2) + '{{ length_unit }}';
+			if (option.dimension_w) {
+				dimension += ' x ' + MayHelper.Number.toI18nString(option.dimension_w, 2) + '{{ length_unit }}';
+			}
+			if (option.dimension_h) {
+				dimension += ' x ' + MayHelper.Number.toI18nString(option.dimension_h, 2) + '{{ length_unit }}';
+			}
+			{% if not may_advanced_options_config['hide_pp_dimension'] %}
+			var $elem = $('.product-box-desc .product-dimension span.value');
+			if ($elem.length) {
+				$elem.html(dimension);
+			} else {
+				$('.product-box-desc .stock').before('<div class="product-dimension"><span>{{ may_advanced_options_language['text_dimension'] }} </span> <span class="value">' + option.dimension + '</span></div>');
+			}
+			{% endif %}
+			$('input:hidden[name=\'option[dimension_l]\']').val(MayHelper.Number.toI18nString(option.dimension_l, 2));
+			$('input:hidden[name=\'option[dimension_w]\']').val(MayHelper.Number.toI18nString(option.dimension_w, 2));
+			$('input:hidden[name=\'option[dimension_h]\']').val(MayHelper.Number.toI18nString(option.dimension_h, 2));
+
+			return true;
+		}
+
+		return false;
+	},
+	quantity: function(option, advancedOption) {
+		if (option.subtract || option.quantity) {
+			advancedOption.quantity = parseInt(option.quantity);
+			if ((option.quantity == 0 && option.subtract != 1)) {
+				option.quantity = '{{ may_advanced_options_language['text_instock'] }}';
+				advancedOption.quantity = -1;
+			}
+			{% if not config_stock_display %}
+			if (option.quantity > 0) option.quantity = '{{ may_advanced_options_language['text_instock'] }}';
+			{% endif %}
+
+			var $elem = $('.product-box-desc .stock');
+			if ($elem.length) {
+				$elem.html('<span>{{ text_stock }} </span>' + (advancedOption.quantity != 0 ? ' <i class="fa fa-check-square-o"></i> ' + option.quantity : '<del>{{ may_advanced_options_language['text_instock'] }}</del>'));
+			}
+
+			if (advancedOption.quantity != 0) {
+				$('#button-cart').prop('disabled', false);
+				$('#button-checkout').prop('disabled', false);
+			} else {
+				$('#button-cart').prop('disabled', true);
+				$('#button-checkout').prop('disabled', true);
+			}
+			
+			return true;
+		}
+
+		return false;
+	},
+	stockStatus: function(option, advancedOption) {
+		if (option.subtract == 1 && advancedOption.quantity == 0 && parseInt(option.stock_status_id)) {
+			var $elem = $('.product-box-desc .stock');
+			if ($elem.length) {
+				$elem.html('<span>{{ text_stock }} </span>' + option.stock_status);
+			}
+
+			return true;
+		}
+
+		return false;
+	},
+	price: function(prices) {
+		var price = MayHelper.Price.toString(prices.price);
+		var special = MayHelper.Price.toString(prices.special);
+		var base = MayHelper.Price.toString(prices.base);
+		
+		{% if not special %}
+		$('#price-old').html(price);
+		{% else %}
+		$('#price-old').html(price);
+		$('#price-special').html(special);
+		{% endif %} // not special
+		{% if tax %}
+		{% if is_quick_view %}
+		$('.price-tax').html('<span>' + $('.price-tax span').html() + '</span> ' + base);
+		{% else %}
+		$('#price-tax').html(base);
+		{% endif %}
+		{% endif %} // tax
+	},
+	point: function(point) {
+	},
+	weight: function(weight) {
+		var $elem = $('.product-box-desc .product-weight span.value');		
+		if ($elem.length) {
+			$elem.html(MayHelper.Number.toI18nString(weight, 2) + '{{ weight_unit }}');
+		} else if (weight) {
+			$('.product-box-desc .stock').after('<div class="product-weight"><span>{{ text_weight }} </span> <span class="value">' + MayHelper.Number.toI18nString(weight, 2) + '{{ weight_unit }}</span></div>');
+		}
+		$('input:hidden[name=\'option[weight]\']').val(MayHelper.Number.toI18nString(weight, 2));
+	},
+	image: function(option) {
+		if (option.product_images != undefined) {
+			var newAdditionalImages = [];
+			var newReplaceImages = [];
+			var currentImagesCount = $('#thumb-slider a.thumbnail').length;
+			if ($('#thumb-slider').hasClass('thumb-vertical-outer')) {
+				option.product_images.forEach(function(item, index) {
+					if (item['origin'] == "") {
+						return;
+					}
+
+					if (newReplaceImages.length < currentImagesCount) {
+						newReplaceImages.push('<li class="image-additional"><a data-index="' + index + '" class="img thumbnail" data-image="' + item['popup'] + '"><img src="' + item['thumb'] + '"/></a></li>');
+					} else {
+						newAdditionalImages.push('<li class="image-additional"><a data-index="' + index + '" class="img thumbnail" data-image="' + item['popup'] + '"><img src="' + item['thumb'] + '"/></a></li>');
+					}
+				});
+
+				var carousel = $('#thumb-slider .thumb-vertical');
+
+				if (newReplaceImages.length == currentImagesCount) {
+					carousel.html(newReplaceImages.join('') + newAdditionalImages.join(''));
+				} else {
+					for (var k=0;k<newReplaceImages.length;k++) {
+						carousel.find('li').eq(k).replaceWith(newReplaceImages[k]);
+					}
+				}
+
+				carousel.appendTo($('#thumb-slider'));
+				$('#thumb-slider .lSSlideOuter').remove();
+				
+				$(".thumb-vertical-outer .thumb-vertical").lightSlider({
+					item: 4,
+					autoWidth: false,
+					vertical:true,
+					slideMargin: 10,
+					verticalHeight:390,
+					pager: false,
+					controls: true,
+					prevHtml: '<i class="fa fa-angle-up"></i>',
+					nextHtml: '<i class="fa fa-angle-down"></i>',
+					responsive: [
+						{
+							breakpoint: 1199,
+							settings: {
+								verticalHeight: 390,
+								item: 4,
+							}
+						},{
+							breakpoint: 1024,
+							settings: {
+								verticalHeight: 175,
+								item: 2,
+								slideMargin: 5,
+							}
+						},{
+							breakpoint: 768,
+							settings: {
+								verticalHeight: 270,
+								item: 3,
+							}
+						},{
+							breakpoint: 480,
+							settings: {
+								verticalHeight: 90,
+								item: 1,
+							}
+						}
+						
+					]
+									
+				});
+			} else {
+				option.product_images.forEach(function(item, index) {
+					if (item['origin'] == "") {
+						return;
+					}
+
+					if (newReplaceImages.length < currentImagesCount) {
+						newReplaceImages.push('<div class="owl2-item active"><div class="image-additional--default"><a class="img thumbnail' + '" data-index="' + index + '" data-image="' + item['popup'] + '"><img src="' + item['thumb'] + '"/></a></div></div>');
+					} else {
+						newAdditionalImages.push('<div class="owl2-item active"><div class="image-additional--default"><a class="thumbnail' + '" data-index="' + index + '" data-image="' + item['popup'] + '"><img src="' + item['thumb'] + '"/></a></div></div>');
+					}
+				});
+
+				var carousel = $('#thumb-slider');
+
+				if (newReplaceImages.length == currentImagesCount) {
+					carousel.trigger('replace.owl.carousel2', newReplaceImages.join('') + newAdditionalImages.join(''));
+					carousel.data('owlCarousel2').settings.nav = (newReplaceImages.length + newAdditionalImages.length) > carousel.data('owlCarousel2').settings.items;
+				} else {
+					for (var k=0;k<newReplaceImages.length;k++) {
+						carousel.trigger('del.owl.carousel2', k);
+						carousel.trigger('add.owl.carousel2', [$(newReplaceImages[k]), k]);
+					}
+				}
+				
+				carousel.trigger('refresh.owl.carousel2');
+			}
+
+			var zoomCollection = $(".large-image img");
+			zoomCollection.removeData('elevateZoom');
+			zoomCollection.removeData('zoomImage');
+			$('.zoomContainer').remove();
+
+			zoomCollection.attr('src', $('#thumb-slider a.thumbnail').eq(0).data('image'));
+			zoomCollection.data('zoom-image', $('#thumb-slider a.thumbnail').eq(0).data('image'));
+			$('#thumb-slider a.thumbnail.active').removeClass('active');
+			$('#thumb-slider a.thumbnail').eq(0).addClass('active');
+
+			zoomCollection.elevateZoom({
+				//value zoomType (window,inner,lens)
+				zoomType        : "inner",
+				//zoomType        :"none",
+				lensSize    :'250',
+				easing:true,
+				scrollZoom : true,
+				gallery: 'thumb-slider',
+				cursor: 'pointer',
+				galleryActiveClass: "active",
+			});
+			
+			var magnificPopup = zoomCollection.data('magnificPopup');
+			if (magnificPopup != undefined) {
+				magnificPopup.items = [];
+				for (k=0;k<$('#thumb-slider a.thumbnail').length;k++) {
+					magnificPopup.items.push({src: $('#thumb-slider a.thumbnail').eq(k).data('image')});
+				}
+			}
+
+			$('input:hidden[name=\'option[image]\']').val(option.product_images[0]['origin']);
+
+			return true;
+		}
+
+		return false;
+	}
+});
+--></script>
+{% endif %}

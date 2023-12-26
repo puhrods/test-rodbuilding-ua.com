@@ -460,9 +460,39 @@ class ControllerCheckoutSimpleCheckoutCart extends SimpleController {
         // Update
         if (!empty($this->request->post['quantity'])) {
             //$keys =  isset($this->session->data['cart']) ? $this->session->data['cart'] : array();
+
+            $this->load->model('extension/may/advanced_options');
+            $cart_product_data = $this->model_extension_may_advanced_options->getCartProductVariableData();
+
             foreach ($this->request->post['quantity'] as $key => $value) {
                 //if (!empty($keys) && array_key_exists($key, $keys)) {
+
+                $error_warning = false;
+
+                if(isset($cart_product_data['models'][$key])) {
+
+                    $model = $cart_product_data['models'][$key];
+
+                    $products = $this->cart->getProducts();
+
+                    foreach ($products as $product) {
+                        if($product['cart_id'] == $key) {
+
+                            $max_quantity = $this->model_extension_may_advanced_options->getOptionQuantity($product['product_id'], $model);
+
+                            if($max_quantity && ($value > $max_quantity)) {
+                                $error_warning  = true;
+                            }
+
+                        }
+
+                    }
+                }
+
+                if(!$error_warning) {
                     $this->cart->update($key, $value);
+                }
+
                 //}
             }
         }

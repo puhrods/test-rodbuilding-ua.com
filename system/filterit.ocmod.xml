@@ -1,0 +1,1954 @@
+<modification>
+    <name>Filterit</name>
+    <code>Filterit</code>
+    <version>2.5.0</version>
+    <author>deeman</author>
+    <link>http://simpleopencart.com</link>
+
+    <file path="admin/controller/sale/order.php">
+      <operation>
+        <search index="0"><![CDATA[payment/' . $order_info['payment_code']]]></search>
+        <add position="before"><![CDATA[
+          $payment_code = explode('.', $order_info['payment_code']);
+          $payment_code = $payment_code[0];
+        ]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[payment/' . $order_info['payment_code']]]></search>
+        <add position="replace"><![CDATA[payment/' . $payment_code]]></add>
+      </operation>
+    </file>
+    
+    <file path="catalog/controller/checkout/simplecheckout_shipping.php" error="skip">
+      <operation>
+        <search><![CDATA[foreach ($quote_data as $key => $value) {]]></search>
+        <add position="before"><![CDATA[
+          if (!$this->filterit && (method_exists($this->load, 'library') || get_class($this->load) == 'agooLoader')) {
+            $this->load->library('simple/filterit');
+          }          
+          if (!$this->filterit) {
+            $this->filterit = new Simple\Filterit($this->registry);
+          }          
+          $quote_data = $this->filterit->filterShipping($quote_data, $address);
+        ]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/controller/checkout/shipping_method.php">
+      <operation>
+        <search><![CDATA[foreach ($method_data as $key => $value) {]]></search>
+        <add position="before"><![CDATA[
+          if (!$this->filterit && (method_exists($this->load, 'library') || get_class($this->load) == 'agooLoader')) {
+            $this->load->library('simple/filterit');
+          }          
+          if (!$this->filterit) {
+            $this->filterit = new Simple\Filterit($this->registry);
+          }          
+          $method_data = $this->filterit->filterShipping($method_data, $this->session->data['shipping_address']);
+        ]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/model/journal2/checkout.php" error="skip">
+      <operation>
+        <search index="0"><![CDATA[foreach ($method_data as $key => $value) {]]></search>
+        <add position="before"><![CDATA[
+          if (!$this->filterit && (method_exists($this->load, 'library') || get_class($this->load) == 'agooLoader')) {
+            $this->load->library('simple/filterit');
+          }          
+          if (!$this->filterit) {
+            $this->filterit = new Simple\Filterit($this->registry);
+          }          
+          $method_data = $this->filterit->filterPayment($method_data, $this->session->data['payment_address']);
+        ]]></add>
+      </operation>
+      <operation>
+        <search index="1"><![CDATA[foreach ($method_data as $key => $value) {]]></search>
+        <add position="before"><![CDATA[
+          if (!$this->filterit && (method_exists($this->load, 'library') || get_class($this->load) == 'agooLoader')) {
+            $this->load->library('simple/filterit');
+          }          
+          if (!$this->filterit) {
+            $this->filterit = new Simple\Filterit($this->registry);
+          }          
+          $method_data = $this->filterit->filterShipping($method_data, $this->session->data['shipping_address']);
+        ]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[unset($this->session->data['payment_method']);]]></search>
+        <add position="before" offset="1"><![CDATA[if (!empty($this->session->data['payment_method']['dummy'])) {
+            $code = '';
+          }]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[unset($this->session->data['shipping_method']);]]></search>
+        <add position="before" offset="1"><![CDATA[if (!empty($this->session->data['shipping_method']['dummy'])) {
+            $code = '';
+          }]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/controller/journal2/checkout.php" error="skip">
+      <operation error="skip">
+        <search><![CDATA[if ($value = Journal2Utils::getProperty($this->session->data, 'payment_method.code')) {]]></search>
+        <add position="after"><![CDATA[
+          $parts = explode('.', $value);
+          $value = $parts[0];
+        ]]></add>
+      </operation>
+
+      <operation error="skip">
+        <search><![CDATA['payment/' . $this->session->data['payment_method']['code']]]></search>
+        <add position="replace"><![CDATA['payment/' . $value]]></add>
+      </operation>
+
+      <operation error="before">
+        <search><![CDATA[if ($payment_method = Journal2Utils::getProperty($this->session->data, 'payment_methods.' . Journal2Utils::getProperty($this->request->post, 'payment_method') . '.title')) {]]></search>
+        <add position="replace"><![CDATA[if (isset($this->session->data['payment_methods'][Journal2Utils::getProperty($this->request->post, 'payment_method')]['title'])) {
+          $payment_method = $this->session->data['payment_methods'][Journal2Utils::getProperty($this->request->post, 'payment_method')]['title'];
+          ]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/view/theme/journal2/template/journal2/checkout/shipping_methods.tpl" error="skip">
+      <operation>
+        <search><![CDATA[</label>]]></search>
+        <add position="after" offset="1"><![CDATA[
+          <?php if (!empty($quote['description'])) { ?>
+          <div>
+            <label for="<?php echo $quote['code'] ?>">
+              <?php echo $quote['description'] ?>
+            </label>
+          </div>
+          <?php } ?>
+        ]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[<?php echo $quote['title']; ?>]]></search>
+        <add position="replace"><![CDATA[
+          <?php if (!empty($quote['image'])) { ?>
+          <img src="<?php echo $quote['image'] ?>" <?php echo !empty($quote['image_style']) ? 'style="'.$quote['image_style'].'"' : '' ?>>
+          <?php } ?>
+          <?php echo $quote['title']; ?>]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[value="<?php echo $quote['code']; ?>"]]></search>
+        <add position="replace"><![CDATA[value="<?php echo $quote['code']; ?>" <?php echo !empty($quote['dummy']) ? 'disabled="disabled"' : '' ?>]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[<?php if ($quote['code'] == $code || !$code) { ?>]]></search>
+        <add position="replace"><![CDATA[<?php if (empty($quote['dummy']) && ($quote['code'] == $code || !$code)) { ?>]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/view/theme/journal2/template/journal2/checkout/payment_methods.tpl" error="skip">
+      <operation>
+        <search><![CDATA[</label>]]></search>
+        <add position="after" offset="1"><![CDATA[
+          <?php if (!empty($payment_method['description'])) { ?>
+          <div>
+            <label for="<?php echo $payment_method['code'] ?>">
+              <?php echo $payment_method['description'] ?>
+            </label>
+          </div>
+          <?php } ?>
+        ]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[<?php echo $payment_method['title']; ?>]]></search>
+        <add position="replace"><![CDATA[
+          <?php if (!empty($payment_method['image'])) { ?>
+          <img src="<?php echo $payment_method['image'] ?>" <?php echo !empty($payment_method['image_style']) ? 'style="'.$payment_method['image_style'].'"' : '' ?>>
+          <?php } ?>
+          <?php echo $payment_method['title']; ?>]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[value="<?php echo $payment_method['code']; ?>"]]></search>
+        <add position="replace"><![CDATA[value="<?php echo $payment_method['code']; ?>" <?php echo !empty($payment_method['dummy']) ? 'disabled="disabled"' : '' ?>]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[<?php if ($payment_method['code'] == $code || !$code) { ?>]]></search>
+        <add position="replace"><![CDATA[<?php if (empty($payment_method['dummy']) && ($payment_method['code'] == $code || !$code)) { ?>]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/view/theme/*/template/checkout/simplecheckout_shipping.tpl">
+      <operation>
+        <search><![CDATA[<?php echo !empty($quote['title']) ? $quote['title'] : ''; ?>]]></search>
+        <add position="replace"><![CDATA[
+          <?php if (!empty($quote['image'])) { ?>
+          <img src="<?php echo $quote['image'] ?>" <?php echo !empty($quote['image_style']) ? 'style="'.$quote['image_style'].'"' : '' ?>>
+          <?php } ?>
+          <?php echo !empty($quote['title']) ? $quote['title'] : ''; ?>]]></add>
+      </operation>
+
+      <operation error="skip">
+        <search><![CDATA[<?php echo (!empty($quote['title_sub']) ? $quote['title_sub'] : (!empty($quote['title']) ? $quote['title'] : '')); ?>]]></search>
+        <add position="replace"><![CDATA[
+          <?php if (!empty($quote['image'])) { ?>
+          <img src="<?php echo $quote['image'] ?>" <?php echo !empty($quote['image_style']) ? 'style="'.$quote['image_style'].'"' : '' ?>>
+          <?php } ?>
+          <?php echo (!empty($quote['title_sub']) ? $quote['title_sub'] : (!empty($quote['title']) ? $quote['title'] : '')); ?>]]></add>
+      </operation>
+
+      <operation error="skip">
+        <search><![CDATA[if (isset($quote['profile'])) echo $quote['title_html'];]]></search>
+        <add position="before" offset="2"><![CDATA[
+          <?php if (!empty($quote['image'])) { ?>
+          <img src="<?php echo $quote['image'] ?>" <?php echo !empty($quote['image_style']) ? 'style="'.$quote['image_style'].'"' : '' ?>>
+          <?php } ?>
+        ]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/view/theme/*/template/checkout/shipping_method.tpl" error="skip">
+      <operation>
+        <search><![CDATA[</label>]]></search>
+        <add position="after" offset="1"><![CDATA[
+          <?php if (!empty($quote['description'])) { ?>
+          <div>
+            <label for="<?php echo $quote['code'] ?>">
+              <?php echo $quote['description'] ?>
+            </label>
+          </div>
+          <?php } ?>
+        ]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[<?php echo $quote['title']; ?>]]></search>
+        <add position="replace"><![CDATA[
+          <?php if (!empty($quote['image'])) { ?>
+          <img src="<?php echo $quote['image'] ?>" <?php echo !empty($quote['image_style']) ? 'style="'.$quote['image_style'].'"' : '' ?>>
+          <?php } ?>
+          <?php echo $quote['title']; ?>]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[value="<?php echo $quote['code']; ?>"]]></search>
+        <add position="replace"><![CDATA[value="<?php echo $quote['code']; ?>" <?php echo !empty($quote['dummy']) ? 'disabled="disabled"' : '' ?>]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[<?php if ($quote['code'] == $code || !$code) { ?>]]></search>
+        <add position="replace"><![CDATA[<?php if (empty($quote['dummy']) && ($quote['code'] == $code || !$code)) { ?>]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/controller/checkout/simplecheckout_payment.php" error="skip">
+      <operation>
+        <search><![CDATA[foreach ($method_data as $key => $value) {]]></search>
+        <add position="before"><![CDATA[
+          if (!$this->filterit && (method_exists($this->load, 'library') || get_class($this->load) == 'agooLoader')) {
+            $this->load->library('simple/filterit');
+          }          
+          if (!$this->filterit) {
+            $this->filterit = new Simple\Filterit($this->registry);
+          }          
+          $method_data = $this->filterit->filterPayment($method_data, $address);
+        ]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/controller/checkout/payment_method.php">
+      <operation>
+        <search><![CDATA[foreach ($method_data as $key => $value) {]]></search>
+        <add position="before"><![CDATA[
+          if (!$this->filterit && (method_exists($this->load, 'library') || get_class($this->load) == 'agooLoader')) {
+            $this->load->library('simple/filterit');
+          }          
+          if (!$this->filterit) {
+            $this->filterit = new Simple\Filterit($this->registry);
+          }          
+          $method_data = $this->filterit->filterPayment($method_data, $this->session->data['payment_address']);
+        ]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/view/theme/*/template/checkout/simplecheckout_payment.tpl">
+      <operation>
+        <search><![CDATA[<?php echo $payment_method['title']; ?>]]></search>
+        <add position="replace"><![CDATA[
+          <?php if (!empty($payment_method['image'])) { ?>
+          <img src="<?php echo $payment_method['image'] ?>" <?php echo !empty($payment_method['image_style']) ? 'style="'.$payment_method['image_style'].'"' : '' ?>>
+          <?php } ?>
+          <?php echo $payment_method['title']; ?>]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/view/theme/*/template/checkout/payment_method.tpl" error="skip">
+      <operation>
+        <search><![CDATA[</label>]]></search>
+        <add position="after" offset="1"><![CDATA[
+          <?php if (!empty($payment_method['description'])) { ?>
+          <div>
+            <label for="<?php echo $payment_method['code'] ?>">
+              <?php echo $payment_method['description'] ?>
+            </label>
+          </div>
+          <?php } ?>
+        ]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[<?php echo $payment_method['title']; ?>]]></search>
+        <add position="replace"><![CDATA[
+          <?php if (!empty($payment_method['image'])) { ?>
+          <img src="<?php echo $payment_method['image'] ?>" <?php echo !empty($payment_method['image_style']) ? 'style="'.$payment_method['image_style'].'"' : '' ?>>
+          <?php } ?>
+          <?php echo $payment_method['title']; ?>]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[value="<?php echo $payment_method['code']; ?>"]]></search>
+        <add position="replace"><![CDATA[value="<?php echo $payment_method['code']; ?>" <?php echo !empty($payment_method['dummy']) ? 'disabled="disabled"' : '' ?>]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[<?php if ($payment_method['code'] == $code || !$code) { ?>]]></search>
+        <add position="replace"><![CDATA[<?php if (empty($payment_method['dummy']) && ($payment_method['code'] == $code || !$code)) { ?>]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/controller/checkout/confirm.php">
+      <operation error="skip">
+        <search><![CDATA['payment/' . $this->session->data['payment_method']['code']]]></search>
+        <add position="before"><![CDATA[
+          $payment_method = $this->session->data['payment_method'];
+          $parts = explode('.', $payment_method['code']);
+          $payment_module = $parts[0];
+        ]]></add>
+      </operation>
+      <operation error="skip">
+        <search><![CDATA['payment/' . $this->session->data['payment_method']['code']]]></search>
+        <add position="replace"><![CDATA['payment/' . $payment_module]]></add>
+      </operation>
+      <operation error="skip">
+        <search><![CDATA['extension/payment/' . $this->session->data['payment_method']['code']]]></search>
+        <add position="before"><![CDATA[
+          $payment_method = $this->session->data['payment_method'];
+          $parts = explode('.', $payment_method['code']);
+          $payment_module = $parts[0];
+        ]]></add>
+      </operation>
+      <operation error="skip">
+        <search><![CDATA['extension/payment/' . $this->session->data['payment_method']['code']]]></search>
+        <add position="replace"><![CDATA['extension/payment/' . $payment_module]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/controller/api/shipping.php">
+      <operation>
+        <search><![CDATA[foreach ($json['shipping_methods'] as $key => $value) {]]></search>
+        <add position="before"><![CDATA[
+          if (!$this->filterit && (method_exists($this->load, 'library') || get_class($this->load) == 'agooLoader')) {
+            $this->load->library('simple/filterit');
+          }          
+          if (!$this->filterit) {
+            $this->filterit = new Simple\Filterit($this->registry);
+          }          
+          $json['shipping_methods'] = $this->filterit->filterShipping($json['shipping_methods'], $this->session->data['shipping_address']);
+        ]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/controller/api/payment.php">
+      <operation>
+        <search><![CDATA[foreach ($json['payment_methods'] as $key => $value) {]]></search>
+        <add position="before"><![CDATA[
+          if (!$this->filterit && (method_exists($this->load, 'library') || get_class($this->load) == 'agooLoader')) {
+            $this->load->library('simple/filterit');
+          }          
+          if (!$this->filterit) {
+            $this->filterit = new Simple\Filterit($this->registry);
+          }          
+          $json['payment_methods'] = $this->filterit->filterPayment($json['payment_methods'], $this->session->data['payment_address']);
+        ]]></add>
+      </operation>
+    </file>
+
+    <file path="admin/model/retailcrm/references.php" error="skip">
+      <operation>
+        <search><![CDATA[return $deliveryMethods;]]></search>
+        <add position="before"><![CDATA[
+        $settings = json_decode(json_encode($this->config->get('filterit_shipping')), true);
+        $created = isset($settings['created']) ? $settings['created'] : array();
+        $language = $this->config->get('config_admin_language');
+
+        foreach ($created as $module_code => $module_info) {
+          foreach ($module_info['methods'] as $method_code => $method_info) {
+            $deliveryMethods[$module_code.'.'.$method_code] = !empty($method_info['title'][$language]) ? $method_info['title'][$language] : $module_code.'.'.$method_code;
+          }
+        }
+        ]]></add>
+      </operation>
+    </file>
+
+    <file path="admin/model/extension/retailcrm/references.php" error="skip">
+      <operation>
+        <search><![CDATA[return $paymentTypes;]]></search>
+        <add position="before"><![CDATA[
+        unset($paymentTypes['filterit']);
+        $settings = json_decode(json_encode($this->config->get('filterit_payment')), true);
+        $created = isset($settings['created']) ? $settings['created'] : array();
+        $language = $this->config->get('config_admin_language');
+
+        foreach ($created as $module_code => $module_info) {
+            $paymentTypes[$module_code] = !empty($module_info['title'][$language]) ? $module_info['title'][$language] : $module_code;
+        }
+        ]]></add>
+      </operation>
+
+      <operation>
+        <search><![CDATA['opencart' => $this->getOpercartDeliveryTypes(),]]></search>
+        <add position="before" offset="2"><![CDATA[
+        $settings = json_decode(json_encode($this->config->get('filterit_shipping')), true);
+        $created = isset($settings['created']) ? $settings['created'] : array();
+        $language = $this->config->get('config_admin_language');
+
+        $deliveryTypes = $this->getOpercartDeliveryTypes();
+
+        if (empty($deliveryTypes)) {
+            $deliveryTypes = array();
+        }
+
+        $skip = false;
+
+        foreach ($deliveryTypes as $code => $module) {
+          if (strpos($code, 'filterit') === 0) {
+            $skip = true;
+          }
+        }
+
+        if (!$skip) {
+          foreach ($created as $module_code => $module_info) {
+            foreach ($module_info['methods'] as $method_code => $method_info) {
+              $deliveryTypes[$module_code]['title'] = !empty($module_info['title'][$language]) ? $module_info['title'][$language] : $module_code;
+              $deliveryTypes[$module_code][$module_code.'.'.$method_code] = array(
+                'code'  => $module_code.'.'.$method_code,
+                'title' => !empty($method_info['title'][$language]) ? $method_info['title'][$language] : $module_code.'.'.$method_code
+              );
+            }
+          }
+        }
+        ]]></add>
+      </operation>
+
+      <operation>
+        <search><![CDATA['opencart' => $this->getOpercartDeliveryTypes(),]]></search>
+        <add position="replace"><![CDATA[
+        'opencart' => $deliveryTypes,
+        ]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/controller/api/retailcrm.php" error="skip">
+      <operation error="skip">
+        <search><![CDATA[$this->response->setOutput(json_encode($deliveryTypes));]]></search>
+        <add position="before"><![CDATA[
+        $settings = json_decode(json_encode($this->config->get('filterit_shipping')), true);
+        $created = isset($settings['created']) ? $settings['created'] : array();
+        $language = $this->config->get('config_admin_language');
+    
+        foreach ($created as $module_code => $module_info) {
+          foreach ($module_info['methods'] as $method_code => $method_info) {
+            $deliveryTypes[$module_code]['title'] = !empty($module_info['title'][$language]) ? $module_info['title'][$language] : $module_code;
+            $deliveryTypes[$module_code][$module_code.'.'.$method_code] = array(
+              'code'  => $module_code.'.'.$method_code,
+              'title' => !empty($method_info['title'][$language]) ? $method_info['title'][$language] : $module_code.'.'.$method_code
+            );
+          }
+        }
+        ]]></add>
+      </operation>
+
+      <operation error="skip">
+        <search><![CDATA[$this->response->setOutput(json_encode($response));]]></search>
+        <add position="before"><![CDATA[
+        $settings = json_decode(json_encode($this->config->get('filterit_shipping')), true);
+        $created = isset($settings['created']) ? $settings['created'] : array();
+        $language = $this->config->get('config_admin_language');
+    
+        foreach ($created as $module_code => $module_info) {
+          foreach ($module_info['methods'] as $method_code => $method_info) {
+            $response[$module_code]['title'] = !empty($module_info['title'][$language]) ? $module_info['title'][$language] : $module_code;
+            $response[$module_code][$module_code.'.'.$method_code] = array(
+              'code'  => $module_code.'.'.$method_code,
+              'title' => !empty($method_info['title'][$language]) ? $method_info['title'][$language] : $module_code.'.'.$method_code
+            );
+          }
+        }
+        ]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/model/retailcrm/order.php" error="skip">
+      <operation>
+        <search><![CDATA[$payment_code = $order_data['payment_code'];]]></search>
+        <add position="after"><![CDATA[
+        $parts = explode('.', $payment_code);
+        $payment_code = $parts[0];
+        ]]></add>
+      </operation>
+    </file>
+
+    <file path="admin/controller/module/yabuy.php" error="skip">
+      <operation>
+        <search><![CDATA[return $modules;]]></search>
+        <add position="before"><![CDATA[
+        $modules[] = array(
+          'code' => 'filterit',
+          'name' => 'Filterit',
+          'edit_url' => $this->url->link('module/filterit', 'token=' . $this->session->data['token'], 'SSL'),
+          'status' => $this->language->get('text_enabled')
+        );
+        ]]></add>
+      </operation>
+    </file>
+
+    <file path="admin/controller/extension/module/yabuy.php" error="skip">
+      <operation>
+        <search><![CDATA[return $modules;]]></search>
+        <add position="before"><![CDATA[
+        $modules[] = array(
+          'code' => 'filterit',
+          'name' => 'Filterit',
+          'edit_url' => $this->url->link('module/filterit', 'token=' . $this->session->data['token'], 'SSL'),
+          'status' => $this->language->get('text_enabled')
+        );
+        ]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/controller/checkout/unicheckout.php" error="skip">
+      <operation>
+        <search index="0"><![CDATA[foreach ($method_data as $key => $value) {]]></search>
+        <add position="before"><![CDATA[
+          if (!$this->filterit && (method_exists($this->load, 'library') || get_class($this->load) == 'agooLoader')) {
+            $this->load->library('simple/filterit');
+          }          
+          if (!$this->filterit) {
+            $this->filterit = new Simple\Filterit($this->registry);
+          }          
+          $method_data = $this->filterit->filterShipping($method_data, $shipping_address);
+        ]]></add>
+      </operation>
+      <operation>
+        <search index="1"><![CDATA[foreach ($method_data as $key => $value) {]]></search>
+        <add position="before"><![CDATA[
+          if (!$this->filterit && (method_exists($this->load, 'library') || get_class($this->load) == 'agooLoader')) {
+            $this->load->library('simple/filterit');
+          }          
+          if (!$this->filterit) {
+            $this->filterit = new Simple\Filterit($this->registry);
+          }          
+          $method_data = $this->filterit->filterPayment($method_data, $payment_address);
+        ]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/controller/checkout/uni_checkout.php" error="skip">
+      <operation>
+        <search index="0"><![CDATA[foreach ($method_data as $key => $value) {]]></search>
+        <add position="before"><![CDATA[
+          if (!$this->filterit && (method_exists($this->load, 'library') || get_class($this->load) == 'agooLoader')) {
+            $this->load->library('simple/filterit');
+          }          
+          if (!$this->filterit) {
+            $this->filterit = new Simple\Filterit($this->registry);
+          }          
+          $method_data = $this->filterit->filterShipping($method_data, $shipping_address);
+        ]]></add>
+      </operation>
+      <operation>
+        <search index="1"><![CDATA[foreach ($method_data as $key => $value) {]]></search>
+        <add position="before"><![CDATA[
+          if (!$this->filterit && (method_exists($this->load, 'library') || get_class($this->load) == 'agooLoader')) {
+            $this->load->library('simple/filterit');
+          }          
+          if (!$this->filterit) {
+            $this->filterit = new Simple\Filterit($this->registry);
+          }          
+          $method_data = $this->filterit->filterPayment($method_data, $payment_address);
+        ]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/view/theme/unishop/template/checkout/unipayment.tpl"  error="skip">
+      <operation>
+        <search index="1"><![CDATA[</div>]]></search>
+        <add position="after"><![CDATA[
+          <?php if (!empty($payment_method['description'])) { ?>
+          <div>
+            <label for="<?php echo $payment_method['code'] ?>">
+              <?php echo $payment_method['description'] ?>
+            </label>
+          </div>
+          <?php } ?>
+        ]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[><?php echo $payment_method['title']; ?>]]></search>
+        <add position="replace"><![CDATA[
+          ><?php if (!empty($payment_method['image'])) { ?>
+          <img src="<?php echo $payment_method['image'] ?>" <?php echo !empty($payment_method['image_style']) ? 'style="'.$payment_method['image_style'].'"' : '' ?>>
+          <?php } ?>
+          <?php echo $payment_method['title']; ?>]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[value="<?php echo $payment_method['code']; ?>"]]></search>
+        <add position="replace"><![CDATA[value="<?php echo $payment_method['code']; ?>" <?php echo !empty($payment_method['dummy']) ? 'disabled="disabled"' : '' ?>]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[<?php if (($payment_method['code'] == $code or !$code) and $lock == false) { ?>]]></search>
+        <add position="replace"><![CDATA[<?php if (empty($payment_method['dummy']) && ($payment_method['code'] == $code or !$code) and $lock == false) { ?>]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/view/theme/unishop/template/checkout/uni_payment.tpl"  error="skip">
+      <operation>
+        <search index="1"><![CDATA[</div>]]></search>
+        <add position="after"><![CDATA[
+          <?php if (!empty($payment_method['description'])) { ?>
+          <div>
+            <label for="<?php echo $payment_method['code'] ?>">
+              <?php echo $payment_method['description'] ?>
+            </label>
+          </div>
+          <?php } ?>
+        ]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[><?php echo $payment_method['title']; ?>]]></search>
+        <add position="replace"><![CDATA[
+          ><?php if (!empty($payment_method['image'])) { ?>
+          <img src="<?php echo $payment_method['image'] ?>" <?php echo !empty($payment_method['image_style']) ? 'style="'.$payment_method['image_style'].'"' : '' ?>>
+          <?php } ?>
+          <?php echo $payment_method['title']; ?>]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[value="<?php echo $payment_method['code']; ?>"]]></search>
+        <add position="replace"><![CDATA[value="<?php echo $payment_method['code']; ?>" <?php echo !empty($payment_method['dummy']) ? 'disabled="disabled"' : '' ?>]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/view/theme/unishop/template/checkout/unishipping.tpl">
+      <!-- <operation>
+        <search index="1"><![CDATA[</div>]]></search>
+        <add position="after"><![CDATA[
+          <?php if (!empty($quote['description'])) { ?>
+          <div>
+            <label for="<?php echo $quote['code'] ?>">
+              <?php echo $quote['description'] ?>
+            </label>
+          </div>
+          <?php } ?>
+        ]]></add>
+      </operation> -->
+      <operation>
+        <search><![CDATA[><?php echo $quote['title']; ?>]]></search>
+        <add position="replace"><![CDATA[
+          ><?php if (!empty($quote['image'])) { ?>
+          <img src="<?php echo $quote['image'] ?>" <?php echo !empty($quote['image_style']) ? 'style="'.$quote['image_style'].'"' : '' ?>>
+          <?php } ?>
+          <?php echo $quote['title']; ?>]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[value="<?php echo $quote['code']; ?>"]]></search>
+        <add position="replace"><![CDATA[value="<?php echo $quote['code']; ?>" <?php echo !empty($quote['dummy']) ? 'disabled="disabled"' : '' ?>]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[<?php if ($quote['code'] == $code || !$code) { ?>]]></search>
+        <add position="replace"><![CDATA[<?php if (empty($quote['dummy']) && ($quote['code'] == $code || !$code)) { ?>]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/view/theme/unishop/template/checkout/uni_shipping.tpl">
+      <operation>
+        <search index="1"><![CDATA[</div>]]></search>
+        <add position="after"><![CDATA[
+          <?php if (!empty($quote['description'])) { ?>
+          <div>
+            <label for="<?php echo $quote['code'] ?>">
+              <?php echo $quote['description'] ?>
+            </label>
+          </div>
+          <?php } ?>
+        ]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[><?php echo $quote['title']; ?>]]></search>
+        <add position="replace"><![CDATA[
+          ><?php if (!empty($quote['image'])) { ?>
+          <img src="<?php echo $quote['image'] ?>" <?php echo !empty($quote['image_style']) ? 'style="'.$quote['image_style'].'"' : '' ?>>
+          <?php } ?>
+          <?php echo $quote['title']; ?>]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[value="<?php echo $quote['code']; ?>"]]></search>
+        <add position="replace"><![CDATA[value="<?php echo $quote['code']; ?>" <?php echo !empty($quote['dummy']) ? 'disabled="disabled"' : '' ?>]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/controller/yandexbuy/cart.php" error="skip">
+      <operation error="skip">
+        <search><![CDATA[require_once(dirname(__FILE__).'/base.php');]]></search>
+        <add position="replace"><![CDATA[require_once(DIR_APPLICATION.'controller/yandexbuy/base.php');]]></add>
+      </operation>
+
+      <operation error="skip">
+        <search><![CDATA[$this->load->model('shipping/'.$code);]]></search>
+        <add position="before"><![CDATA[
+        if ($code == 'filterit') {
+          if (!$this->filterit && (method_exists($this->load, 'library') || get_class($this->load) == 'agooLoader')) {
+            $this->load->library('simple/filterit');
+          }    
+
+          if (!$this->filterit) {
+            $this->filterit = new Simple\Filterit($this->registry);
+          }      
+
+          $filterit_modules = $this->filterit->filterShipping(array(), $address_data);
+
+          foreach ($filterit_modules as $filterit_module) {
+            foreach ($filterit_module['quote'] as $filterit_method) {
+              if (!empty($filterit_method['dummy'])) {
+                continue;
+              }
+
+              $ret[] = array(
+                'id'=>$filterit_method['code'],
+                'type'=>$module['type'],
+                'serviceName'=>mb_substr(trim(strip_tags($filterit_method['title'])), 0, 50, 'UTF-8'),
+                'price'=>intval($filterit_method['cost']),
+                'dates'=>$this->getDeliveryDays($module['days'], $module['before']),
+                'paymentMethods'=>$module['payments']
+              );
+            }
+          }
+
+          continue;
+        }
+        ]]></add>
+      </operation>
+
+      <operation error="skip">
+        <search><![CDATA[if ($this->config->get('ya_pokupki_yandex'))]]></search>
+        <add position="before"><![CDATA[
+       
+          if (!$this->filterit && (method_exists($this->load, 'library') || get_class($this->load) == 'agooLoader')) {
+            $this->load->library('simple/filterit');
+          }    
+
+          if (!$this->filterit) {
+            $this->filterit = new Simple\Filterit($this->registry);
+          }      
+
+          $filterit_modules = $this->filterit->filterShipping(array(), $address_array);
+
+          foreach ($filterit_modules as $filterit_module) {
+            foreach ($filterit_module['quote'] as $filterit_method) {
+              if (!empty($filterit_method['dummy'])) {
+                continue;
+              }
+
+              $id = $filterit_method['code'];
+              $types = $this->config->get('ya_pokupki_carrier');
+              $type = isset($types[$id]) ? $types[$id] : 'POST';
+
+              $carriers[$k] = array(
+                'id'=> $filterit_method['code'],
+                'type'=> $type,
+                'paymentAllow' => $type == "POST" ? false : true,
+                'serviceName'=> strip_tags($filterit_method['title']),
+                'price'=> (float)number_format(
+                  $this->currency->convert(
+                      $this->tax->calculate(
+                          $filterit_method['cost'],
+                          $product_info['tax_class_id'],
+                          $this->config->get('config_tax')
+                      ),
+                      $shop_currency,
+                      $offers_currency
+                  ),
+                  $decimal_place, '.', ''),
+                'dates'=> array(
+                  'fromDate' => date('d-m-Y', time()),
+                  'toDate' => date('d-m-Y', time()+24*60*60),
+                )
+              );
+	          if($type == 'PICKUP')
+	          {
+	             $outlets = $this->{"model_".str_replace("/","_",$for23)."yamodel_pokupki"}->getOutlets();
+	             $market_id = self::preOutlets($outlets['json']['outlets'], $filterit_method['sort_order']);
+	             $market_outlet = (int) $outlets['array'][$market_id]->id;
+	             $carriers[$k]['outlets'][] = array('id'=> $market_outlet);
+	          }
+	          $k++;
+            }
+          }
+
+        ]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/model/{extension/yamodel,yamodel}/pokupki.php" error="skip">
+      
+      <operation error="skip">
+        <search><![CDATA[$this->load->model($for23.'shipping/'.$shipping_id);]]></search>
+        <add position="before"><![CDATA[
+        if (strpos($shipping_id, 'filterit') === 0) {
+          $parts = explode('.', $shipping_id);
+
+          if (!$this->filterit && (method_exists($this->load, 'library') || get_class($this->load) == 'agooLoader')) {
+            $this->load->library('simple/filterit');
+          }    
+
+          if (!$this->filterit) {
+            $this->filterit = new Simple\Filterit($this->registry);
+          }      
+
+          $filterit_modules = $this->filterit->filterShipping(array(), $address);
+
+          if (!empty($filterit_modules[$parts[0]]) && !empty($filterit_modules[$parts[0]]['quote']) && !empty($filterit_modules[$parts[0]]['quote'][$parts[1]])) {
+            return $filterit_modules[$parts[0]]['quote'][$parts[1]];
+          }
+
+          return array();
+        }
+        ]]></add>
+      </operation>
+
+    </file>
+
+    <file path="admin/controller/extension/total/paycharge.php" error="skip">
+      <operation>
+        <search><![CDATA[$this->load->model('localisation/language');]]></search>
+        <add position="before"><![CDATA[
+        $settings = json_decode(json_encode($this->config->get('filterit_payment')), true);
+        $created = isset($settings['created']) ? $settings['created'] : array();
+        $language = $this->config->get('config_admin_language');
+
+        foreach ($created as $module_code => $module_info) {
+          $data['payments'][] = array(
+            'name' => !empty($module_info['title'][$language]) ? $module_info['title'][$language] : $module_code,
+            'code' => $module_code,
+          );
+        }
+        ]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/controller/extension/total/shipping.php" error="skip">
+      <operation>
+        <search><![CDATA[foreach ($quote_data as $key => $value) {]]></search>
+        <add position="before"><![CDATA[
+          if (!$this->filterit && (method_exists($this->load, 'library') || get_class($this->load) == 'agooLoader')) {
+            $this->load->library('simple/filterit');
+          }          
+          if (!$this->filterit) {
+            $this->filterit = new Simple\Filterit($this->registry);
+          }          
+          $quote_data = $this->filterit->filterShipping($quote_data, $this->session->data['shipping_address']);
+        ]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/model/total/shipping.php" error="skip">
+      <operation>
+        <search><![CDATA[$this->config->get('shipping_sort_order')]]></search>
+        <add position="before"><![CDATA[
+          'text'      => $this->session->data['shipping_method']['text'],
+        ]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/model/extension/total/shipping.php" error="skip">
+      <operation>
+        <search><![CDATA[$this->config->get('shipping_sort_order')]]></search>
+        <add position="before"><![CDATA[
+          'text'      => $this->session->data['shipping_method']['text'],
+        ]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/controller/checkout/oct_fastorder.php" error="skip">
+      <operation>
+        <search index="0"><![CDATA[foreach ($method_data as $key => $value) {]]></search>
+        <add position="before"><![CDATA[
+          if (!$this->filterit && (method_exists($this->load, 'library') || get_class($this->load) == 'agooLoader')) {
+            $this->load->library('simple/filterit');
+          }          
+          if (!$this->filterit) {
+            $this->filterit = new Simple\Filterit($this->registry);
+          }          
+          $method_data = $this->filterit->filterShipping($method_data, $shipping_address);
+        ]]></add>
+      </operation>
+      <operation>
+        <search index="1"><![CDATA[foreach ($method_data as $key => $value) {]]></search>
+        <add position="before"><![CDATA[
+          if (!$this->filterit && (method_exists($this->load, 'library') || get_class($this->load) == 'agooLoader')) {
+            $this->load->library('simple/filterit');
+          }          
+          if (!$this->filterit) {
+            $this->filterit = new Simple\Filterit($this->registry);
+          }          
+          $method_data = $this->filterit->filterPayment($method_data, $payment_address);
+        ]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA['extension/payment/' . $this->session->data['payment_method']['code']]]></search>
+        <add position="before"><![CDATA[
+          $payment_method = $this->session->data['payment_method'];
+          $parts = explode('.', $payment_method['code']);
+          $payment_module = $parts[0];
+        ]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA['extension/payment/' . $this->session->data['payment_method']['code']]]></search>
+        <add position="replace"><![CDATA['extension/payment/' . $payment_module]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/view/theme/storeset/template/checkout/oct_fastorder/payment_method.tpl"  error="skip">
+      <operation>
+        <search index="1"><![CDATA[</div>]]></search>
+        <add position="after"><![CDATA[
+          <?php if (!empty($payment_method['description'])) { ?>
+          <div>
+            <label for="<?php echo $payment_method['code'] ?>">
+              <?php echo $payment_method['description'] ?>
+            </label>
+          </div>
+          <?php } ?>
+        ]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[<?php echo $payment_method['title']; ?><]]></search>
+        <add position="replace"><![CDATA[
+          <?php if (!empty($payment_method['image'])) { ?>
+          <img src="<?php echo $payment_method['image'] ?>" <?php echo !empty($payment_method['image_style']) ? 'style="'.$payment_method['image_style'].'"' : '' ?>>
+          <?php } ?>
+          <?php echo $payment_method['title']; ?><]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/view/theme/storeset/template/checkout/oct_fastorder/shipping_method.tpl"  error="skip">
+      <operation>
+        <search index="1"><![CDATA[</div>]]></search>
+        <add position="after"><![CDATA[
+          <?php if (!empty($quote['description'])) { ?>
+          <div>
+            <label for="<?php echo $quote['code'] ?>">
+              <?php echo $quote['description'] ?>
+            </label>
+          </div>
+          <?php } ?>
+        ]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[<?php echo $quote['title']; ?>]]></search>
+        <add position="replace"><![CDATA[
+          <?php if (!empty($quote['image'])) { ?>
+          <img src="<?php echo $quote['image'] ?>" <?php echo !empty($quote['image_style']) ? 'style="'.$quote['image_style'].'"' : '' ?>>
+          <?php } ?>
+          <?php echo $quote['title']; ?>]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/view/theme/storeset/template/checkout/oct_fastorder/fastorder.tpl"  error="skip">
+      <operation>
+        <search index="2"><![CDATA[<?php echo $payment_method['title']; ?>]]></search>
+        <add position="after" offset="3"><![CDATA[
+          <?php if (!empty($payment_method['description'])) { ?>
+          <div>
+            <label for="<?php echo $payment_method['code'] ?>">
+              <?php echo $payment_method['description'] ?>
+            </label>
+          </div>
+          <?php } ?>
+        ]]></add>
+      </operation>
+      <operation>
+        <search index="2"><![CDATA[<?php echo $payment_method['title']; ?>]]></search>
+        <add position="replace"><![CDATA[
+          <?php if (!empty($payment_method['image'])) { ?>
+          <img src="<?php echo $payment_method['image'] ?>" <?php echo !empty($payment_method['image_style']) ? 'style="'.$payment_method['image_style'].'"' : '' ?>>
+          <?php } ?>
+          <?php echo $payment_method['title']; ?>]]></add>
+      </operation>
+      <operation>
+        <search index="2"><![CDATA[<?php echo $quote['title']; ?>]]></search>
+        <add position="after" offset="2"><![CDATA[
+          <?php if (!empty($quote['description'])) { ?>
+          <div>
+            <label for="<?php echo $quote['code'] ?>">
+              <?php echo $quote['description'] ?>
+            </label>
+          </div>
+          <?php } ?>
+        ]]></add>
+      </operation>
+      <operation>
+        <search index="2"><![CDATA[<?php echo $quote['title']; ?>]]></search>
+        <add position="replace"><![CDATA[
+          <?php if (!empty($quote['image'])) { ?>
+          <img src="<?php echo $quote['image'] ?>" <?php echo !empty($quote['image_style']) ? 'style="'.$quote['image_style'].'"' : '' ?>>
+          <?php } ?>
+          <?php echo $quote['title']; ?>]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/controller/checkout/fastorder/fastorder.php" error="skip">
+      <operation>
+        <search><![CDATA[foreach ($shipping_method_data as $key => $value) {]]></search>
+        <add position="before"><![CDATA[
+          if (!$this->filterit && (method_exists($this->load, 'library') || get_class($this->load) == 'agooLoader')) {
+            $this->load->library('simple/filterit');
+          }          
+          if (!$this->filterit) {
+            $this->filterit = new Simple\Filterit($this->registry);
+          }          
+          $shipping_method_data = $this->filterit->filterShipping($shipping_method_data, $this->session->data['shipping_address']);
+        ]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[foreach ($payment_method_data as $key => $value) {]]></search>
+        <add position="before"><![CDATA[
+          if (!$this->filterit && (method_exists($this->load, 'library') || get_class($this->load) == 'agooLoader')) {
+            $this->load->library('simple/filterit');
+          }          
+          if (!$this->filterit) {
+            $this->filterit = new Simple\Filterit($this->registry);
+          }          
+          $payment_method_data = $this->filterit->filterPayment($payment_method_data, $this->session->data['payment_address']);
+        ]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/controller/checkout/fastorder/confirm.php" error="skip">
+      <operation>
+        <search><![CDATA['payment/' . $this->session->data['payment_method']['code']]]></search>
+        <add position="before"><![CDATA[
+          $payment_method = $this->session->data['payment_method'];
+          $parts = explode('.', $payment_method['code']);
+          $payment_module = $parts[0];
+        ]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA['payment/' . $this->session->data['payment_method']['code']]]></search>
+        <add position="replace"><![CDATA['payment/' . $payment_module]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/controller/checkout/shippay_method.php" error="skip">
+      <operation>
+        <search index="0"><![CDATA[foreach ($method_data as $key => $value) {]]></search>
+        <add position="before"><![CDATA[
+          if (!$this->filterit && (method_exists($this->load, 'library') || get_class($this->load) == 'agooLoader')) {
+            $this->load->library('simple/filterit');
+          }          
+          if (!$this->filterit) {
+            $this->filterit = new Simple\Filterit($this->registry);
+          }          
+          $method_data = $this->filterit->filterShipping($method_data, $this->session->data['shipping_address']);
+        ]]></add>
+      </operation>
+
+      <operation>
+        <search index="1"><![CDATA[foreach ($method_data as $key => $value) {]]></search>
+        <add position="before"><![CDATA[
+          if (!isset($this->session->data['shipping_method']) && !empty($this->session->data['shipping_methods'])) {
+            foreach ($this->session->data['shipping_methods'] as $method) {
+              if (!empty($method['quote'])) {
+                $first_method = reset($method['quote']);
+
+                if (!empty($first_method)) {
+                  $this->session->data['shipping_method'] = $first_method;
+                  break;
+                }
+              }
+            }
+          }
+
+          if (!$this->filterit && (method_exists($this->load, 'library') || get_class($this->load) == 'agooLoader')) {
+            $this->load->library('simple/filterit');
+          }          
+          if (!$this->filterit) {
+            $this->filterit = new Simple\Filterit($this->registry);
+          }          
+          $method_data = $this->filterit->filterPayment($method_data, $this->session->data['payment_address']);
+        ]]></add>
+      </operation>
+    </file>
+
+    <file path="admin/controller/{extension/feed,feed}/yamodule.php" error="skip">
+      <operation error="skip">
+        <search><![CDATA[$save_data = $this->config->get('ya_pokupki_carrier');]]></search>
+        <add position="before"><![CDATA[
+        $settings = json_decode(json_encode($this->config->get('filterit_shipping')), true);
+        $created = isset($settings['created']) ? $settings['created'] : array();
+        $language = $this->config->get('config_admin_language');
+
+        foreach ($created as $module_code => $module_info) {
+			$group_name = !empty($module_info['title'][$language]) ? $module_info['title'][$language] : $module_code;
+        	foreach ($module_info['methods'] as $method_code => $method_info) {
+				$method_name = !empty($method_info['title'][$language]) ? $method_info['title'][$language] : $method_code;
+	    		$data['extensions'][] = array(
+	               'name'       => $group_name . " / " . $method_name,
+	               'sort_order' => isset($method_info['sort_order']) ? $method_info['sort_order'] : '',
+	               'installed'  => true,
+	               'ext' => $module_code . "." . $method_code
+	        	);     
+        	}
+        }
+        ]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/view/theme/*/template/checkout/shipping_method.twig" error="skip">
+      <operation>
+        <search><![CDATA[</label>]]></search>
+        <add position="after" offset="1"><![CDATA[
+          {% if quote.description is not empty %}
+          <div>
+            <label for="{{ quote.code }}">
+              {{ quote.description }}
+            </label>
+          </div>
+          {% endif %}
+        ]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[{{ quote.title }}]]></search>
+        <add position="replace"><![CDATA[
+          {% if quote.image is not empty %}
+          <img src="{{ quote.image }}" {{ quote.image_style is not empty ? 'style="' ~ quote.image_style ~ '"' : '' }}>
+          {% endif %}
+          {{ quote.title }}]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[value="{{ quote.code }}"]]></search>
+        <add position="replace"><![CDATA[value="{{ quote.code }}" {{ quote.dummy is not empty ? 'disabled="disabled"' : '' }}]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[{% if quote.code == code or not code %}]]></search>
+        <add position="replace"><![CDATA[{% if quote.dummy is empty and (quote.code == code or not code) %}]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/view/theme/*/template/checkout/payment_method.twig" error="skip">
+      <operation>
+        <search><![CDATA[</label>]]></search>
+        <add position="after" offset="1"><![CDATA[
+          {% if payment_method.description is not empty %}
+          <div>
+            <label for="{{ payment_method.code }}">
+              {{ payment_method.description }}
+            </label>
+          </div>
+          {% endif %}
+        ]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[{{ payment_method.title }}]]></search>
+        <add position="replace"><![CDATA[
+          {% if payment_method.image is not empty %}
+          <img src="{{ payment_method.image }}" {{ payment_method.image_style is not empty ? 'style="' ~ payment_method.image_style ~ '"' : '' }}>
+          {% endif %}
+          {{ payment_method.title }}]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[value="{{ payment_method.code }}"]]></search>
+        <add position="replace"><![CDATA[value="{{ payment_method.code }}" {{ payment_method.dummy is not empty ? 'disabled="disabled"' : '' }}]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[{% if payment_method.code == code or not code %}]]></search>
+        <add position="replace"><![CDATA[{% if payment_method.dummy is empty and (payment_method.code == code or not code) %}]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/view/theme/unishop2/template/checkout/uni_shipping.twig" error="skip">
+      <operation>
+        <search><![CDATA[</label>]]></search>
+        <add position="after"><![CDATA[
+          {% if quote.description is not empty %}
+          <div>
+            <label for="{{ quote.code }}">
+              {{ quote.description }}
+            </label>
+          </div>
+          {% endif %}
+        ]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[{{quote.title}}]]></search>
+        <add position="replace"><![CDATA[
+          {% if quote.image is not empty %}
+          <img src="{{ quote.image }}" {{ quote.image_style is not empty ? 'style="' ~ quote.image_style ~ '"' : '' }}>
+          {% endif %}
+          {{quote.title}}]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[value="{{quote.code}}"]]></search>
+        <add position="replace"><![CDATA[value="{{quote.code}}" {{ quote.dummy is not empty ? 'disabled="disabled"' : '' }}]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[{% if quote.code == code or not code %}]]></search>
+        <add position="replace"><![CDATA[{% if quote.dummy is empty and (quote.code == code or not code) %}]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/view/theme/unishop2/template/checkout/uni_payment.twig" error="skip">
+      <operation>
+        <search><![CDATA[</label>]]></search>
+        <add position="after"><![CDATA[
+          {% if payment_method.description is not empty %}
+          <div>
+            <label for="{{ payment_method.code }}">
+              {{ payment_method.description }}
+            </label>
+          </div>
+          {% endif %}
+        ]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[<span></span>{{payment_method.title}}]]></search>
+        <add position="replace"><![CDATA[
+          {% if payment_method.image is not empty %}
+          <img src="{{ payment_method.image }}" {{ payment_method.image_style is not empty ? 'style="' ~ payment_method.image_style ~ '"' : '' }}>
+          {% endif %}
+          <span></span>{{payment_method.title}}]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[value="{{payment_method.code}}"]]></search>
+        <add position="replace"><![CDATA[value="{{payment_method.code}}" {{ payment_method.dummy is not empty ? 'disabled="disabled"' : '' }}]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[{% if payment_method.code == code or not code and lock == false %}]]></search>
+        <add position="replace"><![CDATA[{% if payment_method.dummy is empty and (payment_method.code == code or not code) and lock == false %}]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/controller/extension/quickcheckout/shipping_method.php">
+      <operation>
+        <search><![CDATA[foreach ($method_data as $key => $value) {]]></search>
+        <add position="before"><![CDATA[
+          if (!$this->filterit && (method_exists($this->load, 'library') || get_class($this->load) == 'agooLoader')) {
+            $this->load->library('simple/filterit');
+          }          
+          if (!$this->filterit) {
+            $this->filterit = new Simple\Filterit($this->registry);
+          }          
+          $method_data = $this->filterit->filterShipping($method_data, $shipping_address);
+        ]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/controller/extension/quickcheckout/payment_method.php">
+      <operation>
+        <search><![CDATA[foreach ($method_data as $key => $value) {]]></search>
+        <add position="before"><![CDATA[
+          if (!$this->filterit && (method_exists($this->load, 'library') || get_class($this->load) == 'agooLoader')) {
+            $this->load->library('simple/filterit');
+          }          
+          if (!$this->filterit) {
+            $this->filterit = new Simple\Filterit($this->registry);
+          }          
+          $method_data = $this->filterit->filterPayment($method_data, $payment_address);
+        ]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/controller/quickcheckout/shipping_method.php">
+      <operation>
+        <search><![CDATA[foreach ($method_data as $key => $value) {]]></search>
+        <add position="before"><![CDATA[
+          if (!$this->filterit && (method_exists($this->load, 'library') || get_class($this->load) == 'agooLoader')) {
+            $this->load->library('simple/filterit');
+          }          
+          if (!$this->filterit) {
+            $this->filterit = new Simple\Filterit($this->registry);
+          }          
+          $method_data = $this->filterit->filterShipping($method_data, $shipping_address);
+        ]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/controller/quickcheckout/payment_method.php">
+      <operation>
+        <search><![CDATA[foreach ($method_data as $key => $value) {]]></search>
+        <add position="before"><![CDATA[
+          if (!$this->filterit && (method_exists($this->load, 'library') || get_class($this->load) == 'agooLoader')) {
+            $this->load->library('simple/filterit');
+          }          
+          if (!$this->filterit) {
+            $this->filterit = new Simple\Filterit($this->registry);
+          }          
+          $method_data = $this->filterit->filterPayment($method_data, $payment_address);
+        ]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/controller/quickcheckout/confirm.php" error="skip">
+      <operation>
+        <search><![CDATA['payment/' . $this->session->data['payment_method']['code']]]></search>
+        <add position="before"><![CDATA[
+          $payment_method = $this->session->data['payment_method'];
+          $parts = explode('.', $payment_method['code']);
+          $payment_module = $parts[0];
+        ]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA['payment/' . $this->session->data['payment_method']['code']]]></search>
+        <add position="replace"><![CDATA['payment/' . $payment_module]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/view/theme/*/template/quickcheckout/shipping_method.tpl" error="skip">
+      <operation>
+        <search><![CDATA[</span></label>]]></search>
+        <add position="after"><![CDATA[
+          <?php if (!empty($quote['description'])) { ?>
+          <div>
+            <label for="<?php echo $quote['code'] ?>">
+              <?php echo $quote['description'] ?>
+            </label>
+          </div>
+          <?php } ?>
+        ]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[<?php echo $adress ? $adress : $quote['title']; ?>]]></search>
+        <add position="replace"><![CDATA[
+          <?php if (!empty($quote['image'])) { ?>
+          <img src="<?php echo $quote['image'] ?>" <?php echo !empty($quote['image_style']) ? 'style="'.$quote['image_style'].'"' : '' ?>>
+          <?php } ?>
+          <?php echo $adress ? $adress : $quote['title']; ?>]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[value="<?php echo $quote['code']; ?>"]]></search>
+        <add position="replace"><![CDATA[value="<?php echo $quote['code']; ?>" <?php echo !empty($quote['dummy']) ? 'disabled="disabled"' : '' ?>]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[<?php if ($quote['code'] == $code || !$code || !$exists) { ?>]]></search>
+        <add position="replace"><![CDATA[<?php if (empty($quote['dummy']) && ($quote['code'] == $code || !$code || !$exists)) { ?>]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/view/theme/*/template/quickcheckout/payment_method.tpl" error="skip">
+      <operation>
+        <search><![CDATA[<?php echo $payment_method['title']; ?></label>]]></search>
+        <add position="replace"><![CDATA[
+          <?php echo $payment_method['title']; ?></label><?php if (!empty($payment_method['description'])) { ?>
+          <div>
+            <label for="<?php echo $payment_method['code'] ?>">
+              <?php echo $payment_method['description'] ?>
+            </label>
+          </div>
+          <?php } ?>
+        ]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[<?php echo $payment_method['title']; ?></label>]]></search>
+        <add position="replace"><![CDATA[
+          <?php if (!empty($payment_method['image'])) { ?>
+          <img src="<?php echo $payment_method['image'] ?>" <?php echo !empty($payment_method['image_style']) ? 'style="'.$payment_method['image_style'].'"' : '' ?>>
+          <?php } ?>
+          <?php echo $payment_method['title']; ?></label>]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[value="<?php echo $payment_method['code']; ?>"]]></search>
+        <add position="replace"><![CDATA[value="<?php echo $payment_method['code']; ?>" <?php echo !empty($payment_method['dummy']) ? 'disabled="disabled"' : '' ?>]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[<?php if ($payment_method['code'] == $code || !$code || !$exists) { ?>]]></search>
+        <add position="replace"><![CDATA[<?php if (empty($payment_method['dummy']) && ($payment_method['code'] == $code || !$code || !$exists)) { ?>]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/view/theme/default/template/extension/quickcheckout/shipping_method.twig" error="skip">
+      <operation>
+        <search><![CDATA[<label for="{{ quote.code }}">{{ quote.title }}</label>]]></search>
+        <add position="replace"><![CDATA[
+          <label for="{{ quote.code }}">
+            {% if quote.image is not empty %}
+            <img src="{{ quote.image }}" {{ quote.image_style is not empty ? 'style="' ~ quote.image_style ~ '"' : '' }}>
+            {% endif %}
+            {{ quote.title }}
+          </label>
+          {% if quote.description is not empty %}
+          <div>
+            <label for="{{ quote.code }}">
+              {{ quote.description }}
+            </label>
+          </div>
+          {% endif %}
+        ]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[name="shipping_method" value="{{ quote.code }}"]]></search>
+        <add position="replace"><![CDATA[name="shipping_method" value="{{ quote.code }}" {{ quote.dummy is not empty ? 'disabled="disabled"' : '' }}]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[{% if quote.code == code %}]]></search>
+        <add position="replace"><![CDATA[{% if quote.dummy is empty and quote.code == code %}]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/view/theme/default/template/extension/quickcheckout/payment_method.twig" error="skip">
+      <operation>
+        <search><![CDATA[<label for="{{ payment_method.code }}">{{ payment_method.title }}</label>]]></search>
+        <add position="replace"><![CDATA[
+          <label for="{{ payment_method.code }}">
+            {% if payment_method.image is not empty %}
+            <img src="{{ payment_method.image }}" {{ payment_method.image_style is not empty ? 'style="' ~ payment_method.image_style ~ '"' : '' }}>
+            {% endif %}
+            {{ payment_method.title }}
+          </label>
+          {% if payment_method.description is not empty %}
+          <div>
+            <label for="{{ payment_method.code }}">
+              {{ payment_method.description }}
+            </label>
+          </div>
+          {% endif %}          
+        ]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[name="payment_method" value="{{ payment_method.code }}"]]></search>
+        <add position="replace"><![CDATA[name="payment_method" value="{{ payment_method.code }}" {{ payment_method.dummy is not empty ? 'disabled="disabled"' : '' }}]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[{% if payment_method.code == code %} }]]></search>
+        <add position="replace"><![CDATA[{% if payment_method.dummy is empty and payment_method.code == code %}]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/controller/extension/quickcheckout/confirm.php" error="skip">
+      <operation>
+        <search><![CDATA['extension/payment/' . $this->session->data['payment_method']['code']]]></search>
+        <add position="before"><![CDATA[
+          $payment_method = $this->session->data['payment_method'];
+          $parts = explode('.', $payment_method['code']);
+          $payment_module = $parts[0];
+        ]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA['extension/payment/' . $this->session->data['payment_method']['code']]]></search>
+        <add position="replace"><![CDATA['extension/payment/' . $payment_module]]></add>
+      </operation>
+    </file>
+
+    <file path="admin/controller/revolution/revcheckoutshippay.php" error="skip">
+      <operation>
+        <search><![CDATA[$payment_extensions = $this->model_extension_extension->getInstalled('payment');]]></search>
+        <add position="before"><![CDATA[
+        $settings = json_decode(json_encode($this->config->get('filterit_shipping')), true);
+        $created = isset($settings['created']) ? $settings['created'] : array();
+        $language = $this->config->get('config_admin_language');
+
+        foreach ($created as $module_code => $module_info) {
+          $data['shipping_extensions'][] = array(
+            'name' => !empty($module_info['title'][$language]) ? $module_info['title'][$language] : $module_code,
+            'cod'  => $module_code
+          );
+        }
+        ]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/view/theme/revolution/template/revolution/checkout/shipping.tpl" error="skip">
+      <operation>
+        <search><![CDATA[<?php foreach ($shipping_method['quote'] as $quote) { ?>]]></search>
+        <add position="before"><![CDATA[
+        <div style="font-weight: 400"><?php echo $shipping_method['title']; ?></div>
+        ]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/controller/revolution/revcheckout.php">
+      <operation>
+        <search index="0"><![CDATA[foreach ($method_data as $key => $value) {]]></search>
+        <add position="before"><![CDATA[
+          if (!$this->filterit && (method_exists($this->load, 'library') || get_class($this->load) == 'agooLoader')) {
+            $this->load->library('simple/filterit');
+          }          
+          if (!$this->filterit) {
+            $this->filterit = new Simple\Filterit($this->registry);
+          }          
+          $method_data = $this->filterit->filterShipping($method_data, $shipping_address);
+        ]]></add>
+      </operation>
+
+      <operation>
+        <search index="1"><![CDATA[foreach ($method_data as $key => $value) {]]></search>
+        <add position="before"><![CDATA[
+          if (!$this->filterit && (method_exists($this->load, 'library') || get_class($this->load) == 'agooLoader')) {
+            $this->load->library('simple/filterit');
+          }          
+          if (!$this->filterit) {
+            $this->filterit = new Simple\Filterit($this->registry);
+          }          
+          $method_data = $this->filterit->filterPayment($method_data, $payment_address);
+        ]]></add>
+      </operation>
+
+      <operation>
+        <search><![CDATA[$this->session->data['payment_methods'] = $method_data;]]></search>
+        <add position="after"><![CDATA[/*]]></add>
+      </operation>
+
+      <operation>
+        <search><![CDATA[$data['payment_methods'] = $method_data;]]></search>
+        <add position="before"><![CDATA[*/]]></add>
+      </operation>
+
+      <operation>
+        <search><![CDATA[in_array('adres_on', $shipping_payment[$session_shipping_methods])]]></search>
+        <add position="replace"><![CDATA[(!empty($shipping_payment[$session_shipping_methods]) && is_array($shipping_payment[$session_shipping_methods]) && in_array('adres_on', $shipping_payment[$session_shipping_methods]))]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/view/theme/revolution/template/revolution/checkout/shipping.tpl" error="skip">
+      <operation>
+        <search><![CDATA[</label>]]></search>
+        <add position="after"><![CDATA[
+          <?php if (!empty($quote['description'])) { ?>
+          <div>
+            <label for="<?php echo $quote['code'] ?>">
+              <?php echo $quote['description'] ?>
+            </label>
+          </div>
+          <?php } ?>
+        ]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[><?php echo $quote['title']; ?>]]></search>
+        <add position="replace"><![CDATA[
+          ><?php if (!empty($quote['image'])) { ?>
+          <img src="<?php echo $quote['image'] ?>" <?php echo !empty($quote['image_style']) ? 'style="'.$quote['image_style'].'"' : '' ?>>
+          <?php } ?>
+          <?php echo $quote['title']; ?>]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[value="<?php echo $quote['code']; ?>"]]></search>
+        <add position="replace"><![CDATA[value="<?php echo $quote['code']; ?>" <?php echo !empty($quote['dummy']) ? 'disabled="disabled"' : '' ?>]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[<?php if ($quote['code'] == $code || !$code) { ?>]]></search>
+        <add position="replace"><![CDATA[<?php if (empty($quote['dummy']) && ($quote['code'] == $code || !$code)) { ?>]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/view/theme/revolution/template/revolution/checkout/payment.tpl" error="skip">
+      <operation>
+        <search><![CDATA[</label>]]></search>
+        <add position="after"><![CDATA[
+          <?php if (!empty($payment_method['description'])) { ?>
+          <div>
+            <label for="<?php echo $payment_method['code'] ?>">
+              <?php echo $payment_method['description'] ?>
+            </label>
+          </div>
+          <?php } ?>
+        ]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[><?php echo $payment_method['title']; ?>]]></search>
+        <add position="replace"><![CDATA[
+          ><?php if (!empty($payment_method['image'])) { ?>
+          <img src="<?php echo $payment_method['image'] ?>" <?php echo !empty($payment_method['image_style']) ? 'style="'.$payment_method['image_style'].'"' : '' ?>>
+          <?php } ?>
+          <?php echo $payment_method['title']; ?>]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[value="<?php echo $payment_method['code']; ?>"]]></search>
+        <add position="replace"><![CDATA[value="<?php echo $payment_method['code']; ?>" <?php echo !empty($payment_method['dummy']) ? 'disabled="disabled"' : '' ?>]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[<?php if (($payment_method['code'] == $code or !$code) and $lock == false) { ?>]]></search>
+        <add position="replace"><![CDATA[<?php if (empty($payment_method['dummy']) && (($payment_method['code'] == $code or !$code) and $lock == false)) { ?>]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/view/theme/journal2/template/journal2/checkout/shipping_methods.twig" error="skip">
+      <operation>
+        <search><![CDATA[{{ quote.title }} - {{ quote.text }}</label>]]></search>
+        <add position="after" offset="2"><![CDATA[
+          {% if quote.description is not empty %}
+          <div>
+            <label for="{{ quote.code }}">
+              {{ quote.description }}
+            </label>
+          </div>
+          {% endif %}
+        ]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[{{ quote.title }} - {{ quote.text }}</label>]]></search>
+        <add position="replace"><![CDATA[
+            {% if quote.image is not empty %}
+            <img src="{{ quote.image }}" {{ quote.image_style is not empty ? 'style="' ~ quote.image_style ~ '"' : '' }}>
+            {% endif %}
+            {{ quote.title }} - {{ quote.text }}
+          </label>
+        ]]></add>
+      </operation>
+      
+      <operation>
+        <search><![CDATA[name="shipping_method" value="{{ quote.code }}"]]></search>
+        <add position="replace"><![CDATA[name="shipping_method" value="{{ quote.code }}" {{ quote.dummy is not empty ? 'disabled="disabled"' : '' }}]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[{% if quote.code == code or not code %}]]></search>
+        <add position="replace"><![CDATA[{% if quote.dummy is empty and (quote.code == code or not code) %}]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/view/theme/journal2/template/journal2/checkout/payment_methods.twig" error="skip">
+      <operation>
+        <search><![CDATA[{{ payment_method.title }}]]></search>
+        <add position="replace"><![CDATA[
+          {% if payment_method.image is not empty %}
+          <img src="{{ payment_method.image }}" {{ payment_method.image_style is not empty ? 'style="' ~ payment_method.image_style ~ '"' : '' }}>
+          {% endif %}
+          {{ payment_method.title }}
+        ]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[{% endif %} </label>]]></search>
+        <add position="after" offset="2"><![CDATA[
+          {% if payment_method.description is not empty %}
+          <div>
+            <label for="{{ payment_method.code }}">
+              {{ payment_method.description }}
+            </label>
+          </div>
+          {% endif %}          
+        ]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[name="payment_method" value="{{ payment_method.code }}"]]></search>
+        <add position="replace"><![CDATA[name="payment_method" value="{{ payment_method.code }}" {{ payment_method.dummy is not empty ? 'disabled="disabled"' : '' }}]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[{% if payment_method.code == code or not code %}]]></search>
+        <add position="replace"><![CDATA[{% if payment_method.dummy is empty and (payment_method.code == code or not code) %}]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/controller/checkout/newstorecheckout.php" error="skip">
+      <operation>
+        <search index="0"><![CDATA[foreach ($method_data as $key => $value) {]]></search>
+        <add position="before"><![CDATA[
+          if (!$this->filterit && (method_exists($this->load, 'library') || get_class($this->load) == 'agooLoader')) {
+            $this->load->library('simple/filterit');
+          }          
+          if (!$this->filterit) {
+            $this->filterit = new Simple\Filterit($this->registry);
+          }          
+          $method_data = $this->filterit->filterShipping($method_data, $this->session->data['shipping_address']);
+        ]]></add>
+      </operation>
+      <operation>
+        <search index="1"><![CDATA[foreach ($method_data as $key => $value) {]]></search>
+        <add position="before"><![CDATA[
+          if (!$this->filterit && (method_exists($this->load, 'library') || get_class($this->load) == 'agooLoader')) {
+            $this->load->library('simple/filterit');
+          }          
+          if (!$this->filterit) {
+            $this->filterit = new Simple\Filterit($this->registry);
+          }          
+          $method_data = $this->filterit->filterPayment($method_data, $this->session->data['payment_address']);
+        ]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA['extension/payment/' . $this->session->data['payment_method']['code']]]></search>
+        <add position="before"><![CDATA[
+          $payment_method = $this->session->data['payment_method'];
+          $parts = explode('.', $payment_method['code']);
+          $payment_module = $parts[0];
+        ]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA['extension/payment/' . $this->session->data['payment_method']['code']]]></search>
+        <add position="replace"><![CDATA['extension/payment/' . $payment_module]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/view/theme/newstore/template/checkout/newstoreshipping_method.tpl" error="skip">
+      <operation>
+        <search><![CDATA[</label>]]></search>
+        <add position="after"><![CDATA[
+          <?php if (!empty($quote['description'])) { ?>
+          <div>
+            <label for="<?php echo $quote['code'] ?>">
+              <?php echo $quote['description'] ?>
+            </label>
+          </div>
+          <?php } ?>
+        ]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[<?php echo $quote['title']; ?> -]]></search>
+        <add position="replace"><![CDATA[
+          <?php if (!empty($quote['image'])) { ?>
+          <img src="<?php echo $quote['image'] ?>" <?php echo !empty($quote['image_style']) ? 'style="'.$quote['image_style'].'"' : '' ?>>
+          <?php } ?>
+          <?php echo $quote['title']; ?> -]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[value="<?php echo $quote['code']; ?>"]]></search>
+        <add position="replace"><![CDATA[value="<?php echo $quote['code']; ?>" <?php echo !empty($quote['dummy']) ? 'disabled="disabled"' : '' ?>]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[<?php if ($quote['code'] == $code || !$code) { ?>]]></search>
+        <add position="replace"><![CDATA[<?php if (empty($quote['dummy']) && ($quote['code'] == $code || !$code)) { ?>]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/view/theme/newstore/template/checkout/newstorepayment_method.tpl" error="skip">
+      <operation>
+        <search><![CDATA[<?php echo $payment_method['title']; ?></label>]]></search>
+        <add position="replace"><![CDATA[
+          <?php if (!empty($payment_method['image'])) { ?>
+          <img src="<?php echo $payment_method['image'] ?>" <?php echo !empty($payment_method['image_style']) ? 'style="'.$payment_method['image_style'].'"' : '' ?>>
+          <?php } ?>
+          <?php echo $payment_method['title']; ?></label>
+          <?php if (!empty($payment_method['description'])) { ?>
+          <div>
+            <label for="<?php echo $payment_method['code'] ?>">
+              <?php echo $payment_method['description'] ?>
+            </label>
+          </div>
+          <?php } ?>
+        ]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[value="<?php echo $payment_method['code']; ?>"]]></search>
+        <add position="replace"><![CDATA[value="<?php echo $payment_method['code']; ?>" <?php echo !empty($payment_method['dummy']) ? 'disabled="disabled"' : '' ?>]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[<?php if ($payment_method['code'] == $code || !$code) { ?>]]></search>
+        <add position="replace"><![CDATA[<?php if (empty($payment_method['dummy']) && ($payment_method['code'] == $code || !$code)) { ?>]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/controller/checkout/pixelshopcheckout.php" error="skip">
+      <operation>
+        <search index="0"><![CDATA[foreach ($method_data as $key => $value) {]]></search>
+        <add position="before"><![CDATA[
+          if (!$this->filterit && (method_exists($this->load, 'library') || get_class($this->load) == 'agooLoader')) {
+            $this->load->library('simple/filterit');
+          }          
+          if (!$this->filterit) {
+            $this->filterit = new Simple\Filterit($this->registry);
+          }          
+          $method_data = $this->filterit->filterShipping($method_data, $this->session->data['shipping_address']);
+        ]]></add>
+      </operation>
+      <operation>
+        <search index="1"><![CDATA[foreach ($method_data as $key => $value) {]]></search>
+        <add position="before"><![CDATA[
+          if (!$this->filterit && (method_exists($this->load, 'library') || get_class($this->load) == 'agooLoader')) {
+            $this->load->library('simple/filterit');
+          }          
+          if (!$this->filterit) {
+            $this->filterit = new Simple\Filterit($this->registry);
+          }          
+          $method_data = $this->filterit->filterPayment($method_data, $this->session->data['payment_address']);
+        ]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA['extension/payment/' . $this->session->data['payment_method']['code']]]></search>
+        <add position="before"><![CDATA[
+          $payment_method = $this->session->data['payment_method'];
+          $parts = explode('.', $payment_method['code']);
+          $payment_module = $parts[0];
+        ]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA['extension/payment/' . $this->session->data['payment_method']['code']]]></search>
+        <add position="replace"><![CDATA['extension/payment/' . $payment_module]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/view/theme/pixelshop/template/checkout/pixelshopshipping_method.tpl" error="skip">
+      <operation>
+        <search><![CDATA[</label>]]></search>
+        <add position="after"><![CDATA[
+          <?php if (!empty($quote['description'])) { ?>
+          <div>
+            <label for="<?php echo $quote['code'] ?>">
+              <?php echo $quote['description'] ?>
+            </label>
+          </div>
+          <?php } ?>
+        ]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[<?php echo $quote['title']; ?> -]]></search>
+        <add position="replace"><![CDATA[
+          <?php if (!empty($quote['image'])) { ?>
+          <img src="<?php echo $quote['image'] ?>" <?php echo !empty($quote['image_style']) ? 'style="'.$quote['image_style'].'"' : '' ?>>
+          <?php } ?>
+          <?php echo $quote['title']; ?> -]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[value="<?php echo $quote['code']; ?>"]]></search>
+        <add position="replace"><![CDATA[value="<?php echo $quote['code']; ?>" <?php echo !empty($quote['dummy']) ? 'disabled="disabled"' : '' ?>]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[<?php if ($quote['code'] == $code || !$code) { ?>]]></search>
+        <add position="replace"><![CDATA[<?php if (empty($quote['dummy']) && ($quote['code'] == $code || !$code)) { ?>]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/view/theme/pixelshop/template/checkout/pixelshoppayment_method.tpl" error="skip">
+      <operation>
+        <search><![CDATA[<?php echo $payment_method['title']; ?></label>]]></search>
+        <add position="replace"><![CDATA[
+          <?php if (!empty($payment_method['image'])) { ?>
+          <img src="<?php echo $payment_method['image'] ?>" <?php echo !empty($payment_method['image_style']) ? 'style="'.$payment_method['image_style'].'"' : '' ?>>
+          <?php } ?>
+          <?php echo $payment_method['title']; ?></label>
+          <?php if (!empty($payment_method['description'])) { ?>
+          <div>
+            <label for="<?php echo $payment_method['code'] ?>">
+              <?php echo $payment_method['description'] ?>
+            </label>
+          </div>
+          <?php } ?>
+        ]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[value="<?php echo $payment_method['code']; ?>"]]></search>
+        <add position="replace"><![CDATA[value="<?php echo $payment_method['code']; ?>" <?php echo !empty($payment_method['dummy']) ? 'disabled="disabled"' : '' ?>]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[<?php if ($payment_method['code'] == $code || !$code) { ?>]]></search>
+        <add position="replace"><![CDATA[<?php if (empty($payment_method['dummy']) && ($payment_method['code'] == $code || !$code)) { ?>]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/controller/checkout/shippay_method.php" error="skip">
+      <operation>
+        <search><![CDATA['extension/payment/' . $this->session->data['payment_method']['code']]]></search>
+        <add position="before"><![CDATA[
+          $payment_method = $this->session->data['payment_method'];
+          $parts = explode('.', $payment_method['code']);
+          $payment_module = $parts[0];
+        ]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA['extension/payment/' . $this->session->data['payment_method']['code']]]></search>
+        <add position="replace"><![CDATA['extension/payment/' . $payment_module]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/model/journal3/checkout.php" error="skip">
+      <operation>
+        <search index="0"><![CDATA[foreach ($method_data as $key => $value) {]]></search>
+        <add position="before"><![CDATA[
+          if (!$this->filterit && (method_exists($this->load, 'library') || get_class($this->load) == 'agooLoader')) {
+            $this->load->library('simple/filterit');
+          }          
+          if (!$this->filterit) {
+            $this->filterit = new Simple\Filterit($this->registry);
+          }          
+          $method_data = $this->filterit->filterShipping($method_data, $this->session->data['shipping_address']);
+        ]]></add>
+      </operation>
+      <operation>
+        <search index="1"><![CDATA[foreach ($method_data as $key => $value) {]]></search>
+        <add position="before"><![CDATA[
+          if (!$this->filterit && (method_exists($this->load, 'library') || get_class($this->load) == 'agooLoader')) {
+            $this->load->library('simple/filterit');
+          }          
+          if (!$this->filterit) {
+            $this->filterit = new Simple\Filterit($this->registry);
+          }          
+          $method_data = $this->filterit->filterPayment($method_data, $this->session->data['payment_address']);
+        ]]></add>
+      </operation>      
+      <operation>
+        <search><![CDATA['shipping_method' => Arr::get($this->session->data, 'shipping_method.title', '')]]></search>
+        <add position="before" offset="1"><![CDATA[if (!empty($this->session->data['shipping_method']['dummy'])) {
+            unset($this->session->data['shipping_method']);
+          }]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA['payment_method' => Arr::get($this->session->data, 'payment_method.title', '')]]></search>
+        <add position="before" offset="1"><![CDATA[if (!empty($this->session->data['payment_method']['dummy'])) {
+            unset($this->session->data['payment_method']);
+          }]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[$payment_method = Arr::get($this->session->data, 'payment_methods.' . $code);]]></search>
+        <add position="after"><![CDATA[
+          foreach ($this->session->data['payment_methods'] as $c => $p) {
+            if ($c == $code) {
+              $payment_method = $p;
+              break;
+            }
+          }
+        ]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/controller/journal3/checkout.php" error="skip">
+      <operation error="skip">
+        <search><![CDATA[$this->response->setOutput($this->load->controller('extension/payment/' . Arr::get($this->session->data, 'payment_method.code')));]]></search>
+        <add position="before"><![CDATA[
+          $code = Arr::get($this->session->data, 'payment_method.code');
+          $parts = explode('.', $code);
+          $code = $parts[0];
+        ]]></add>
+      </operation>
+
+      <operation error="skip">
+        <search><![CDATA[$this->response->setOutput($this->load->controller('extension/payment/' . Arr::get($this->session->data, 'payment_method.code')));]]></search>
+        <add position="replace"><![CDATA[$this->response->setOutput($this->load->controller('extension/payment/' . $code));]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/view/theme/journal3/template/journal3/checkout/shipping_method.tpl" error="skip">
+      <operation>
+        <search><![CDATA[<div class="radio" v-for="quote in shipping_method.quote">]]></search>
+        <add position="replace"><![CDATA[<div v-for="quote in shipping_method.quote"><div class="radio">]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[</label>]]></search>
+        <add position="replace"><![CDATA[</label>
+          </div>
+          <div v-if="quote.description">{{quote.description}}</div>
+        ]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[<span class="shipping-quote-title" v-html="quote.title + ' - ' + quote.text"></span>]]></search>
+        <add position="before"><![CDATA[
+          <img v-if="quote.image" :src="quote.image" :style="quote.image_style">
+        ]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[v-bind:value="quote.code"]]></search>
+        <add position="replace"><![CDATA[v-bind:value="quote.code" :disabled="quote.dummy == '1'"]]></add>
+      </operation>
+    </file>
+
+    <file path="catalog/view/theme/journal3/template/journal3/checkout/payment_method.tpl" error="skip">
+      <operation>
+        <search><![CDATA[</label>]]></search>
+        <add position="replace"><![CDATA[</label>
+          <div v-if="payment_method.description">{{payment_method.description}}</div>
+        ]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[<span v-html="payment_method.title + (payment_method.terms ? '(' + payment_method.terms + ')' : '') "></span>]]></search>
+        <add position="before"><![CDATA[
+          <img v-if="payment_method.image" :src="payment_method.image" :style="payment_method.image_style">
+        ]]></add>
+      </operation>
+      <operation>
+        <search><![CDATA[v-bind:value="payment_method.code"]]></search>
+        <add position="replace"><![CDATA[v-bind:value="payment_method.code" :disabled="payment_method.dummy == '1'"]]></add>
+      </operation>
+    </file>
+
+</modification>

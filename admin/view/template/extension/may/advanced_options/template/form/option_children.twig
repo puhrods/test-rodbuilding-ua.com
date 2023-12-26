@@ -1,0 +1,41 @@
+{% if options %}
+<div class="well">
+{% for option in options %}
+{% if option["children"]|length > 0 %}
+<div class="row option-container">
+	<div class="col-lg-12 col-md-12 col-sm-12">
+		<div class="panel panel-default">
+		  <div class="panel-heading">
+		  	{{ option["name"] }} &gt;&gt;&gt; {{ option["cname"] }}
+		  </div>
+		  <div class="panel-body">
+			  <div class="row">
+			  {% for option_value in option["values"] %}
+			  	<div class="col-lg-2 col-md-3 col-sm-6">
+					{% for option_child in option["children"] %}
+					<div><label><input type="checkbox" name="option_children[{{ option["option_id"] }}][{{ option_value["option_value_id"] }}][]" value="{{ option_child["option_value_id"] }}" 
+					{% if (not combinations) or (option_value["option_value_id"] ~ "-" ~ option_child["option_value_id"]) in combinations %} 
+					checked="checked" 
+					{% endif %}
+					/>&nbsp;&nbsp;&nbsp;<span>{{ option_value["name"] }} - {{ option_child["name"] }}</span></label></div>
+					{% endfor %}
+			  	</div>
+			  {% endfor %}
+			  </div>
+		  </div>
+		</div>
+	</div>
+</div>
+{% endif %}
+{% endfor %}
+</div>
+<div class="buttons">
+  <div class="pull-left">
+  	<div class="alert alert-warning hidden"></div>
+  </div>
+  <div class="pull-right">
+	<input type="button" value="{{ _['Back'] }}" id="button-option-children-back" data-loading-text="{{ _['Loading...'] }}" class="btn" />
+	<input type="button" value="{{ _['Next'] }}" id="button-option-children-next" data-loading-text="{{ _['Loading...'] }}" class="btn btn-primary" />
+  </div>
+</div>
+{% endif %}

@@ -1,0 +1,79 @@
+{% if may_advanced_options_config['swatches'] %}
+<style type="text/css">
+{{ may_advanced_options_config['swatch_css'] }}
+</style>
+<style id="may-advanced-options-swatch-style">
+.may-swatches input[type=radio] + img,
+.may-swatches input[type=radio] + span {
+	border: {{ may_advanced_options_config['swatch_style_border_width'] }}px solid #{{ may_advanced_options_config['swatch_style_border_color_default'] }};
+	min-width: {{ may_advanced_options_config['swatch_style_size_width'] }}px;
+	height: {{ may_advanced_options_config['swatch_style_size_height'] }}px;
+	border-radius: {{ may_advanced_options_config['swatch_style_size_radius'] }}px;
+}
+.may-swatches input[type=radio] + img {
+	max-width: {{ may_advanced_options_config['swatch_style_size_width'] }}px;
+	padding: {{ may_advanced_options_config['swatch_style_space_padding'] }}px;
+}
+.may-swatches input[type=radio] + span {
+	padding: {{ may_advanced_options_config['swatch_style_space_padding'] + 4 }}px;
+	line-height: {{ may_advanced_options_config['swatch_style_size_height'] - may_advanced_options_config['swatch_style_space_padding'] * 2 - 8 }}px;
+}
+.may-swatches label:hover img,
+.may-swatches label:hover span,
+.may-swatches input[type=radio]:checked + img,
+.may-swatches input[type=radio]:checked + span {
+	border-color: #{{ may_advanced_options_config['swatch_style_border_color_selected'] }};
+}
+.may-swatches input[type=radio]:checked + img + i.fa-check,
+.may-swatches input[type=radio]:checked + span + i.fa-check {
+	line-height: {{ may_advanced_options_config['swatch_style_size_height'] }}px;
+}
+.may-swatches input[type=radio] + img + i:before,
+.may-swatches input[type=radio] + span + i:before,
+.may-swatches input[type=radio] + img + i:after,
+.may-swatches input[type=radio] + span + i:after,
+.may-swatches input[type=radio] + img + i,
+.may-swatches input[type=radio] + span + i {
+	width: calc(100% - {{ may_advanced_options_config['swatch_style_space_padding'] * 2 + may_advanced_options_config['swatch_style_border_width'] * 2 }}px);
+	height: {{ may_advanced_options_config['swatch_style_size_height'] - may_advanced_options_config['swatch_style_space_padding'] * 2 - may_advanced_options_config['swatch_style_border_width'] * 2 }}px;
+	line-height: {{ may_advanced_options_config['swatch_style_size_height'] - may_advanced_options_config['swatch_style_space_padding'] * 2 - may_advanced_options_config['swatch_style_border_width'] * 2 }}px;
+	left: {{ may_advanced_options_config['swatch_style_space_padding'] + may_advanced_options_config['swatch_style_border_width'] }}px;
+	top: {{ may_advanced_options_config['swatch_style_space_padding'] + may_advanced_options_config['swatch_style_border_width'] }}px;
+	border-radius: {{ may_advanced_options_config['swatch_style_size_radius'] ? may_advanced_options_config['swatch_style_size_radius'] - 1 : 0 }}px;
+}
+.may-swatches input[type=radio] + img + i:before,
+.may-swatches input[type=radio] + span + i:before,
+.may-swatches input[type=radio] + img + i:after,
+.may-swatches input[type=radio] + span + i:after {
+	width: 100%;
+	height: {{ may_advanced_options_config['swatch_style_size_height'] - may_advanced_options_config['swatch_style_space_padding'] * 2 - may_advanced_options_config['swatch_style_border_width'] * 2 }}px;
+	line-height: {{ may_advanced_options_config['swatch_style_size_height'] - may_advanced_options_config['swatch_style_space_padding'] * 2 - may_advanced_options_config['swatch_style_border_width'] * 2 }}px;
+	left: 0;
+	top: 0;
+	border-radius: {{ may_advanced_options_config['swatch_style_size_radius'] ? may_advanced_options_config['swatch_style_size_radius'] - 1 : 0 }}px;
+}
+.may-swatches input[type=radio].out-of-stock + img + i.slash,
+.may-swatches input[type=radio].out-of-stock + span + i.slash {
+	background: linear-gradient(to top left, transparent calc(50% - 1px), #{{ may_advanced_options_config['swatch_style_border_color_default'] }}, transparent calc(50% + 1px));
+}
+.may-swatches input[type=radio].out-of-stock + img + i.cross:before,
+.may-swatches input[type=radio].out-of-stock + span + i.cross:before,
+.may-swatches input[type=radio].out-of-stock + img + i.cross:after,
+.may-swatches input[type=radio].out-of-stock + span + i.cross:after {
+	display: inline-block;
+	position: absolute;
+	content: "";
+}
+.may-swatches input[type=radio].out-of-stock + img + i.cross:before,
+.may-swatches input[type=radio].out-of-stock + span + i.cross:before {
+	background: linear-gradient(to top left, transparent calc(50% - 1px), #{{ may_advanced_options_config['swatch_style_border_color_default'] }}, transparent calc(50% + 1px));
+}
+.may-swatches input[type=radio].out-of-stock + img + i.cross:after,
+.may-swatches input[type=radio].out-of-stock + span + i.cross:after {
+	background: linear-gradient(to top right, transparent calc(50% - 1px), #{{ may_advanced_options_config['swatch_style_border_color_default'] }}, transparent calc(50% + 1px));
+}
+.may-add-to-cart-disabled:after {
+	content: "";
+}
+</style>
+{% endif %}

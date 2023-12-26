@@ -32,6 +32,9 @@
 					<label class="btn btn-warning btn-sm{{ method == 'EXPRESS' ? ' active' }}" data-toggle="tooltip" title="{{ button_express }}"><input type="radio" name="method" value="EXPRESS" id="input-method-e"{{ method == 'EXPRESS' ? ' checked' }}>E</label>
 					<label class="btn btn-warning btn-sm{{ method == 'STANDARD' ? ' active' }}" data-toggle="tooltip" title="{{ button_standard }}"><input type="radio" name="method" value="STANDARD" id="input-method-s"{{ method == 'STANDARD' ? ' checked' }}>S</label>
 				</div>
+				<div class="btn-group pull-right" data-toggle="buttons" style="margin-right: 15px;">
+					<label class="btn btn-default btn-sm{{ bonus_departure ? ' active' }}" data-toggle="tooltip" title="{{ button_bonus_departure }}"><input type="checkbox" name="bonus_departure" value="1" id="input-bonus_departure"{{ bonus_departure ? ' checked' }}>$</label>
+				</div>
 			</div>
 			<div class="panel-body">
 				<form class="form-horizontal">
@@ -46,21 +49,21 @@
 								</div>
 								<div class="panel-body">
 									<div class="form-group">
+										<label class="col-sm-3 control-label" for="input-sender_name">{{ entry_sender }}</label>
+										<div class="col-sm-9">
+											<input type="text" name="sender_name" value="{{ sender_name }}" placeholder="{{ entry_sender }}" id="input-sender_name" class="form-control" />
+											<input type="hidden" name="sender" value="{{ sender }}" id="input-sender" />
+										</div>
+									</div>
+									<div class="form-group">
 										<label class="col-sm-3 control-label" for="input-sender_type">{{ entry_client_type }}</label>
 										<div class="col-sm-9">
 											<select name="sender_type" id="input-sender_type" class="form-control">
 												<option value="">{{ text_select }}</option>
 												{% for v in client_types %}
-												<option value="{{ v.id }}"{{ v.id == sender_type ? ' selected="selected"' }}>{{ v.description }}</option>
+													<option value="{{ v.id }}"{{ v.id == sender_type ? ' selected="selected"' }}>{{ v.description }}</option>
 												{% endfor %}
 											</select>
-										</div>
-									</div>
-									<div class="form-group">
-										<label class="col-sm-3 control-label" for="input-sender_name">{{ entry_sender }}</label>
-										<div class="col-sm-9">
-											<input type="text" name="sender_name" value="{{ sender_name }}" placeholder="{{ entry_sender }}" id="input-sender_name" class="form-control" />
-											<input type="hidden" name="sender" value="{{ sender }}" id="input-sender" />
 										</div>
 									</div>
 									<div class="form-group">
@@ -73,12 +76,6 @@
 										<label class="col-sm-3 control-label" for="input-sender_edrpou">{{ entry_edrpou }}</label>
 										<div class="col-sm-9">
 											<input type="text" name="sender_edrpou" value="{{ sender_edrpou }}" placeholder="{{ entry_edrpou }}" id="input-sender_edrpou" class="form-control" />
-										</div>
-									</div>
-									<div class="form-group">
-										<label class="col-sm-3 control-label" for="input-sender_bank_code">{{ entry_bank_code }}</label>
-										<div class="col-sm-9">
-											<input type="text" name="sender_bank_code" value="{{ sender_bank_code }}" placeholder="{{ entry_bank_code }}" id="input-sender_bank_code" class="form-control" />
 										</div>
 									</div>
 									<div class="form-group">
@@ -107,10 +104,10 @@
 									<div class="form-group">
 										<label class="col-sm-3 control-label" for="input-sender_region">{{ entry_region }}</label>
 										<div class="col-sm-9">
-											<select name="sender_region" id="input-sender_region" class="form-control">
+											<select name="sender_region" id="input-sender_region" class="form-control selectpicker show-tick" data-live-search="true">
 												<option value="">{{ text_select }}</option>
-												{% for v in zones %}
-												<option value="{{ v.zone_id }}"{{ v.zone_id == sender_region ? ' selected="selected"' }}>{{ v.name }}</option>
+												{% for v in regions %}
+													<option value="{{ v.REGION_ID }}"{{ v.REGION_ID == sender_region ? ' selected="selected"' }}>{{ v.description }}</option>
 												{% endfor %}
 											</select>
 										</div>
@@ -118,7 +115,7 @@
 									<div class="form-group">
 										<label class="col-sm-3 control-label" for="input-sender_city">{{ entry_city }}</label>
 										<div class="col-sm-9">
-											<input type="text" name="sender_city" value="{{ sender_city }}" placeholder="{{ entry_city }}" id="input-sender_city" class="form-control" />
+											<select name="sender_city" id="input-sender_city" class="form-control selectpicker show-tick" data-live-search="true"></select>
 										</div>
 									</div>
 									<div class="form-group">
@@ -160,21 +157,21 @@
 								</div>
 								<div class="panel-body">
 									<div class="form-group">
+										<label class="col-sm-3 control-label" for="input-recipient_name">{{ entry_recipient }}</label>
+										<div class="col-sm-9">
+											<input type="text" name="recipient_name" value="{{ recipient_name }}" placeholder="{{ entry_recipient }}" id="input-recipient_name" class="form-control" />
+											<input type="hidden" name="recipient" value="{{ recipient }}" id="input-recipient" />
+										</div>
+									</div>
+									<div class="form-group">
 										<label class="col-sm-3 control-label" for="input-recipient_type">{{ entry_client_type }}</label>
 										<div class="col-sm-9">
 											<select name="recipient_type" id="input-recipient_type" class="form-control">
 												<option value="">{{ text_select }}</option>
 												{% for v in client_types %}
-												<option value="{{ v.id }}"{{ v.id == recipient_type ? ' selected="selected"' }}>{{ v.description }}</option>
+													<option value="{{ v.id }}"{{ v.id == recipient_type ? ' selected="selected"' }}>{{ v.description }}</option>
 												{% endfor %}
 											</select>
-										</div>
-									</div>
-									<div class="form-group">
-										<label class="col-sm-3 control-label" for="input-recipient_name">{{ entry_recipient }}</label>
-										<div class="col-sm-9">
-											<input type="text" name="recipient_name" value="{{ recipient_name }}" placeholder="{{ entry_recipient }}" id="input-recipient_name" class="form-control" />
-											<input type="hidden" name="recipient" value="{{ recipient }}" id="input-recipient" />
 										</div>
 									</div>
 									<div class="form-group">
@@ -203,10 +200,10 @@
 									<div class="form-group">
 										<label class="col-sm-3 control-label" for="input-recipient_region">{{ entry_region }}</label>
 										<div class="col-sm-9">
-											<select name="recipient_region" id="input-recipient_region" class="form-control">
+											<select name="recipient_region" id="input-recipient_region" class="form-control selectpicker show-tick" data-live-search="true">
 												<option value="">{{ text_select }}</option>
-												{% for v in zones %}
-													<option value="{{ v.zone_id }}"{{ v.zone_id == recipient_region ? ' selected="selected"' }}>{{ v.name }}</option>
+												{% for v in regions %}
+													<option value="{{ v.REGION_ID }}"{{ v.REGION_ID == recipient_region ? ' selected="selected"' }}>{{ v.description }}</option>
 												{% endfor %}
 											</select>
 										</div>
@@ -214,22 +211,28 @@
 									<div class="form-group">
 										<label class="col-sm-3 control-label" for="input-recipient_city">{{ entry_city }}</label>
 										<div class="col-sm-9">
-											<input type="text" name="recipient_city" value="{{ recipient_city }}" placeholder="{{ entry_city }}" id="input-recipient_city" class="form-control" />
+											<select name="recipient_city" id="input-recipient_city" class="form-control selectpicker show-tick" data-live-search="true"></select>
 										</div>
 									</div>
 									<div class="form-group">
+										<label class="col-sm-3 control-label" for="input-recipient_department">{{ entry_department }}</label>
+										<div class="col-sm-9">
+											<select name="recipient_department" id="input-recipient_department" class="form-control selectpicker show-tick" data-live-search="true"></select>
+										</div>
+									</div>
+									<div class="form-group" style="display: none">
 										<label class="col-sm-3 control-label" for="input-recipient_street">{{ entry_street }}</label>
 										<div class="col-sm-9">
 											<input type="text" name="recipient_street" value="{{ recipient_street }}" placeholder="{{ entry_street }}" id="input-recipient_street" class="form-control" />
 										</div>
 									</div>
-									<div class="form-group">
+									<div class="form-group" style="display: none">
 										<label class="col-sm-3 control-label" for="input-recipient_house">{{ entry_house }}</label>
 										<div class="col-sm-9">
 											<input type="text" name="recipient_house" value="{{ recipient_house }}" placeholder="{{ entry_house }}" id="input-recipient_house" class="form-control" />
 										</div>
 									</div>
-									<div class="form-group">
+									<div class="form-group" style="display: none">
 										<label class="col-sm-3 control-label" for="input-recipient_flat">{{ entry_flat }}</label>
 										<div class="col-sm-9">
 											<input type="text" name="recipient_flat" value="{{ recipient_flat }}" placeholder="{{ entry_flat }}" id="input-recipient_flat" class="form-control" />
@@ -249,32 +252,20 @@
 					<div class="row">
 						<div class="col-sm-6">
 							<div class="panel panel-default">
-								<div class="panel-heading clearfix" style="padding-top: 5px; padding-bottom: 5px;">
-									<h3 class="panel-title" style="padding-top: 5px;">{{ text_departure_options }}</h3>
-									<div class="pull-right">
-										<button type="button" class="btn btn-primary btn-sm" data-toggle="tooltip" title="{{ button_add_seat }}" id="button-add-seat" onclick="addSeat();"><i class="fa fa-plus" aria-hidden="true"></i></button>
-										<button type="button" class="btn btn-danger btn-sm" data-toggle="tooltip" title="{{ button_delete_seat }}" id="button-delete-seat" onclick="deleteSeat();"{{ seats_amount < 2 ? ' style="display: none;"' }}><i class="fa fa-minus" aria-hidden="true"></i></button>
-									</div>
+								<div class="panel-heading">
+									<h3 class="panel-title">{{ text_departure_options }}</h3>
 								</div>
 								<div class="panel-body">
-									{% for i in 0..seats_amount - 1 %}
+									{% for v in parcels %}
+										<legend id="text-seat-{{ loop.index0 }}">{{ text_seat }} {{ loop.index0 + 1 }}</legend>
 									<div class="form-group">
 										<label class="col-sm-3 control-label" for="input-weight-{{ loop.index0 }}">{{ entry_weight }}</label>
 										<div class="col-sm-9">
 											<div class="input-group">
 												<input type="text" name="parcels[{{ loop.index0 }}][weight]" value="{{ parcels[loop.index0] ?  parcels[loop.index0]['weight'] : 0 }}" placeholder="{{ entry_weight }}" id="input-weight-{{ loop.index0 }}" class="form-control" />
-												<span class="input-group-addon">{{ text_g }}</span>
+												<span class="input-group-addon">{{ text_kg }}</span>
 											</div>
                                             <input type="hidden" name="parcels[{{ loop.index0 }}][uuid]" value="{{ parcels[loop.index0]['uuid'] ?  parcels[loop.index0]['uuid'] : '' }}" id="input-uuid-{{ loop.index0 }}" />
-										</div>
-									</div>
-									<div class="form-group">
-										<label class="col-sm-3 control-label" for="input-width-{{ loop.index0 }}">{{ entry_width }}</label>
-										<div class="col-sm-9">
-											<div class="input-group">
-												<input type="text" name="parcels[{{ loop.index0 }}][width]" value="{{ parcels[loop.index0] ?  parcels[loop.index0]['width'] : 0 }}" placeholder="{{ entry_width }}" id="input-width-{{ loop.index0 }}" class="form-control" />
-												<span class="input-group-addon">{{ text_cm }}</span>
-											</div>
 										</div>
 									</div>
 									<div class="form-group">
@@ -282,6 +273,15 @@
 										<div class="col-sm-9">
 											<div class="input-group">
 												<input type="text" name="parcels[{{ loop.index0 }}][length]" value="{{ parcels[loop.index0] ?  parcels[loop.index0]['length'] : 0 }}" placeholder="{{ entry_length }}" id="input-length-{{ loop.index0 }}" class="form-control" />
+												<span class="input-group-addon">{{ text_cm }}</span>
+											</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-3 control-label" for="input-width-{{ loop.index0 }}">{{ entry_width }}</label>
+										<div class="col-sm-9">
+											<div class="input-group">
+												<input type="text" name="parcels[{{ loop.index0 }}][width]" value="{{ parcels[loop.index0] ?  parcels[loop.index0]['width'] : 0 }}" placeholder="{{ entry_width }}" id="input-width-{{ loop.index0 }}" class="form-control" />
 												<span class="input-group-addon">{{ text_cm }}</span>
 											</div>
 										</div>
@@ -296,13 +296,13 @@
 										</div>
 									</div>
 									<div class="form-group">
-										<label class="col-sm-3 control-label" for="input-announced_price-{{ loop.index0 }}">{{ entry_announced_price }}</label>
+										<label class="col-sm-3 control-label" for="input-declared_cost-{{ loop.index0 }}">{{ entry_declared_cost }}</label>
 										<div class="col-sm-9">
 											<div class="input-group">
 												<span class="input-group-btn">
-													<button type="button" id="button-components_list-{{ loop.index0 }}" onclick="$('#input-announced_price_id').val('{{ loop.index0 }}');" data-toggle="modal" data-target="#modal-totals-list" data-tooltip="true" title="{{ button_components_list }}" class="btn btn-default"><i class="fa fa-list" aria-hidden="true"></i></button>
+													<button type="button" id="button-components_list-{{ loop.index0 }}" onclick="$('#input-declared_cost_id').val('{{ loop.index0 }}');" data-toggle="modal" data-target="#modal-totals-list" data-tooltip="true" title="{{ button_components_list }}" class="btn btn-default"><i class="fa fa-list" aria-hidden="true"></i></button>
 												</span>
-												<input type="text" name="parcels[{{ loop.index0 }}][announced_price]" value="{{ parcels[loop.index0] ?  parcels[loop.index0]['announced_price'] : 0 }}" placeholder="{{ entry_announced_price }}" id="input-announced_price-{{ loop.index0 }}" class="form-control" />
+												<input type="text" name="parcels[{{ loop.index0 }}][declared_cost]" value="{{ parcels[loop.index0] ?  parcels[loop.index0]['declared_cost'] : 0 }}" placeholder="{{ entry_declared_cost }}" id="input-declared_cost-{{ loop.index0 }}" class="form-control" />
 												<span class="input-group-addon">{{ text_grn }}</span>
 											</div>
 										</div>
@@ -314,6 +314,19 @@
 										</div>
 									</div>
 									{% endfor %}
+									<div class="form-group">
+										<label class="col-sm-3 control-label" for="input-seats_amount">{{ entry_seats_amount }}</label>
+										<div class="col-sm-9">
+											<div class="input-group">
+												<input type="text" name="seats_amount" value="{{ seats_amount }}" placeholder="{{ entry_seats_amount }}" id="input-seats_amount" class="form-control" />
+												<span class="input-group-btn">
+													<button type="button" id="button-seat_plus" onclick="addSeat();" class="btn btn-default"><i class="fa fa-plus" aria-hidden="true"></i></button>
+													<button type="button" id="button-seat_minus" onclick="deleteSeat();" class="btn btn-default"><i class="fa fa-minus" aria-hidden="true"></i></button>
+												</span>
+												<span class="input-group-addon">{{ text_pc }}</span>
+											</div>
+										</div>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -324,12 +337,12 @@
 								</div>
 								<div class="panel-body">
 									<div class="form-group">
-										<label class="col-sm-3 control-label" for="input-payer">{{ entry_payer }}</label>
+										<label class="col-sm-3 control-label" for="input-delivery_payer">{{ entry_delivery_payer }}</label>
 										<div class="col-sm-9">
-											<select name="payer" id="input-payer" class="form-control">
+											<select name="delivery_payer" id="input-delivery_payer" class="form-control">
 												<option value="0">{{ text_select }}</option>
 												{% for payer_type in references['payer_types'] %}
-												<option value="{{ payer_type.id }}"{{ payer_type.id == payer ? ' selected="selected"' }}>{{ payer_type.description }}</option>
+												<option value="{{ payer_type.id }}"{{ payer_type.id == delivery_payer ? ' selected="selected"' }}>{{ payer_type.description }}</option>
 												{% endfor %}
 											</select>
 										</div>
@@ -378,28 +391,28 @@
 								<div class="panel-body">
 									<div class="col-sm-6">
 										<div class="form-group">
-											<label class="col-sm-3 control-label" for="input-recommended_letter">{{ entry_recommended_letter }}</label>
+											<label class="col-sm-3 control-label" for="input-delivery_notification">{{ entry_delivery_notification }}</label>
 											<div class="col-sm-9">
 												<label class="radio-inline">
-													<input type="checkbox" name="recommended_letter" id="input-recommended_letter" class="form-control"{{ recommended_letter ? ' checked' }}>
+													<input type="checkbox" name="delivery_notification" id="input-delivery_notification" class="form-control"{{ delivery_notification ? ' checked' }}>
 												</label>
 											</div>
 										</div>
 										<div class="form-group">
-											<label class="col-sm-3 control-label" for="input-check_on_delivery">{{ entry_check_on_delivery }}</label>
+											<label class="col-sm-3 control-label" for="input-sms_message">{{ entry_sms_message }}</label>
 											<div class="col-sm-9">
 												<label class="radio-inline">
-													<input type="checkbox" name="check_on_delivery" id="input-check_on_delivery" class="form-control"{{ check_on_delivery ? ' checked' }}>
+													<input type="checkbox" name="sms_message" id="input-sms_message" class="form-control"{{ sms_message ? ' checked' }}>
 												</label>
 											</div>
 										</div>
 									</div>
 									<div class="col-sm-6">
 										<div class="form-group">
-											<label class="col-sm-3 control-label" for="input-sms_message">{{ entry_sms_message }}</label>
+											<label class="col-sm-3 control-label" for="input-check_on_delivery">{{ entry_check_on_delivery }}</label>
 											<div class="col-sm-9">
 												<label class="radio-inline">
-													<input type="checkbox" name="sms_message" id="input-sms_message" class="form-control"{{ sms_message ? ' checked' }}>
+													<input type="checkbox" name="check_on_delivery" id="input-check_on_delivery" class="form-control"{{ check_on_delivery ? ' checked' }}>
 												</label>
 											</div>
 										</div>
@@ -429,7 +442,7 @@
 									<h4 class="modal-title" id="totals-list-label">{{ heading_components_list }}</h4>
 								</div>
 								<div class="modal-body">
-									<input type="hidden" name="announced_price_id" value="" id="input-announced_price_id">
+									<input type="hidden" name="declared_cost_id" value="" id="input-declared_cost_id">
 									<div class="table-responsive">
 										<table class="table table-striped" id="table-totals_list">
 											<thead>
@@ -446,9 +459,9 @@
 													<td class="text-center">{{ v.price }} {{ text_grn }}</td>
 													<td class="text-center">
 														{% if v.status %}
-															<button type="button" class="btn btn-danger btn-xs" id="button-total_announced_price_minus"><i class="fa fa-minus"></i></button>
+															<button type="button" class="btn btn-danger btn-xs" id="button-total_declared_cost_minus"><i class="fa fa-minus"></i></button>
 														{% else %}
-															<button type="button" class="btn btn-success btn-xs" id="button-total_announced_price_plus"><i class="fa fa-plus"></i></button>
+															<button type="button" class="btn btn-success btn-xs" id="button-total_declared_cost_plus"><i class="fa fa-plus"></i></button>
 														{% endif %}
 													</td>
 												</tr>
@@ -456,8 +469,8 @@
 											</tbody>
 											<tfoot>
 												<tr>
-													<td><strong>{{ text_announced_price }}</strong></td>
-													<td class="text-center" id="td-announced_price_total"><strong>{{ parcels[0] ? parcels[0]['announced_price'] : 0 }} {{ text_grn }}</strong></td>
+													<td><strong>{{ text_declared_cost }}</strong></td>
+													<td class="text-center" id="td-declared_cost_total"><strong>{{ parcels[0] ? parcels[0]['declared_cost'] : 0 }} {{ text_grn }}</strong></td>
 													<td></td>
 												</tr>
 											</tfoot>
@@ -465,7 +478,7 @@
 									</div>
 								</div>
 								<div class="modal-footer">
-									<button type="button" onclick="saveAnnouncedPrice();" class="btn btn-primary"><i class="fa fa-check"></i></button>
+									<button type="button" onclick="saveDeclaredCost();" class="btn btn-primary"><i class="fa fa-check"></i></button>
 									<button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i></button>
 								</div>
 							</div>
@@ -478,6 +491,9 @@
 		</div>
 	</div>
 </div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/i18n/defaults-{{ translations_code }}.min.js"></script>
 <script type="text/javascript"><!--
 	function validateForm(element) {
 		var post_data = element.name + '=' + encodeURIComponent(element.value);
@@ -486,189 +502,337 @@
 			post_data += '&backward_delivery_total=' + encodeURIComponent($('#input-backward_delivery_total').val());
 		}
 
-		$.ajax( {
+		$.ajax({
 			url: 'index.php?route=extension/shipping/ukrposhta/getCNForm&user_token={{ user_token }}',
 			type: 'POST',
 			data: post_data,
 			dataType: 'json',
+			beforeSend: function () {
+			},
+			complete: function () {
+			},
 			success: function(json) {
 				checkErrors(json);
-			},
-			error: function (jqXHR, textStatus, errorThrown) {
-				console.log(textStatus);
-			 }
-		} );
+			}
+		});
 	}
 
 	function checkErrors(array) {
 		if (array['warning']) {
 			if (array['warning'] instanceof Array || array['warning'] instanceof Object) {
 				for(var w in array['warning']) {
-					$('.container-fluid:eq(1)').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + array['warning'][w] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+					$('.container-fluid:eq(2)').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + array['warning'][w] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
 				}
 			} else {
-				$('.container-fluid:eq(1)').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + array['warning'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+				$('.container-fluid:eq(2)').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + array['warning'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
 			}
 		}
 
 		for (var field in array['errors']) {
-			$('div.form-group').has('label[for="input-' + field + '"]').removeClass('has-success').addClass('has-error');
+			$('div.form-group').has('label[for="input-' + field + '"]').addClass('has-error');
 			$('#span-' + field).remove('.help-block');
 			$('div.form-group > div[class^="col-sm"]').has('#input-' + field).append('<span id="span-' + field + '" class="help-block">' + array['errors'][field] + '</span>');
 		}
 
-        for (var field in array['success']) {
-            $('div.form-group').has('label[for="input-' + field + '"]').removeClass('has-error').addClass('has-success');
-            $('#span-' + field).remove('.help-block');
-        }
+		for (var field in array['success']) {
+			$('div.form-group').has('label[for="input-' + field + '"]').removeClass('has-error');
+			$('#span-' + field).remove('.help-block');
+		}
 
-        if (array['errors'] && array['errors']['parcels']) {
-            for (var i in array['errors']['parcels']) {
-                for (var field in array['errors']['parcels'][i]) {
-                    $('div.form-group').has('label[for="input-' + field + '-' + i + '"]').removeClass('has-success').addClass('has-error');
-                    $('#span-' + field + '-' + i).remove('.help-block');
-                    $('div.form-group > div[class^="col-sm"]').has('#input-' + field + '-' + i).append('<span id="span-' + field + '-' + i + '" class="help-block">' + array['errors']['parcels'][i][field] + '</span>');
-                }
-            }
-        }
+		if (array['errors'] && array['errors']['parcels']) {
+			for (var i in array['errors']['parcels']) {
+				for (var field in array['errors']['parcels'][i]) {
+					$('div.form-group').has('label[for="input-' + field + '-' + i + '"]').addClass('has-error');
+					$('#span-' + field + '-' + i).remove('.help-block');
+					$('div.form-group > div[class^="col-sm"]').has('#input-' + field + '-' + i).append('<span id="span-' + field + '-' + i + '" class="help-block">' + array['errors']['parcels'][i][field] + '</span>');
+				}
+			}
+		}
 
-        if (array['success'] && array['success']['parcels']) {
-            for (var i in array['success']['parcels']) {
-                for (var field in array['success']['parcels'][i]) {
-                    $('div.form-group').has('label[for="input-' + field + '-' + i + '"]').removeClass('has-error').addClass('has-success');
-                    $('#span-' + field + '-' + i).remove('.help-block');
-                }
-            }
-        }
+		if (array['success'] && array['success']['parcels']) {
+			for (var i in array['success']['parcels']) {
+				for (var field in array['success']['parcels'][i]) {
+					$('div.form-group').has('label[for="input-' + field + '-' + i + '"]').removeClass('has-error');
+					$('#span-' + field + '-' + i).remove('.help-block');
+				}
+			}
+		}
 	}
 
 	function addSeat() {
 		var
-			html = '',
-			count = $('input[id^="input-weight"]').length;
+				html = '',
+				$seats = $('#input-seats_amount'),
+				count = $('input[id^="input-weight"]').length;
 
-			if (count < 2) {
-				$('#button-delete-seat').fadeIn();
-			}
-
-		html += '<div class="form-group"><label class="col-sm-3 control-label" for="input-weight-' + count + '">{{ entry_weight }}</label><div class="col-sm-9"><div class="input-group"><input type="text" name="parcels[' + count + '][weight]" value="0" placeholder="{{ entry_weight }}" id="input-weight-' + count + '" class="form-control" /><span class="input-group-addon">{{ text_g }}</span></div></div></div>';
-		html += '<div class="form-group"><label class="col-sm-3 control-label" for="input-width-' + count + '">{{ entry_width }}</label><div class="col-sm-9"><div class="input-group"><input type="text" name="parcels[' + count + '][width]" value="0" placeholder="{{ entry_width }}" id="input-width-' + count + '" class="form-control" /><span class="input-group-addon">{{ text_cm }}</span></div></div></div>';
+		html += '<legend id="text-seat-' + count + '">{{ text_seat }} ' + (count + 1) + '</legend>';
+		html += '<div class="form-group"><label class="col-sm-3 control-label" for="input-weight-' + count + '">{{ entry_weight }}</label><div class="col-sm-9"><div class="input-group"><input type="text" name="parcels[' + count + '][weight]" value="0" placeholder="{{ entry_weight }}" id="input-weight-' + count + '" class="form-control" /><span class="input-group-addon">{{ text_kg }}</span><input type="hidden" name="parcels[' + count + '][uuid]" value="" id="input-uuid-' + count + '" /></div></div></div>';
 		html += '<div class="form-group"><label class="col-sm-3 control-label" for="input-length-' + count + '">{{ entry_length }}</label><div class="col-sm-9"><div class="input-group"><input type="text" name="parcels[' + count + '][length]" value="0" placeholder="{{ entry_length }}" id="input-length-' + count + '" class="form-control" /><span class="input-group-addon">{{ text_cm }}</span></div></div></div>';
+		html += '<div class="form-group"><label class="col-sm-3 control-label" for="input-width-' + count + '">{{ entry_width }}</label><div class="col-sm-9"><div class="input-group"><input type="text" name="parcels[' + count + '][width]" value="0" placeholder="{{ entry_width }}" id="input-width-' + count + '" class="form-control" /><span class="input-group-addon">{{ text_cm }}</span></div></div></div>';
 		html += '<div class="form-group"><label class="col-sm-3 control-label" for="input-height-' + count + '">{{ entry_height }}</label><div class="col-sm-9"><div class="input-group"><input type="text" name="parcels[' + count + '][height]" value="0" placeholder="{{ entry_height }}" id="input-height-' + count + '" class="form-control" /><span class="input-group-addon">{{ text_cm }}</span></div></div></div>';
-		html += '<div class="form-group"><label class="col-sm-3 control-label" for="input-announced_price-' + count + '">{{ entry_announced_price }}</label><div class="col-sm-9"><div class="input-group"><span class="input-group-btn"><button type="button" id="button-components_list-' + count + '" onclick="$(\'#input-announced_price_id\').val(' + count + ');" data-toggle="modal" data-target="#modal-totals-list" data-tooltip="true" title="{{ button_components_list }}" class="btn btn-default"><i class="fa fa-list" aria-hidden="true"></i></button></span><input type="text" name="parcels[' + count + '][announced_price]" value="0" placeholder="{{ entry_announced_price }}" id="input-announced_price-' + count + '" class="form-control" /><span class="input-group-addon">{{ text_grn }}</span></div></div></div>';
+		html += '<div class="form-group"><label class="col-sm-3 control-label" for="input-declared_cost-' + count + '">{{ entry_declared_cost }}</label><div class="col-sm-9"><div class="input-group"><span class="input-group-btn"><button type="button" id="button-components_list-' + count + '" onclick="$(\'#input-declared_cost_id\').val(' + count + ');" data-toggle="modal" data-target="#modal-totals-list" data-tooltip="true" title="{{ button_components_list }}" class="btn btn-default"><i class="fa fa-list" aria-hidden="true"></i></button></span><input type="text" name="parcels[' + count + '][declared_cost]" value="0" placeholder="{{ entry_declared_cost }}" id="input-declared_cost-' + count + '" class="form-control" /><span class="input-group-addon">{{ text_grn }}</span></div></div></div>';
 		html += '<div class="form-group"><label class="col-sm-3 control-label" for="input-departure_description-' + count + '">{{ entry_departure_description }}</label><div class="col-sm-9"><textarea name="parcels[' + count + '][departure_description]" rows="2" id="input-departure_description-' + count + '" maxlength="40" class="form-control"></textarea></div></div>';
 
 		$('textarea[id^="input-departure_description"]:last').parents('div.form-group').after(html);
+
+		$seats.val(+$seats.val() + 1).trigger('change');
 	}
 
-    function deleteSeat() {
-        var count = $('input[id^="input-weight"]').length;
+	function deleteSeat() {
+		var
+				$seats = $('#input-seats_amount'),
+				count = $('input[id^="input-weight"]').length;
 
-        if (count == 2) {
-            $('#button-delete-seat').fadeOut();
-        }
+		if (count > 1) {
+			$('legend[id^="text-seat-"]:last').remove();
+			$('input[id^="input-weight-"]:last').parents('div.form-group').remove();
+			$('input[id^="input-length-"]:last').parents('div.form-group').remove();
+			$('input[id^="input-width-"]:last').parents('div.form-group').remove();
+			$('input[id^="input-height-"]:last').parents('div.form-group').remove();
+			$('input[id^="input-declared_cost-"]:last').parents('div.form-group').remove();
+			$('textarea[id^="input-departure_description-"]:last').parents('div.form-group').remove();
+		}
 
-        $('input[id^="input-weight-"]:last').parents('div.form-group').remove();
-        $('input[id^="input-width-"]:last').parents('div.form-group').remove();
-        $('input[id^="input-length-"]:last').parents('div.form-group').remove();
-        $('input[id^="input-height-"]:last').parents('div.form-group').remove();
-        $('input[id^="input-announced_price-"]:last').parents('div.form-group').remove();
-        $('textarea[id^="input-departure_description-"]:last').parents('div.form-group').remove();
-    }
+		if ($seats.val() > 1) {
+			$seats.val(+$seats.val() - 1).trigger('change');
+		}
+	}
 
-	function saveAnnouncedPrice() {
-	    var id = $('#input-announced_price_id').val();
+	function saveDeclaredCost() {
+		var id = $('#input-declared_cost_id').val();
 
-		$('#input-announced_price-' + id).val(parseInt($('#td-announced_price_total')[0].outerText));
+		$('#input-declared_cost-' + id).val(parseInt($('#td-declared_cost_total')[0].outerText));
 
 		$('#modal-totals-list').modal('hide');
 	}
 
 	function formHandler(element) {
 		switch(element.id) {
-            case 'input-sender_type':
-                if (element.value == 'COMPANY') {
-                    $('#input-sender_tin').parents('div.form-group').fadeOut();
-                    $('#input-sender_edrpou, #input-sender_bank_code, #input-sender_bank_account').parents('div.form-group').fadeIn();
-                } else if (element.value == 'PRIVATE_ENTREPRENEUR') {
-                    $('#input-sender_edrpou').parents('div.form-group').fadeOut();
-                    $('#input-sender_tin, #input-sender_bank_code, #input-sender_bank_account').parents('div.form-group').fadeIn();
-                } else {
-                    $('#input-sender_edrpou, #input-sender_bank_code, #input-sender_bank_account').parents('div.form-group').fadeOut();
-                    $('#input-sender_tin').parents('div.form-group').fadeIn();
-                }
-
-                break;
-
-			case 'input-sender_name':
-                if (!$('#input-sender_name').val()) {
-                    $('#input-sender').val('');
-                }
+			case 'input-sender_type':
+				if (element.value == 'COMPANY') {
+					$('#input-sender_tin').parents('div.form-group').fadeOut();
+					$('#input-sender_edrpou, #input-sender_bank_account').parents('div.form-group').fadeIn();
+				} else if (element.value == 'PRIVATE_ENTREPRENEUR') {
+					$('#input-sender_edrpou').parents('div.form-group').fadeOut();
+					$('#input-sender_tin, #input-sender_bank_account').parents('div.form-group').fadeIn();
+				} else {
+					$('#input-sender_edrpou, #input-sender_bank_account').parents('div.form-group').fadeOut();
+					$('#input-sender_tin').parents('div.form-group').fadeIn();
+				}
 
 				break;
 
-            case 'input-sender_region':
-            case 'input-sender_city':
-            case 'input-sender_street':
-            case 'input-sender_house':
-            case 'input-sender_flat':
-            case 'input-sender_postcode':
-                $('#input-sender_address').val('');
+			case 'input-sender_name':
+				if (!$('#input-sender_name').val()) {
+					$('#input-sender').val('');
+				}
 
-                break;
+				break;
 
-            case 'input-recipient_type':
-                if (element.value == 'COMPANY') {
-                    $('#input-recipient_tin').parents('div.form-group').fadeOut();
-                    $('#input-recipient_edrpou').parents('div.form-group').fadeIn();
-                } else if (element.value == 'PRIVATE_ENTREPRENEUR') {
-                    $('#input-recipient_edrpou').parents('div.form-group').fadeOut();
-                    $('#input-recipient_tin').parents('div.form-group').fadeIn();
-                } else {
-                    $('#input-recipient_tin, #input-recipient_edrpou').parents('div.form-group').fadeOut();
-                }
+			case 'input-sender_street':
+			case 'input-sender_house':
+			case 'input-sender_flat':
+			case 'input-sender_postcode':
+				$('#input-sender_address').val('');
 
-                break;
+				break;
 
-            case 'input-recipient_name':
-                if (!$('#input-recipient_name').val()) {
-                    $('#input-recipient').val('');
-                }
+			case 'input-sender_region':
+				$.ajax({
+					url: 'index.php?route=extension/shipping/ukrposhta/ukrposhtaData&user_token={{ user_token }}',
+					type: 'POST',
+					data: 'action=getCities&filter=' + encodeURIComponent(element.value),
+					dataType: 'json',
+					success: function (json) {
+						if (json instanceof Array) {
+							var
+									html = '<option value="">{{ text_select }}</option>',
+									subtext,
+									option_s;
 
-                break;
+							for(var i in json) {
+								if (!element.value) {
+									subtext = ' data-subtext="' + json[i]['district_description'] + ', ' + json[i]['region_description'] + '"';
+								} else {
+									subtext = ' data-subtext="' + json[i]['district_description'] + '"';
+								}
 
-            case 'input-recipient_region':
-            case 'input-recipient_city':
-            case 'input-recipient_street':
-            case 'input-recipient_house':
-            case 'input-recipient_flat':
-            case 'input-recipient_postcode':
-                $('#input-recipient_address').val('');
+								if (json[i]['CITY_ID'] == '{{ sender_city }}') {
+									option_s = ' selected="selected"';
+								} else {
+									option_s = '';
+								}
 
-                break;
+								html += '<option value="' + json[i]['CITY_ID'] + '"' + subtext + option_s + '>' + json[i]['description'] + '</option>'
+							}
+
+							$('#input-sender_city').html(html).selectpicker('refresh').trigger('change');
+						}
+					}
+				});
+
+				break;
+
+			case 'input-recipient_type':
+				if (element.value == 'COMPANY') {
+					$('#input-recipient_tin').parents('div.form-group').fadeOut();
+					$('#input-recipient_edrpou').parents('div.form-group').fadeIn();
+				} else if (element.value == 'PRIVATE_ENTREPRENEUR') {
+					$('#input-recipient_edrpou').parents('div.form-group').fadeOut();
+					$('#input-recipient_tin').parents('div.form-group').fadeIn();
+				} else {
+					$('#input-recipient_tin, #input-recipient_edrpou').parents('div.form-group').fadeOut();
+				}
+
+				break;
+
+			case 'input-recipient_name':
+				if (!$('#input-recipient_name').val()) {
+					$('#input-recipient').val('');
+				}
+
+				break;
+
+			case 'input-recipient_service_type':
+				if (element.value == 'D') {
+					$('[for="input-recipient_department"]').filter(':visible').parent().fadeOut();
+					$('[for="input-recipient_street"], [for="input-recipient_house"], [for="input-recipient_flat"]').filter(':hidden').parent().fadeIn();
+				} else {
+					$('[for="input-recipient_department"]').filter(':hidden').parent().fadeIn();
+					$('[for="input-recipient_street"], [for="input-recipient_house"], [for="input-recipient_flat"]').filter(':visible').parent().fadeOut();
+				}
+
+				break;
+
+			case 'input-recipient_region':
+				$.ajax({
+					url: 'index.php?route=extension/shipping/ukrposhta/ukrposhtaData&user_token={{ user_token }}',
+					type: 'POST',
+					data: 'action=getCities&filter=' + encodeURIComponent(element.value),
+					dataType: 'json',
+					success: function (json) {
+						if (json instanceof Array) {
+							var
+									html = '<option value="">{{ text_select }}</option>',
+									subtext,
+									option_s;
+
+							for(var i in json) {
+								if (!element.value) {
+									subtext = ' data-subtext="' + json[i]['district_description'] + ', ' + json[i]['region_description'] + '"';
+								} else {
+									subtext = ' data-subtext="' + json[i]['district_description'] + '"';
+								}
+
+								if (json[i]['CITY_ID'] == '{{ recipient_city }}') {
+									option_s = ' selected="selected"';
+								} else {
+									option_s = '';
+								}
+
+								html += '<option value="' + json[i]['CITY_ID'] + '"' + subtext + option_s + '>' + json[i]['description'] + '</option>'
+							}
+
+							$('#input-recipient_city').html(html).selectpicker('refresh').trigger('change');
+						}
+					}
+				});
+
+				break;
+
+			case 'input-recipient_city':
+				$.ajax({
+					url: 'index.php?route=extension/shipping/ukrposhta/ukrposhtaData&user_token={{ user_token }}',
+					type: 'POST',
+					data: 'action=getDepartments&filter=' + encodeURIComponent(element.value),
+					dataType: 'json',
+					success: function (json) {
+						if (json instanceof Array) {
+							var
+									html = '<option value="">{{ text_select }}</option>',
+									option_s;
+
+							for(var i in json) {
+								if (json[i]['ID'] == '{{ recipient_department }}') {
+									option_s = ' selected="selected"';
+								} else {
+									option_s = '';
+								}
+
+								html += '<option value="' + json[i]['ID'] + '"' + option_s + '>' + json[i]['description'] + '</option>'
+							}
+
+							$('#input-recipient_department').html(html).selectpicker('refresh').trigger('change');
+						}
+					}
+				});
+
+				break;
+
+			case 'input-recipient_department':
+				var postcode = $('#input-recipient_department option:selected').text().split(',');
+
+				$('#input-recipient_postcode').val(postcode[0]).trigger('change');
+
+				break;
+
+			case 'input-recipient_street':
+			case 'input-recipient_house':
+			case 'input-recipient_flat':
+			case 'input-recipient_postcode':
+				$('#input-recipient_address').val('');
+
+				break;
 
 			case 'input-backward_delivery_total':
 				if (+element.value) {
 					$('#input-backward_delivery_payer').trigger('change').parents('div.form-group').fadeIn();
 				} else {
-                    $('#input-backward_delivery_payer').trigger('change').parents('div.form-group').fadeOut();
+					$('#input-backward_delivery_payer').trigger('change').parents('div.form-group').fadeOut();
 				}
 
 				break;
 
-            case 'input-backward_delivery_payer':
-                if (element.value == 'recipient' && $('#input-backward_delivery_total').val()) {
-                    $('#input-money_transfer_method').parents('div.form-group').fadeIn();
-                } else {
-                    $('#input-money_transfer_method').parents('div.form-group').fadeOut();
-                }
+			case 'input-backward_delivery_payer':
+				if (element.value == 'recipient' && $('#input-backward_delivery_total').val()) {
+					$('#input-money_transfer_method').parents('div.form-group').fadeIn();
+				} else {
+					$('#input-money_transfer_method').parents('div.form-group').fadeOut();
+				}
 
-                break;
+				break;
 		}
 	}
 
 	$( function () {
+		$('.selectpicker').selectpicker({
+			liveSearchStyle: 'contains',
+			iconBase: 'fa',
+			tickIcon: 'fa-check'
+		});
+
 		$('[data-tooltip=true]').tooltip();
+
+		$.ajaxSetup({
+			beforeSend: function (jqXHR, settings) {
+				if (settings.url.match(/ukrposhta/i)) {
+					$('body').fadeTo('fast', 0.7).prepend('<div id="ocmax-loader" style="position: fixed; top: 50%;	left: 50%; z-index: 9999;"><i class="fa fa-spinner fa-spin fa-3x fa-fw"></i></div>');
+				}
+			},
+			complete: function () {
+				var $alerts = $('.alert-danger, .alert-success');
+
+				if ($alerts.length !== 0) {
+					setTimeout(function() { $alerts.fadeOut(); }, 5000);
+				}
+
+				$('body').fadeTo('fast', 1);
+				$('#ocmax-loader').remove();
+			},
+			error: function (jqXHR, textStatus, errorThrown) {
+				console.log(textStatus);
+			}
+		});
 
 		$('.date').datetimepicker( {pickTime: false} ).on('change', function () {
 			var input = $(this).find('input')[0];
@@ -682,27 +846,27 @@
 			setTimeout(validateForm, 200, this);
 		} );
 
-		$('#input-sender_type, #input-recipient_type, #input-backward_delivery_total').each(function() {
+		$('#input-sender_type, #input-sender_region, #input-recipient_service_type:checked, #input-recipient_type, #input-recipient_region, #input-recipient_city, #input-backward_delivery_total').each(function() {
 			formHandler(this);
 		} );
 
 		// Change totals list
-		$('#modal-totals-list').on('click', '#button-total_announced_price_minus, #button-total_announced_price_plus', function (e) {
+		$('#modal-totals-list').on('click', '#button-total_declared_cost_minus, #button-total_declared_cost_plus', function (e) {
 			var b = $(e.currentTarget),
-				cost = parseInt(b.parents('tr').find('td:eq(1)').text()),
-				total = $('#td-announced_price_total')[0].outerText;
+					cost = parseInt(b.parents('tr').find('td:eq(1)').text()),
+					total = $('#td-declared_cost_total')[0].outerText;
 
-			if (e.currentTarget.id == 'button-total_announced_price_minus') {
-				b.replaceWith('<button type="button" class="btn btn-success btn-xs" id="button-total_announced_price_plus"><i class="fa fa-plus"></i></button>');
+			if (e.currentTarget.id == 'button-total_declared_cost_minus') {
+				b.replaceWith('<button type="button" class="btn btn-success btn-xs" id="button-total_declared_cost_plus"><i class="fa fa-plus"></i></button>');
 
 				total = total.replace(/-?\d+/, parseInt(total) - cost);
 			} else {
-				b.replaceWith('<button type="button" class="btn btn-danger btn-xs" id="button-total_announced_price_minus"><i class="fa fa-minus"></i></button>');
+				b.replaceWith('<button type="button" class="btn btn-danger btn-xs" id="button-total_declared_cost_minus"><i class="fa fa-minus"></i></button>');
 
 				total = total.replace(/-?\d+/, parseInt(total) + cost);
 			}
 
-			$('#td-announced_price_total').html('<strong>' + total + '</strong>');
+			$('#td-declared_cost_total').html('<strong>' + total + '</strong>');
 		} );
 
 		$('#button-sender_search').on('click', function(e) {
@@ -727,14 +891,13 @@
 				},
 				success: function (json) {
 					if (json['success']) {
-						$('.container-fluid:eq(1)').prepend('<div class="alert alert-success"><i class="fa fa-check-circle"></i> ' + json['success'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+						$('.container-fluid:eq(2)').prepend('<div class="alert alert-success"><i class="fa fa-check-circle"></i> ' + json['success'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
 
 						$('#input-sender_type').val(json['type']).trigger('change');
 						$('#input-sender').val(json['uuid']);
 						$('#input-sender_name').val(json['name']);
 						$('#input-sender_tin').val(json['tin']);
 						$('#input-sender_edrpou').val(json['edrpou']);
-						$('#input-sender_bank_code').val(json['bankCode']);
 						$('#input-sender_bank_account').val(json['bankAccount']);
 						$('#input-sender_email').val(json['email']);
 						$('#input-sender_address').val(json['addressId']);
@@ -746,10 +909,10 @@
 						$('#input-sender_postcode').val(json['postcode']);
 					} else {
 						if (json['error']) {
-							$('.container-fluid:eq(1)').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+							$('.container-fluid:eq(2)').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
 						}
 						if (json['warning']) {
-							$('.container-fluid:eq(1)').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['warning'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+							$('.container-fluid:eq(2)').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['warning'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
 						}
 					}
 				}
@@ -778,7 +941,7 @@
 				},
 				success: function (json) {
 					if (json['success']) {
-						$('.container-fluid:eq(1)').prepend('<div class="alert alert-success"><i class="fa fa-check-circle"></i> ' + json['success'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+						$('.container-fluid:eq(2)').prepend('<div class="alert alert-success"><i class="fa fa-check-circle"></i> ' + json['success'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
 
 						$('#input-recipient_type').val(json['type']).trigger('change');
 						$('#input-recipient').val(json['uuid']);
@@ -794,10 +957,10 @@
 						$('#input-recipient_postcode').val(json['postcode']);
 					} else {
 						if (json['error']) {
-							$('.container-fluid:eq(1)').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+							$('.container-fluid:eq(2)').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
 						}
 						if (json['warning']) {
-							$('.container-fluid:eq(1)').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['warning'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+							$('.container-fluid:eq(2)').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['warning'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
 						}
 					}
 				}

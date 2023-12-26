@@ -1,0 +1,48 @@
+<div class="tab-pane" id="tab-bundle-expert">
+    <div class="table-responsive">
+        <table id="special" class="table table-striped table-bordered table-hover">
+            <thead>
+            <tr>
+                <td class="text-left">{{ text_bundle }}{# 'Комплект'; #}</td>
+                <td class="text-left">{{ text_name }}{# 'Название'; #}</td>
+                <td class="text-right">{{ text_status }}</td>
+                <td class="text-right">{{ text_action }}</td>
+            </tr>
+            </thead>
+            <tbody>
+            {% set product_kit_row = 0 %}
+            {% for product_kit in product_kits %}
+                <tr id="product-kit-row{{ product_kit_row }}">
+                    <td class="text-left">
+                        <span>{{ product_kit['name'] is defined ? product_kit['name'] : '' }}</span>
+                    </td>
+                    <td class="text-left">
+                        <span>{{ product_kit['title'] is defined ? product_kit['title'] : '' }}</span>
+                    </td>
+                    <td class="text-right">
+                        <span>{{ product_kit['status'] is defined ? product_kit['status'] : '' }}</span>
+                    </td>
+                    <td class="text-right">
+                        <a href="{{ product_kit['href'] }}" data-toggle="tooltip" title="{{ '' }}" class="btn btn-default"><i class="fa fa-pencil"></i></a>
+                    </td>
+                </tr>
+                {% set product_kit_row = product_kit_row + 1 %}
+            {% endfor %}
+            </tbody>
+            <tfoot>
+            <tr>
+                <td colspan="3"></td>
+                <td class="text-right">
+                    {% if (disable_add_button) %}
+                        {{ text_save_product_before_add_kits }}&nbsp&nbsp
+                        <a href="{{ href_button_add }}" data-toggle="tooltip" title="{{ '' }}" class="btn btn-primary disabled"><i class="fa fa-plus-circle"></i></a>
+                    {% else %}
+                        <a href="{{ href_button_add }}" data-toggle="tooltip" title="{{ '' }}" class="btn btn-primary"><i class="fa fa-plus-circle"></i></a>
+                    {% endif %}
+
+                </td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>

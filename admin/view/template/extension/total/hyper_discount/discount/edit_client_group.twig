@@ -1,0 +1,362 @@
+{{ header }}{{ column_left }}
+<div id="content">
+    <div class="container-fluid h-editor">
+        <div id="panel_top" class="affix col-sm-12">
+            <div class="text-title text-center"><i class="fa fa-opencart" aria-hidden="true"></i>
+                <span class="win-title">{{ hyper_discount_name }}</span>
+                <hr class="ht-min">
+                <span class="ht-title">{{ hyper_discount_title }}</span>
+            </div>
+            <h1>{{ heading_titles }}</h1>
+            <div id="panel_tops" class="pull-right">
+                <button type="button" onclick="Apply();" data-toggle="tooltip" data-placement="bottom" class="btn btn-primary memory-button" title="{{ button_apply }}"><i class="fa fa-check-circle-o"></i></button>
+                <button type="submit" onclick="Save();" data-toggle="tooltip" data-placement="bottom" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+                <a href="{{ cancel }}" data-toggle="tooltip" data-placement="bottom" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a>
+            </div>
+        </div>
+
+        <div class="panel panel-default col-sm-12">
+            <div class="panel-heading">
+                <h3 class="panel-title"><i class="fa fa-cogs"></i> {{ text_lists }}</h3>
+                <button class="pull-right hm-help btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal">
+                    <i class="fa fa-info" aria-hidden="true"></i> - {{ help_name }} 
+                </button>
+            </div>
+            <div class="panel-body top-pad">
+              <div class="col-sm-12">
+                <div class="well">
+                    <form action="{{ save_all_filtered_clients }}" method="post" id="save_all_filtered_clients" enctype="multipart/form-data">
+                        <input type="hidden" value="{{ _GET['page'] is defined?_GET['page']:1 }}" name="page">
+                        <div class="row">
+                            <input type="hidden" value="{{ discount_action }}" name="discount_action" >
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label class="control-label" for="input-name">{{ column_names }}</label>
+                                    <input type="text" name="filter_name" value="{{ filter_name }}" placeholder="{{ column_names }}" id="input-name" class="form-control" />
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label" for="input-status">{{ entry_status }}</label>
+                                    <select name="filter_status" id="input-status" class="form-control">
+                                        <option value="*"></option>
+                                        {% if (filter_status) %} 
+                                            <option value="1" selected="selected">{{ text_enabled }}</option>
+                                        {% else %} 
+                                            <option value="1">{{ text_enabled }}</option>
+                                        {% endif %} 
+                                        {% if (not filter_status and not  (filter_status is null) ) %} 
+                                            <option value="0" selected="selected">{{ text_disabled }}</option>
+                                        {% else %} 
+                                            <option value="0">{{ text_disabled }}</option>
+                                        {% endif %} 
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label class="control-label" for="input-email">{{ entry_email }}</label>
+                                    <input type="text" name="filter_email" value="{{ filter_email }}" placeholder="{{ entry_email }}" id="input-email" class="form-control" />
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label" for="input-ip">{{ entry_ip }}</label>
+                                    <input type="text" name="filter_ip" value="{{ filter_ip }}" placeholder="{{ entry_ip }}" id="input-ip" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label class="control-label" for="input-customer-group">{{ entry_customer_group }}</label>
+                                    <span class="multiselect-native-select">
+                                        <select multiple="multiple" name="filter_customer_group_id[]" id="input-customer-group" class="filter-customer-group">
+                                           
+                                            {% for customer_group in customer_groups %} 
+                                                {% if customer_group['customer_group_id'] in filter_customer_group_id %} 
+                                                    <option value="{{ customer_group['customer_group_id'] }}" selected="selected">{{ customer_group['name'] }}</option>
+                                                {% else %} 
+                                                    <option value="{{ customer_group['customer_group_id'] }}">{{ customer_group['name'] }}</option>
+                                                {% endif %} 
+                                            {% endfor %} 
+                                        </select>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-sm-3 hm-filters">
+                                <div class="form-group">
+                                    <label class="control-label" for="input-date-added">{{ entry_date_added }}</label>
+                                    <div class="input-group date">
+                                        <input type="text" name="filter_date_added" value="{{ filter_date_added }}" placeholder="{{ entry_date_added }}" data-date-format="YYYY-MM-DD" id="input-date-added" class="form-control" />
+                                        <span class="input-group-btn">
+                                            <button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="pul-right form-group">
+                                    <label class="control-label">{{ filters_action }}</label>
+                                    <div class="filter-group">
+                                        <div class="input-group-btn">
+                                            <button type="button" data-toggle="tooltip" title="" data-original-title="{{ button_clears }}" id="button-clear" class="btn btn-primary pull-right three"><i class="fa fa-trash" aria-hidden="true"></i></button>
+                                            <button type="submit" form="save_all_filtered_clients" data-toggle="tooltip" title="" data-original-title="{{ filtered_clients_titles }}" class="btn btn-primary pull-right two"><i class="fa fa-check-square-o" aria-hidden="true"></i></button>
+                                            <button type="button" data-toggle="tooltip" title="" data-original-title="{{ filtered_clients }}" id="button-filter" class="btn btn-primary pull-right one"><i class="fa fa-filter" aria-hidden="true"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6 text-left">{{ pagination }}</div>
+                    <div class="col-sm-6 text-right">{{ results }}</div>
+                </div>
+                <form action="{{ action_save }}" method="post" enctype="multipart/form-data" id="edit_client_group">
+                    <input type="hidden" value="{{ cust_ids }}" name="editable_clients" >
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <td style="width: 1px;" class="text-center"><input type="checkbox" onclick="$('input[name*=\'selected\']').prop('checked', this.checked);" /></td>
+                                    <td class="text-left">{% if (sort == 'name') %} 
+                                        <a href="{{ sort_name }}" class="{{ order|lower }}">{{ column_names }}</a>
+                                        {% else %} 
+                                        <a href="{{ sort_name }}">{{ column_names }}</a>
+                                        {% endif %}</td>
+                                    <td class="text-left">{% if (sort == 'c.email') %} 
+                                        <a href="{{ sort_email }}" class="{{ order|lower }}">{{ column_email }}</a>
+                                        {% else %} 
+                                        <a href="{{ sort_email }}">{{ column_email }}</a>
+                                        {% endif %}</td>
+                                    <td class="text-left">{% if (sort == 'customer_group') %} 
+                                        <a href="{{ sort_customer_group }}" class="{{ order|lower }}">{{ column_customer_group }}</a>
+                                        {% else %} 
+                                        <a href="{{ sort_customer_group }}">{{ column_customer_group }}</a>
+                                        {% endif %}</td>
+                                    <td class="text-left">{% if (sort == 'c.status') %} 
+                                        <a href="{{ sort_status }}" class="{{ order|lower }}">{{ column_status }}</a>
+                                        {% else %} 
+                                        <a href="{{ sort_status }}">{{ column_status }}</a>
+                                        {% endif %}</td>
+                                    <td class="text-left">{% if (sort == 'c.ip') %} 
+                                        <a href="{{ sort_ip }}" class="{{ order|lower }}">{{ column_ip }}</a>
+                                        {% else %} 
+                                        <a href="{{ sort_ip }}">{{ column_ip }}</a>
+                                        {% endif %}</td>
+                                    <td class="text-left">{% if (sort == 'c.date_added') %} 
+                                        <a href="{{ sort_date_added }}" class="{{ order|lower }}">{{ column_date_added }}</a>
+                                        {% else %} 
+                                        <a href="{{ sort_date_added }}">{{ column_date_added }}</a>
+                                        {% endif %}</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            <input type="hidden" value="{{ discount_action }}" name="discount_action" >
+                            {% if (customers) %} 
+                            {% for customer in customers %} 
+                            <tr>
+                                <td class="text-center">{% if customer['customer_id'] in selected %} 
+                                    <input type="checkbox" name="selected[]" value="{{ customer['customer_id'] }}" checked="checked" />
+                                    {% else %} 
+                                    <input type="checkbox" name="selected[]" value="{{ customer['customer_id'] }}" />
+                                    {% endif %}</td>
+                                <td class="text-left">{{ customer['name'] }}</td>
+                                <td class="text-left">{{ customer['email'] }}</td>
+                                <td class="text-left">{{ customer['customer_group'] }}</td>
+                                <td class="text-left">{{ customer['status'] }}</td>
+                                <td class="text-left">{{ customer['ip'] }}</td>
+                                <td class="text-left">{{ customer['date_added'] }}</td>
+                            </tr>
+                            {% endfor %} 
+                            {% else %} 
+                            <tr>
+                                <td class="text-center" colspan="8">{{ text_no_results }}</td>
+                            </tr>
+                            {% endif %} 
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+                <div class="row">
+                    <div class="col-sm-6 text-left">{{ pagination }}</div>
+                    <div class="col-sm-6 text-right">{{ results }}</div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <hr>
+                    <div class="panel-heading text-center ">
+                        <h3 class="text-center panel-title"><i class="fa fa-copyright" aria-hidden="true"></i> {{ description_author }}</h3>
+                    </div>
+                    <br>
+                    <div class="text-center">
+                        <button form="help_modals" class="hm-info btn btn-primary btn-sm" data-toggle="modal" data-target="#Authors_Modal">
+                            {{ description_author_start }} 
+                        </button>
+                    </div>
+                    <hr>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times" aria-hidden="true"></i></button>
+                    <h4 class="modal-title" id="myModalLabel"><i class="fa fa-cogs"></i> {{ text_lists }}</h4>
+                </div>
+                <div class="modal-body">
+                    <legend>{{ help_text }}</legend>
+                    <div class="helper-info">{{ help_first_text }}</div>
+                    <div class="helper-info">{{ help_second_text }}</div>
+                    <div class="helper-info">{{ help_third_text }}</div>
+                    <div class="helper-info">{{ help_fourth_text }}</div>
+                    <div class="helper-info">{{ help_end_text }}</div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal"> {{ help_ok }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+<!-- Start Modal HELPER Authors -->
+    <div class="modal fade" id="Authors_Modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times" aria-hidden="true"></i></button>
+                    <h4 class="modal-title" id="myModalLabel"><i class="fa fa-cogs"></i> {{ description_author }}</h4>
+                </div>
+                <div class="modal-body">
+                    <legend>{{ description_copyright }}</legend>
+                    <div class="text-center">{{ description_author_copyright }}</div>
+                    <div class="text-center">{{ thank_you }}</div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal"> {{ help_ok }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $('#input-customer-group').multiselect({
+        buttonWidth: '150px',
+        maxHeight: 300
+    });
+
+    $('#button-filter').on('click', function () {
+        url = 'index.php?route=extension/total/hyper_discount/editor_client&user_token={{ user_token }}{{ url_params }}';
+        url = url + getParams();
+        location = url;
+    });
+
+    $('#button-clear').on('click', function () {
+        url = 'index.php?route=extension/total/hyper_discount/editor_client&user_token={{ user_token }}&clear=1{{ url_params }}';
+        location = url;
+    });
+
+    function getParams()
+    {
+        url = '';
+
+        var filter_name = $('input[name=\'filter_name\']').val();
+
+        if (filter_name) {
+            url += '&filter_name=' + encodeURIComponent(filter_name);
+        }
+
+        var filter_email = $('input[name=\'filter_email\']').val();
+
+        if (filter_email) {
+            url += '&filter_email=' + encodeURIComponent(filter_email);
+        }
+
+
+        $(".filter-customer-group > option").filter(":selected").each(function (i) {
+            url += '&filter_customer_group_id[]=' + $(this).val();
+            ;
+        });
+
+
+
+        var filter_status = $('select[name=\'filter_status\']').val();
+
+        if (filter_status != '*') {
+            url += '&filter_status=' + encodeURIComponent(filter_status);
+        }
+
+        var filter_ip = $('input[name=\'filter_ip\']').val();
+
+        if (filter_ip) {
+            url += '&filter_ip=' + encodeURIComponent(filter_ip);
+        }
+
+        var filter_date_added = $('input[name=\'filter_date_added\']').val();
+
+        if (filter_date_added) {
+            url += '&filter_date_added=' + encodeURIComponent(filter_date_added);
+        }
+        return url;
+    }
+</script>
+<script type="text/javascript">
+    $('input[name=\'filter_name\']').autocomplete({
+        'source': function (request, response) {
+            $.ajax({
+                url: 'index.php?route=customer/customer/autocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request),
+                dataType: 'json',
+                success: function (json) {
+                    response($.map(json, function (item) {
+                        return {
+                            label: item['name'],
+                            value: item['customer_id']
+                        }
+                    }));
+                }
+            });
+        },
+        'select': function (item) {
+            $('input[name=\'filter_name\']').val(item['label']);
+        }
+    });
+
+    $('input[name=\'filter_email\']').autocomplete({
+        'source': function (request, response) {
+            $.ajax({
+                url: 'index.php?route=customer/customer/autocomplete&user_token={{ user_token }}&filter_email=' + encodeURIComponent(request),
+                dataType: 'json',
+                success: function (json) {
+                    response($.map(json, function (item) {
+                        return {
+                            label: item['email'],
+                            value: item['customer_id']
+                        }
+                    }));
+                }
+            });
+        },
+        'select': function (item) {
+            $('input[name=\'filter_email\']').val(item['label']);
+        }
+    });
+    function Apply() {
+        $('#edit_client_group').attr('action', '{{ update_stay }}');
+        $('#edit_client_group').submit();
+    }
+    function Save() {
+        $('#edit_client_group').attr('action', '{{ action_save }}');
+        $('#edit_client_group').submit();
+    }
+</script>
+<script type="text/javascript">
+    $('.date').datetimepicker({
+        pickTime: false
+    });
+</script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('body').addClass('hyper-page hm-edit-page hd-switch');
+    });
+
+</script>
+{{ footer }} 

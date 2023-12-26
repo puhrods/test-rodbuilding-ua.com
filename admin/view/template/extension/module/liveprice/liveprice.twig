@@ -1,0 +1,353 @@
+{#
+//  Live Price / Живая цена
+//  Support: support@liveopencart.com / Поддержка: help@liveopencart.ru
+#}
+{{ header }}{{ column_left }}
+<div id="content">
+	
+	<div class="page-header">
+    <div class="container-fluid">
+		<div class="pull-right">
+			<button type="submit" form="form-liveprice" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+			<a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
+			<h1>{{ module_name }}</h1>
+			<ul class="breadcrumb">
+				{% for breadcrumb in breadcrumbs %}
+					<li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+				{% endfor %}
+			</ul>
+		</div>
+	</div>
+	<div class="container-fluid">
+		{% if error_warning is defined and error_warning %}
+			<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+				<button type="button" class="close" data-dismiss="alert">&times;</button>
+			</div>
+		{% endif %}
+		{% if success is defined and success %}
+			<div class="alert alert-success"><i class="fa fa-exclamation-circle"></i> {{ success }}
+				<button type="button" class="close" data-dismiss="alert">&times;</button>
+			</div>
+		{% endif %}
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_edit }}</h3>
+			</div>
+			<div class="panel-body">
+				
+				<ul class="nav nav-tabs">
+					<li class="active"><a href="#tab-settings" data-toggle="tab">{{ entry_settings }}</a></li>
+					{% if version_pro %}
+						<li><a href="#tab-customize-discounts" data-toggle="tab" id="tab-customize-discounts-button" style="display: none;">{{ entry_customize_discounts }}</a></li>
+						<li><a href="#tab-discounts" data-toggle="tab" id="tab-discounts-button">{{ entry_discounts }}</a></li>
+						<li><a href="#tab-specials" data-toggle="tab" id="tab-specials-button">{{ entry_specials }}</a></li>
+					{% endif %}
+					<li><a href="#tab-about" data-toggle="tab" id="tab-about-button">{{ entry_about }}</a></li>
+				</ul>
+				
+				
+				<form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-liveprice" class="form-horizontal">
+				
+					<!-- always enabled -->
+					<input type="hidden" name="settings[status]" value="1">
+					
+					<div class="tab-content">
+						
+						<div class="tab-pane active" id="tab-settings" style="min-height: 300px;">
+							
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="animation">
+									<span data-toggle="tooltip" title="{{ entry_animation_help }}">
+										{{ entry_animation }}
+									</span>
+								</label>
+								<div class="col-sm-10">
+									
+									<div class="checkbox">
+										<label>
+											<input type="checkbox" name="settings[animation]" id="animation" value="1"
+												{% if settings.animation is defined and settings.animation %}
+													checked
+												{% endif %}
+											>
+										</label>
+									</div>
+								
+								</div>
+							</div>
+							
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="ignore_cart">
+									<span data-toggle="tooltip" title="{{ entry_ignore_cart_help }}">
+										{{ entry_ignore_cart }}
+									</span>
+								</label>
+								<div class="col-sm-10">
+									<div class="checkbox">
+										<label>
+											<input type="checkbox" name="settings[ignore_cart]" id="ignore_cart" value="1"
+												{% if settings.ignore_cart is defined and settings.ignore_cart %}
+													checked
+												{% endif %}
+											>
+										</label>
+									</div>
+								</div>
+							</div>
+						
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="multiplied_price">{{ entry_multiplied_price }}</label>
+								<div class="col-sm-10">
+									
+									<div class="checkbox">
+										<label>
+											<input type="checkbox" name="settings[multiplied_price]" id="multiplied_price" value="1"
+												{% if settings['multiplied_price'] ?? 0 %}
+													checked
+												{% endif %}
+											>
+										</label>
+									</div>
+								
+								</div>
+							</div>
+							
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="ignore_greater_special">
+									<span data-toggle="tooltip" title="{{ entry_ignore_greater_special_help }}">
+										{{ entry_ignore_greater_special }}
+									</span>
+								</label>
+								<div class="col-sm-10">
+									<div class="checkbox">
+										<label>
+											<input type="checkbox" name="settings[ignore_greater_special]" id="ignore_greater_special" value="1"
+												{% if settings['ignore_greater_special'] is defined and settings['ignore_greater_special'] %}
+													checked
+												{% endif %}
+											>
+										</label>
+									</div>
+								</div>
+							</div>
+							
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="hide_tax">
+									<span data-toggle="tooltip" title="{{ entry_hide_tax_help }}">
+										{{ entry_hide_tax }}
+									</span>
+								</label>
+								<div class="col-sm-10">
+									<div class="checkbox">
+										<label>
+											<input type="checkbox" name="settings[hide_tax]" id="hide_tax" value="1"
+												{% if settings['hide_tax'] is defined and settings['hide_tax'] %}
+													checked
+												{% endif %}
+											>
+										</label>
+									</div>
+								</div>
+							</div>
+							
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="ropro_discounts_addition">
+									<span data-toggle="tooltip" title="{{ text_ropro_discounts_addition_help }}">
+										{{ entry_ropro_discounts_addition }}
+									</span>
+								</label>
+								<div class="col-sm-1">
+									<div class="checkbox">
+										<label>
+											<input type="checkbox" name="settings[ropro_discounts_addition]" id="ropro_discounts_addition" value="1"
+												{% if settings['ropro_discounts_addition'] is defined and settings['ropro_discounts_addition'] %}
+													checked
+												{% endif %}
+											>
+										</label>
+									</div>
+								</div>	
+								<div class="col-sm-9">	
+									<span class="help-block" style="display: none;" data-notify="ropro_discounts_addition">{{ text_relatedoptions_notify }}</span>
+								</div>
+							</div>
+							
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="ropro_specials_addition">
+									<span data-toggle="tooltip" title="{{ text_ropro_specials_addition_help }}">
+										{{ entry_ropro_specials_addition }}
+									</span>
+								</label>
+								<div class="col-sm-1">
+									<div class="checkbox">
+										<label>
+											<input type="checkbox" name="settings[ropro_specials_addition]" id="ropro_specials_addition" value="1"
+												{% if settings['ropro_specials_addition'] is defined and settings['ropro_specials_addition'] %}
+													checked
+												{% endif %}
+											>
+										</label>
+									</div>
+								</div>	
+								<div class="col-sm-9">	
+									<span class="help-block" style="display: none;" data-notify="ropro_specials_addition">{{ text_relatedoptions_notify }}</span>
+								</div>
+							</div>
+							
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="discount_quantity">{{ entry_discount_quantity }}</label>
+								<div class="col-sm-4">
+									
+									<select id="discount_quantity" name="settings[discount_quantity]" class="form-control">
+										<option value="0"
+											{% if settings['discount_quantity'] is defined and settings['discount_quantity']==0 %}
+												selected
+											{% endif %}
+										>{{ text_discount_quantity_0 }}
+										</option>
+										<option value="1"
+											{% if settings['discount_quantity'] is defined and settings['discount_quantity']==1 %}
+												selected
+											{% endif %}
+										>{{ text_discount_quantity_1 }}
+										</option>
+										<option value="2"
+											{% if settings['discount_quantity'] is defined and settings['discount_quantity']==2 %}
+												selected
+											{% endif %}
+										>{{ text_discount_quantity_2 }}
+										</option>
+									</select>
+									
+									<span class="help-block" style="display: none;" data-notify="ro">{{ text_relatedoptions_notify }}</span>
+								
+								</div>
+								{% if version_pro %}
+									<label class="col-sm-2 control-label">{{ entry_customize_discounts }}</label>
+									<div class="col-sm-4">
+										<label class="radio-inline">
+											<input type="radio" name="settings[discount_quantity_customize]" value="1"
+												{% if (settings['discount_quantity_customize'] ?? 0) %}
+													checked
+												{% endif %}
+											>{{ text_yes }}
+										</label>
+										<label class="radio-inline">
+											<input type="radio" name="settings[discount_quantity_customize]" value=""
+												{% if not ( settings['discount_quantity_customize'] ?? 0) %}
+													checked
+												{% endif %}
+											>{{ text_no }}
+										</label>
+									</div>
+								{% endif %}
+							</div>
+							
+							{% if version_pro %}
+								{{ liveprice_pro_settings }}
+							{% endif %}
+								
+						</div>
+							
+						{% if version_pro %}
+							{{ liveprice_pro_tab_content }}
+						{% endif %}	
+					
+					</form>
+					
+					<div class="tab-pane" id="tab-about" style="min-height: 300px;">
+						
+						<div id="module_description">
+							{{ module_description }}
+						</div>
+						<hr>
+						{{ text_conversation }}
+						<hr>
+						<br>
+						<h4>{{ entry_we_recommend }}</h4><br>
+						<div id="we_recommend">
+							{{ text_we_recommend }}
+						</div>	
+						
+					</div>
+					
+				</div>	
+				
+				<div style="margin-top:40px;">
+					<hr>
+					<span class="help-block">{{ text_module_version }}: {{ module_version }} | {{ text_module_support }} | <span id="module_page">{{ text_module_page }}</span></span><span class="help-block" style="font-size: 80%; line-height: 130%;">{{ module_copyright }}</span>
+				</div>	
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript"><!--
+
+$(document).ready(function(){
+	
+	$('select[name*="[discount_quantity]"]').change(function(){
+		if ( $(this).val() == "2" ) {
+			$(this).siblings('[data-notify="ro"]').show();
+		} else {
+			$(this).siblings('[data-notify="ro"]').hide();
+		}
+	});
+	$('select[name*="[discount_quantity]"]').change();
+	
+});
+
+
+//--></script>
+
+<script type="text/javascript"><!--
+
+	
+	
+$('#ropro_discounts_addition').change(function(){
+	$('[data-notify="ropro_discounts_addition"]').toggle($(this).is(':checked'));
+});
+$('#ropro_discounts_addition').change();
+
+$('#ropro_specials_addition').change(function(){
+	$('[data-notify="ropro_specials_addition"]').toggle($(this).is(':checked'));
+});
+$('#ropro_specials_addition').change();
+
+//--></script>
+
+<script type="text/javascript"><!--
+
+	function check_for_updates() {
+		
+		$.ajax({
+			url: '//update.liveopencart.com/upd.php',
+			type: 'post',
+			data: {module:'{{ extension_code }}', version:'{{ module_version }}', lang: '{{ config_admin_language }}'},
+			dataType: 'json',
+	
+			success: function(data) {
+				
+				if (data) {
+					
+					if (data['recommend']) {
+						$('#we_recommend').html(data['recommend']);
+					}
+					if (data['update']) {
+						$('#tab-about-button').append('&nbsp;&nbsp;<font style="color:red;font-weight:normal;">{{ text_update_alert|e }}</font>');
+						$('#module_description').after('<hr><div class="alert alert-info" role="alert">'+data['update']+'</div>');
+					}
+					if (data['product_pages']) {
+						$('#module_page').html(data['product_pages']);
+					}
+				}
+			}
+		});
+		
+	}
+
+	check_for_updates();
+
+//--></script>
+
+{{ footer }}

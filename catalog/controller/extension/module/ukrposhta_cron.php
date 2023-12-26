@@ -23,7 +23,7 @@ class ControllerModuleUkrPoshtaCron extends Controller {
     }
 
     public function departuresTracking() {
-        if (isset($this->request->get['key']) && $this->request->get['key'] == $this->settings['key_cron']) {
+        if (!empty($this->request->get['key']) && $this->request->get['key'] == $this->settings['key_cron']) {
             if (version_compare(VERSION, '2.3', '>=')) {
                 $this->load->model('extension/module/ukrposhta_cron');
 
@@ -34,7 +34,32 @@ class ControllerModuleUkrPoshtaCron extends Controller {
                 $model_name = 'model_module_ukrposhta_cron';
             }
 
-            $orders = $this->$model_name->getOrders();
+            /* Caching orders for tracking if there are more than $limit */
+            $limit 	= 100;
+
+            $data = $this->cache->get('ukrposhta_tracking_orders');
+
+            if ($data) {
+                $orders = array_splice($data, 0, $limit);
+
+                if ($data) {
+                    $this->cache->set('ukrposhta_tracking_orders', $data);
+                } else {
+                    $this->cache->delete('ukrposhta_tracking_orders');
+                }
+            } else {
+                $result = $this->$model_name->getOrders();
+
+                if ($result->num_rows > $limit) {
+                    $data = $result->rows;
+
+                    $orders = array_splice($data, 0, $limit);
+
+                    $this->cache->set('ukrposhta_tracking_orders', $data);
+                } else {
+                    $orders = $result->rows;
+                }
+            }
 
             if ($orders) {
                 $cn_numbers = array();
@@ -184,203 +209,195 @@ class ControllerModuleUkrPoshtaCron extends Controller {
                     }
 
                     foreach($documents as $document) {
-                        $status_settings = false;
-
                         foreach ($this->settings['settings_tracking_statuses'] as $s_t_s) {
                             if ($s_t_s['ukrposhta_status'] == $document['event'] && $s_t_s['store_status'] != $orders[$document['barcode']]['order_status_id'] && (!$s_t_s['implementation_delay']['value'] || strtotime($document['date']) < strtotime('- ' . $s_t_s['implementation_delay']['value'] . ' ' . $s_t_s['implementation_delay']['type']))) {
-                                $status_settings = $s_t_s;
+                                $replace_cn = array();
 
-                                break;
-                            }
-                        }
+                                foreach ($find_cn as $m) {
+                                    $k = str_replace(array('{', '}'), '', $m);
 
-                        if ($status_settings) {
-                            $replace_cn = array();
-
-                            foreach ($find_cn as $m) {
-                                $k = str_replace(array('{', '}'), '', $m);
-
-                                $replace_cn[$k] = (isset($document[$k])) ? $document[$k] : '';
-                            }
-
-                            // E-mail
-                            $email_message = '';
-
-                            if ($status_settings['email'][$orders[$document['barcode']]['language_id']]) {
-                                $email_template = explode('|', $status_settings['email'][$orders[$document['barcode']]['language_id']]);
-
-                                if (!empty($email_template[0])) {
-                                    $email_message = str_replace($find_order, $replace_order[$orders[$document['barcode']]['order_id']], $email_template[0]);
-                                    $email_message = str_replace($find_cn, $replace_cn, $email_message);
+                                    $replace_cn[$k] = (isset($document[$k])) ? $document[$k] : '';
                                 }
 
-                                if (!empty($email_template[1])) {
-                                    $products = $this->$model_name->getOrderProducts($orders[$document['barcode']]['order_id']);
+                                // E-mail
+                                $email_message = '';
 
-                                    foreach ($products as $k => $product) {
-                                        $replace_product = array(
-                                            'name'     => $product['name'],
-                                            'model'    => $product['model'],
-                                            'option'   => '',
-                                            'sku'      => $product['sku'],
-                                            'ean'      => $product['ean'],
-                                            'upc'      => $product['upc'],
-                                            'jan'      => $product['jan'],
-                                            'isbn'     => $product['isbn'],
-                                            'mpn'      => $product['mpn'],
-                                            'quantity' => $product['quantity']
-                                        );
+                                if ($s_t_s['email'][$orders[$document['barcode']]['language_id']]) {
+                                    $email_template = explode('|', $s_t_s['email'][$orders[$document['barcode']]['language_id']]);
 
-                                        if ($product['option']) {
-                                            foreach ($product['option'] as $option) {
-                                                $replace_product['option'] = $option['name'] . ': ' . $option['value'];
+                                    if (!empty($email_template[0])) {
+                                        $email_message = str_replace($find_order, $replace_order[$orders[$document['barcode']]['order_id']], $email_template[0]);
+                                        $email_message = str_replace($find_cn, $replace_cn, $email_message);
+                                    }
+
+                                    if (!empty($email_template[1])) {
+                                        $products = $this->$model_name->getOrderProducts($orders[$document['barcode']]['order_id']);
+
+                                        foreach ($products as $k => $product) {
+                                            $replace_product = array(
+                                                'name'     => $product['name'],
+                                                'model'    => $product['model'],
+                                                'option'   => '',
+                                                'sku'      => $product['sku'],
+                                                'ean'      => $product['ean'],
+                                                'upc'      => $product['upc'],
+                                                'jan'      => $product['jan'],
+                                                'isbn'     => $product['isbn'],
+                                                'mpn'      => $product['mpn'],
+                                                'quantity' => $product['quantity']
+                                            );
+
+                                            if ($product['option']) {
+                                                foreach ($product['option'] as $option) {
+                                                    $replace_product['option'] = $option['name'] . ': ' . $option['value'];
+                                                }
                                             }
-                                        }
 
-                                        $email_message .= trim(str_replace($find_product, $replace_product, $email_template[1]));
+                                            $email_message .= trim(str_replace($find_product, $replace_product, $email_template[1]));
+                                        }
                                     }
                                 }
-                            }
 
-                            // SMS
-                            $sms_message = '';
+                                // SMS
+                                $sms_message = '';
 
-                            if ($status_settings['sms'][$orders[$document['barcode']]['language_id']]) {
-                                $sms_template = explode('|', $status_settings['sms'][$orders[$document['barcode']]['language_id']]);
+                                if ($s_t_s['sms'][$orders[$document['barcode']]['language_id']]) {
+                                    $sms_template = explode('|', $s_t_s['sms'][$orders[$document['barcode']]['language_id']]);
 
-                                if (!empty($sms_template[0])) {
-                                    $sms_message = str_replace($find_order, $replace_order[$orders[$document['barcode']]['order_id']], $sms_template[0]);
-                                    $sms_message = str_replace($find_cn, $replace_cn, $sms_message);
-                                }
+                                    if (!empty($sms_template[0])) {
+                                        $sms_message = str_replace($find_order, $replace_order[$orders[$document['barcode']]['order_id']], $sms_template[0]);
+                                        $sms_message = str_replace($find_cn, $replace_cn, $sms_message);
+                                    }
 
-                                if (!empty($sms_template[1])) {
-                                    $products = $this->$model_name->getProducts($orders[$document['barcode']]['order_id']);
+                                    if (!empty($sms_template[1])) {
+                                        $products = $this->$model_name->getProducts($orders[$document['barcode']]['order_id']);
 
-                                    foreach ($products as $k => $product) {
-                                        $replace_product = array(
-                                            'name'     => $product['name'],
-                                            'model'    => $product['model'],
-                                            'option'   => '',
-                                            'sku'      => $product['sku'],
-                                            'ean'      => $product['ean'],
-                                            'upc'      => $product['upc'],
-                                            'jan'      => $product['jan'],
-                                            'isbn'     => $product['isbn'],
-                                            'mpn'      => $product['mpn'],
-                                            'quantity' => $product['quantity']
-                                        );
+                                        foreach ($products as $k => $product) {
+                                            $replace_product = array(
+                                                'name'     => $product['name'],
+                                                'model'    => $product['model'],
+                                                'option'   => '',
+                                                'sku'      => $product['sku'],
+                                                'ean'      => $product['ean'],
+                                                'upc'      => $product['upc'],
+                                                'jan'      => $product['jan'],
+                                                'isbn'     => $product['isbn'],
+                                                'mpn'      => $product['mpn'],
+                                                'quantity' => $product['quantity']
+                                            );
 
-                                        if ($product['option']) {
-                                            foreach ($product['option'] as $option) {
-                                                $replace_product['option'] .= $option['name'] . ': ' . $option['value'];
+                                            if ($product['option']) {
+                                                foreach ($product['option'] as $option) {
+                                                    $replace_product['option'] .= $option['name'] . ': ' . $option['value'];
+                                                }
                                             }
-                                        }
 
-                                        $sms_message .= trim(str_replace($find_product, $replace_product, $sms_template[1]));
+                                            $sms_message .= trim(str_replace($find_product, $replace_product, $sms_template[1]));
+                                        }
                                     }
                                 }
-                            }
 
-                            // Add order history
-                            if (isset($status_settings['customer_notification_default'])) {
-                                $notify = true;
-                            } else {
-                                $notify = false;
-                            }
+                                // Add order history
+                                if (isset($s_t_s['customer_notification_default'])) {
+                                    $notify = true;
+                                } else {
+                                    $notify = false;
+                                }
 
-                            if (version_compare(VERSION, '2', '>=')) {
-                                $this->model_checkout_order->addOrderHistory($orders[$document['barcode']]['order_id'], $status_settings['store_status'], $sms_message, $notify);
-                            } else {
-                                $this->model_checkout_order->update($orders[$document['barcode']]['order_id'], $status_settings['store_status'], $sms_message, $notify);
-                            }
+                                if (version_compare(VERSION, '2', '>=')) {
+                                    $this->model_checkout_order->addOrderHistory($orders[$document['barcode']]['order_id'], $s_t_s['store_status'], $sms_message, $notify);
+                                } else {
+                                    $this->model_checkout_order->update($orders[$document['barcode']]['order_id'], $s_t_s['store_status'], $sms_message, $notify);
+                                }
 
-                            if ($this->settings['debugging_mode']) {
-                                $this->log->write('Ukrposhta API in order #' . $orders[$document['barcode']]['order_id'] . ' changed its status to #' . $status_settings['store_status']);
-                            }
+                                if ($this->settings['debugging_mode']) {
+                                    $this->log->write('Ukrposhta API in order #' . $orders[$document['barcode']]['order_id'] . ' changed its status to #' . $s_t_s['store_status']);
+                                }
 
-                            $language = new Language($orders[$document['barcode']][$language_directory]);
-                            $language->load($orders[$document['barcode']][$language_directory]);
+                                $language = new Language($orders[$document['barcode']][$language_directory]);
+                                $language->load($orders[$document['barcode']][$language_directory]);
 
-                            if (version_compare(VERSION, '3', '>=')) {
-                                $language->load('mail/order_edit');
+                                if (version_compare(VERSION, '3', '>=')) {
+                                    $language->load('mail/order_edit');
 
-                                $subject = sprintf($language->get('text_subject'), html_entity_decode($orders[$document['barcode']]['store_name'], ENT_QUOTES, 'UTF-8'), $orders[$document['barcode']]['order_id']);
+                                    $subject = sprintf($language->get('text_subject'), html_entity_decode($orders[$document['barcode']]['store_name'], ENT_QUOTES, 'UTF-8'), $orders[$document['barcode']]['order_id']);
 
-                                $mail = new Mail($this->config->get('config_mail_engine'));
-                                $mail->parameter = $this->config->get('config_mail_parameter');
-                                $mail->smtp_hostname = $this->config->get('config_mail_smtp_hostname');
-                                $mail->smtp_username = $this->config->get('config_mail_smtp_username');
-                                $mail->smtp_password = html_entity_decode($this->config->get('config_mail_smtp_password'), ENT_QUOTES, 'UTF-8');
-                                $mail->smtp_port = $this->config->get('config_mail_smtp_port');
-                                $mail->smtp_timeout = $this->config->get('config_mail_smtp_timeout');
+                                    $mail = new Mail($this->config->get('config_mail_engine'));
+                                    $mail->parameter = $this->config->get('config_mail_parameter');
+                                    $mail->smtp_hostname = $this->config->get('config_mail_smtp_hostname');
+                                    $mail->smtp_username = $this->config->get('config_mail_smtp_username');
+                                    $mail->smtp_password = html_entity_decode($this->config->get('config_mail_smtp_password'), ENT_QUOTES, 'UTF-8');
+                                    $mail->smtp_port = $this->config->get('config_mail_smtp_port');
+                                    $mail->smtp_timeout = $this->config->get('config_mail_smtp_timeout');
 
-                                $from = $this->model_setting_setting->getSettingValue('config_email', $orders[$document['barcode']]['store_id']);
+                                    $from = $this->model_setting_setting->getSettingValue('config_email', $orders[$document['barcode']]['store_id']);
 
-                                if (!$from) {
+                                    if (!$from) {
+                                        $from = $this->config->get('config_email');
+                                    }
+                                } elseif (version_compare(VERSION, '2', '>=')) {
+                                    $language->load('mail/order');
+
+                                    $subject = sprintf($language->get('text_update_subject'), html_entity_decode($orders[$document['barcode']]['store_name'], ENT_QUOTES, 'UTF-8'), $orders[$document['barcode']]['order_id']);
+
+                                    $mail = new Mail();
+                                    $mail->protocol = $this->config->get('config_mail_protocol');
+                                    $mail->parameter = $this->config->get('config_mail_parameter');
+                                    $mail->smtp_hostname = $this->config->get('config_mail_smtp_hostname');
+                                    $mail->smtp_username = $this->config->get('config_mail_smtp_username');
+                                    $mail->smtp_password = html_entity_decode($this->config->get('config_mail_smtp_password'), ENT_QUOTES, 'UTF-8');
+                                    $mail->smtp_port = $this->config->get('config_mail_smtp_port');
+                                    $mail->smtp_timeout = $this->config->get('config_mail_smtp_timeout');
+
+                                    $from = $this->config->get('config_email');
+                                } else {
+                                    $language->load('mail/order');
+
+                                    $subject = sprintf($language->get('text_update_subject'), html_entity_decode($orders[$document['barcode']]['store_name'], ENT_QUOTES, 'UTF-8'), $orders[$document['barcode']]['order_id']);
+
+                                    $mail = new Mail();
+                                    $mail->protocol = $this->config->get('config_mail_protocol');
+                                    $mail->parameter = $this->config->get('config_mail_parameter');
+                                    $mail->hostname = $this->config->get('config_smtp_host');
+                                    $mail->username = $this->config->get('config_smtp_username');
+                                    $mail->password = $this->config->get('config_smtp_password');
+                                    $mail->port = $this->config->get('config_smtp_port');
+                                    $mail->timeout = $this->config->get('config_smtp_timeout');
+
                                     $from = $this->config->get('config_email');
                                 }
-                            } elseif (version_compare(VERSION, '2', '>=')) {
-                                $language->load('mail/order');
 
-                                $subject = sprintf($language->get('text_update_subject'), html_entity_decode($orders[$document['barcode']]['store_name'], ENT_QUOTES, 'UTF-8'), $orders[$document['barcode']]['order_id']);
-
-                                $mail = new Mail();
-                                $mail->protocol = $this->config->get('config_mail_protocol');
-                                $mail->parameter = $this->config->get('config_mail_parameter');
-                                $mail->smtp_hostname = $this->config->get('config_mail_smtp_hostname');
-                                $mail->smtp_username = $this->config->get('config_mail_smtp_username');
-                                $mail->smtp_password = html_entity_decode($this->config->get('config_mail_smtp_password'), ENT_QUOTES, 'UTF-8');
-                                $mail->smtp_port = $this->config->get('config_mail_smtp_port');
-                                $mail->smtp_timeout = $this->config->get('config_mail_smtp_timeout');
-
-                                $from = $this->config->get('config_email');
-                            } else {
-                                $language->load('mail/order');
-
-                                $subject = sprintf($language->get('text_update_subject'), html_entity_decode($orders[$document['barcode']]['store_name'], ENT_QUOTES, 'UTF-8'), $orders[$document['barcode']]['order_id']);
-
-                                $mail = new Mail();
-                                $mail->protocol = $this->config->get('config_mail_protocol');
-                                $mail->parameter = $this->config->get('config_mail_parameter');
-                                $mail->hostname = $this->config->get('config_smtp_host');
-                                $mail->username = $this->config->get('config_smtp_username');
-                                $mail->password = $this->config->get('config_smtp_password');
-                                $mail->port = $this->config->get('config_smtp_port');
-                                $mail->timeout = $this->config->get('config_smtp_timeout');
-
-                                $from = $this->config->get('config_email');
-                            }
-
-                            // Customer notification
-                            if (isset($status_settings['customer_notification']) && filter_var($orders[$document['barcode']]['email'], FILTER_VALIDATE_EMAIL) && $email_message) {
-                                $mail->setTo($orders[$document['barcode']]['email']);
-                                $mail->setFrom($from);
-                                $mail->setSender(html_entity_decode($orders[$document['barcode']]['store_name'], ENT_QUOTES, 'UTF-8'));
-                                $mail->setSubject(html_entity_decode($subject, ENT_QUOTES, 'UTF-8'));
-                                $mail->setHtml(html_entity_decode($email_message, ENT_QUOTES, 'UTF-8'));
-                                $mail->send();
-                            }
-
-                            // Admin notification
-                            if (isset($status_settings['admin_notification']) && filter_var($this->config->get('config_email'), FILTER_VALIDATE_EMAIL) && $email_message) {
-                                $mail->setTo($from);
-                                $mail->setFrom($from);
-                                $mail->setSender(html_entity_decode($orders[$document['barcode']]['store_name'], ENT_QUOTES, 'UTF-8'));
-                                $mail->setSubject(html_entity_decode($subject, ENT_QUOTES, 'UTF-8'));
-                                $mail->setHtml(html_entity_decode($email_message, ENT_QUOTES, 'UTF-8'));
-                                $mail->send();
-
-                                // Send to additional alert emails
-                                if (version_compare(VERSION, '2.3', '>=')) {
-                                    $emails = explode(',', $this->config->get('config_alert_email'));
-                                } else {
-                                    $emails = explode(',', $this->config->get('config_mail_alert'));
+                                // Customer notification
+                                if (isset($s_t_s['customer_notification']) && filter_var($orders[$document['barcode']]['email'], FILTER_VALIDATE_EMAIL) && $email_message) {
+                                    $mail->setTo($orders[$document['barcode']]['email']);
+                                    $mail->setFrom($from);
+                                    $mail->setSender(html_entity_decode($orders[$document['barcode']]['store_name'], ENT_QUOTES, 'UTF-8'));
+                                    $mail->setSubject(html_entity_decode($subject, ENT_QUOTES, 'UTF-8'));
+                                    $mail->setHtml(html_entity_decode($email_message, ENT_QUOTES, 'UTF-8'));
+                                    $mail->send();
                                 }
 
-                                foreach ($emails as $email) {
-                                    if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                                        $mail->setTo($email);
-                                        $mail->send();
+                                // Admin notification
+                                if (isset($s_t_s['admin_notification']) && filter_var($this->config->get('config_email'), FILTER_VALIDATE_EMAIL) && $email_message) {
+                                    $mail->setTo($from);
+                                    $mail->setFrom($from);
+                                    $mail->setSender(html_entity_decode($orders[$document['barcode']]['store_name'], ENT_QUOTES, 'UTF-8'));
+                                    $mail->setSubject(html_entity_decode($subject, ENT_QUOTES, 'UTF-8'));
+                                    $mail->setHtml(html_entity_decode($email_message, ENT_QUOTES, 'UTF-8'));
+                                    $mail->send();
+
+                                    // Send to additional alert emails
+                                    if (version_compare(VERSION, '2.3', '>=')) {
+                                        $emails = explode(',', $this->config->get('config_alert_email'));
+                                    } else {
+                                        $emails = explode(',', $this->config->get('config_mail_alert'));
+                                    }
+
+                                    foreach ($emails as $email) {
+                                        if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                                            $mail->setTo($email);
+                                            $mail->send();
+                                        }
                                     }
                                 }
                             }

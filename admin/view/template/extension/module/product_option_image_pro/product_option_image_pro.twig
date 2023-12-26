@@ -1,0 +1,483 @@
+{#
+//  Product Option Image PRO / Изображения опций PRO
+//  Support: support@liveopencart.com / Поддержка: help@liveopencart.ru
+#}
+{{ header }}{{ column_left }}
+<div id="content">
+	
+	<div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        <button type="submit" form="form-poip" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+        <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
+      <h1>{{ module_name }}</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+					<li><a href="{{ breadcrumb['href'] }}">{{ breadcrumb['text'] }}</a></li>
+				{% endfor %}
+      </ul>
+    </div>
+  </div>
+	
+	<div class="container-fluid">
+    {% if (error_warning ?? false) %}
+			<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+				<button type="button" class="close" data-dismiss="alert">&times;</button>
+			</div>
+    {% endif %}
+    {% if (updated ?? false) %}
+			<div class="alert alert-success"><i class="fa fa-exclamation-circle"></i> {{ updated }}
+				<button type="button" class="close" data-dismiss="alert">&times;</button>
+			</div>
+    {% endif %}
+		{% if (success ?? false) %}
+			<div class="alert alert-success"><i class="fa fa-exclamation-circle"></i> {{ success }}
+				<button type="button" class="close" data-dismiss="alert">&times;</button>
+			</div>
+    {% endif %}
+		
+		<script>
+			$(document).on('change', ':checkbox[name^="poip_module["]', function(){
+				$('#'+$(this).attr('id')+'-details').toggle( $(this).is(':checked') );
+			});
+			$(document).on('change', 'input[id], select[id]', function(){
+				let toggle_children = $(this).val() && $(this).val() != '0' && $(this).is('select, :checked');
+				$('[data-parent="'+$(this).attr('id')+'"]').toggle(toggle_children);
+			});
+			$().ready(function(){
+				 $('input[id], select[id]').change();
+			});
+		</script>
+
+		{% macro display_setting_item(modules, field, parent_name='') %}
+			
+			<label class="col-sm-2 control-label" for="{{ field.name }}" {% if field.parent %}	style="display:none;" data-parent="{{ field.parent }}" {% endif %}>
+				{% if field.help %}
+					<span data-toggle="tooltip" title="" data-original-title="{{ field.help }}">{{ field.title }}</span>
+				{% else %}
+					{{ field.title }}
+				{% endif %}
+			</label>
+			
+			{% if field.values %}
+				
+				{# select #}
+				<div class="col-sm-{{ ((field.children ?? false) or parent_name) ? 4 : 10 }}" {% if field.parent %}	style="display:none;" data-parent="{{ field.parent }}" {% endif %}>
+					<select name="poip_module[{{ field.name }}]" id="{{ field.name }}" class="form-control">
+					
+						{% for val_id, val_text in field.values %}
+							<option value="{{ val_id }}" 
+								{% if modules[field.name] is defined and modules[field.name] == val_id %}
+									selected
+								{% endif %}
+							>{{ val_text }}</option>
+						{% endfor %}
+					
+					</select>
+				</div>
+				
+			{% else %}
+				
+				{# checkbox #}
+			
+				<div class="col-sm-1" {% if field.parent %}	style="display:none;" data-parent="{{ field.parent }}" {% endif %}>
+					<div class="checkbox">
+						<label>
+							<input type="checkbox" id="{{ field.name }}" name="poip_module[{{ field.name }}]" value="1"
+								{% if ( modules[field.name] ?? false ) %}
+									checked
+								{% endif %}
+							>
+						</label>
+					</div>
+				</div>	
+				{% if ( field.details ?? false ) %}
+					<div class="col-sm-9" {% if field.parent %}	style="display:none;" data-parent="{{ field.parent }}" {% endif %}>
+						<span class="help-block" id="{{ field.name }}-details" style="display:none;">
+							{{ field.details }}
+						</span>
+						<script>
+							$('#{{ field.name }}').change();
+						</script>
+					</div>
+				{% endif %}
+				
+			{% endif %}
+			
+			{% for field_child in field.children %}
+				{{ _self.display_setting_item(modules, field_child, field.name) }}
+			{% endfor %}
+			
+		{% endmacro display_setting_item %}
+		
+		{% macro display_setting_row(modules, field) %}
+			
+			<div class="form-group"
+				{% if field.parent %}
+					style="display:none;" data-parent="{{ field.parent }}"
+				{% endif %}
+			>
+				{{ _self.display_setting_item(modules, field) }}
+			</div>
+		{% endmacro display_setting_row %}
+		
+		{% import _self as self_macro %}
+		
+		<div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_edit }}</h3>
+      </div>
+      <div class="panel-body">
+				
+				<ul class="nav nav-tabs">
+					<li class="active"><a href="#tab-settings" data-toggle="tab">{{ entry_settings }}</a></li>
+					<li><a href="#tab-import" data-toggle="tab">{{ entry_import }}</a></li>
+					<li><a href="#tab-export" data-toggle="tab">{{ entry_export }}</a></li>
+					<li><a href="#tab-about" data-toggle="tab" id="tab-about-button">{{ entry_about }}</a></li>
+				</ul>
+				
+				<div class="tab-content">
+					<div class="tab-pane active" id="tab-settings">
+						
+						<form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-ro" class="form-horizontal">
+				
+							{% for field in fields %}
+								{{ self_macro.display_setting_row(modules, field) }}
+							{% endfor %}
+							
+							<div class="form-group" >
+								<label class="col-sm-2 control-label"><span data-toggle="tooltip" title="" data-original-title="{{ entry_custom_thumb_size_help }}">{{ entry_custom_thumb_size }}</span></label>
+								<div class="col-sm-2" >
+									<input type="text" class="form-control" name="poip_module[custom_thumb_width]" value="{{ modules.custom_thumb_width ?? '' }}" title="{{ entry_custom_thumb_width }}" placeholder="{{ entry_custom_thumb_width }}">
+								</div>
+								<div class="col-sm-2" >
+									<input type="text" class="form-control" name="poip_module[custom_thumb_height]" value="{{ modules.custom_thumb_height ?? '' }}" title="{{ entry_custom_thumb_height }}" placeholder="{{ entry_custom_thumb_height }}">
+								</div>
+							</div>
+				
+							<div class="form-group" >
+								<label class="col-sm-2 control-label"><span data-toggle="tooltip" title="" data-original-title="{{ entry_custom_theme_id_help }}">{{ entry_custom_theme_id }}</span></label>
+								<div class="col-sm-10" >
+									<input type="text" class="form-control" name="poip_module[custom_theme_id]" value="{{ modules.custom_theme_id ?? '' }}">
+								</div>
+							</div>
+				
+						</form>
+					</div>
+				
+					<div class="tab-pane form-horizontal" id="tab-import">
+						<div class="form-group" ><div class="col-sm-12" >{{ entry_import_description }}</div></div>
+						
+						{% if import_export_is_possible ?? false %}
+						
+              <div class="form-group" >
+									
+                <label class="col-sm-2 control-label"></label>
+                
+                <div class="col-sm-10" >
+                
+                  <label class="radio">
+                    <input type="radio" name="import_delete_before" value="0" checked>{{ entry_import_nothing_before }}
+                  </label>
+                  <label class="radio">
+                    <input type="radio" name="import_delete_before" value="1">{{ entry_import_delete_before }}
+                  </label>
+                  
+                </div>	
+               
+              </div>
+            
+							<div class="form-group" style="min-height: 50px;">
+								<label class="col-sm-2 control-label"></label>
+								<div class="col-sm-10" >
+									<button type="button" id="button-upload" data-toggle="tooltip" title="" class='btn btn-primary' data-original-title="{{ button_upload }}">{{ button_upload }}</button>
+									<span class="help-block">{{ button_upload_help }}</span>
+								</div>
+							</div>
+							
+						{% endif %}
+						
+						{% if xlsx_lib_error ?? false %}
+							<div class="alert alert-danger">
+								<i class="fa fa-exclamation-circle"></i> {{ error_xlsx_lib_is_not_found|format(xlsx_lib_name) }}</b>
+								<br><br>
+								<button type="button" class="btn" data-poip="button-install-xlsx-lib">{{ button_install_xlsx_lib|format(xlsx_lib_name) }}</button>
+							</div>
+						{% endif %}
+						
+						<div class="form-group" >
+							<div class="col-sm-12" id="import_result_text"></div>
+						</div>
+					</div>
+					
+					<div class="tab-pane" id="tab-export">
+						
+						<div style="margin-bottom: 30px;">{{ entry_export_description }}</div>
+						
+						{% if import_export_is_possible ?? false %}
+							
+							<form id="form_export" class="form-horizontal" action="{{ action_export }}" method="post" target="export_frame">
+							
+								<div class="form-group">
+									<label class="col-sm-2 control-label" for="include_options_without_images">
+										{{ entry_export_options_without_images }}
+									</label>
+									<div class="col-sm-10" >
+										<div class="checkbox">
+											<label>
+												<input type="checkbox" id="include_options_without_images" name="include_options_without_images" value="1">
+											</label>
+										</div>
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-2 control-label" for="include_names">
+										{{ entry_export_names }}
+									</label>
+									<div class="col-sm-10" >
+										<div class="checkbox">
+											<label>
+												<input type="checkbox" id="include_names" name="include_names" value="1">
+											</label>
+										</div>
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-2 control-label">
+										{{ entry_export_first_product_id }} ( {{ entry_export_min_product_id }} {{ min_product_id }} )
+									</label>
+									<div class="col-sm-2" >
+										<input name="export_first_product_id" class="form-control" value="">
+									</div>	
+									<label class="col-sm-2 control-label">
+										{{ entry_export_last_product_id }} ( {{ entry_export_max_product_id }} {{ max_product_id }} )
+									</label>
+									<div class="col-sm-2" >
+										<input name="export_last_product_id" class="form-control" value="">
+									</div>	
+                </div>
+						
+								<div class="form-group">
+									<label class="col-sm-2 control-label"></label>
+									<div class="col-sm-10" >
+										<button type="button" id="button-export" onclick="$('#form_export').submit();" data-toggle="tooltip" title="" class='btn btn-primary' data-original-title="{{ button_export }}">{{ button_export }}</button>
+									</div>
+								</div>
+							
+							</form>
+							
+						{% endif %}
+						
+						{% if xlsx_lib_error ?? false %}
+							<div class="alert alert-danger">
+								<i class="fa fa-exclamation-circle"></i> {{ error_xlsx_lib_is_not_found|format(xlsx_lib_name) }}</b>
+								<br><br>
+								<button type="button" class="btn" data-poip="button-install-xlsx-lib">{{ button_install_xlsx_lib|format(xlsx_lib_name) }}</button>
+							</div>
+						{% endif %}
+						
+						
+						<iframe name="export_frame" src="" id="export_frame" style="display: none"></iframe>
+							
+					</div>
+					
+					<div class="tab-pane" id="tab-about">
+							
+						<div id="module_description">
+							{{ module_description }}
+						</div>
+						
+						<hr>
+						{{ text_conversation }}
+						<hr>	
+						
+						<br>
+						<h4>{{ entry_we_recommend }}</h4><br>
+						<div id="we_recommend">
+							{{ text_we_recommend }}
+						</div>
+						
+					</div>
+					
+				</div>
+				
+				<hr >
+				<span class="help-block">{{ text_module_version }}: {{ module_version }} | {{ text_module_support }} | <span id="module_page">{{ module_page }}</span></span><span class="help-block" style="font-size: 80%; line-height: 130%;">{{ module_copyright }}</span>
+					
+      </div>
+    </div>
+  </div>
+</div>
+	
+
+<script type="text/javascript"><!--
+$('#button-upload').on('click', function() {
+	
+	$('#form-upload').remove();
+	
+	$('body').prepend('<form enctype="multipart/form-data" id="form-upload" style="display: none;"><input type="file" name="file" /></form>');
+
+	$('#form-upload input[name=\'file\']').trigger('click');
+	
+	timer = setInterval(function() {
+    
+    if ( !$('#form-upload input[name="file"]').length ) {
+      clearInterval(timer);
+      return;
+    }
+    
+		if ($('#form-upload input[name=\'file\']').val() != '') {
+			clearInterval(timer);
+      
+      var form_data = new FormData($('#form-upload')[0]);
+      
+      form_data.append("import_delete_before", $('input:radio[name="import_delete_before"]:checked').val() );
+			
+			$.ajax({
+				url: 'index.php?route=extension/module/product_option_image_pro/import&user_token={{ user_token }}',
+				type: 'post',		
+				dataType: 'json',
+				data: form_data,
+				cache: false,
+				contentType: false,
+				processData: false,		
+				beforeSend: function() {
+					$('#button-upload').button('loading');
+				},
+				complete: function() {
+					$('#button-upload').button('reset');
+				},	
+				success: function(json) {
+					
+          $('#import_result_text').html("{{ entry_server_response }}: "+json);
+          			
+					if (json['success']) {
+						alert(json['success']);
+					}
+        
+          if (json['error']) {
+            $('#import_result_text').html('Error: '+json['error']);
+						alert(json['error']);
+          } else {
+						let html = '';
+						html+= '<table class="table table-hover">';
+						html+= '<thead>';
+						html+= '<tr><th class="col-sm-2">{{ entry_import_result_rows }}</th><th class="col-sm-1 text-right">'+json['rows']+'</th><th>{{ entry_import_result_details }}</th>';
+						html+= '</thead>';
+						html+= '<tbody>';
+						let json_result_keys = ['added', 'already_exist', 'not_found', 'no_image', 'skipped'];
+						let json_result_names = ['{{ entry_import_result_added }}', '{{ entry_import_result_already_exist }}', '{{ entry_import_result_not_found }}', '{{ entry_import_result_no_image }}', '{{ entry_import_result_skipped }}'];
+						for ( let i=0;i<json_result_keys.length;i++ ) {
+							let result_key = json_result_keys[i];
+							let result_name = json_result_names[i];
+							if ( json[result_key] ) {
+								html+= '<tr><td>'+result_name+'</td><td class="text-right">';
+								html+= json[result_key].length;
+								html+= '</td><td>';
+								if ( json[result_key].length ) {
+									html+= '<button class="btn" onclick="$(this).next().toggle();">{{ entry_import_result_toggle_details }}</button>';
+									html+= '<div style="display:none">';
+									html+= json[result_key].join(', ');
+									html+= '</div>';
+								}	
+								html+= '</td></tr>';
+							}
+						}
+						html+= '</tbody>';
+						html+= '</table>';
+						$('#import_result_text').html(html);
+						alert('{{ entry_import_result_done }}');
+          }
+          
+				},			
+				error: function(xhr, ajaxOptions, thrownError) {
+					alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+				}
+			});
+      
+      $('#form-upload').remove();
+      
+		}
+	}, 500);
+});
+//--></script>
+
+
+<script type="text/javascript"><!--
+
+
+	$('button[data-poip="button-install-xlsx-lib"]').click(function(){
+		
+		let $button = $(this);
+		let install_texts = {{ {
+			success_install_xlsx_lib: success_install_xlsx_lib|format(xlsx_lib_name),
+		}|json_encode }};
+		
+		$.ajax({
+			url: 'index.php?route=extension/module/product_option_image_pro/installXLSXLib&user_token={{ user_token }}',
+			type: 'get',		
+			dataType: 'json',
+			//data: form_data,
+			cache: false,
+			//contentType: false,
+			//processData: false,		
+			beforeSend: function() {
+				$button.button('loading');
+			},
+			complete: function() {
+				$button.button('reset');
+			},	
+			success: function(json) {
+				
+				if ( json.error ) {
+					console.debug(json);
+					alert(json.error);
+				} else {
+					alert(install_texts.success_install_xlsx_lib);
+					$button.replaceWith(install_texts.success_install_xlsx_lib);
+				}
+				
+			},			
+			error: function(xhr, ajaxOptions, thrownError) {
+				console.debug(xhr);
+				console.debug(thrownError);
+				alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+			}
+		});
+	});
+
+	function checkUpdates() {
+		
+		$.ajax({
+			url: '//update.liveopencart.com/upd.php',
+			type: 'post',
+			data: {module:'{{ extension_code }}', version:'{{ module_version }}', lang: '{{ config_admin_language }}'},
+			dataType: 'json',
+	
+			success: function(data) {
+				
+				if (data) {
+					
+					if (data['recommend']) {
+						$('#we_recommend').html(data['recommend']);
+					}
+					if (data['update']) {
+						$('#tab-about-button').append('&nbsp;&nbsp;<font style="color:red;font-weight:normal;">{{ text_update_alert|e }}</font>');
+						$('#module_description').after('<hr><div class="alert alert-info" role="alert">'+data['update']+'</div>');
+					}
+					if (data['product_pages']) {
+						$('#module_page').html(data['product_pages']);
+					}
+				}
+			}
+		});
+		
+	}
+
+	checkUpdates();
+
+//--></script>
+
+{{ footer }}

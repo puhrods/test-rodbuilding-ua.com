@@ -1,0 +1,335 @@
+
+#tab-option {
+    /*
+    overflow-x: scroll !important;
+    min-height: 500px;
+    */
+}
+
+.jexcel-content .img-thumbnail {
+    padding: 0;
+}
+
+.jexcel-content .img-thumbnail img {
+    width: 30px;
+}
+
+.jexcel>div>table>thead>tr.jexcel_headers>td {
+    text-indent: -9999px;
+    border-right: 1px dotted #ccc;
+    position: relative;
+    font-size: 5px;
+}
+
+.jexcel>div>table>thead>tr.jexcel_headers>td:after {
+    content: '';
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 5px 5px 5px 0;
+    border-color: transparent #aaa transparent transparent;
+    position: absolute;
+    right: 1px;
+    top: 2px;
+}
+
+.jexcel>div>table>thead>tr.jexcel_headers>td:before {
+    content: '';
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 5px 0 5px 5px;
+    border-color: transparent transparent transparent #aaa;
+    position: absolute;
+    left: 0px;
+    top: 2px;
+}
+
+.jexcel>div>table>thead>tr.jexcel_headers>td:first-child,
+.jexcel>div>table>thead>tr.jexcel_headers>td#col-0 {
+    border-left: 1px solid transparent;
+    border-right: 1px solid #ccc;
+}
+
+.jexcel_nested .h1,
+.jexcel_nested .h2,
+.jexcel_nested .h3,
+.jexcel_nested .h4,
+.jexcel_nested .h5,
+.jexcel_nested .h6 {
+    font-size: 13px;
+}
+
+.jexcel-header table > thead > tr > td.h0 i {
+    font-size: 17px;
+    cursor: pointer;
+}
+
+.jexcel-content table > tbody > tr span.hint {
+    display: none;
+}
+
+.jexcel-content table > tbody > tr.selected span.hint {
+    position: absolute;
+    margin-top: -35px;
+    margin-left: -5px;
+    font-size: 12px;
+    color: green;
+    display: inline;
+    background: #fff;
+    padding: 2px 5px;
+    -webkit-box-shadow: 2px 2px 2px 0px rgba(0,0,0,0.5);
+    -moz-box-shadow: 2px 2px 2px 0px rgba(0,0,0,0.5);
+    box-shadow: 2px 2px 2px 0px rgba(0,0,0,0.5);    
+}
+
+.jexcel-content table > tbody > tr > td.c0 {
+    padding: 0 0 0  8px;
+    font-size: 17px;
+    border-top: 0 none;
+    border-bottom: 0 none;
+    overflow: hidden;
+}
+
+.jexcel-content table > tbody > tr > td.c0 i {
+    position: relative;
+    width: 100%;
+    cursor: pointer;
+}
+
+.jexcel-content table > tbody > tr > td.c0 i:after {
+    content: "";
+    width: 300px;
+    display: inline-block;
+    position: absolute;
+    left: 12px;
+    top: 8px;
+    border-top: 1px dotted #666;
+}
+
+.jexcel-content table > tbody > tr > td.c0 > span.vr-space {
+    position: relative;
+    display: block;
+    float: left;
+    width: 24px;
+    height: 24px;
+}
+
+.jexcel-content table > tbody > tr > td.c0 > span.vr-space:before {
+    content: "";
+    display: inline-block;
+    width: 1px;
+    height: 140px;
+    position: absolute;
+    top: -70px;
+    left: 6px;
+    border-left: 1px dotted #666;
+}
+
+.jexcel-content table > tbody > tr > td.c0 > span.vr-space.vr-leap.vr-last:before {
+    height: 79px;
+}
+
+.jexcel-content table > tbody > tr > td.c0 > span.vr-space.vr-leap:after {
+    content: "";
+    display: block;
+    width: 20px;
+    height: 200px;
+    position: absolute;
+    top: 10px;
+    left: 6px;
+    border-top: 1px dotted #666;
+}
+
+.jexcel-content table > tbody > tr > td.c0 span.vr-child {
+    position: relative;
+}
+
+.jexcel-content table > tbody > tr.collapsed > td.c0 span.vr-child {
+    display: none;
+}
+
+.jexcel-content table > tbody > tr > td.c0 span.vr-child:before {
+    content: "";
+    display: block;
+    width: 1px;
+    height: 200px;
+    position: absolute;
+    top: 11px;
+    left: 30px;
+    border-left: 1px dotted #666;
+}
+
+.jexcel-content table > tbody > tr > td.c0 > span.vr {
+    position: relative;
+    display: block;
+    float: left;
+}
+
+.jexcel-content table > tbody > tr > td.c0 > span.vr:before {
+    content: "";
+    display: block;
+    width: 1px;
+    height: 200px;
+    position: absolute;
+    bottom: 20px;
+    left: 6px;
+    border-left: 1px dotted #666;
+}
+
+.jexcel-content table > tbody > tr > td.c0 > span.vr:after {
+    content: "";
+    display: block;
+    width: 1px;
+    height: 70px;
+    position: absolute;
+    top: 16px;
+    left: 6px;
+    border-left: 1px dotted #666;
+}
+
+.jexcel-content table > tbody > tr > td.c0 > span.vr.vr-last:after {
+    display: none;
+}
+
+.jexcel > div > table > tbody > tr > td:nth-last-child(2) {
+    white-space: normal !important;
+}
+
+.jexcel > div > table > tbody > tr > td.readonly {
+    color: rgba(0, 0, 0, 1);
+    background-color: rgba(0, 0, 0, 0.08);
+}
+
+.jexcel .highlight {
+    background: rgba(0,0,0,.02);
+}
+
+.jexcel > div > table > tbody > tr > td > input[type=checkbox] {
+    border: 1px solid #dcdcdc;
+    outline: black;
+}
+
+.jexcel-content .option-image-wrapper {
+    display: inline-block;
+    margin-right: 5px;
+}
+
+.jexcel-content .option-image-wrapper:last-child a.img-thumbnail {
+    position: relative;
+}
+
+.jexcel-content .option-image-wrapper:last-child a.img-thumbnail:before {
+    content: "+";
+    color: #888;
+    font-size: 25px;
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    font-weight: bold;
+    line-height: 25px;
+    text-align: center;
+    left: 50%;
+    top: 50%;
+    margin-left: -12px;
+    margin-top: -13px;
+}
+
+.jexcel-content .option-image-wrapper:last-child a.img-thumbnail img {
+    visibility: hidden;
+}
+
+i#zoom-images {
+    font-size: 20px;
+    position: absolute;
+    margin-left: 20px;
+    margin-top: -2px;    
+}
+
+.jexcel-content table.zoom a.img-thumbnail {
+    padding: 4px;
+}
+
+.jexcel-content table.zoom a.img-thumbnail img {
+    width: 60px;
+}
+
+.modal-dialog-centered {
+    min-height: calc(100% - (1.75rem * 2));
+    display: flex;
+    align-items: center;
+    margin: 1.75rem auto;
+}
+
+.modal-dialog-centered .modal-content {
+    width: 100%;
+}
+
+#modal-add-new .modal-body {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+#modal-add-new .panel {
+    margin-bottom: 0;
+}
+
+#modal-add-new .modal-footer a {
+    text-decoration: underline;
+}
+
+#modal-add-new i.fa-chain {
+    transform: rotate(-45deg);
+    margin: 0 10px;
+}
+
+#modal-add-new .disabled a.action {
+    display: none;
+}
+
+#tab-may-advanced-option.tab-pane {
+    padding-left: 15px;
+    padding-right: 15px;
+    overflow-x: auto;
+}
+
+#may-advanced-option-actions {
+    display: flex;
+}
+
+#may-advanced-option-actions .add-action {
+    margin-right: 20px;
+}
+
+#may-advanced-option-actions .additional-actions .may-advanced-option-tab {
+    padding: 2px 4px 2px 10px;
+    background: #ddd;
+    border-radius: 3px;
+    margin-right: 10px;
+}
+
+#may-advanced-option-actions .additional-actions .may-advanced-option-tab label {
+    margin-right: 10px;
+}
+
+#may-advanced-option-actions .additional-actions .btn {
+    padding: 6px 10px;
+}
+
+#may-advanced-option-content .alert {
+    margin-bottom: 0;
+    vertical-align: middle;
+    padding: 4px 10px;
+}
+
+#may-advanced-option-extra {
+    margin-top: 10px;
+    margin-right: 30px;
+}
+
+@media screen and (max-width: 1600px) {
+    #may-advanced-option-extra {
+        margin-right: 0;
+        float: none !important;
+    }
+}

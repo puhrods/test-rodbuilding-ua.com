@@ -1,0 +1,303 @@
+<div class="modal fade" id="modal-add-new" tabindex="-1" role="dialog" aria-labelledby="Add new combined options" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title step step-1" id="modal-title-step-1">{{ _['Select options to combine'] }}</h4>
+                <h4 class="modal-title step step-2 hidden" id="modal-title-step-2">{{ _['Select available option values'] }}</h4>
+                <h4 class="modal-title step step-3 hidden" id="modal-title-step-3">{{ _['Select available dependencies'] }}</h4>
+            </div>
+            <div class="modal-body">
+                {% if options %}
+                <div class="options-container row form-inline step step-1" id="modal-options-container">
+                    <div class="form-group col-sm-12">
+                    {% for option in options %}
+                        <div class="col-sm-4 checkbox">
+                            <label for="modal-option-{{ option['option_id'] }}">
+                                <input name="modal_option[]" 
+                                        value="{{ option['option_id'] }}" 
+                                        data-label="{{ option['name'] }}" 
+                                        data-option-values="{{ option['values']|json_encode|escape }}"
+                                        class="modal-option" 
+                                        type="checkbox" 
+                                        id="modal-option-{{ option['option_id'] }}"
+                                        {{ (option['option_id'] in selected['options']) ? 'checked' : '' }}> {{ option['name'] }} <span class="badge hidden">{{ option['values']|length }}</span>
+                            </label>
+                        </div>
+                    {% endfor %}
+                    </div>
+                    <div class="form-group col-sm-12 text-center" style="display: none;">
+                        <span id="modal-selected-options" data-option-ids="" data-option-labels=""></span>
+                    </div>
+                </div>
+                <div class="option-values-container row form-inline step step-2 hidden" id="modal-option-values-container">
+                </div>
+                <div class="option-dependencies-container row step step-3 hidden" id="modal-option-dependencies-container">
+                </div>
+                {% else %}
+                <div class="alert alert-info text-center">{{ _['No results!'] }}</div>
+                {% endif %}
+            </div>
+            <div class="modal-footer disabled">
+                <span class="pull-left">
+                    <a href="javascript:void(0)" class="action step step-1" id="modal-action-select-option-values">{{ _['Select only available values from selected options'] }}</a>
+                    <a href="javascript:void(0)" class="action step step-2 hidden" id="modal-action-select-option-dependencies">{{ _['Check option depedencies'] }}</a>
+                </span>
+                <button type="button" class="btn btn-default step step-2 hidden" id="modal-button-back-step-2">{{ _['Back'] }}</button>
+                <button type="button" class="btn btn-default step step-3 hidden" id="modal-button-back-step-3">{{ _['Back'] }}</button>
+                <button type="button" class="btn btn-primary" id="modal-button-generate" disabled>{{ _['Generate'] }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" id="modal-add-new-script">
+
+var modal_var_selected = {{ selected|json_encode }};
+
+var validate_action_ability = function(step) {
+    var action_status = true;
+    if (step == 1) {
+        action_status = ($('#modal-selected-options').data('option-ids') != "") ? true : false;
+    } else if (step == 2) {
+        $('#modal-option-values-container .block-option-values').each(function(panel, index) {
+            if (!$(this).find('input[type="checkbox"]:checked').length) {
+                action_status = false;
+            }
+        });
+    } else if (step == 3) {
+        $('#modal-option-dependencies-container .block-option-dependencies').each(function(panel, index) {
+            if (!$(this).find('input[type="checkbox"]:checked').length) {
+                action_status = false;
+            }
+        });
+    }
+    if (action_status) {
+        $('#modal-add-new .modal-footer').removeClass('disabled');
+        $('#modal-button-generate').prop('disabled', false);
+    } else {
+        $('#modal-add-new .modal-footer').addClass('disabled');
+        $('#modal-button-generate').prop('disabled', true);
+    }
+}
+
+var selected_option_changed = function($elm) {
+    var selected_options = $('#modal-selected-options').data('option-ids');
+    if (selected_options != "") {
+        selected_options = selected_options.split(',');
+    } else {
+        selected_options = [];
+    }
+
+    var option_id = $elm.val();
+    if ($elm.is(':checked')) {
+        selected_options.push(option_id);
+    } else {
+        var option_index = selected_options.indexOf(option_id);
+        if (option_index !== -1) {
+            selected_options.splice(option_index, 1);
+        }
+    }
+
+    if (selected_options.length) {
+        $('#modal-selected-options').parent().show();
+    } else {
+        $('#modal-selected-options').parent().hide();
+    }
+        
+    var selected_option_labels = [];
+    selected_options.forEach(function(option_id, index) {
+        selected_option_labels.push($('#modal-option-' + option_id).data('label'));
+    });
+
+    $('#modal-selected-options').data('option-ids', selected_options.join(','));
+    $('#modal-selected-options').data('option-labels', selected_option_labels.join('-'));
+    $('#modal-selected-options').html(selected_option_labels.join(' <i class="fa fa-chain"></i> '));
+
+    validate_action_ability(1);
+}
+
+{% for selected_option_id in selected['options'] %}
+selected_option_changed($('#modal-option-{{ selected_option_id }}'));
+{% endfor %}
+
+$(document).delegate('.options-container input[type="checkbox"]', 'change', function() {
+    selected_option_changed($(this));
+});
+
+$(document).delegate('#modal-action-select-option-values', 'click', function() {
+
+    var selected_options = $('#modal-selected-options').data('option-ids').split(',');
+
+    var html = '';
+
+    selected_options.forEach(function(option_id, index) {
+        html += '<div class="panel panel-default block-option-values" data-option-id="' + option_id + '">';
+        html += '  <div class="panel-heading">' + $('#modal-option-' + option_id).data('label') + '<span class="pull-right"><a href="#" data-step="2" class="select-all">{{ _['Select All'] }}</a> | <a href="#" data-step="2" class="deselect-all">{{ _['Deselect All'] }}</a></span></div>';
+        html += '  <div class="panel-body"><div class="row">';
+
+        option_values = $('#modal-option-' + option_id).data('option-values');
+        option_values.forEach(function(value, value_index) {
+            html += '<div class="col-lg-3 col-md-4 col-sm-6 checkbox">';
+
+            var checked = 'checked';
+            if (modal_var_selected['values'] != undefined && modal_var_selected['values'].length && modal_var_selected['values'].indexOf(value['option_value_id']) == -1) {
+                checked = '';
+            }
+
+            html += '  <label for="modal-option-value-' + value['option_value_id'] + '"><input type="checkbox" value="' + value['option_value_id'] + '" id="modal-option-value-' + value['option_value_id'] + '" ' + checked + '> ' + value['name'] + '</label>';
+            html += '</div>';
+        });
+
+        html += '  </div></div>';
+        html += '</div>';
+    });
+
+    $('#modal-option-values-container').html(html);
+
+    $('.step-2').removeClass('hidden');
+    $('.step-1').addClass('hidden');
+});
+
+$(document).delegate('#modal-action-select-option-dependencies', 'click', function() {
+
+    var selected_options = $('#modal-selected-options').data('option-ids').split(',');
+
+    var html = '';
+
+    for (var index = 0; index < selected_options.length - 1; index ++) {
+        var parent_id = selected_options[index];
+        var child_id = selected_options[index + 1];
+
+        html += '<div class="panel panel-default" data-parent-id="' + parent_id + ' data-child-id="' + child_id + '">';
+        html += '  <div class="panel-heading">' + $('#modal-option-' + parent_id).data('label') + ' <i class="fa fa-chain"></i> '  + $('#modal-option-' + child_id).data('label') + '<span class="pull-right"><a href="#" data-step="3" class="select-all">{{ _['Select All'] }}</a> | <a href="#" data-step="3" class="deselect-all">{{ _['Deselect All'] }}</a></span></div>';
+        html += '  <div class="panel-body">';
+
+        parent_values = $('#modal-option-' + parent_id).data('option-values');
+        child_values = $('#modal-option-' + child_id).data('option-values');
+
+        parent_values.forEach(function(parent_value, parent_value_index) {
+            if (!$('#modal-option-value-' + parent_value['option_value_id']).is(':checked')) {
+                return;
+            }
+
+            html += '<div class="form-group block-option-dependencies"><div class="row"><label class="col-sm-3 control-label">' + parent_value['name'] + '</label>';
+            html += '  <div class="col-sm-9"><div class="row form-inline">';
+            child_values.forEach(function(child_value, child_value_index) {
+                if (!$('#modal-option-value-' + child_value['option_value_id']).is(':checked')) {
+                    return;
+                }
+
+                html += '<div class="col-md-4 col-sm-6 checkbox">';
+
+                var checked = 'checked';
+                if (modal_var_selected['combinations'] != undefined && modal_var_selected['combinations'].length && modal_var_selected['combinations'].indexOf(parent_value['option_value_id'] + '-' + child_value['option_value_id']) == -1) {
+                    checked = '';
+                }
+
+                html += '  <label for="modal-option-dependency-' + parent_value['option_value_id'] + '-' + child_value['option_value_id'] + '"><input type="checkbox" value="' + child_value['option_value_id'] + '" id="modal-option-dependency-' + parent_value['option_value_id'] + '-' + child_value['option_value_id'] + '" ' + checked + '> ' + child_value['name'] + '</label>';
+                html += '</div>';
+            });
+            html += '  </div></div>';
+            html += '</div></div>';
+        });
+
+        html += '  </div>';
+        html += '</div>';
+    }
+
+    $('#modal-option-dependencies-container').html(html);
+
+    $('.step-3').removeClass('hidden');
+    $('.step-2').addClass('hidden');
+});
+
+$(document).delegate('#modal-add-new a.select-all', 'click', function() {
+    $(this).closest('.panel').find('input[type="checkbox"]').prop('checked', true);
+    validate_action_ability($(this).data('step'));
+    return false;
+});
+
+$(document).delegate('#modal-option-values-container input[type="checkbox"]', 'change', function() {
+    validate_action_ability(2);
+});
+
+$(document).delegate('#modal-option-dependencies-container input[type="checkbox"]', 'change', function() {
+    validate_action_ability(3);
+});
+
+$(document).delegate('#modal-add-new a.deselect-all', 'click', function() {
+    $(this).closest('.panel').find('input[type="checkbox"]').prop('checked', false);
+    validate_action_ability($(this).data('step'));
+    return false;
+});
+
+$(document).delegate('#modal-button-back-step-2', 'click', function() {
+    $('.step-1').removeClass('hidden');
+    $('.step-2').addClass('hidden');
+});
+
+$(document).delegate('#modal-button-back-step-3', 'click', function() {
+    $('.step-2').removeClass('hidden');
+    $('.step-3').addClass('hidden');
+});
+
+$(document).delegate('#modal-button-generate', 'click', function() {
+    var selected_options = $('#modal-selected-options').data('option-ids').split(',');
+    var options = [];
+
+    for (var index = 0; index < selected_options.length; index ++) {
+        var option_id = selected_options[index];
+
+        var option_values = [];
+
+        $('#modal-option-' + option_id).data('option-values').forEach(function(option_value, option_value_index) {
+            if ($('#modal-options-container').hasClass('hidden') && !$('#modal-option-value-' + option_value['option_value_id']).is(':checked')) {
+                return;
+            }
+
+            var children = [];
+            if (index < selected_options.length - 1) {
+                var child_id = selected_options[index + 1];
+                $('#modal-option-' + child_id).data('option-values').forEach(function(child_value, child_value_index) {
+                    if (!$('#modal-option-dependencies-container').hasClass('hidden') && !$('#modal-option-dependency-' + option_value['option_value_id'] + '-' + child_value['option_value_id']).is(':checked')) {
+                        return;
+                    }
+
+                    children.push(child_value['option_value_id']);
+                });
+            }
+
+            option_values.push({
+                "option_value_id": option_value['option_value_id'],
+                "name": option_value['name'],
+                "children": children
+            });
+        });
+
+        options.push({
+            "option_id": option_id,
+            "name": $('#modal-option-' + option_id).data('label'),
+            "option_value": option_values
+        });
+    }
+
+    $('#modal-add-new').modal('hide');
+
+    var old_option_row = $('#modal-add-new').data('option-row');
+    if (old_option_row === undefined) {
+        old_option_row = -1;
+    }
+
+    add_new_addvanced_option({
+        "value": 0,
+        "label": $('#modal-selected-options').data('option-labels'),
+        "swatch_image": (old_option_row == -1) ? "{{ may_advanced_options_config['swatch_image'] }}" : $('#input-swatch-image' + old_option_row).val(),
+        "show_first_option_in_list": (old_option_row == -1) ? "{{ may_advanced_options_config['show_first_option_in_list'] }}" : $('#input-show-first-option-in-list' + old_option_row).val(),
+        "options": options,
+        "option_row": old_option_row
+    });
+});
+</script>

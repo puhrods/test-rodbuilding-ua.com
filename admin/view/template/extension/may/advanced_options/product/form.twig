@@ -1,0 +1,1019 @@
+<script src="view/javascript/may/js/jquery.jexcel.js"></script>
+<script src="view/javascript/may/js/jquery.jdropdown.js"></script>
+<link rel="stylesheet" href="view/javascript/may/css/jquery.jexcel.min.css" type="text/css" />
+<link rel="stylesheet" href="view/javascript/may/css/jquery.jdropdown.min.css" type="text/css" />
+<link rel="stylesheet" href="view/stylesheet/may/advanced_options.css" type="text/css" />
+
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="may-advanced-option-exist-alert" id="modal-may-advanced-option-exist-alert" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+        <h4 class="modal-title">{{ _['Combined Option is exist'] }}</h4>
+      </div>  
+      <div class="modal-body">{{ _['Only one combined option is available for a product. If you want to add other combined option, please remove current one.'] }}</div>
+    </div>
+  </div>
+</div>
+
+<div class="tab-pane" id="tab-may-advanced-option">
+  <div class="form-inline" id="may-advanced-option-actions">
+    <div class="add-action">
+      <input type="text" name="may_advanced_option" size="23" value="" placeholder="{{ _['Predefined Combined Option'] }}" id="input-may-advanced-option" class="form-control" />
+      <span>-{{ _['Or'] }}-</span>
+      <button type="button" id="button-add-new-combination" class="btn btn-success" data-url="{{ url_combine_options_modal }}">{{ _['Generate New'] }}</button>
+    </div>
+    <div class="additional-actions" id="may-advanced-option-tabs"></div>
+  </div>
+  <hr/>
+  <div class="tab-content" id="may-advanced-option-content"></div>
+</div>
+{% set option_row = 10000 %}
+{% set may_option_value_row = 0 %}
+<script type="text/javascript"><!--
+function init_excel(option_length, option_row, may_option_value_row) {
+  var text_column_count = 0;
+  {% if may_advanced_options_config['attribute_model'] %}
+  text_column_count ++;
+  {% endif %}
+  {% if may_advanced_options_config['attribute_sku'] %}
+  text_column_count ++;
+  {% endif %}
+  {% if may_advanced_options_config['attribute_upc'] %}
+  text_column_count ++;
+  {% endif %}
+  {% if may_advanced_options_config['attribute_ean'] %}
+  text_column_count ++;
+  {% endif %}
+  {% if may_advanced_options_config['attribute_jan'] %}
+  text_column_count ++;
+  {% endif %}
+  {% if may_advanced_options_config['attribute_isbn'] %}
+  text_column_count ++;
+  {% endif %}
+  {% if may_advanced_options_config['attribute_mpn'] %}
+  text_column_count ++;
+  {% endif %}
+  {% if may_advanced_options_config['attribute_location'] %}
+  text_column_count ++;
+  {% endif %}
+  var text_column_width = Math.min(250, Math.ceil(80 * 8 / text_column_count));
+  return {
+    data: [],
+    nestedHeaders: [
+      {title: '<span class="text-left text-nowrap may-tree-icon" style="width: ' + (option_length * 24 + 10) + 'px"><i class="fa fa-plus-square-o expand-all" aria-hidden="true"></i> / <i class="fa fa-minus-square-o collapse-all" aria-hidden="true"></i></span>'},
+      {title: '{{ _['Option Value'] }}'},
+      {% if may_advanced_options_config['attribute_model'] %}
+      {title: '{{ _['Model'] }}'},
+      {% endif %}
+      {% if may_advanced_options_config['attribute_sku'] %}
+      {title: '{{ _['SKU'] }}'},
+      {% endif %}
+      {% if may_advanced_options_config['attribute_upc'] %}
+      {title: '{{ _['UPC'] }}'},
+      {% endif %}
+      {% if may_advanced_options_config['attribute_ean'] %}
+      {title: '{{ _['EAN'] }}'},
+      {% endif %}
+      {% if may_advanced_options_config['attribute_jan'] %}
+      {title: '{{ _['JAN'] }}'},
+      {% endif %}
+      {% if may_advanced_options_config['attribute_isbn'] %}
+      {title: '{{ _['ISBN'] }}'},
+      {% endif %}
+      {% if may_advanced_options_config['attribute_mpn'] %}
+      {title: '{{ _['MPN'] }}'},
+      {% endif %}
+      {% if may_advanced_options_config['attribute_location'] %}
+      {title: '{{ _['Location'] }}'},
+      {% endif %}
+      {% if may_advanced_options_config['attribute_quantity'] %}
+      {title: '{{ _['Quantity'] }}'},
+      {% endif %}
+      {% if may_advanced_options_config['attribute_stock_status'] %}
+      {title: '{{ _['Stock Status'] }}'},
+      {% endif %}
+      {% if may_advanced_options_config['attribute_price'] %}
+      {title: '{{ _['Price'] }}', colspan: 2},
+      {% endif %}
+      {% if may_advanced_options_config['attribute_point'] %}
+      {title: '{{ _['Points'] }}', colspan: 2},
+      {% endif %}
+      {% if may_advanced_options_config['attribute_weight'] %}
+      {title: '{{ _['Weight'] }}', colspan: 2},
+      {% endif %}
+      {% if may_advanced_options_config['attribute_dimension'] %}
+      {title: '{{ _['Dimensions (LxWxH)'] }}', colspan: 3},
+      {% endif %}
+      {title: '{{ _['Image'] }} <i class="fa fa-search-plus" aria-hidden="true" id="zoom-images"></i>'},
+      {title: '{{ _['Hide'] }}'},
+    ],
+    contextMenu: function() { return false; },
+    colWidths: [
+      (option_length * 24 + 10), 
+      90, 
+      {% if may_advanced_options_config['attribute_model'] %}
+      text_column_width, 
+      {% endif %}
+      {% if may_advanced_options_config['attribute_sku'] %}
+      text_column_width, 
+      {% endif %}
+      {% if may_advanced_options_config['attribute_upc'] %}
+      text_column_width, 
+      {% endif %}
+      {% if may_advanced_options_config['attribute_ean'] %}
+      text_column_width, 
+      {% endif %}
+      {% if may_advanced_options_config['attribute_jan'] %}
+      text_column_width, 
+      {% endif %}
+      {% if may_advanced_options_config['attribute_isbn'] %}
+      text_column_width, 
+      {% endif %}
+      {% if may_advanced_options_config['attribute_mpn'] %}
+      text_column_width, 
+      {% endif %}
+      {% if may_advanced_options_config['attribute_location'] %}
+      text_column_width, 
+      {% endif %}
+      {% if may_advanced_options_config['attribute_quantity'] %}
+      45, 
+      {% endif %}
+      {% if may_advanced_options_config['attribute_stock_status'] %}
+      90, 
+      {% endif %}
+      {% if may_advanced_options_config['attribute_price'] %}
+      45, 
+      45, 
+      {% endif %}
+      {% if may_advanced_options_config['attribute_point'] %}
+      45, 
+      45, 
+      {% endif %}
+      {% if may_advanced_options_config['attribute_weight'] %}
+      45, 
+      45, 
+      {% endif %}
+      {% if may_advanced_options_config['attribute_dimension'] %}
+      45, 
+      45,
+      45,
+      {% endif %}
+      220
+    ],
+    colAlignments: [
+      'center', 
+      'left', 
+      {% if may_advanced_options_config['attribute_model'] %}
+      'left', 
+      {% endif %}
+      {% if may_advanced_options_config['attribute_sku'] %}
+      'left', 
+      {% endif %}
+      {% if may_advanced_options_config['attribute_upc'] %}
+      'left', 
+      {% endif %}
+      {% if may_advanced_options_config['attribute_ean'] %}
+      'left', 
+      {% endif %}
+      {% if may_advanced_options_config['attribute_jan'] %}
+      'left', 
+      {% endif %}
+      {% if may_advanced_options_config['attribute_isbn'] %}
+      'left', 
+      {% endif %}
+      {% if may_advanced_options_config['attribute_mpn'] %}
+      'left', 
+      {% endif %}
+      {% if may_advanced_options_config['attribute_location'] %}
+      'left', 
+      {% endif %}
+      {% if may_advanced_options_config['attribute_quantity'] %}
+      'center', 
+      {% endif %}
+      {% if may_advanced_options_config['attribute_stock_status'] %}
+      'left', 
+      {% endif %}
+      {% if may_advanced_options_config['attribute_price'] %}
+      'center', 
+      'center', 
+      {% endif %}
+      {% if may_advanced_options_config['attribute_point'] %}
+      'center', 
+      'center', 
+      {% endif %}
+      {% if may_advanced_options_config['attribute_weight'] %}
+      'center', 
+      'center', 
+      {% endif %}
+      {% if may_advanced_options_config['attribute_dimension'] %}
+      'center', 
+      'center', 
+      'center', 
+      {% endif %}
+      'center', 
+      'center'
+    ],
+    columns: [
+      { type: 'text', readOnly: true},
+      { type: 'text', readOnly: true},
+      {% if may_advanced_options_config['attribute_model'] %}
+      { type: 'text' },
+      {% endif %}
+      {% if may_advanced_options_config['attribute_sku'] %}
+      { type: 'text' },
+      {% endif %}
+      {% if may_advanced_options_config['attribute_upc'] %}
+      { type: 'text' },
+      {% endif %}
+      {% if may_advanced_options_config['attribute_ean'] %}
+      { type: 'text' },
+      {% endif %}
+      {% if may_advanced_options_config['attribute_jan'] %}
+      { type: 'text' },
+      {% endif %}
+      {% if may_advanced_options_config['attribute_isbn'] %}
+      { type: 'text' },
+      {% endif %}
+      {% if may_advanced_options_config['attribute_mpn'] %}
+      { type: 'text' },
+      {% endif %}
+      {% if may_advanced_options_config['attribute_location'] %}
+      { type: 'text' },
+      {% endif %}
+      {% if may_advanced_options_config['attribute_quantity'] %}
+      { type: 'number' },
+      {% endif %}
+      {% if may_advanced_options_config['attribute_stock_status'] %}
+      { type: 'dropdown', source:[{'id':'', 'name':'-'}{% for stock_status in stock_statuses %},{'id':'{{ stock_status.stock_status_id }}', 'name':'{{ stock_status.name }}'}{% endfor %}] },
+      {% endif %}
+      {% if may_advanced_options_config['attribute_price'] %}
+      { type: 'dropdown', source:[{'id':'as', 'name':'='},'+','-'] },
+      { type: 'number' },
+      {% endif %}
+      {% if may_advanced_options_config['attribute_point'] %}
+      { type: 'dropdown', source:[{'id':'as', 'name':'='},'+','-'] },
+      { type: 'number' },
+      {% endif %}
+      {% if may_advanced_options_config['attribute_weight'] %}
+      { type: 'dropdown', source:[{'id':'as', 'name':'='},'+','-'] },
+      { type: 'number' },
+      {% endif %}
+      {% if may_advanced_options_config['attribute_dimension'] %}
+      { type: 'number' },
+      { type: 'number' },
+      { type: 'number' },
+      {% endif %}
+      { type: 'text', readOnly: true },
+      { type: 'checkbox' },
+    ],
+    rowDrag: false,
+    readOnly: [],
+    colname: [
+      '', 
+      'label', 
+      {% if may_advanced_options_config['attribute_model'] %}
+      'model', 
+      {% endif %}
+      {% if may_advanced_options_config['attribute_sku'] %}
+      'sku', 
+      {% endif %}
+      {% if may_advanced_options_config['attribute_upc'] %}
+      'upc', 
+      {% endif %}
+      {% if may_advanced_options_config['attribute_ean'] %}
+      'ean', 
+      {% endif %}
+      {% if may_advanced_options_config['attribute_jan'] %}
+      'jan', 
+      {% endif %}
+      {% if may_advanced_options_config['attribute_isbn'] %}
+      'isbn', 
+      {% endif %}
+      {% if may_advanced_options_config['attribute_mpn'] %}
+      'mpn', 
+      {% endif %}
+      {% if may_advanced_options_config['attribute_location'] %}
+      'location', 
+      {% endif %}
+      {% if may_advanced_options_config['attribute_quantity'] %}
+      'quantity', 
+      {% endif %}
+      {% if may_advanced_options_config['attribute_stock_status'] %}
+      'stock_status_id', 
+      {% endif %}
+      {% if may_advanced_options_config['attribute_price'] %}
+      'price_prefix', 
+      'price', 
+      {% endif %}
+      {% if may_advanced_options_config['attribute_point'] %}
+      'points_prefix', 
+      'points', 
+      {% endif %}
+      {% if may_advanced_options_config['attribute_weight'] %}
+      'weight_prefix', 
+      'weight', 
+      {% endif %}
+      {% if may_advanced_options_config['attribute_dimension'] %}
+      'dimension_l', 
+      'dimension_w', 
+      'dimension_h', 
+      {% endif %}
+      'image', 
+      'hide'
+    ],
+    optionRow: option_row,
+    optionValueRow: may_option_value_row,
+    onchange: function (object, cell, value) {
+      var col_row = cell.attr('id').split('-');
+      var col = col_row[0];
+      var row = parseInt(col_row[1]) + this.optionValueRow;
+      var colname = this.colname[col];
+
+      var product_options = JSON.parse($('#product_options' + this.optionRow).val());
+
+      var isUpdated = false;
+      for (var key in product_options) {
+        if (isUpdated) {
+          break;
+        }
+
+        for (var index in product_options[key]['product_option_value']) {
+          if (index == row) {
+            product_options[key]['product_option_value'][index][colname] = value;
+            isUpdated = true;
+            break;
+          }
+        }
+      }
+
+      $('#product_options' + this.optionRow).val(JSON.stringify(product_options));
+    }
+  };  
+}
+
+function render_advanced_option_section(excel, option_row, product_options) {
+
+  html = '<textarea class="hidden" name="may_advanced_option_values[' + option_row + ']" id="product_options' + option_row + '">' + product_options + '</textarea>';
+  html += '<div class="row">'
+  html += ' <div class="col-sm-12 form-inline">'
+  html += ' <label><div class="input-group input-group-sm">';
+  html += '   <span class="input-group-addon">{{ _['Required'] }}</span>';
+  html += '   <select id="input-required' + option_row + '" data-option-row="' + option_row + '" class="form-control input-required">';
+  html += '       <option value="1" selected>{{ _['Yes'] }}</option>';
+  html += '       <option value="0">{{ _['No'] }}</option>';
+  html += '   </select>';
+  html += ' </div></label>';
+  html += ' <label><div class="input-group input-group-sm">';
+  html += '   <span class="input-group-addon">{{ _['Use Product Image for Swatch'] }}</span>';
+  html += '   <select id="input-swatch-image' + option_row + '" data-option-row="' + option_row + '" class="form-control input-swatch-image">';
+  html += '       <option value="1" selected>{{ _['Yes'] }}</option>';
+  html += '       <option value="0">{{ _['No'] }}</option>';
+  html += '   </select>';
+  html += ' </div></label>';
+  html += ' <label><div class="input-group input-group-sm">';
+  html += '   <span class="input-group-addon">{{ _['Show First Option in Product List'] }}</span>';
+  html += '   <select id="input-show-first-option-in-list' + option_row + '" data-option-row="' + option_row + '" class="form-control input-show-first-option-in-list">';
+  html += '       <option value="1" selected>{{ _['Yes'] }}</option>';
+  html += '       <option value="0">{{ _['No'] }}</option>';
+  html += '   </select>';
+  html += ' </div></label>';
+  html += ' <label><div class="input-group input-group-sm">';
+  html += '   <span class="input-group-addon">{{ _['Subtract Stock'] }}</span>';
+  html += '   <select id="input-subtract' + option_row + '" data-option-row="' + option_row + '" class="form-control input-subtract">';
+  html += '       <option value="1" selected>{{ _['Yes'] }}</option>';
+  html += '       <option value="0">{{ _['No'] }}</option>';
+  html += '   </select>';
+  html += '   <span class="input-group-addon alert-info">{{ _['If "Substract Stock" is "No", all options will be "In Stock" even though quantity is empty.'] }}</span>';
+  html += ' </div></label>';
+  html += ' </div>';
+  html += '</div>';
+  $('#tab-may-advanced-option .tab-content').append(html + '<div class="jexcel-wrapper"><div id="tab-option-excel-' + option_row + '"></div></div>');
+  $('#tab-option-excel-' + option_row).jexcel(excel);
+  $('#tab-option-excel-' + option_row).jexcel('updateSettings', {
+    cells: function (cell, col, row) {
+      var colname = excel.colname[col];
+      var row_key = $(cell).closest('tr').find('span.row-identifier').data('row-key');
+      if (excel.readOnly.includes(colname + '-' + row_key)) {
+        $(cell).addClass('readonly');
+      }
+    }
+  });
+
+  product_options = JSON.parse(product_options);
+  
+  $('#may-advanced-option-tabs').append('<div class="may-advanced-option-tab"><label>' + product_options[option_row]['name'] + '</label><button type="button" id="button-edit-combination' + option_row + '" data-option-row="' + option_row + '" class="btn btn-edit-combination btn-primary" data-url="{{ url_combine_options_modal }}"><i class="fa fa-pencil"></i></button>&nbsp;<button type="button" id="button-remove-combination' + option_row + '" data-option-row="' + option_row + '" class="btn btn-remove-combination btn-danger"><i class="fa fa-trash-o"></i></button></div>');
+
+  for (var option_index in product_options) {
+
+    if (product_options[option_index]['required'] == 0) {
+      $('#input-required' + option_row + ' option[value=\'0\']').prop('selected', true);
+    }
+
+    if (product_options[option_index]['swatch_image'] == 0) {
+      $('#input-swatch-image' + option_row + ' option[value=\'0\']').prop('selected', true);
+    }
+
+    if (product_options[option_index]['show_first_option_in_list'] == 0) {
+      $('#input-show-first-option-in-list' + option_row + ' option[value=\'0\']').prop('selected', true);
+    }
+
+    for (var value_index in product_options[option_index]['product_option_value']) {
+      if (product_options[option_index]['product_option_value'][value_index]['subtract'] == 0) {
+        $('#input-subtract' + option_row + ' option[value=\'0\']').prop('selected', true);
+      }
+      break;
+    }
+
+    break;
+  }
+}
+
+var option_row = {{ option_row }};
+var may_option_value_row = {{ may_option_value_row }};
+
+var tree_depth = 0;
+var excel_data;
+var row_key;
+var tree_icon_html;
+var image_html;
+
+{% for product_option in may_advanced_options %}
+tree_depth = {{ product_option['option_value_tree_depth'] }};
+excel_data = init_excel(tree_depth, option_row, may_option_value_row);
+
+{% for product_option_item in product_option['option_value_tree'] %}
+row_key = '{{ product_option_item['row_key']|join('-')|escape|lower }}';
+tree_icon_html = '<span class="row-identifier" data-row-key="' + row_key + '"></span>';
+{% if product_option_item['depth'] > 0 %}
+{% for i in range(0, product_option_item['depth'] - 1) %}
+  tree_icon_html += '<span class="vr-space ' + ({{ product_option_item['parent_sibling_index'][i] }} ? 'invisible' : '') + '"></span>';
+{% endfor %} // endfor i
+{% endif %}
+if ({{ product_option_item['depth'] }} < tree_depth - 1) {
+  {% if may_advanced_options_config['attribute_quantity'] %}
+  excel_data.readOnly.push('quantity-' + row_key);
+  {% endif %}
+  tree_icon_html += '<span class="vr ' + ({{ product_option_item['is_last_sibling'] }} ? 'vr-last' : '') + '"><span class="vr-child"></span><i class="fa fa-minus-square-o" aria-hidden="true"></i></span>';
+} else {
+  tree_icon_html += '<span class="vr-space vr-leap ' + ({{ product_option_item['is_last_sibling'] }} ? 'vr-last' : '') + '"></span>';
+}
+
+image_html = '';
+{% for product_option_item_value_image in product_option_item['value']['image'] %}
+{% if product_option_item_value_image['image'] == '' %}
+image_html += '<div class="option-image-wrapper" data-cindex="{{ loop.index }}"><a href="" id="thumb-option-image-c{{ loop.index }}-' + may_option_value_row + '" data-toggle="image" class="img-thumbnail"><img src="{{ placeholder }}" alt="" title="" data-placeholder="{{ placeholder }}" /></a><input type="hidden" value="" name="may_advanced_option_images[' + option_row + '][' + (option_row + {{ product_option_item['index'] }}) + '][{{ product_option_item['value']['option_value_id'] }}][]" id="input-option-image-c{{ loop.index }}-' + may_option_value_row + '"></div>';
+{% else %}
+image_html += '<div class="option-image-wrapper" data-cindex="{{ loop.index }}"><a href="" id="thumb-option-image-c{{ loop.index }}-' + may_option_value_row + '" data-toggle="image" class="img-thumbnail"><img src="{{ product_option_item_value_image['thumb'] }}" alt="" title="" data-placeholder="{{ product_option_item_value_image['thumb'] }}" /></a><input type="hidden" value="{{ product_option_item_value_image['image'] }}" name="may_advanced_option_images[' + option_row + '][' + (option_row + {{ product_option_item['index'] }}) + '][{{ product_option_item['value']['option_value_id'] }}][]" id="input-option-image-c{{ loop.index }}-' + may_option_value_row + '"></div>';
+{% endif %}
+{% endfor %} // endfor product_option_item_value_image
+
+excel_data.data.push([
+  tree_icon_html,
+  "<span class=\"hint\">" + row_key + "</span>{{ product_option_item['name'] }}",
+  {% if may_advanced_options_config['attribute_model'] %}
+  "{{ product_option_item['value']['model'] }}",
+  {% endif %}
+  {% if may_advanced_options_config['attribute_sku'] %}
+  "{{ product_option_item['value']['sku'] }}",
+  {% endif %}
+  {% if may_advanced_options_config['attribute_upc'] %}
+  "{{ product_option_item['value']['upc'] }}",
+  {% endif %}
+  {% if may_advanced_options_config['attribute_ean'] %}
+  "{{ product_option_item['value']['ean'] }}",
+  {% endif %}
+  {% if may_advanced_options_config['attribute_jan'] %}
+  "{{ product_option_item['value']['jan'] }}",
+  {% endif %}
+  {% if may_advanced_options_config['attribute_isbn'] %}
+  "{{ product_option_item['value']['isbn'] }}",
+  {% endif %}
+  {% if may_advanced_options_config['attribute_mpn'] %}
+  "{{ product_option_item['value']['mpn'] }}",
+  {% endif %}
+  {% if may_advanced_options_config['attribute_location'] %}
+  "{{ product_option_item['value']['location'] }}",
+  {% endif %}
+  {% if may_advanced_options_config['attribute_quantity'] %}
+  (({{ product_option_item['depth'] }} >= tree_depth - 1) && {{ product_option_item['value']['quantity'] }}) ? {{ product_option_item['value']['quantity'] }} : "",
+  {% endif %}
+  {% if may_advanced_options_config['attribute_stock_status'] %}
+  "{{ product_option_item['value']['stock_status_id'] }}",
+  {% endif %}
+  {% if may_advanced_options_config['attribute_price'] %}
+  "{{ product_option_item['value']['price_prefix'] }}",
+  parseFloat("{{ product_option_item['value']['price'] }}") ? parseFloat("{{ product_option_item['value']['price'] }}") : "",
+  {% endif %}
+  {% if may_advanced_options_config['attribute_point'] %}
+  "{{ product_option_item['value']['points_prefix'] }}",
+  parseFloat("{{ product_option_item['value']['points'] }}") ? parseFloat("{{ product_option_item['value']['points'] }}") : "",
+  {% endif %}
+  {% if may_advanced_options_config['attribute_weight'] %}
+  "{{ product_option_item['value']['weight_prefix'] }}",
+  parseFloat("{{ product_option_item['value']['weight'] }}") ? parseFloat("{{ product_option_item['value']['weight'] }}") : "",
+  {% endif %}
+  {% if may_advanced_options_config['attribute_dimension'] %}
+  parseFloat("{{ product_option_item['value']['dimension_l'] }}") ? parseFloat("{{ product_option_item['value']['dimension_l'] }}") : "",
+  parseFloat("{{ product_option_item['value']['dimension_w'] }}") ? parseFloat("{{ product_option_item['value']['dimension_w'] }}") : "",
+  parseFloat("{{ product_option_item['value']['dimension_h'] }}") ? parseFloat("{{ product_option_item['value']['dimension_h'] }}") : "",
+  {% endif %}
+  image_html,
+  "{{ product_option_item['value']['hide'] }}"
+]);
+
+may_option_value_row ++;
+{% endfor %} // endfor product_option_item
+render_advanced_option_section(excel_data, option_row, '{{ product_option['options']|json_encode|escape('js') }}');
+
+option_row ++;
+
+{% endfor %}
+
+$('#form-product ul.nav.nav-tabs a[href="#tab-option"]').closest('li').before('<li><a href="#tab-may-advanced-option" data-toggle="tab">{{ _['Combined Option'] }}</a></li>');
+$('#tab-option').before($('#tab-may-advanced-option'));
+
+function add_new_addvanced_option(item) {
+  var options = item['options'];
+
+  var old_option_row = item['option_row'];
+  var old_product_options = [];
+  if (old_option_row != undefined && old_option_row != -1) {
+    var old_excel_data = $('#tab-option-excel-' + old_option_row).jexcel('getData', false);
+    var old_excel_colname = $('#tab-option-excel-' + old_option_row).jexcel('getConfig', 'colname');
+    $('#tab-option-excel-' + old_option_row + ' span.row-identifier').each(function(row_index, row) {
+      var old_product_option = [];
+      old_excel_colname.forEach(function(colname, col_index) {
+        if (colname == 'image') {
+          old_product_option[colname] = [];
+          $(row).closest('tr').find('.option-image-wrapper').each(function(image_index, image) {
+            old_product_option[colname].push({
+              "thumb": $(this).find('img').attr('src'),
+              "placeholder": $(this).find('img').data('placeholder'),
+              "image": $(this).find('input:hidden').val()
+            });
+          });
+        } else {
+          old_product_option[colname] = old_excel_data[row_index][col_index];
+        }
+      });
+      old_product_option['subtract'] = $('#input-subtract' + old_option_row).val();
+      old_product_options[$(this).data('row-key')] = old_product_option;
+    });
+  }
+
+  $('#button-remove-combination' + old_option_row).trigger('click');
+
+  var product_options = {};
+  var product_option_model_tmp = [];
+  var excel = init_excel(options.length, option_row, may_option_value_row);
+
+  var option_tree = [];
+
+  tree_depth = options.length;
+
+  for (var i=0; i<options.length; i++) {
+    var option_tree_tmp = [];
+    if (i == 0) {
+      options[i]['option_value'].forEach(function(option_value) {
+        option_tree_tmp.push({'depth' : 0, 'option_id' : options[i]['option_id'], 'option_name' : options[i]['name'], 'value' : option_value, 'parent_sibling_index' : [], 'is_last_sibling' : 0});
+      });
+      option_tree_tmp[option_tree_tmp.length - 1]['is_last_sibling'] = 1;
+    } else {
+      option_tree.forEach(function(tree_item) {
+        option_tree_tmp.push(tree_item);
+        if (tree_item.depth == i - 1) {
+          options[i]['option_value'].forEach(function(option_value) {
+            if (tree_item['value']['children'].indexOf(option_value['option_value_id']) != -1) {
+              option_tree_tmp.push({'depth' : i, 'option_id' : options[i]['option_id'], 'option_name' : options[i]['name'], 'value' : option_value, 'parent_sibling_index' : tree_item['parent_sibling_index'].concat(tree_item['is_last_sibling']), 'is_last_sibling' : 0});
+            }
+          });
+          option_tree_tmp[option_tree_tmp.length - 1]['is_last_sibling'] = 1;
+        }
+      });
+    }
+
+    option_tree = option_tree_tmp;
+  }
+
+  var product_option_value = [item['value']];
+  var product_option_value_tooltip = [];
+  var prev_item_depth = -1;
+  var advanced_option_row = option_row;
+  var advanced_option_rows = new Array(options.length).fill(option_row);
+
+  option_tree.forEach(function(tree_item, index) {
+
+    if (prev_item_depth < tree_item['depth']) {
+      product_options[advanced_option_row] = {
+        "product_option_id": "",
+        "name": item['label'],
+        "value": item['label'] + ':::' + product_option_value.slice(0, tree_item['depth'] + 1).join('-'),
+        "option_id": tree_item['option_id'],
+        "type": "may_advanced_option",
+        "required": 1,
+        "swatch_image": item['swatch_image'],
+        "show_first_option_in_list": item['show_first_option_in_list']
+      }
+
+      advanced_option_rows[tree_item['depth']] = advanced_option_row;
+      advanced_option_row ++;
+    }
+
+    prev_item_depth = tree_item['depth'];
+
+    if (product_option_value.length <= tree_item['depth']) {
+      product_option_value.push(tree_item['value']['option_value_id']);
+    } else {
+      product_option_value[tree_item['depth'] + 1] = tree_item['value']['option_value_id'];
+    }
+
+    if (product_option_value_tooltip.length <= tree_item['depth']) {
+      product_option_value_tooltip.push(tree_item['option_name'] + ' : ' + tree_item['value']['name']);
+    } else {
+      product_option_value_tooltip[tree_item['depth']] =  tree_item['option_name'] + ' : ' + tree_item['value']['name'];
+    }
+
+    if (product_option_model_tmp.length <= tree_item['depth']) {
+      product_option_model_tmp.push(tree_item['value']['name']);
+    } else {
+      product_option_model_tmp[tree_item['depth']] = tree_item['value']['name'];
+    }
+
+    var row_key = product_option_model_tmp.slice(0, tree_item['depth'] + 1).join('-').toLowerCase();
+    var tree_icon_html = '<span class="row-identifier" data-row-key="' + row_key + '"></span>';
+    for (var i=0; i<tree_item['depth']; i++) {
+      tree_icon_html += '<span class="vr-space ' + (tree_item['parent_sibling_index'][i] ? 'invisible' : '') + '"></span>';
+    }
+    if (tree_item['depth'] < options.length - 1) {
+      tree_icon_html += '<span class="vr ' + (tree_item['is_last_sibling'] ? 'vr-last' : '') + '"><span class="vr-child"></span><i class="fa fa-minus-square-o" aria-hidden="true"></i></span>';
+    } else {
+      tree_icon_html += '<span class="vr-space vr-leap ' + (tree_item['is_last_sibling'] ? 'vr-last' : '') + '"></span>';
+    }
+
+    if (typeof product_options[advanced_option_rows[tree_item['depth']]]['product_option_value'] === 'undefined') {
+      product_options[advanced_option_rows[tree_item['depth']]]['product_option_value'] = {};
+    }
+
+    {% if may_advanced_options_config['attribute_model'] %}
+    var product_option_model = $('#input-model').val() ? $('#input-model').val().toLowerCase() + '-' + row_key : row_key;
+    {% else %}
+    var product_option_model = "";
+    {% endif %}
+
+    product_options[advanced_option_rows[tree_item['depth']]]['product_option_value'][may_option_value_row] = {
+      "option_value_id": tree_item['value']['option_value_id'],
+      "product_option_value_id": "",
+      "model": product_option_model,
+      "sku": "",
+      "upc": "",
+      "ean": "",
+      "jan": "",
+      "isbn": "",
+      "mpn": "",
+      "location": "",
+      "quantity": 0,
+      "stock_status_id": "",
+      "subtract": 0,
+      "subtract-from": option_row,
+      "price_prefix": "as",
+      "price": "",
+      "points_prefix": "as",
+      "points": "",
+      "weight_prefix": "as",
+      "weight": "",
+      "dimension_l": "",
+      "dimension_w": "",
+      "dimension_h": "",
+      "image": "",
+      "hide": "0"
+    };
+
+    var product_option_tmp = product_options[advanced_option_rows[tree_item['depth']]]['product_option_value'][may_option_value_row];
+    var image_html_tmp = '<div class="option-image-wrapper" data-cindex="1"><a href="" id="thumb-option-image-c1-' + may_option_value_row + '" data-toggle="image" class="img-thumbnail"><img src="{{ placeholder }}" alt="" title="" data-placeholder="{{ placeholder }}" /></a><input type="hidden" value="" name="may_advanced_option_images[' + option_row + '][' + advanced_option_rows[tree_item['depth']] + '][' + tree_item['value']['option_value_id'] + '][]" id="input-option-image-c1-' + may_option_value_row + '"></div>';
+
+    if (old_product_options[row_key] !== undefined) {
+      product_option_tmp['model'] = (old_product_options[row_key]['model'] !== undefined) ? old_product_options[row_key]['model'] : product_option_tmp['model'];
+      product_option_tmp['sku'] = (old_product_options[row_key]['sku'] !== undefined) ? old_product_options[row_key]['sku'] : product_option_tmp['sku'];
+      product_option_tmp['upc'] = (old_product_options[row_key]['upc'] !== undefined) ? old_product_options[row_key]['upc'] : product_option_tmp['upc'];
+      product_option_tmp['ean'] = (old_product_options[row_key]['ean'] !== undefined) ? old_product_options[row_key]['ean'] : product_option_tmp['ean'];
+      product_option_tmp['jan'] = (old_product_options[row_key]['jan'] !== undefined) ? old_product_options[row_key]['jan'] : product_option_tmp['jan'];
+      product_option_tmp['isbn'] = (old_product_options[row_key]['isbn'] !== undefined) ? old_product_options[row_key]['isbn'] : product_option_tmp['isbn'];
+      product_option_tmp['mpn'] = (old_product_options[row_key]['mpn'] !== undefined) ? old_product_options[row_key]['mpn'] : product_option_tmp['mpn'];
+      product_option_tmp['location'] = (old_product_options[row_key]['location'] !== undefined) ? old_product_options[row_key]['location'] : product_option_tmp['location'];
+      product_option_tmp['quantity'] = (old_product_options[row_key]['quantity'] !== undefined) ? old_product_options[row_key]['quantity'] : product_option_tmp['quantity'];
+      product_option_tmp['stock_status_id'] = (old_product_options[row_key]['stock_status_id'] !== undefined) ? old_product_options[row_key]['stock_status_id'] : product_option_tmp['stock_status_id'];
+      product_option_tmp['subtract'] = (old_product_options[row_key]['subtract'] !== undefined) ? old_product_options[row_key]['subtract'] : product_option_tmp['subtract'];
+      product_option_tmp['price_prefix'] = (old_product_options[row_key]['price_prefix'] !== undefined) ? old_product_options[row_key]['price_prefix'] : product_option_tmp['price_prefix'];
+      product_option_tmp['price'] = (old_product_options[row_key]['price'] !== undefined) ? old_product_options[row_key]['price'] : product_option_tmp['price'];
+      product_option_tmp['points_prefix'] = (old_product_options[row_key]['points_prefix'] !== undefined) ? old_product_options[row_key]['points_prefix'] : product_option_tmp['points_prefix'];
+      product_option_tmp['points'] = (old_product_options[row_key]['points'] !== undefined) ? old_product_options[row_key]['points'] : product_option_tmp['points'];
+      product_option_tmp['weight_prefix'] = (old_product_options[row_key]['weight_prefix'] !== undefined) ? old_product_options[row_key]['weight_prefix'] : product_option_tmp['weight_prefix'];
+      product_option_tmp['weight'] = (old_product_options[row_key]['weight'] !== undefined) ? old_product_options[row_key]['weight'] : product_option_tmp['weight'];
+      product_option_tmp['dimension_l'] = (old_product_options[row_key]['dimension_l'] !== undefined) ? old_product_options[row_key]['dimension_l'] : product_option_tmp['dimension_l'];
+      product_option_tmp['dimension_w'] = (old_product_options[row_key]['dimension_w'] !== undefined) ? old_product_options[row_key]['dimension_w'] : product_option_tmp['dimension_w'];
+      product_option_tmp['dimension_h'] = (old_product_options[row_key]['dimension_h'] !== undefined) ? old_product_options[row_key]['dimension_h'] : product_option_tmp['dimension_h'];      
+      product_option_tmp['hide'] = (old_product_options[row_key]['hide'] !== undefined) ? old_product_options[row_key]['hide'] : product_option_tmp['hide'];
+
+      if (old_product_options[row_key]['image'] !== undefined && old_product_options[row_key]['image'].length) {
+        image_html_tmp = "";
+        old_product_options[row_key]['image'].forEach(function(image, image_index) {
+          image_html_tmp += '<div class="option-image-wrapper" data-cindex="' + (image_index + 1) + '"><a href="" id="thumb-option-image-c' + (image_index + 1) + '-' + may_option_value_row + '" data-toggle="image" class="img-thumbnail"><img src="' + image['thumb'] + '" alt="" title="" data-placeholder="' + image['placeholder'] + '" /></a><input type="hidden" value="' + image["image"] + '" name="may_advanced_option_images[' + option_row + '][' + advanced_option_rows[tree_item['depth']] + '][' + tree_item['value']['option_value_id'] + '][]" id="input-option-image-c' + (image_index + 1) + '-' + may_option_value_row + '"></div>';
+        });
+      }
+    }
+
+    if (tree_item['depth'] < options.length - 1) {
+      excel.readOnly.push('quantity-' + row_key);
+    }
+
+    excel.data.push([
+      tree_icon_html,
+      '<span class="hint">' + row_key + '</span>' + tree_item['value']['name'],
+      {% if may_advanced_options_config['attribute_model'] %}
+      product_option_tmp['model'],
+      {% endif %}
+      {% if may_advanced_options_config['attribute_sku'] %}
+      product_option_tmp['sku'],
+      {% endif %}
+      {% if may_advanced_options_config['attribute_upc'] %}
+      product_option_tmp['upc'],
+      {% endif %}
+      {% if may_advanced_options_config['attribute_ean'] %}
+      product_option_tmp['ean'],
+      {% endif %}
+      {% if may_advanced_options_config['attribute_jan'] %}
+      product_option_tmp['jan'],
+      {% endif %}
+      {% if may_advanced_options_config['attribute_isbn'] %}
+      product_option_tmp['isbn'],
+      {% endif %}
+      {% if may_advanced_options_config['attribute_mpn'] %}
+      product_option_tmp['mpn'],
+      {% endif %}
+      {% if may_advanced_options_config['attribute_location'] %}
+      product_option_tmp['location'],
+      {% endif %}
+      {% if may_advanced_options_config['attribute_quantity'] %}
+      product_option_tmp['quantity'] ? product_option_tmp['quantity'] : '',
+      {% endif %}
+      {% if may_advanced_options_config['attribute_stock_status'] %}
+      product_option_tmp['stock_status_id'] ? product_option_tmp['stock_status_id'] : '',
+      {% endif %}
+      {% if may_advanced_options_config['attribute_price'] %}
+      product_option_tmp['price_prefix'],
+      product_option_tmp['price'],
+      {% endif %}
+      {% if may_advanced_options_config['attribute_point'] %}
+      product_option_tmp['points_prefix'],
+      product_option_tmp['points'],
+      {% endif %}
+      {% if may_advanced_options_config['attribute_weight'] %}
+      product_option_tmp['weight_prefix'],
+      product_option_tmp['weight'],
+      {% endif %}
+      {% if may_advanced_options_config['attribute_dimension'] %}
+      product_option_tmp['dimension_l'],
+      product_option_tmp['dimension_w'],
+      product_option_tmp['dimension_h'],
+      {% endif %}
+      image_html_tmp,
+      product_option_tmp['hide'],
+    ]);
+
+    may_option_value_row ++;
+  });
+
+  render_advanced_option_section(excel, option_row, JSON.stringify(product_options));
+/*
+  $('#option > li:last-child').before('<li><a class="may-advanced-option-tab" href="#tab-option' + option_row + '" data-toggle="tab"><i class="fa fa-minus-circle" onclick="$(\'a[href=\\\'#tab-option' + option_row + '\\\']\').parent().remove(); $(\'#tab-option' + option_row + ' .jexcel\').jexcel(\'destroy\'); $(\'#tab-option' + option_row + '\').remove(); $(\'#option a:first\').tab(\'show\');"></i>' + item['label'] + '<i class="fa fa-chain pull-right"></i></a></li>');
+  $('#option a[href=\'#tab-option' + option_row + '\']').tab('show');
+*/
+  option_row = advanced_option_row;
+}
+
+$('input[name=\'may_advanced_option\']').autocomplete({
+  'source': function(request, response) {
+    $.ajax({
+      url: 'index.php?route=extension/may/advanced_options/template/autocomplete&user_token={{ user_token }}&filter_name=' +  encodeURIComponent(request),
+      dataType: 'json',
+      success: function(json) {
+        response($.map(json, function(item) {
+          return {
+            value: item['value'],
+            label: item['name'],
+            options: item['options'],
+            swatch_image: item['swatch_image'],
+            show_first_option_in_list: item['show_first_option_in_list']
+          }
+        }));
+      }
+    });
+  },
+  'select': function(item) {
+    if ($('#may-advanced-option-content').html() != '') {
+      $('#modal-may-advanced-option-exist-alert').modal('show');
+      return;
+    }
+
+    add_new_addvanced_option(item);
+  }
+});
+
+$(document).delegate('select.input-required', 'change', function() {
+  var product_options = JSON.parse($('#product_options' + $(this).data('option-row')).val());
+  for (var key in product_options) {
+    product_options[key]['required'] = $(this).val();
+  }
+  $('#product_options' + $(this).data('option-row')).val(JSON.stringify(product_options));
+});
+
+$(document).delegate('select.input-swatch-image', 'change', function() {
+  var product_options = JSON.parse($('#product_options' + $(this).data('option-row')).val());
+  for (var key in product_options) {
+    product_options[key]['swatch_image'] = $(this).val();
+  }
+  $('#product_options' + $(this).data('option-row')).val(JSON.stringify(product_options));
+});
+
+$(document).delegate('select.input-show-first-option-in-list', 'change', function() {
+  var product_options = JSON.parse($('#product_options' + $(this).data('option-row')).val());
+  for (var key in product_options) {
+    product_options[key]['show_first_option_in_list'] = $(this).val();
+  }
+  $('#product_options' + $(this).data('option-row')).val(JSON.stringify(product_options));
+});
+
+$(document).delegate('select.input-subtract', 'change', function() {
+  var product_options = JSON.parse($('#product_options' + $(this).data('option-row')).val());
+  for (var key in product_options) {
+    for (var index in product_options[key]['product_option_value']) {
+      product_options[key]['product_option_value'][index]['subtract'] = $(this).val();
+    }
+  }
+  $('#product_options' + $(this).data('option-row')).val(JSON.stringify(product_options));
+});
+
+$(document).delegate('tbody td.c0 i.fa', 'click', function() {
+  var $table = $(this).closest('table');
+  var $row = $(this).closest('tr');
+  var $row_identifier = $row.find('span.row-identifier');
+  var children = [];
+  $table.find('span.row-identifier[data-row-key^=\'' + $row_identifier.data('row-key') + '-\']').each(function() {
+    children.push($(this).closest('tr').get(0));
+  });
+
+  $table.find('tr.collapsed span.row-identifier[data-row-key^=\'' + $row_identifier.data('row-key') + '-\']').each(function() {
+    $table.find('tr span.row-identifier[data-row-key^=\'' + $(this).data('row-key') + '-\']').each(function() {
+      var index = children.indexOf($(this).closest('tr').get(0));
+      if (index !== -1) {
+        children.splice(index, 1);
+      }
+    });
+  });
+
+  if ($row.hasClass('collapsed')) {
+    $(children).each(function() {
+      $(this).fadeIn(100);
+    })
+    $row.removeClass('collapsed');
+    $(this).removeClass('fa-plus-square-o');
+    $(this).addClass('fa-minus-square-o');
+  } else {
+    $(children).each(function() {
+      $(this).fadeOut(100);
+    })
+    $row.addClass('collapsed');
+    $(this).removeClass('fa-minus-square-o');
+    $(this).addClass('fa-plus-square-o');    
+  }
+});
+
+$(document).delegate('i.expand-all', 'click', function() {
+  var $table = $(this).closest('.jexcel').find('.jexcel-content table');
+  var children = $table.find('tbody i.fa-plus-square-o').toArray().reverse();
+  $(children).trigger('click');
+});
+
+$(document).delegate('i.collapse-all', 'click', function() {
+  var $table = $(this).closest('.jexcel').find('.jexcel-content table');
+  var children = $table.find('tbody i.fa-minus-square-o').toArray().reverse();
+  $(children).trigger('click');
+});
+
+$(document).delegate('.jexcel > div > table > tbody > tr > td > input[type=checkbox]', 'change', function() {
+  var jexcel = $(this).closest('.jexcel');
+  var cell = $(this).parent();
+  jexcel.jexcel('setValue', cell, $(this).is(':checked'));
+});
+
+$(document).delegate('#zoom-images', 'click', function() {
+  var $table = $(this).closest('.jexcel').find('.jexcel-content table');
+  $table.toggleClass('zoom');
+
+  $(this).toggleClass('fa-search-plus');
+  $(this).toggleClass('fa-search-minus');
+});
+
+$('#option a:first').tab('show');
+
+// Option Value Images Management
+var $may_advanced_option_value_image_target = false;
+$(document).delegate('a[data-toggle=\'image\']', 'click', function() {
+  if ($(this).parent().hasClass('option-image-wrapper') && $(this).attr('aria-describedby') == undefined && $(this).parent().find('input').val() == '') {
+    $may_advanced_option_value_image_target = $(this).closest('td');
+  } else {
+    $may_advanced_option_value_image_target = false;
+  }
+});
+$(document).delegate('#modal-image a.thumbnail', 'click', function() {
+  if (!$may_advanced_option_value_image_target) {
+    return;
+  }
+
+  var next_index = parseInt($may_advanced_option_value_image_target.find('.option-image-wrapper').last().data('cindex')) + 1;
+  var orig_index = parseInt($may_advanced_option_value_image_target.find('.option-image-wrapper').eq(0).data('cindex'));
+  var $option_image_wrapper = $may_advanced_option_value_image_target.find('.option-image-wrapper').eq(0).clone();
+  $option_image_wrapper.attr('data-cindex', next_index);
+  $option_image_wrapper.find('a.img-thumbnail').attr('id', $option_image_wrapper.find('a.img-thumbnail').attr('id').replace('c' + orig_index, 'c' + next_index));
+  $option_image_wrapper.find('a.img-thumbnail img').attr('src', '{{ placeholder }}');
+  $option_image_wrapper.find('input').attr('id', $option_image_wrapper.find('input').attr('id').replace('c' + orig_index, 'c' + next_index));
+  $option_image_wrapper.find('input').val('');
+  $may_advanced_option_value_image_target.append($option_image_wrapper);
+  
+  $may_advanced_option_value_image_target = false;
+});
+$(document).delegate('#button-clear', 'click', function() {
+  if (!$may_advanced_option_value_image_target && $(this).closest('td').find('.option-image-wrapper').length > 1) {
+    $(this).closest('.option-image-wrapper').remove();
+  }
+
+  $may_advanced_option_value_image_target = false;
+});
+
+$(document).delegate('#button-add-new-combination', 'click', function() {
+  if ($('#may-advanced-option-content').html() != '') {
+    $('#modal-may-advanced-option-exist-alert').modal('show');
+    return;
+  }
+
+  if ($('#modal-add-new').length) {
+    $('#modal-add-new').modal('show');
+    return;
+  }
+
+  $.ajax({
+    url: $(this).data('url'),
+    type: 'post',
+    dataType: 'html',
+    beforeSend: function() {
+      $('#button-add-new-combination').button('loading');
+    },
+    complete: function() {
+      $('#button-add-new-combination').button('reset');
+    },
+    success: function(html) {
+      $('body').append(html);
+      $('#modal-add-new').modal('show');
+    },
+    error: function(xhr, ajaxOptions, thrownError) {
+      alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+    }
+  });  
+});
+
+$(document).delegate('.btn-remove-combination', 'click', function() {
+  var option_row = $(this).data('option-row');
+  $(this).closest('.may-advanced-option-tab').remove();
+  $('#tab-option-excel-' + option_row).jexcel('destroy'); 
+  $('#may-advanced-option-content').html(''); 
+});
+
+$(document).delegate('.btn-edit-combination', 'click', function() {
+  var option_row = $(this).data('option-row');
+
+  if ($('#modal-add-new').length) {
+    $('#modal-add-new').data('option-row', option_row);
+    $('#modal-add-new').modal('show');
+    return;
+  }
+
+  var product_options = JSON.parse($('#product_options' + option_row).val());
+  $.ajax({
+    url: $(this).data('url'),
+    type: 'post',
+    data: product_options,
+    dataType: 'html',
+    success: function(html) {
+      $('body').append(html);
+      $('#modal-add-new').data('option-row', option_row);
+      $('#modal-add-new').modal('show');
+    },
+    error: function(xhr, ajaxOptions, thrownError) {
+      alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+    }
+  });  
+});
+//--></script>

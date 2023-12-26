@@ -1,0 +1,109 @@
+{% if ( ro_installed ?? false ) %}
+				
+	{# // << Product Image Option DropDown compatibility #}
+	{% if ( text_select_your ?? false) and (options ?? false) and (options is iterable) %}
+		<script>
+			var ro_piodd_select_texts = [];
+			{% for option in options %}
+				{% if option.type == 'image' %}
+					ro_piodd_select_texts[{{ option.product_option_id }}] = '{{ text_select_your ~ option.name }}';
+				{% endif %}
+			{% endfor %}
+		</script>	
+	{% endif %}
+	{# // >> Product Image Option DropDown compatibility #}
+
+	{# // << the common part and the part for option reset #}
+	{% if ( ro_data ?? false ) or ( (ro_settings ?? false) and (ro_settings.show_clear_options ?? false) ) %} 
+		<style>
+			.ro_option_disabled { color: #e1e1e1!important; }
+		</style>
+	{% endif %}
+	{# // >> the common part and the part for option reset #}
+
+		
+	{% if ( ro_data ?? false ) or (ro_settings.show_clear_options ?? false) %}
+		<script type="text/javascript">
+			
+		(function(){
+		
+			var ro_texts = {};
+			ro_texts['text_ro_clear_options'] 		= '{{ (text_ro_clear_options ?? false) ? text_ro_clear_options|e : '' }}';
+			ro_texts['entry_stock_control_error'] = '{{ (entry_stock_control_error ?? false) ? entry_stock_control_error|e : '' }}';
+			ro_texts['text_stock'] 								= '{{ (text_stock ?? false) ? text_stock|e : '' }}';
+			ro_texts['stock'] 										= '{{ (stock ?? false) ? stock|e : '' }}';
+			ro_texts['stock_status'] 							= '{{ (stock_status ?? false) ? stock_status|e : '' }}';
+			ro_texts['product_model'] 						= '{{ (model ?? false) ? model|e : ro_product_model|e }}';
+		
+			var ro_params = {};
+			ro_params['ro_settings'] 		= {{ ro_settings|json_encode }};
+			ro_params['ro_texts'] 			= ro_texts;
+			ro_params['product_id']			= {{ ro_product_id }};
+			ro_params['ro_data'] 				= {{ ro_data|json_encode }};
+			ro_params['ro_theme_name'] 	= '{{ ro_theme_name }}';
+			{% if ( ros_to_select ?? false ) %}
+				ro_params['ros_to_select'] = {{ ros_to_select|json_encode }};
+			{% elseif ( ro_filter_name ?? false ) %}
+				ro_params['filter_name'] = '{{ ro_filter_name }}';
+			{% elseif ( ro_search ?? false ) %}
+				ro_params['filter_name'] = '{{ ro_search }}';
+			{% endif %}
+			{% if ( poip_ov ?? false) %}
+				ro_params['poip_ov'] = '{{ poip_ov }}';
+			{% endif %}
+			
+			var $container_of_options = $('body');
+			if ( typeof(ro_getProductContainer) == 'function' ) {
+				$container_of_options = ro_getProductContainer({{ ro_product_id }});
+			}
+			
+			var ro_instance = $container_of_options.liveopencart_RelatedOptions(ro_params);
+			
+			ro_instance.common_fn = ro_getCommonFunctions(ro_instance);
+			if ( typeof(ro_setThemeCommonFunctions) == 'function' ) {
+				ro_setThemeCommonFunctions(ro_instance);
+			}
+			ro_instance.common_fn.initBasic();
+			
+			var spec_fn = ro_getSpecificFunctions(ro_instance);
+				
+			{# // << the part when the product has related options #}
+			{% if ( ro_data ?? 0) %} 
+			
+				
+			
+				// to custom
+				ro_instance.use_block_options = ($('a[id^=block-option][option-value]').length || $('a[id^=block-image-option][option-value]').length || $('a[id^=color-][optval]').length);
+				
+				ro_instance.bind('init_after.ro', spec_fn.event_init_after);
+				ro_instance.bind('setAccessibleOptionValues_select_after.ro', spec_fn.event_setAccessibleOptionValues_select_after);
+				ro_instance.bind('setAccessibleOptionValues_radioUncheck_after.ro', spec_fn.event_setAccessibleOptionValues_radioUncheck_after);
+				ro_instance.bind('setAccessibleOptionValues_radioToggle_after.ro', spec_fn.event_setAccessibleOptionValues_radioToggle_after);
+				ro_instance.bind('setAccessibleOptionValues_radioEnableDisable_after.ro', spec_fn.event_setAccessibleOptionValues_radioEnableDisable_after);
+				ro_instance.bind('setSelectedCombination_withAccessControl_after.ro', spec_fn.event_setSelectedCombination_withAccessControl_after);
+				ro_instance.bind('controlAccessToValuesOfAllOptions_after.ro', spec_fn.event_controlAccessToValuesOfAllOptions_after);
+				
+				ro_instance.custom_radioToggle = spec_fn.custom_radioToggle;
+				ro_instance.custom_radioEnableDisable = spec_fn.custom_radioEnableDisable;
+				
+				ro_instance.sstore_setOptionsStyles = spec_fn.sstore_setOptionsStyles;
+				
+				
+				
+			{% endif %}
+			{# // >> the part when the product has related options #}
+			
+			ro_instance.bind('setOptionValue_after.ro', spec_fn.event_setOptionValue_after);
+			
+			ro_instance.spec_fn = spec_fn;
+			if ( typeof(ro_setThemeSpecificFunctions) == 'function' ) {
+				ro_setThemeSpecificFunctions(ro_instance);
+			}
+			
+			ro_instance.initRO();
+		
+		})();
+		
+		</script>
+	{% endif %}
+{% endif %}

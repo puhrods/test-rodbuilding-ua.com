@@ -1,0 +1,115 @@
+<div class="kit-item free-product-template" data-empty-item="1" data-item-position="{{ item_position }}"  data-item-position-free="-1" data-is-main-product-position="" data-item-mode="">
+    <!--    -->{# if($item_product['is_free_product']) $input_name = 'kit_items_free'; else $input_name = 'kit_items'; #}
+    <div class="kit-item-product hidden" style="padding: 0;position:relative;" data-item-position="{{ item_position }}" data-item-position-free="-1" data-item-product-position="" data-product-id="-1" >
+        <input type="hidden" name="kit_items[{{ item_position }}][product_id]" data-id="input-product-id" value="-1">
+        <input type="hidden" name="kit_items[{{ item_position }}][item_position]" data-id="input-item-position" value="{{ item_position }}">
+        <input type="hidden" name="kit_items[{{ item_position }}][item_position_free]" data-id="input-item-position-free" value="-1">
+        <input type="hidden" name="kit_items[{{ item_position }}][quantity]" id="input-for-quantity" value="">
+        <input type="hidden" name="kit_items[{{ item_position }}][quantity_edit]" data-id="input-for-quantity-edit" value="1">
+        <input type="hidden" name="kit_items[{{ item_position }}][empty_mode_item_is_empty]" data-id="input-is-item-is-empty" value="">
+        <input type="hidden" name="kit_items[{{ item_position }}][is_free_product]" data-id="input-is-free-product" value="1">
+        <input type="hidden" name="kit_items[{{ item_position }}][free_product_in_kit]" data-id="input-free-product-in-kit" value="0">
+
+        <div class="be-product-thumb transition" style="border: none; margin-bottom: 0; overflow: visible;"
+                {% if (product_click_mode == 'default') %}
+                    onclick="bundle_expert_form.set_active_product(this);"
+                {% endif %}
+                {% if (product_click_mode == 'none') %}
+                    onclick=""
+                {% endif %}
+        >
+
+            <div class="be-product-thumb-overlay">
+            </div>
+
+            <i class="fa fa-exclamation-circle alert-danger alert-icon"></i>
+
+
+            <div class="be-image" style="text-align: center">
+                <a>
+                    <div style="display: inline-block; position: relative;">
+                        <img src="" alt="" title="" class="img-responsive" />
+                        <div class="active-item-underline"></div>
+
+                        <div class="item-quantity hidden" style=""></div>
+
+                        <div class="item-price-discount hidden" style=""></div>
+
+                    </div>
+                </a>
+
+
+            </div>
+            <div class="be-caption" style="min-height: auto; padding: 0 8px; text-align: center;">
+                <h4 class="be-product-title"><a style="text-overflow: ellipsis;">&nbsp;</a></h4>
+                <p class="be-price" style="">
+                    <span class="be-price-new"></span> <span class="be-price-old"></span>
+                </p>
+            </div>
+
+
+            <div class="product-options-values" style="display: none">
+            </div>
+
+            <div class="col-xs-12 col-sm-2 text-left hidden" style="padding: 0 8px;">
+                <div class="attribute-table-container" style="margin-top: 6px;">
+                </div>
+            </div>
+
+        </div>
+
+
+    </div>
+
+    <!--    -->{# if($item_product['item_empty_mode']['enable']){ #}
+    {% if (1) %}
+        <div class="empty-kit-item-product" style="padding: 0;position:relative;" data-item-position="{{ item_position }}" data-item-product-position="" data-product-id="" >
+            <div class="be-product-thumb transition" style="border: none; margin-bottom: 0; overflow: visible;"
+                    {% if (product_click_mode == 'default') %}
+                        onclick="bundle_expert_form.set_active_product($(this).closest('.kit-item').find('.kit-item-product .be-product-thumb'));"
+                    {% endif %}
+                    {% if (product_click_mode == 'none') %}
+                        onclick=""
+                    {% endif %}
+            >
+                <div class="be-product-thumb-overlay">
+                </div>
+                <div class="be-image" style="text-align: center">
+                    <a>
+                        <div style="display: inline-block; position: relative;">
+                            <img class="bundle-expert-transparent img-responsive" src="{{ empty_image_name }}" alt="{{ '' }}" title="{{ '' }}"  />
+                            <div class="active-item-underline"></div>
+                        </div>
+                    </a>
+
+
+                </div>
+
+                <div class="be-caption" style="min-height: auto; padding: 0 8px; text-align: center;">
+                    <h4 class="be-product-title"><a style="text-overflow: ellipsis;">{{ free_item_title }}</a></h4>
+                    <p class="be-price" style="margin: 0">
+                        {{ text_item_not_selected }}
+                    </p>
+                </div>
+
+                <div class=" selectable-item-container text-xs-center" style="text-align:center;margin-top: 0px;margin-bottom: 1px">
+                    <span class="selectable-item " style="padding: 4px 8px; background-color: #ececec; text-transform: uppercase"
+                          onclick="bundle_expert_form.on_click_select_item_product_button(this);event.stopPropagation()">
+                        {{ text_add_product }}
+                    </span>
+                </div>
+
+                <div class="col-xs-12 col-sm-2 text-left hidden" style="padding: 0 8px;">
+                    <div class="attribute-table-container" style="margin-top: 6px;">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="plus-symbol {% if (last_item) %} {{ 'hidden' }}{% endif %}" style="">
+        <i class="fa fa-plus" style="    font-size: 20px;"></i>
+    </div>
+
+</div>

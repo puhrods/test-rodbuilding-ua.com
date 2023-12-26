@@ -1,0 +1,53 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-opencart" aria-hidden="true"></i> {{ text_abouts }}</h3>
+        <button form="help_modals" class="pull-right hm-info btn btn-warning btn-sm" data-toggle="modal" data-target="#Abouts_Form_Modal">
+            <i class="fa fa-key" aria-hidden="true"></i> - {{ help_name }} 
+        </button>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-sm-6">
+                <legend class="text-danger">{{ description_name }}</legend>                
+                <p class="bg-info" style="overflow: auto;">
+                  <img src="https://download.hyperlab.team/image/hdp_ru.png" style="float:left;max-width:300px;margin:0 10px 10px 0;" />
+                  {{ description_start }}
+                </p>
+            </div>
+            <div class="col-sm-6">
+                <legend class="text-danger">{{ activation_key_name }}</legend>
+                <div class="input-group">
+                    <input type="text" name="discount_variant[license_key]" class="form-control" value="{{ license_key }}" placeholder="{{ name_key }}">
+          <span class="input-group-btn">
+              <button onclick='Apply();' class="btn btn-success" type="button">
+                  <i class="fa fa-check-square-o" aria-hidden="true"></i> {{ save_key }} 
+              </button>
+          </span>
+                </div>
+                <legend class="text-danger">{{ description_warning }}</legend>
+                <p class="bg-danger">{{ description_warning_start }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Start Modal About -->
+<div class="modal fade" id="Abouts_Form_Modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times" aria-hidden="true"></i></button>
+                <h4 class="modal-title" id="myModalLabel"><i class="fa fa-cogs"></i> {{ help_name_abouts }}</h4>
+            </div>
+            <div class="modal-body">
+                <legend>{{ help_text }}</legend>
+                <div class="helper-info">{{ help_list }}</div>
+                <div class="text-center">{{ help_warning }}</div>
+                <div class="helper-info">{{ help_end }}</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal"> {{ help_ok }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END Modal About -->

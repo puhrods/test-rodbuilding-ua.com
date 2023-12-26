@@ -1,0 +1,245 @@
+<script type="text/javascript">
+$.fn.mayAdvancedOptions = function(config, updateProcessor) {
+    config = $.extend({
+        prices: {
+            price: 0,
+            special: 0,
+            base: 0
+        },
+
+        point: 0,
+        weight: 0,
+
+        actionButtonSelector: ['#button-cart'],
+        quantityErrorBefore: $('input[name="quantity"]'),
+        quantityErrorMessage: 'This product is not available in the desired quantity or not in stock!',
+
+        preselect: {
+            id: 0,
+            wait: 0
+        }
+    }, config);
+
+    // Public
+    this.quantity = -1;
+
+    var $me = this;
+
+    var optionSelector = '.may-advanced-option';
+
+    var getLevelById = function(id) {
+        return (typeof id == 'string') ? id.split('-').length : 1;
+    }
+
+    var optionsWrapper = function(level, visibleOnly = false) {
+        return $me.find('div' + (visibleOnly ? '.visible' : '') + '.may-advanced-option-level-' + level);
+    }
+
+    var childOptionsWrapper = function(id, childLevel) {
+        return $me.find('div.may-advanced-option-level-' + childLevel + '[data-advanced-option-id^=\'' + id + '\']');
+    }
+
+    var selectedOptionByWrapper = function($wrapper) {
+        var $selectedOption;
+
+        if ($wrapper.hasClass('type-select')) {
+            $selectedOption = $wrapper.find(optionSelector + ' option:selected');
+            if (!$selectedOption.length || $selectedOption.val() == "") {
+                $selectedOption = $wrapper.find(optionSelector + ' option').eq(0);
+                $selectedOption.prop('selected', true);
+            }
+
+            $me.find(optionSelector + ' option[data-option-value-id="' + $selectedOption.data('option-value-id') + '"]').prop('selected', true);
+        } else {
+            $selectedOption = $wrapper.find(optionSelector + ':checked');
+            if (!$selectedOption.length) {
+                $selectedOption = $wrapper.find(optionSelector + ':first');
+                $selectedOption.prop('checked', true);
+            }
+
+            $me.find(optionSelector + '[data-option-value-id="' + $selectedOption.data('option-value-id') + '"]').prop('checked', true);
+        }
+
+        return $selectedOption;
+    }
+
+    var refreshChildOptions = function(id) {
+        var level = getLevelById(id);
+
+        if (!childOptionsWrapper(id, (level + 1)).length) {
+            return;
+        }
+
+        while (childOptionsWrapper(id, (level + 1)).length) {
+            var $visibleOptionsWrapper = optionsWrapper(level, true);
+            if (!$visibleOptionsWrapper.length) {
+                break;
+            }
+
+            $selectedOption = selectedOptionByWrapper($visibleOptionsWrapper);
+
+            if (typeof $selectedOption.data('advanced-option-id') !== 'undefined') {
+                visibleId = $selectedOption.data('advanced-option-id') + '-' + $selectedOption.data('option-value-id');
+            }
+
+            optionsWrapper(level + 1, false).each(function() {
+                if ($(this).data('advanced-option-id') == visibleId) {
+                    $(this).find(optionSelector).prop('disabled', false);
+
+                    $(this).removeClass('hidden');
+                    $(this).addClass('visible');
+
+                    $selectedOption = selectedOptionByWrapper($(this));
+
+                    if ($selectedOption.length) {
+                        $(this).find('input[type=\'hidden\']').val($selectedOption.val());
+                    } else {
+                        $(this).find('input[type=\'hidden\']').val(0);
+                    }
+                } else {
+                    $(this).find(optionSelector).prop('disabled', true);
+                    $(this).find('input[type=\'hidden\']').val(-1);
+                    $(this).removeClass('visible');
+                    $(this).addClass('hidden');
+                }
+            });
+
+            level ++;
+        }
+    }
+
+    var reloadOptionValues = function() {
+        var isUpdated = {
+            model: false,
+            sku: false,
+            upc: false,
+            ean: false,
+            jan: false,
+            isbn: false,
+            mpn: false,
+            location: false,
+            dimension: false,
+            image: false,
+            quantity: false
+        };
+
+        var prices = $.extend({}, config.prices);
+        var point = config.point;
+        var weight = config.weight;
+
+        $me.find('div.visible').get().reverse().forEach(function(wrapper, wrapperIndex) {
+            var $selectedOption = selectedOptionByWrapper($(wrapper));
+
+            if (!$selectedOption.length || $selectedOption.data('option-value') == undefined) {
+                return;
+            }
+
+            var option = $selectedOption.data('option-value');
+            if (typeof option == 'string') {
+			    option = JSON.parse(option);
+            }
+
+            if (updateProcessor.hasOwnProperty('model') && !isUpdated.model) isUpdated.model = updateProcessor.model(option);
+            if (updateProcessor.hasOwnProperty('sku') && !isUpdated.sku) isUpdated.sku = updateProcessor.sku(option);
+            if (updateProcessor.hasOwnProperty('upc') && !isUpdated.upc) isUpdated.upc = updateProcessor.upc(option);
+            if (updateProcessor.hasOwnProperty('ean') && !isUpdated.ean) isUpdated.ean = updateProcessor.ean(option);
+            if (updateProcessor.hasOwnProperty('jan') && !isUpdated.jan) isUpdated.jan = updateProcessor.jan(option);
+            if (updateProcessor.hasOwnProperty('isbn') && !isUpdated.isbn) isUpdated.isbn = updateProcessor.isbn(option);
+            if (updateProcessor.hasOwnProperty('mpn') && !isUpdated.mpn) isUpdated.mpn = updateProcessor.mpn(option);
+            if (updateProcessor.hasOwnProperty('location') && !isUpdated.location) isUpdated.location = updateProcessor.location(option);
+            if (updateProcessor.hasOwnProperty('dimension') && !isUpdated.dimension) isUpdated.dimension = updateProcessor.dimension(option);
+            if (updateProcessor.hasOwnProperty('image') && !isUpdated.image) isUpdated.image = updateProcessor.image(option);
+            if (updateProcessor.hasOwnProperty('quantity') && !isUpdated.quantity) isUpdated.quantity = updateProcessor.quantity(option, $me);
+
+            // Update Labels
+            var optionLabel = $selectedOption.data('label');
+            if (optionLabel != undefined && $selectedOption.closest('.type-swatches').length) {
+                $selectedOption.closest('.type-swatches').find('span.selected-option-label').html(optionLabel != "" ? "- " + optionLabel : "");
+            }
+
+            // Summing up Price
+            if (option.price_prefix == "+") {
+                if (option.price) {
+                    prices.price += MayHelper.Price.toNumber(option.price);
+                    prices.special += MayHelper.Price.toNumber(option.price);
+                }
+                if (option.base_price) {
+                    prices.base += MayHelper.Price.toNumber(option.base_price);
+                }
+            } else if (option.price_prefix == "-") {
+                if (option.price) {
+                    prices.price -= MayHelper.Price.toNumber(option.price);
+                    prices.special -= MayHelper.Price.toNumber(option.price);
+                }
+                if (option.base_price) {
+                    prices.base -= MayHelper.Price.toNumber(option.base_price);
+                }
+            }
+
+            // Summing up Point
+            if (option.point != undefined && option.point != "") {
+                if (option.point_prefix == "+") {
+                    point += parseInt(option.point);
+                } else if (option.point_prefix == "-") {
+                    point -= parseInt(option.point);
+                }
+            }
+
+            // Summing up Weight
+            if (option.weight != undefined && option.weight != "") {
+                if (option.weight_prefix == "+") {
+                    weight += parseFloat(option.weight);
+                } else if (option.weight_prefix == "-") {
+                    weight -= parseFloat(option.weight);
+                }
+            }
+        });
+
+        if (updateProcessor.hasOwnProperty('price')) updateProcessor.price(prices);
+        if (updateProcessor.hasOwnProperty('point')) updateProcessor.point(point);
+        if (updateProcessor.hasOwnProperty('weight')) updateProcessor.weight(weight);
+    }
+
+    this.find(optionSelector).on('change', function(e) {
+        $me.find($(this).attr('for')).val($(this).val());
+        refreshChildOptions($(this).data('advanced-option-id'));
+        reloadOptionValues();
+        return false;
+    });
+
+    config.actionButtonSelector.forEach(function(elm, elmIndex) {
+        $(elm).on("click", function (event) {
+            var isAllOptionSelected = true;
+            $('.form-group.visible input[type="hidden"]').each(function() {
+                if ($(this).val() == 0) {
+                    isAllOptionSelected = false;
+                }
+            });
+
+            if (isAllOptionSelected && $me.quantity != -1 && parseInt($('input[name="quantity"]').val()) > $me.quantity) {
+                $('.form-group.visible').removeClass('has-error');
+                $('.form-group.visible .text-danger').remove();
+                $('#error-quantity.has-error').remove();
+
+                config.quantityErrorBefore.after('<div id="error-quantity" class="has-error">' + config.quantityErrorMessage + '</div>');
+
+                event.preventDefault();
+                event.stopImmediatePropagation();
+                return false;
+            } else {
+                $('#error-quantity.has-error').remove();
+            }
+        });
+        var btnEvent = $._data($(elm).get(0), 'events').click.pop();
+        $._data($(elm).get(0), 'events').click.unshift(btnEvent);
+    });
+
+    if (config.preselect.id) {
+        setTimeout(function() {
+            $me.find('.may-swatches').eq(0).find('[data-option-value-id="' + config.preselect.id + '"]').trigger('click');
+        }, config.preselect.wait);
+    }
+
+    return this;
+}
+</script>

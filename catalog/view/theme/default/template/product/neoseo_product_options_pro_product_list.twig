@@ -1,0 +1,69 @@
+{% if product['options'] is defined and product['options'] %}
+<form id="product_options_form_{{ product.product_id }}" class="options_pro_form">
+  <input type="hidden" name="product_id" value="{{ product.product_id }}">
+  <input type="hidden" name="minimum" value="{{ product.minimum }}">
+  <div class="caption">
+    {% for option in product['options'] %}
+    {% if option['type'] == 'select' %}
+    <div class="form-group{% if option['required']  %} required {% endif %}">
+      <label class="control-label" for="input-option{{ option.product_option_id }}">{{ option.name }}</label>
+      <select name="option[{{ option.product_option_id }}]" id="input-option{{ option.product_option_id }}" class="form-control">
+        <option value="">{{ text_select }}</option>
+        {% for option_value in option['product_option_value'] %}
+        <option value="{{ option_value.product_option_value_id }}">{{ option_value.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    {% endif %}
+    {% if option['type'] == 'radio' %}
+    <div class="form-group options-pro-group{% if option['required']  %} required {% endif %}">
+      <label class="control-label">{{ option.name }}</label>
+      <div id="input-option{{ option.product_option_id }}">
+        {% for option_value in option['product_option_value'] %}
+        <div class="radio radio-square">
+          <label>
+            <input type="radio" name="option[{{ option.product_option_id }}]" value="{{ option_value.product_option_value_id }}" />
+            <span class="square">{{ option_value.name }}</span>
+          </label>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+    {% if option['type'] == 'checkbox' %}
+    <div class="form-group options-pro-group{% if option['required']  %} required {% endif %}">
+      <label class="control-label">{{ option.name }}</label>
+      <div id="input-option{{ option.product_option_id }}">
+        {% for option_value in option['product_option_value'] %}
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" name="option[{{ option.product_option_id }}][]" value="{{ option_value.product_option_value_id }}" />
+            <span>{{ option_value.name }}</span>
+          </label>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+    {% if option['type'] == 'image' %}
+    <div class="form-group options-pro-group{% if option['required']  %} required {% endif %}">
+      <label class="control-label">{{ option.name }}</label>
+      <div id="input-option{{ option.product_option_id }}" class="form-radio">
+        <div class="radio-image-wrapper">
+          {% for option_value in option['product_option_value'] %}
+          <div class="radio-product-image">
+            <label>
+              <input type="radio" name="option[{{ option.product_option_id }}]" value="{{ option_value.product_option_value_id }}" />
+              <span><img src="{{ option_value.image }}" alt="{{ option_value.name }}" class="img-thumbnail" /></span>
+              <!-- {{ option_value.name }} -->
+            </label>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+  </div>
+</form>
+{% endif %}

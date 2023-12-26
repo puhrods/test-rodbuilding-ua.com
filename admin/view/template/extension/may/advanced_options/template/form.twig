@@ -1,0 +1,374 @@
+{{ header }}{{ column_left}}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        <a href="{{ cancel }}" data-toggle="tooltip" title="{{ _['Cancel'] }}" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
+      <h1>{{ _['Combined Options'] }}</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+        <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="container-fluid">
+    {% if error.error_warning %}
+    <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    {% endif %}
+
+    <div id="accordion">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h4 class="panel-title">{{ _['Step 1 : Select options to combine'] }}</h4>
+        </div>
+        <div class="panel-collapse collapse" id="collapse-select-options" data-url="{{ url_select_options_form }}">
+          <div class="panel-body">  
+          </div>
+        </div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h4 class="panel-title">{{ _['Step 2 : Select available option values and arrange options'] }}</h4>
+        </div>
+        <div class="panel-collapse collapse" id="collapse-option-values" data-url="{{ url_option_values_form }}">
+          <div class="panel-body">
+          </div>
+        </div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h4 class="panel-title">{{ _['Step 3 : Option Dependencies'] }}</h4>
+        </div>
+        <div class="panel-collapse collapse" id="collapse-option-children" data-url="{{ url_option_children_form }}">
+          <div class="panel-body">
+          </div>
+        </div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h4 class="panel-title">{{ _['Step 4 : Combined Option Details'] }}</h4>
+        </div>
+        <div class="panel-collapse collapse" id="collapse-advanced-option-details" data-url="{{ url_save }}">
+          <div class="panel-body">
+            <div class="form-horizontal">
+              <div class="form-group required">
+                <label class="col-sm-2 control-label">{{ _['Option Name'] }}</label>
+                <div class="col-sm-10">
+                  <input type="text" name="advanced_option_name" value="{{ option ? option['option_name'] : '' }}" placeholder="{{ _['Option Name'] }}" class="form-control option-name" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-sm-2 control-label" for="input-sort-order">{{ _['Use Product Image for Swatch'] }}</label>
+                <div class="col-sm-10">
+                  <select name="swatch_image" id="input-swatch-image" class="form-control">
+                    {% if (option and option['swatch_image']) or may_advanced_options_config['swatch_image'] %}
+                    <option value="1" selected="selected">{{ _['Yes'] }}</option>
+                    <option value="0">{{ _['No'] }}</option>
+                    {% else %}
+                    <option value="1">{{ _['Yes'] }}</option>
+                    <option value="0" selected="selected">{{ _['No'] }}</option>
+                    {% endif %}
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-sm-2 control-label" for="input-sort-order">{{ _['Show First Option in Product List'] }}</label>
+                <div class="col-sm-10">
+                  <select name="show_first_option_in_list" id="input-swatch-image" class="form-control">
+                    {% if (option and option['show_first_option_in_list']) or may_advanced_options_config['show_first_option_in_list'] %}
+                    <option value="1" selected="selected">{{ _['Yes'] }}</option>
+                    <option value="0">{{ _['No'] }}</option>
+                    {% else %}
+                    <option value="1">{{ _['Yes'] }}</option>
+                    <option value="0" selected="selected">{{ _['No'] }}</option>
+                    {% endif %}
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-sm-2 control-label" for="input-sort-order">{{ _['Sort Order'] }}</label>
+                <div class="col-sm-10">
+                  <input type="text" name="sort_order" value="{{ option ? option['sort_order'] : '' }}" placeholder="{{ _['Sort Order'] }}" id="input-sort-order" class="form-control" />
+                </div>
+              </div>
+            </div>
+            <div class="buttons">
+              <div class="pull-left">
+                <div class="alert alert-warning hidden"></div>
+              </div>
+              <div class="pull-right">
+              <input type="button" value="{{ _['Back'] }}" id="button-option-details-back" data-loading-text="{{ _['Loading...'] }}" class="btn" />
+              <input type="button" value="{{ _['Save'] }}" id="button-option-details-save" data-loading-text="{{ _['Loading...'] }}" class="btn btn-primary" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% if option %}
+  <input type="hidden" value="{{ option['children'] }}" name="option_children" id="option-children"/>
+  {% set selected_option_values = [] %}
+  {% for option_values in option['content'] %}
+  {% set selected_option_values = selected_option_values|merge(option_values) %}
+  {% endfor %}
+  <input type="hidden" value="{{ selected_option_values|join(',') }}" name="option_content" id="option-content"/>
+  <input type="hidden" value="{{ option['combinations']|join(',') }}" name="option_combinations" id="option-combinations"/>
+  {% endif %}
+  <input type="hidden" value="" name="option_values" id="option-values"/>
+  <script type="text/javascript"><!--
+  var firstSelectedOptions = [];
+  $(document).ready(function() {
+    $.ajax({
+      url: $('#collapse-select-options').data('url'),
+      {% if option %}
+      type: 'post',
+      data: $('#option-children'),
+      {% endif %}
+      dataType: 'html',
+      success: function(html) {
+        $('#collapse-select-options .panel-body').html(html);
+
+        $('#collapse-select-options').parent().find('.panel-heading .panel-title').html('<a href="#collapse-select-options" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle">{{ _['Step 1 : Select options to combine'] }} <i class="fa fa-caret-down"></i></a>');
+
+        $('a[href=\'#collapse-select-options\']').trigger('click');
+
+        {% if option %}
+          if (firstSelectedOptions.length == 0) {
+            $('#collapse-select-options input[name*=\'selected\']:checked').each(function() {
+              firstSelectedOptions.push($(this).val());
+            });            
+          }
+        {% endif %}
+
+       },
+      error: function(xhr, ajaxOptions, thrownError) {
+        alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+      }
+    });
+  });
+
+  $(document).delegate('#button-select-options', 'click', function() {
+
+    if ($('#collapse-select-options input[name*=\'selected\']:checked').length == 0) {
+      $('#collapse-select-options .alert-warning').html('{{ _['Warning: One or more options must be selected!'] }}');
+      $('#collapse-select-options .alert-warning').removeClass('hidden');
+      return;
+    }
+
+    {% if option %}
+      var selectedOptions = [];
+
+      $('#collapse-select-options input[name*=\'selected\']:checked').each(function() {
+        selectedOptions.push($(this).val());
+      });
+
+      if (selectedOptions.join(',') != firstSelectedOptions.join(',')) {
+        $('#option-values').val('');
+      } else {
+        $('#option-values').val($('#option-children').val() + ":" + $('#option-content').val());
+      }
+    {% endif %}
+
+    $('#collapse-select-options .alert-warning').html('');
+    $('#collapse-select-options .alert-warning').addClass('hidden');
+    
+    $.ajax({
+      url: $('#collapse-option-values').data('url'),
+      type: 'post',
+      data: $('#collapse-select-options input[name*=\'selected\']:checked, #option-values'),
+      dataType: 'html',
+      beforeSend: function() {
+        $('#button-select-options').button('loading');
+      },
+      complete: function() {
+        $('#button-select-options').button('reset');
+      },
+      success: function(html) {
+        $('#collapse-option-values .panel-body').html(html);
+        $('#collapse-select-options').parent().find('.panel-heading .panel-title').html('{{ _['Step 1 : Select options to combine'] }}');
+
+        $('#collapse-option-values').parent().find('.panel-heading .panel-title').html('<a href="#collapse-option-values" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle">{{ _['Step 2 : Select available option values and arrange options'] }} <i class="fa fa-caret-down"></i></a>');
+
+        $('a[href=\'#collapse-option-values\']').trigger('click');
+      },
+      error: function(xhr, ajaxOptions, thrownError) {
+        alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+      }
+    });
+  });
+
+  $(document).delegate('.select-all', 'click', function() {
+    $(this).parent().parent().parent().find('input[type=\'checkbox\']').prop('checked', true);
+    return false;
+  });
+
+  $(document).delegate('.deselect-all', 'click', function() {
+    $(this).parent().parent().parent().find('input[type=\'checkbox\']').prop('checked', false);
+    return false;
+  });
+
+  $(document).delegate('#button-option-values-back', 'click', function() {
+    $('#collapse-option-values').parent().find('.panel-heading .panel-title').html('{{ _['Step 2 : Select available option values and arrange options'] }}');
+
+    $('#collapse-select-options').parent().find('.panel-heading .panel-title').html('<a href="#collapse-select-options" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle">{{ _['Step 1 : Select options to combine'] }} <i class="fa fa-caret-down"></i></a>');
+
+    $('a[href=\'#collapse-select-options\']').trigger('click');
+  });
+
+  $(document).delegate('#collapse-option-values a.desc', 'click', function() {
+    var index = $('#collapse-option-values a.desc').index($(this));
+
+    if (index < $('#collapse-option-values a.desc').length - 1) {
+      var optionContainer = $('#collapse-option-values .option-container').get(index);
+      $(optionContainer).slideUp(200, function () {
+        $(optionContainer).insertAfter($(optionContainer).next());
+        $(optionContainer).slideDown(200);
+      });
+    }
+    return false;
+  });  
+
+  $(document).delegate('#collapse-option-values a.asc', 'click', function() {
+    var index = $('#collapse-option-values a.asc').index($(this));
+
+    if (index > 0) {
+      var optionContainer = $('#collapse-option-values .option-container').get(index);
+      $(optionContainer).slideUp(200, function () {
+        $(optionContainer).insertBefore($(optionContainer).prev());
+        $(optionContainer).slideDown(200);
+      });
+    }
+    return false;
+  });  
+
+  $(document).delegate('#button-option-values-next', 'click', function() {
+
+    var isValid = true;
+
+    $('#collapse-option-values .option-container').each(function() {
+      if ($(this).find('input[type=\'checkbox\']:checked').length == 0) {
+        isValid = false;
+      }
+    })
+
+    if (!isValid) {
+      $('#collapse-option-values .alert-warning').html('{{ _['Warning: One or more values must be selected for each option!'] }}');
+      $('#collapse-option-values .alert-warning').removeClass('hidden');
+      return;
+    }
+
+    $('#collapse-option-values .alert-warning').html('');
+    $('#collapse-option-values .alert-warning').addClass('hidden');
+    
+    $.ajax({
+      url: $('#collapse-option-children').data('url'),
+      type: 'post',
+      data: $('#collapse-option-values input[type=\'checkbox\']:checked, #option-combinations'),
+      dataType: 'html',
+      beforeSend: function() {
+        $('#button-option-values').button('loading');
+      },
+      complete: function() {
+        $('#button-option-values').button('reset');
+      },
+      success: function(html) {
+        $('#collapse-option-children .panel-body').html(html);
+        $('#collapse-option-values').parent().find('.panel-heading .panel-title').html('{{ _['Step 2 : Select available option values and arrange options'] }}');
+
+        $('#collapse-option-children').parent().find('.panel-heading .panel-title').html('<a href="#collapse-option-children" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle">{{ _['Step 3 : Option Dependencies'] }} <i class="fa fa-caret-down"></i></a>');
+
+        $('a[href=\'#collapse-option-children\']').trigger('click');
+      },
+      error: function(xhr, ajaxOptions, thrownError) {
+        alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+      }
+    });
+  });
+
+  $(document).delegate('#button-option-children-back', 'click', function() {
+    $('#collapse-option-children').parent().find('.panel-heading .panel-title').html('{{ _['Step 3 : Option Dependencies'] }}');
+
+    $('#collapse-option-values').parent().find('.panel-heading .panel-title').html('<a href="#collapse-option-values" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle">{{ _['Step 2 : Select available option values and arrange options'] }} <i class="fa fa-caret-down"></i></a>');
+
+    $('a[href=\'#collapse-option-values\']').trigger('click');
+  });
+
+  $(document).delegate('#button-option-children-next', 'click', function() {
+
+    var isValid = true;
+
+    $('#collapse-option-children .option-container .panel-body .col-lg-2').each(function() {
+      if ($(this).find('input[type=\'checkbox\']:checked').length == 0) {
+        isValid = false;
+      }
+    })
+
+    if (!isValid) {
+      $('#collapse-option-children .alert-warning').html('{{ _['Warning: One or more dependencies must be selected in each column!'] }}');
+      $('#collapse-option-children .alert-warning').removeClass('hidden');
+      return;
+    }
+
+    $('#collapse-option-children .alert-warning').html('');
+    $('#collapse-option-children .alert-warning').addClass('hidden');
+
+    $('#collapse-option-children').parent().find('.panel-heading .panel-title').html('{{ _['Step 3 : Option Dependencies'] }}');
+
+    $('#collapse-advanced-option-details').parent().find('.panel-heading .panel-title').html('<a href="#collapse-advanced-option-details" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle">{{ _['Step 4 : Combined Option Details'] }} <i class="fa fa-caret-down"></i></a>');
+
+    $('a[href=\'#collapse-advanced-option-details\']').trigger('click');
+  });
+
+  $(document).delegate('#button-option-details-back', 'click', function() {
+    $('#collapse-advanced-option-details').parent().find('.panel-heading .panel-title').html('{{ _['Step 4 : Combined Option Details'] }}');
+
+    $('#collapse-option-children').parent().find('.panel-heading .panel-title').html('<a href="#collapse-option-children" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle">{{ _['Step 3 : Option Dependencies'] }} <i class="fa fa-caret-down"></i></a>');
+
+    $('a[href=\'#collapse-option-children\']').trigger('click');
+  });  
+
+  $(document).delegate('#button-option-details-save', 'click', function() {
+    var isValid = true;
+
+    $('#collapse-advanced-option-details .option-name').each(function() {
+      if ($(this).val().length < 1 || $(this).val().length > 128) {
+        isValid = false;
+      }
+    });
+
+    if (!isValid) {
+      $('#collapse-advanced-option-details .alert-warning').html('{{ _['Option Name must be between 1 and 128 characters!'] }}');
+      $('#collapse-advanced-option-details .alert-warning').removeClass('hidden');
+      return;
+    }
+
+    $('#collapse-advanced-option-details .alert-warning').html('');
+    $('#collapse-advanced-option-details .alert-warning').addClass('hidden');
+
+    $.ajax({
+      url: $('#collapse-advanced-option-details').data('url'),
+      type: 'post',
+      data: $('#collapse-option-values input[type=\'checkbox\']:checked, #collapse-option-children input[type=\'checkbox\']:checked, #collapse-advanced-option-details input, #collapse-advanced-option-details select').serialize(),
+      dataType: 'html',
+      beforeSend: function() {
+        $('#button-option-details-save').button('loading');
+      },
+      complete: function() {
+        $('#button-option-details-save').button('reset');
+      },
+      success: function(html) {
+        location.href = $('.breadcrumb li').last().find('a').attr('href');
+      },
+      error: function(xhr, ajaxOptions, thrownError) {
+        alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+      }
+    });
+
+  });
+
+//--></script></div>
+{{ footer }}

@@ -1,0 +1,1029 @@
+{{ header }}{{ column_left }}
+<div id="content">
+    <div class="page-header">
+
+        {{ bundle_expert_navigation }}
+
+        <div class="container-fluid">
+            <div class="pull-right">
+                {% if (is_registered) %}
+                    <button type="submit" form="form-bundle_expert" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+                {% endif %}
+                <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
+            <h1>{{ heading_title }}</h1>
+            <ul class="breadcrumb">
+                {% for breadcrumb in breadcrumbs %}
+                    <li><a href="{{ breadcrumb['href'] }}">{{ breadcrumb['text'] }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class=" alert-container">
+            {% if (error_warning) %}
+                <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                </div>
+
+            {% endif %}
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_edit }}</h3>
+            </div>
+            <div class="panel-body">
+                <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-bundle_expert" class="form-horizontal">
+                    <ul class="nav nav-tabs">
+                        {% if (is_registered) %}
+                            <li class="{% if (is_registered) %} {{ 'active' }}{% endif %}"><a href="#tab-main" data-toggle="tab">{{ entry_settings }}</a></li>
+                            <li class=""><a href="#tab-selectors" data-toggle="tab">{{ entry_selectors }}</a></li>
+                            <li class=""><a href="#tab-other" data-toggle="tab">{{ entry_other }}</a></li>
+                        {% endif %}
+                        {% if (not is_registered or (is_registered and show_reg_tab) ) %}
+                            <li class="{% if (not is_registered) %} {{ 'active' }}{% endif %}"><a href="#tab-register" data-toggle="tab">{{ entry_register }}</a></li>
+                        {% endif %}
+                    </ul>
+
+                    <div class="tab-content">
+                        {% if (is_registered) %}
+                            <div class="tab-pane {% if (is_registered) %} {{ 'active' }}{% else %} {{ 'hidden' }}{% endif %}  in" id="tab-main">
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label" for="input-status">{{ entry_status_customer }}</label>
+                                    <div class="col-sm-10">
+                                        <select name="bundle_expert_status_for_customer" id="input-status-for-customer" class="form-control" onchange="update_dtatus_for_customer()">
+                                            {% if (bundle_expert_status_for_customer) %}
+                                                <option value="1" selected="selected">{{ text_enabled }}</option>
+                                                <option value="0">{{ text_disabled }}</option>
+                                            {% else %}
+                                                <option value="1">{{ text_enabled }}</option>
+                                                <option value="0" selected="selected">{{ text_disabled }}</option>
+                                            {% endif %}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!--                              <div class="" id="form-customer-mode-active" style="-->{# if (!$bundle_expert_status_for_customer) echo 'display:none' #}<!--">-->
+
+                                <div class="form-group form-customer-mode-active hidden" style="display: none">
+                                    <label class="col-sm-2 control-label" for="input-title">{{ text_cart_kit_color_1 }}</label>
+                                    <div class="col-sm-2">
+                                        <div id="cp1" class="input-group colorpicker-component">
+                                            <input type="text" name="bundle_expert_settings[cart_color_handler_1]" value="{{ bundle_expert_settings['cart_color_handler_1'] }}" class="form-control" />
+                                            <span class="input-group-addon"><i></i></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2 text-left">
+                                        <a class="btn btn-default" onclick="set_default_color_1();">{{ text_cart_kit_color_reset }}</a>
+                                    </div>
+                                </div>
+
+                                <div class="form-group form-customer-mode-active hidden"  style="display: none">
+                                    <label class="col-sm-2 control-label" for="input-title">{{ text_cart_kit_color_2 }}</label>
+                                    <div class="col-sm-2">
+                                        <div id="cp2" class="input-group colorpicker-component">
+                                            <input type="text" name="bundle_expert_settings[cart_color_handler_2]" value="{{ bundle_expert_settings['cart_color_handler_2'] }}" class="form-control" />
+                                            <span class="input-group-addon"><i></i></span>
+
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2 text-left">
+                                        <a class="btn btn-default" onclick="set_default_color_2();">{{ text_cart_kit_color_reset }}</a>
+                                    </div>
+                                </div>
+
+                                <div class="form-group form-customer-mode-active"  style="display: none">
+                                    <label class="col-sm-2 control-label" for="input-title"><span data-toggle="tooltip" title="{{ text_cart_items_limit_help }}">{{ text_cart_items_limit }}</span></label>
+                                    <div class="col-sm-10">
+                                        <input type="hidden" name="bundle_expert_settings[cart_items_limit][status]" value="{{ bundle_expert_settings['cart_items_limit']['status'] }}" class="form-control" />
+                                        <input type="text" name="bundle_expert_settings[cart_items_limit][limit]" value="{{ bundle_expert_settings['cart_items_limit']['limit'] }}" class="form-control" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group form-customer-mode-active"  style="display: none">
+                                    <label class="col-sm-2 control-label" for="input-title">{{ text_checkout_pages }}</label>
+                                    <div class="col-sm-10 text-left">
+                                        <table id="route" class="table table-striped1 table-bordered1 table-hover" style="margin-bottom: 0">
+
+                                            {% set checkout_page_row = 0 %}
+                                            {% for checkout_page in bundle_expert_settings['checkout_pages'] %}
+                                                <tr id="checkout-page-row{{ checkout_page_row }}" style="border: none">
+                                                    <td style="border: none; padding-left: 0; padding-right: 0" class="text-left"><input type="text" name="bundle_expert_settings[checkout_pages][{{ checkout_page_row }}]" value="{{ checkout_page }}" placeholder="{{ '' }}" class="form-control" /></td>
+                                                    <td style="border: none" class="text-right hidden"><button type="button" onclick="$('#checkout-page-row{{ checkout_page_row }}').remove();" data-toggle="tooltip" title="{{ '' }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>
+                                                </tr>
+                                                {% set checkout_page_row = checkout_page_row + 1 %}
+                                            {% endfor %}
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <!--                              </div>-->
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">{{ text_product_item_quantity_edit_default_value }}</label>
+                                    <div class="col-sm-10">
+                                        <select name="bundle_expert_settings[product_item_quantity_edit_default_value]" class="form-control" >
+                                            {% if (bundle_expert_settings['product_item_quantity_edit_default_value']) %}
+                                                <option value="1" selected="selected">{{ text_yes }}</option>
+                                                <option value="0">{{ text_no }}</option>
+                                            {% else %}
+                                                <option value="1">{{ text_yes }}</option>
+                                                <option value="0" selected="selected">{{ text_no }}</option>
+                                            {% endif %}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label" for="input-title"><span data-toggle="tooltip" title="{{ text_order_info_format_help }}">{{ text_order_info_format }}</span></label>
+                                    <div class="col-sm-10">
+                                        <select name="bundle_expert_settings[order_info_format]" class="form-control" >
+                                            {% for key,text in order_info_format_values %}
+                                                <option value="{{ key }}" {% if (bundle_expert_settings['order_info_format'] == key) %} {{ 'selected="selected"' }}{% endif %}">{{ text }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+
+
+
+                                <div class="form-group form-customer-mode-active">
+                                    <label class="col-sm-2 control-label">{{ text_minify_js_css }}</label>
+                                    <div class="col-sm-10">
+                                        <select name="bundle_expert_settings[css_js_minify]" class="form-control" >
+                                            {% if (bundle_expert_settings['css_js_minify']) %}
+                                                <option value="1" selected="selected">{{ text_yes }}</option>
+                                                <option value="0">{{ text_no }}</option>
+                                            {% else %}
+                                                <option value="1">{{ text_yes }}</option>
+                                                <option value="0" selected="selected">{{ text_no }}</option>
+                                            {% endif %}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group form-customer-mode-active">
+                                    <label class="col-sm-2 control-label">{{ text_js_library }}</label>
+                                    <div class="col-sm-10">
+                                        <div class="well well-sm" style="height: 150px; overflow: auto;">
+                                            {% for css_js_file in css_js_files %}
+                                                <div class="checkbox">
+                                                    <label>
+                                                        {% if (css_js_file['enable']) %}
+                                                            <input type="checkbox" name="bundle_expert_settings[css_js_files][{{ css_js_file['key'] }}]" value="{{ css_js_file['enable'] }}" checked="checked" />
+                                                            {{ css_js_file['name'] }}
+                                                        {% else %}
+                                                            <input type="checkbox" name="bundle_expert_settings[css_js_files][{{ css_js_file['key'] }}]" value="{{ css_js_file['enable'] }}" />
+                                                            {{ css_js_file['name'] }}
+                                                        {% endif %}
+                                                    </label>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group form-customer-mode-active {% if (not display_kit_discount_not_customer_group) %} {{ 'hidden' }}{% endif %}">
+                                    <label class="col-sm-2 control-label">{{ text_disable_bundle_discount_in_customer_group }}</label>
+                                    <div class="col-sm-10">
+                                        <div class="well well-sm" style="height: 150px; overflow: auto;">
+                                            {% for customer_group in customer_groups %}
+                                                <div class="checkbox">
+                                                    <label>
+                                                        {% if (customer_group['discount_disable']) %}
+                                                            <input type="checkbox" name="bundle_expert_settings[kit_discount_not_customer_group][{{ customer_group['customer_group_id'] }}]" value="{{ customer_group['customer_group_id'] }}" checked="checked" />
+                                                            {{ customer_group['name'] }}
+                                                        {% else %}
+                                                            <input type="checkbox" name="bundle_expert_settings[kit_discount_not_customer_group][{{ customer_group['customer_group_id'] }}]" value="{{ customer_group['customer_group_id'] }}" />
+                                                            {{ customer_group['name'] }}
+                                                        {% endif %}
+                                                    </label>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">{{ text_custom_header_cart_js_status }}</label>
+                                    <div class="col-sm-10">
+                                        <select name="bundle_expert_settings[custom_header_cart_js_status]" id="custom_header_cart_js_status" class="form-control" onchange="update_custom_header_cart_js_status();">
+                                            {% if (bundle_expert_settings['custom_header_cart_js_status']) %}
+                                                <option value="1" selected="selected">{{ text_yes }}</option>
+                                                <option value="0">{{ text_no }}</option>
+                                            {% else %}
+                                                <option value="1">{{ text_yes }}</option>
+                                                <option value="0" selected="selected">{{ text_no }}</option>
+                                            {% endif %}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group custom-header-cart-js-template">
+                                    <label class="col-sm-2 control-label">{{ text_custom_header_cart_js_template }}</label>
+                                    <div class="col-sm-10">
+                                        <select name="bundle_expert_settings[custom_header_cart_js_template_id]" id="custom_header_cart_js_template" class="form-control" onchange="update_custom_header_cart_js_template();" >
+                                            <option value="-1" {% if (bundle_expert_settings['custom_header_cart_js_template_id'] == "-1") %} selected="selected" {% endif %} > {{ text_custom_header_cart_js_template_select }}</option>
+                                            {% for custom_header_cart_js_template in custom_header_cart_js_templates %}
+                                                {% if (bundle_expert_settings['custom_header_cart_js_template_id'] == custom_header_cart_js_template['id']) %}
+                                                    <option value="{{ custom_header_cart_js_template['id'] }}" selected="selected">{{ custom_header_cart_js_template['name'] }}</option>
+                                                {% else %}
+                                                    <option value="{{ custom_header_cart_js_template['id'] }}" >{{ custom_header_cart_js_template['name'] }}</option>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </select>
+                                        <textarea name="bundle_expert_settings[custom_header_cart_js]" id="textarea-custom-header-cart-js"  style="width: 100%;margin-top: 16px;height: 300px;">{{ bundle_expert_settings['custom_header_cart_js'] }}</textarea>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label" for="input-status">{{ entry_status }}</label>
+                                    <div class="col-sm-10">
+                                        <select name="{{ module_status_name }}" id="input-status" class="form-control">
+                                            {% if (bundle_expert_status) %}
+                                                <option value="1" selected="selected">{{ text_enabled }}</option>
+                                                <option value="0">{{ text_disabled }}</option>
+                                            {% else %}
+                                                <option value="1">{{ text_enabled }}</option>
+                                                <option value="0" selected="selected">{{ text_disabled }}</option>
+                                            {% endif %}
+                                        </select>
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+
+
+                        {% endif %}
+
+                        <div class="tab-pane in" id="tab-other">
+
+                            <div class="form-group form-customer-mode-active">
+                                <label class="col-sm-2 control-label">{{ text_product_as_kit_add_from_category_enable }}</label>
+                                <div class="col-sm-10">
+                                    <select name="bundle_expert_settings[product_as_kit_add_from_category_enable]" class="form-control" >
+                                        {% if (bundle_expert_settings['product_as_kit_add_from_category_enable']) %}
+                                            <option value="1" selected="selected">{{ text_yes }}</option>
+                                            <option value="0">{{ text_no }}</option>
+                                        {% else %}
+                                            <option value="1">{{ text_yes }}</option>
+                                            <option value="0" selected="selected">{{ text_no }}</option>
+                                        {% endif %}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group form-customer-mode-active">
+                                <label class="col-sm-2 control-label">{{ text_dynamic_update_product_as_kit_price }}</label>
+                                <div class="col-sm-10">
+                                    <select name="bundle_expert_settings[dynamic_update_product_as_kit_price_in_db]" class="form-control" >
+                                        {% if (bundle_expert_settings['dynamic_update_product_as_kit_price_in_db']) %}
+                                            <option value="1" selected="selected">{{ text_yes }}</option>
+                                            <option value="0">{{ text_no }}</option>
+                                        {% else %}
+                                            <option value="1">{{ text_yes }}</option>
+                                            <option value="0" selected="selected">{{ text_no }}</option>
+                                        {% endif %}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group form-customer-mode-active hidden">
+                                <label class="col-sm-2 control-label">{{ text_dynamic_update_product_as_kit_price_button }}</label>
+                                <div class="col-sm-10">
+                                    <span id="button-update-product-as-kit-prices" class="btn btn-default" onclick="update_product_as_kit_prices();">{{ text_update_button }}</span>
+                                    <i class="hidden fa fa-spinner fa-spin"></i>
+                                </div>
+                            </div>
+
+                            <div class="form-group form-customer-mode-active">
+                                <label class="col-sm-2 control-label">{{ text_dynamic_update_product_as_kit_price_le }}</label>
+                                <div class="col-sm-10">
+                                    <select name="bundle_expert_settings[dynamic_update_product_as_kit_price_in_db_le]" class="form-control" >
+                                        {% if (bundle_expert_settings['dynamic_update_product_as_kit_price_in_db_le']) %}
+                                            <option value="1" selected="selected">{{ text_yes }}</option>
+                                            <option value="0">{{ text_no }}</option>
+                                        {% else %}
+                                            <option value="1">{{ text_yes }}</option>
+                                            <option value="0" selected="selected">{{ text_no }}</option>
+                                        {% endif %}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group form-customer-mode-active hidden">
+                                <label class="col-sm-2 control-label">{{ text_dynamic_update_product_as_kit_price_le_button }}</label>
+                                <div class="col-sm-10">
+                                    <span  id="button-update-product-as-kit-prices-le" class="btn btn-default" onclick="update_product_as_kit_prices_le();">{{ text_update_button }}</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group form-customer-mode-active">
+                                <label class="col-sm-2 control-label">{{ text_smart_js }}</label>
+                                <div class="col-sm-10">
+                                    <select name="bundle_expert_settings[smart_js]" class="form-control" >
+                                        {% if (bundle_expert_settings['smart_js']) %}
+                                            <option value="1" selected="selected">{{ text_smart_js_variant_1 }}</option>
+                                            <option value="0">{{ text_smart_js_default }}</option>
+                                        {% else %}
+                                            <option value="1">{{ text_smart_js_variant_1 }}</option>
+                                            <option value="0" selected="selected">{{ text_smart_js_default }}</option>
+                                        {% endif %}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group form-customer-mode-active">
+                                <label class="col-sm-2 control-label">{{ text_cache_widgets }}</label>
+                                <div class="col-sm-10">
+                                    <select name="bundle_expert_settings[cache_widgets]" class="form-control" >
+                                        {% if (bundle_expert_settings['cache_widgets']) %}
+                                            <option value="1" selected="selected">{{ text_yes }}</option>
+                                            <option value="0">{{ text_no }}</option>
+                                        {% else %}
+                                            <option value="1">{{ text_yes }}</option>
+                                            <option value="0" selected="selected">{{ text_no }}</option>
+                                        {% endif %}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group form-customer-mode-active">
+                                <label class="col-sm-2 control-label">{{ text_dynamic_clear_cache_button }}</label>
+                                <div class="col-sm-10">
+                                    <span  id="button-clear-cache" class="btn btn-default" onclick="clear_cache();">{{ text_clear_button }}</span>
+                                </div>
+                            </div>
+                            <div class="form-group form-customer-mode-active1 hidden">
+                                <label class="col-sm-2 control-label">{{ text_dynamic_update_cache_button }}</label>
+                                <div class="col-sm-10">
+                                    <span  id="button-update-cache" class="btn btn-default" onclick="update_cache();">{{ text_update_button }}</span>
+                                </div>
+                            </div>
+
+
+
+                        </div>
+
+                        <div class="tab-pane in" id="tab-selectors">
+
+                            <fieldset>
+                                <legend style="">{{ text_product_page }}</legend>
+                                <div class="form-group ">
+                                    <label class="col-sm-2 control-label" for="input-title">{{ text_price }}</label>
+                                    <div class="col-xs-10 col-sm-5">
+                                        <input type="text" name="bundle_expert_settings[selectors][product_page][price]" id="" value="{{ bundle_expert_settings['selectors']['product_page']['price'] }}" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="form-group hidden ">
+                                    <label class="col-sm-2 control-label" for="input-title">{{ text_special }}</label>
+                                    <div class="col-xs-10 col-sm-5">
+                                        <input type="text" name="bundle_expert_settings[selectors][product_page][special]" id="" value="{{ bundle_expert_settings['selectors']['product_page']['special'] }}" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="form-group ">
+                                    <label class="col-sm-2 control-label" for="input-title">{{ text_price_parent }}</label>
+                                    <div class="col-xs-10 col-sm-5">
+                                        <input type="text" name="bundle_expert_settings[selectors][product_page][price_parent]" id="" value="{{ bundle_expert_settings['selectors']['product_page']['price_parent'] }}" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="form-group ">
+                                    <label class="col-sm-2 control-label" for="input-title">{{ text_quantity }}</label>
+                                    <div class="col-xs-10 col-sm-5">
+                                        <input type="text" name="bundle_expert_settings[selectors][product_page][quantity]" id="" value="{{ bundle_expert_settings['selectors']['product_page']['quantity'] }}" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="form-group ">
+                                    <label class="col-sm-2 control-label" for="input-title">{{ text_button_minus }}</label>
+                                    <div class="col-xs-10 col-sm-5">
+                                        <input type="text" name="bundle_expert_settings[selectors][product_page][button_minus]" id="" value="{{ bundle_expert_settings['selectors']['product_page']['button_minus'] }}" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="form-group ">
+                                    <label class="col-sm-2 control-label" for="input-title">{{ text_button_plus }}</label>
+                                    <div class="col-xs-10 col-sm-5">
+                                        <input type="text" name="bundle_expert_settings[selectors][product_page][button_plus]" id="" value="{{ bundle_expert_settings['selectors']['product_page']['button_plus'] }}" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="form-group ">
+                                    <label class="col-sm-2 control-label" for="input-title">{{ text_add_to_cart_button }}</label>
+                                    <div class="col-xs-10 col-sm-5">
+                                        <input type="text" name="bundle_expert_settings[selectors][product_page][button]" id="" value="{{ bundle_expert_settings['selectors']['product_page']['button'] }}" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="form-group ">
+                                    <label class="col-sm-2 control-label" for="input-title">{{ text_product_data }}</label>
+                                    <div class="col-xs-10 col-sm-5">
+                                        <input type="text" name="bundle_expert_settings[selectors][product_page][product_data]" id="" value="{{ bundle_expert_settings['selectors']['product_page']['product_data'] }}" class="form-control" />
+                                    </div>
+                                </div>
+                            </fieldset>
+
+                            <fieldset style="display: none">
+                                <legend style="">{{ 'Список селекторов' }}</legend>
+                                <div class="form-group ">
+                                    <label class="col-sm-2 control-label" for="input-title">{{ '' }}</label>
+                                    <div class="col-xs-10 col-sm-5">
+                                        <input type="text" name="bundle_expert_settings[selectors][list]" id="" value="{{ '' }}" class="form-control" />
+                                    </div>
+                                </div>
+                            </fieldset>
+
+
+                        </div>
+
+                        {% if (not is_registered or (is_registered and show_reg_tab) ) %}
+                            <div class="tab-pane {% if (not is_registered) %} {{ 'active' }}{% endif %} in" id="tab-register">
+
+                                <div id="register-form-container" class="{% if (is_registered) %} {{ 'hidden' }}{% endif %}">
+                                    <fieldset>
+                                        <legend style="border-bottom: none">{{ text_license_getting_key }}</legend>
+
+                                        <div class="license-key-form" style="display: none">
+
+                                            <div class="form-group hidden">
+                                                <label class="col-sm-2 control-label" for="input-title">{{ text_license_market_id }}</label>
+                                                <div class="col-xs-10 col-sm-5">
+                                                    <select name="bundle_expert_license[market_id]" class="form-control" id="input-for-license-market-id">
+
+                                                        <option value="-1" selected="selected"> --- None --- </option>
+                                                        {% for market_id in market_ids %}
+                                                            {% if (market_id['market_id'] == bundle_expert_license['market_id']) %}
+                                                                <option value="{{ market_id['market_id'] }}" selected="selected">{{ market_id['name'] }}</option>
+                                                            {% else %}
+                                                                <option value="{{ market_id['market_id'] }}">{{ market_id['name'] }}</option>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group ">
+                                                <label class="col-sm-2 control-label" for="input-title">{{ text_license_order_number }}</label>
+                                                <div class="col-xs-10 col-sm-5">
+                                                    <input type="text" name="bundle_expert_license[license_order_number]" id="input-for-license-order-number" value="{{ bundle_expert_license['license_order_number'] }}" class="form-control" />
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group ">
+                                                <label class="col-sm-2 control-label" for="input-title">{{ text_license_domain_name }}</label>
+                                                <div class="col-xs-10 col-sm-5">
+                                                    <input type="text" name="bundle_expert_license[license_domain]" id="input-for-license-domain" value="{{ bundle_expert_license['license_domain'] }}" class="form-control" onchange="on_change_domain();" />
+                                                </div>
+                                                <div class="col-xs-2 col-sm-5 text-left">
+                                                    <a class="btn btn-default" id="button-insert-domain" onclick="" title="{{ text_license_paste_domain }}"><i class="fa fa-arrow-left"></i></a>
+                                                </div>
+
+                                            </div>
+
+                                            <div class="hidden" id="form-manual-register">
+                                                <div class="form-group">
+                                                    <label class="col-sm-2 control-label" for="">{{ '' }}</label>
+                                                    <div class="col-sm-10">
+                                                        <input type="text" name="manual_register[license_key]" placeholder="license_key" id="" class="form-control" />
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-sm-2 control-label" for="">{{ '' }}</label>
+                                                    <div class="col-sm-10">
+                                                        <input type="text" name="manual_register[license_app]" placeholder="license_app" id="" class="form-control" />
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-sm-2 control-label" for="">{{ '' }}</label>
+                                                    <div class="col-sm-10">
+                                                        <input type="text" name="manual_register[key]" placeholder="key" id="" class="form-control" />
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-sm-2 control-label" for="">{{ '' }}</label>
+                                                    <div class="col-sm-10">
+                                                        <a class="btn btn-default" type="button" data-loading-text="Loading..." id="button-manual-register">{{ text_license_button_register }}</a>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+
+                                            <div class="form-group ">
+                                                <label class="col-sm-2 control-label" for="input-title">{{ '' }}</label>
+
+                                                <div class="col-xs-12 col-sm-10" id="" style="">
+                                                    {{ text_license_get_key_description }}
+                                                </div>
+                                            </div>
+
+
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label" for="input-title">{{ '' }}</label>
+
+                                                <div class="col-sm-10">
+                                                    <div id="get-license-key-message" style="margin-top: 0px">
+
+                                                    </div>
+                                                    <button class="btn btn-primary" id="button-get-license-key" type="button" data-loading-text="Loading..." >{{ text_license_button_get_key }}</button>
+
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label" for="input-title">{{ '' }}</label>
+                                            <div class="col-sm-10">
+                                                <a class="btn btn-default" id="button-show-license-form" onclick="" style="display: none">{{ text_license_button_get_key }}</a>
+                                                <input type="hidden" name="bundle_expert_license[key]" value="{{ bundle_expert_license['key'] }}" class="form-control" />
+                                                <div id="get-license-key-message-success" style="margin-top: 8px">
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </fieldset>
+
+
+                                    <fieldset>
+                                        <legend style="border-bottom: none">{{ text_license_register }}</legend>
+
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label" for="input-title">{{ text_license_license_key }}</label>
+                                            <div class="col-sm-10">
+                                                <input onchange="update_register_button()" type="text" name="bundle_expert_license[license_key]" value="{{ bundle_expert_license['license_key'] }}" id="input-for-license-key" class="form-control" />
+                                            </div>
+
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label" for="">{{ '' }}</label>
+
+                                            <div class="col-sm-10">
+                                                <div style="margin-bottom: 8px">
+                                                    {{ text_license_register_description }}<br>
+                                                </div>
+                                                <div id="register-message" style="margin-top: 0px">
+
+                                                </div>
+                                                <input onchange="update_register_button()" type="hidden" name="bundle_expert_license[license_app]" value="{{ bundle_expert_license['license_app'] }}" id="input-for-license-app" class="form-control" />
+
+                                                <a class="btn btn-default" type="button" data-loading-text="Loading..." id="button-register">{{ text_license_button_register }}</a>
+                                                <div id="register-success" style="margin-top: 8px">
+
+                                                </div>
+                                                <a class="btn btn-success"  style="display: none" type="button" data-loading-text="Loading..." id="button-update">{{ text_license_update_page }}</a>
+                                            </div>
+                                        </div>
+
+                                    </fieldset>
+
+                                    <fieldset>
+                                        <legend style="border-bottom: none">{{ text_license_info_text }}</legend>
+                                        <label class="col-sm-2 control-label" for="">{{ '' }}</label>
+                                        <div class="col-sm-10">
+                                            <div>
+                                                {{ text_license_info_description }}
+                                            </div>
+
+
+                                        </div>
+                                    </fieldset>
+                                </div>
+
+                                <div id="register-form-complete-container" class="{% if (not is_registered) %} {{ 'hidden' }}{% endif %}">
+                                    <div>
+                                        {{ text_register_domain }}
+                                    </div>
+
+
+                                    <div style="margin-top: 16px">
+                                        <a href="{{ reset_button_url }}" class="btn btn-default" id="button-reset-register" onclick="">{{ text_license_button_reset_register }}</a>
+                                    </div>
+
+
+
+                                </div>
+
+
+
+                            </div>
+                        {% endif %}
+                    </div>
+
+                </form>
+
+                <div style="text-align: center">{{ text_bundle_expert_version }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .colorpicker-2x .colorpicker-saturation {
+        width: 200px;
+        height: 200px;
+    }
+
+    .colorpicker-2x .colorpicker-hue,
+    .colorpicker-2x .colorpicker-alpha {
+        width: 30px;
+        height: 200px;
+    }
+
+    .colorpicker-2x .colorpicker-color,
+    .colorpicker-2x .colorpicker-color div {
+        height: 30px;
+    }
+</style>
+<script type="text/javascript"><!--
+    function set_default_color_1(){
+        $('#cp1').colorpicker('setValue', '#e1f6e0a8');
+    }
+
+    function set_default_color_2(){
+        $('#cp2').colorpicker('setValue', '#f6e0ef6b');
+    }
+
+    $('#cp1, #cp2').colorpicker({
+        customClass: 'colorpicker-2x',
+        sliders: {
+            saturation: {
+                maxLeft: 200,
+                maxTop: 200
+            },
+            hue: {
+                maxTop: 200
+            },
+            alpha: {
+                maxTop: 200
+            }
+        }
+    });
+
+    function on_change_domain(){
+        var input = $('#input-for-license-domain');
+
+        var value = $(input).val();
+
+        value = value.toLocaleLowerCase();
+        value = value.replace('http://', '');
+        value = value.replace('https://', '');
+        //Убираем слэши
+        value = value.replace(/^\/|\/$/g, '');
+
+        $(input).val(value);
+    }
+
+    $('#button-get-license-key').click(function () {
+
+        var market_id=$('#input-for-license-market-id :selected').val();
+        var order_number=$('#input-for-license-order-number').val();
+        var domain_name=$('#input-for-license-domain').val();
+
+        $.ajax({
+            //url: 'index.php?route=module/bundle_expert/getLicenseKey&token={# echo $token_value; #}//&order_number=' +  order_number + '&domain_name=' + domain_name,
+            url: 'index.php?route=catalog/bundle_expert/getLicenseKey&{{ token_name }}{{ token_value }}&market_id=' +  market_id + '&order_number=' +  order_number + '&domain_name=' + domain_name,
+            dataType: 'json',
+            beforeSend: function() {
+                $('#button-get-license-key').button('loading');
+            },
+            complete: function() {
+
+                $('#button-get-license-key').button('reset');
+            },
+            success: function(json) {
+                $('#get-license-key-message').html('');
+                $('#get-license-key-message-success').html('');
+                $('#register-message').html('');
+                $('#register-success').html('');
+
+                if (json['error']) {
+                    $('#get-license-key-message').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                }
+
+                if (json['license_key']) {
+                    $('#get-license-key-message-success').prepend('<div class="alert alert-success"><i class="fa fa-exclamation-circle"></i> ' + json['success'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                    $('#input-for-license-key').val(json['license_key']);
+
+                    $('.license-key-form').hide();
+
+                    $('#button-show-license-form').show();
+                    update_register_button();
+
+                }
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+            }
+        });
+
+    });
+
+    $('#button-register').click(function () {
+
+        var license_key=$('#input-for-license-key').val();
+
+        $.ajax({
+            //url: 'index.php?route=module/bundle_expert/registerModuleByLicenseKey&{{ token_name }}{# echo $token_value; #}//&license_key=' +  license_key,
+            url: 'index.php?route=catalog/bundle_expert/registerModuleByLicenseKey&{{ token_name }}{{ token_value }}&license_key=' +  license_key,
+            dataType: 'json',
+            beforeSend: function() {
+                $('#button-register').button('loading');
+            },
+            complete: function() {
+                $('#button-register').button('reset');
+            },
+            success: function(json) {
+                $('#get-license-key-message').html('');
+                $('#get-license-key-message-success').html('');
+                $('#register-message').html('');
+                $('#register-success').html('');
+
+                if (json['error']) {
+                    $('#register-message').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                }
+
+                // if (json['redirect']) {
+                //     location = json['redirect'];
+                // }
+
+                if (json['success']) {
+                    $('#register-success').prepend('<div class="alert alert-success"><i class="fa fa-exclamation-circle"></i> ' + json['success'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+
+                    $('#button-register').hide();
+                    $('#button-update').show();
+
+
+                }
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+            }
+        });
+
+    });
+
+    $('#button-update').click(function () {
+
+        location.reload();
+
+        // $('button[type=submit]').click();
+
+    });
+
+    $('#button-manual-register').click(function () {
+
+        var data=$('#form-manual-register input, #register-form-container input');
+
+        $.ajax({
+            url: 'index.php?route=catalog/bundle_expert/registerModuleByManual&{{ token_name }}{{ token_value }}',
+            data:data,
+            dataType: 'json',
+            beforeSend: function() {
+                $('#button-register').button('loading');
+            },
+            complete: function() {
+                $('#button-register').button('reset');
+            },
+            success: function(json) {
+
+                if (json['error']) {
+                    $('#register-message').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                }
+
+                if (json['redirect']) {
+                    location = json['redirect'];
+                }
+
+                if (json['success']) {
+                    $('#register-success').prepend('<div class="alert alert-success"><i class="fa fa-exclamation-circle"></i> ' + json['success'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+
+                    $('#button-register').hide();
+                    $('#button-update').show();
+
+
+                }
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+            }
+        });
+
+    });
+
+    $('#button-show-license-form').click(function () {
+        $('#get-license-key-message').html('');
+        $('#get-license-key-message-success').html('');
+
+        $('.license-key-form').show();
+
+        $('#button-show-license-form').hide();
+
+        update_register_button();
+
+    });
+
+    $('#button-insert-domain').click(function () {
+        var domain = window.location.hostname;
+        $('#input-for-license-domain').val(domain);
+
+    });
+
+    function update_view_license_form() {
+        var license_key = $('input#input-for-license-key').val();
+
+        if (license_key === '') {
+            $('.license-key-form').show();
+            $('#button-show-license-form').hide();
+        } else {
+            $('.license-key-form').hide();
+            $('#button-show-license-form').show();
+        }
+
+        update_register_button();
+    }
+
+
+    function update_register_button() {
+        var license_key = $('input#input-for-license-key').val();
+
+        if (license_key === '') {
+            $('#button-register').addClass('btn-default');
+            $('#button-register').removeClass('btn-primary');
+        } else {
+            $('#button-register').removeClass('btn-default');
+            $('#button-register').addClass('btn-primary');
+        }
+    }
+
+    function update_dtatus_for_customer(){
+
+        var value = $('#input-status-for-customer :selected').val();
+        if(value==='1')
+            $('.form-customer-mode-active').show();
+        else
+            $('.form-customer-mode-active').hide();
+    }
+
+    update_dtatus_for_customer();
+
+    update_view_license_form();
+    update_register_button();
+
+    function update_product_as_kit_prices() {
+        $.ajax({
+            url: 'index.php?route=catalog/bundle_expert/updateProductAsKitAllPrices&{{ token_name }}{{ token_value }}',
+            dataType: 'json',
+            beforeSend: function() {
+                $('#button-update-product-as-kit-prices').button('loading');
+                $('.alert-container').html('');
+            },
+            complete: function() {
+                $('#button-update-product-as-kit-prices').button('reset');
+            },
+            success: function(json) {
+
+                if (json['success']) {
+                    $('.alert-container').append('<div class="alert alert-success"><i class="fa fa-exclamation-circle"></i> ' + json['success'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+
+                }
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+            }
+        });
+    }
+    function update_product_as_kit_prices_le() {
+        $.ajax({
+            url: 'index.php?route=catalog/bundle_expert/updateProductAsKitAllPricesLe&{{ token_name }}{{ token_value }}',
+            dataType: 'json',
+            beforeSend: function() {
+                $('#button-update-product-as-kit-prices-le').button('loading');
+                $('.alert-container').html('');
+            },
+            complete: function() {
+                $('#button-update-product-as-kit-prices-le').button('reset');
+            },
+            success: function(json) {
+
+                if (json['success']) {
+                    $('.alert-container').append('<div class="alert alert-success"><i class="fa fa-exclamation-circle"></i> ' + json['success'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+
+                }
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+            }
+        });
+    }
+
+    function clear_cache() {
+        $.ajax({
+            url: 'index.php?route=catalog/bundle_expert/clearCache&{{ token_name }}{{ token_value }}',
+            dataType: 'json',
+            beforeSend: function() {
+                $('#button-clear-cache').button('loading');
+                $('.alert-container').html('');
+            },
+            complete: function() {
+                $('#button-clear-cache').button('reset');
+            },
+            success: function(json) {
+
+                if (json['success']) {
+                    $('.alert-container').append('<div class="alert alert-success"><i class="fa fa-exclamation-circle"></i> ' + json['success'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+
+                }
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+            }
+        });
+    }
+
+    function update_cache() {
+        $.ajax({
+            url: 'index.php?route=catalog/bundle_expert/updateCache&{{ token_name }}{{ token_value }}',
+            dataType: 'json',
+            beforeSend: function() {
+                $('#button-update-cache').button('loading');
+                $('.alert-container').html('');
+            },
+            complete: function() {
+                $('#button-update-cache').button('reset');
+            },
+            success: function(json) {
+
+                if (json['success']) {
+                    $('.alert-container').append('<div class="alert alert-success"><i class="fa fa-exclamation-circle"></i> ' + json['success'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+
+                }
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+            }
+        });
+    }
+
+    function add_subdomain_register() {
+        $('#register-form-container').removeClass('hidden');
+        $('#register-form-complete-container').hide();
+    }
+
+    function update_custom_header_cart_js_status() {
+        var value = $('select#custom_header_cart_js_status').val();
+        if (value === "1") {
+            $('.custom-header-cart-js-template').show();
+        } else {
+            $('.custom-header-cart-js-template').hide();
+        }
+
+    }
+
+    var custom_js = '';
+
+    function changed_custom_header_cart_js() {
+        $('select#custom_header_cart_js_template').val('-1');
+    }
+
+    $("#textarea-custom-header-cart-js").on('keyup', function() {
+        custom_js = $('#textarea-custom-header-cart-js').val();
+        changed_custom_header_cart_js();
+
+    });
+
+    function update_custom_header_cart_js_template() {
+        var value = $('select#custom_header_cart_js_template').val();
+
+        if(value==="-1") {
+            $('#textarea-custom-header-cart-js').val(custom_js);;
+            return;
+        }
+
+        $.ajax({
+            url: 'index.php?route=catalog/bundle_expert/getCustomJsTemplate&{{ token_name }}{{ token_value }}&id='+value,
+            dataType: 'json',
+            beforeSend: function() {
+                $('#textarea-custom-header-cart-js').html('');
+            },
+            complete: function() {
+                //$('#button-update-cache').button('reset');
+            },
+            success: function(json) {
+
+                if (json['success']) {
+                    $('#textarea-custom-header-cart-js').val(json['script']);
+
+                }
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+            }
+        });
+    }
+
+    update_custom_header_cart_js_status();
+
+    //--></script>
+
+
+{{ footer }}

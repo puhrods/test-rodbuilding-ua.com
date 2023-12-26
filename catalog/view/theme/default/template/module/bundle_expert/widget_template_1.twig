@@ -1,0 +1,120 @@
+<div class="kit-widget be-css kit-widget-carousel bootstrap-style {% if (product_as_kit_mode) %} {{ 'product-as-kit-mode' }}{% endif %} {% if (product_as_kit_mode_light_mode) %} {{ 'product-as-kit-mode-light-mode' }}{% endif %}" data-id="bundle-expert-widget-{{ widget['widget_id'] }}" data-kit-title="{{ widget['kit_info']['title'] }}" data-widget-id="{{ widget['widget_id'] }}" data-kit-id="{{ widget['kit_info']['kit_id'] }}" data-main-product-id="{{ widget['main_product_id'] }}" data-widget-unique-id="{{ widget['unique_id'] }}" data-free-products-table-mode="{% if (free_products_table_mode) %} {{ 1 }}{% else %} {{ 0 }}{% endif %}" data-image-width="{{ image_width }}" data-max-width="{% if (widget['widget_width_mode']['limit'] == 1) %} {{ widget['widget_width_mode']['value'] }}{% else %} {{ '-1' }}{% endif %}" style="{% if (widget['widget_width_mode']['limit'] == 1) %} {{ 'max-width: '~widget['widget_width_mode']['value']~'px' }}{% endif %}">
+
+    <div  class="" style="border: 1px solid #ddd;   margin-bottom: 0px;">
+        <div class="kit-data">
+            <input type="hidden" name="kit_id" value="{{ widget['kit_info']['kit_id'] }}">
+            <input type="hidden" name="main_product_id" value="{{ widget['main_product_id'] }}">
+            <input type="hidden" name="main_product_in_cart" value="{{ widget['main_product_in_cart'] }}">
+            <input type="hidden" name="cart_merge_confirm" value="">
+            <input type="hidden" name="cart_merge_enable" value="{{ widget['cart_merge_enable'] }}">
+        </div>
+        <div class="kit-widget-header" style="padding: 8px 4px;;text-align: center; background-color: #ececec">
+            <h3 style="margin: 0; font-size: 18px">{{ widget['kit_info']['title'] }}</h3>
+
+            {% if (show_settings_icon) %}
+                <div class="be-settings-dropdown" style="">
+                    <span class="btn1 btn-sm1 btn-default1 dropdown-toggle" type="button" id="dropdownMenu{{ widget['unique_id'] }}" data-toggle="dropdown"><i class="fa fa-cog"></i></span>
+                    <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="dropdownMenu{{ widget['unique_id'] }}">
+                        <li role="presentation"><a target="_blank" role="menuitem" tabindex="-1" href="{{ kit_settings_link }}">{{ text_kit_settings_link }}</a></li>
+                        <li role="presentation"><a target="_blank" role="menuitem" tabindex="-1" href="{{ widget_settings_link }}">{{ text_widget_settings_link }}</a></li>
+                    </ul>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="kit-items" style="">
+            <div id="bundle-expert-widget-carousel-{{ widget['unique_id'] }}" class="owl-carousel owl-carousel-bundle-expert" style=" padding-top: 16px;padding-bottom: 8px;">
+
+                {% for index1,kit_product in kit_items %}
+                    {% for index2,kit_item_product in kit_product['products'] %}
+                        {% if (not (kit_item_product['is_free_product'] and not kit_item_product['free_product_in_kit'])) %}
+                            {{ kit_product['item_html'][index2] }}
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+                {% for index2,html in free_products_add_button_html %}
+                    {{ html }}
+                {% endfor %}
+
+            </div>
+
+            <div class="kit-widget-total-container" style="">
+                <div>
+                    <div class="total-default-container {% if (not display_total_default) %} {{ 'hidden' }}{% endif %}">
+                        {{ text_products_total }}:<br>
+                        {% if (total_default_new) %}
+                            <span class="be-price-old total-default" data-price-value="{{ total_default_value }}">
+                                {{ total_default }}
+                            </span>
+                            <span class="total-default-new" data-price-value="{{ total_default_new_value }}">
+                                {{ total_default_new }}
+                            </span>
+                        {% else %}
+
+                            <span class="be-price-old total-default" data-price-value=""></span>
+                            <span class="total-default-new" data-price-value="{{ total_default_value }}">
+                                    {{ total_default }}
+                                </span>
+                        {% endif %}
+
+                    </div>
+
+                    <div class="be-profit-price-row-container">
+
+                        <div class="be-profit-price-row {% if (not profit_value) %} {{ 'hidden' }}{% endif %}">
+                            <div class="text-right be-profit-price-header  " style="">
+                                {{ text_bundle_profit_price }}:
+                            </div>
+                            <div class=" text-right  be-profit-price-value">
+                                    <span class="be-profit-price">
+                                            {{ profit_price }}
+                                    </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        {{ text_bundle_total }}:<br>
+                        <span class="be-price"   style="font-weight: bold">
+                            {% if (total_kit_old) %}
+                                <span class="be-price-old total-kit-old"  data-price-value="{{ total_kit_old_value }}">
+                                    {{ total_kit_old }}
+                                </span>
+                                <span class="total-kit"  data-price-value="{{ total_kit_value }}">
+                                    {{ total_kit }}
+                                </span>
+                            {% else %}
+                                <span class="be-price-old total-kit-old" data-price-value=""></span>
+                                <span class="total-kit" data-price-value="{{ total_kit_value }}">
+                                    {{ total_kit }}
+                                </span>
+                            {% endif %}
+
+                        </span>
+                    </div>
+                    <div class="" style="margin-top: 4px;">
+
+
+                        {% if (not product_as_kit_mode and not product_as_kit_mode_light_mode) %}
+                            <a onclick="bundle_expert.add_to_cart_by_widget(this, '');" data-loading-text="Loading..." class="btn btn-primary btn-lg btn-block">
+                                {{ text_add_kit_to_cart }}
+                            </a>
+                        {% endif %}
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="widget-over-info hidden" style="">
+            <div class="widget-over-info-image"></div>
+            <div class="widget-over-info-text"></div>
+            <div class="widget-over-info-button">
+            </div>
+        </div>
+
+    </div>
+
+
+
+</div>

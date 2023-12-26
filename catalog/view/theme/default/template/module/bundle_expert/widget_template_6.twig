@@ -1,0 +1,71 @@
+<div class="kit-widget be-css kit-widget-series bootstrap-style" data-id="bundle-expert-widget-{{ widget['widget_id'] }}" data-kit-title="{{ widget['kit_info']['title'] }}" data-widget-id="{{ widget['widget_id'] }}" data-kit-id="{{ widget['kit_info']['kit_id'] }}" data-main-product-id="{{ widget['main_product_id'] }}" data-widget-unique-id="{{ widget['unique_id'] }}"  data-image-width="{{ image_width }}" data-max-width="{% if (widget['widget_width_mode']['limit'] == 1) %} {{ widget['widget_width_mode']['value'] }}{% else %} {{ '-1' }}{% endif %}" style="{% if (widget['widget_width_mode']['limit'] == 1) %} {{ 'max-width: '~widget['widget_width_mode']['value']~'px' }}{% endif %}">
+
+    <div  class="" style="border: 1px solid #ddd;   margin-bottom: 0px;">
+        <div class="kit-data">
+            <input type="hidden" name="kit_id" value="{{ widget['kit_info']['kit_id'] }}">
+            <input type="hidden" name="main_product_id" value="{{ widget['main_product_id'] }}">
+            <input type="hidden" name="main_product_in_cart" value="{{ widget['main_product_in_cart'] }}">
+            <input type="hidden" name="cart_merge_confirm" value="">
+            <input type="hidden" name="cart_merge_enable" value="{{ widget['cart_merge_enable'] }}">
+            <input type="hidden" name="product_as_kit_mode" value="{{ product_as_kit_mode }}">
+        </div>
+        <div class="kit-widget-header" style="padding: 8px 4px;;text-align: center; background-color: #ececec;border-bottom: 0px solid rgba(0,0,0,0.05);">
+            <h3 style="margin: 0; font-size: 18px;">{{ widget['kit_info']['title'] }}</h3>
+
+            {% if (show_settings_icon) %}
+                <div class="be-settings-dropdown" style="">
+                    <span class="btn1 btn-sm1 btn-default1 dropdown-toggle" type="button" id="dropdownMenu{{ widget['unique_id'] }}" data-toggle="dropdown"><i class="fa fa-cog"></i></span>
+                    <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="dropdownMenu{{ widget['unique_id'] }}">
+
+                        <li role="presentation"><a target="_blank" role="menuitem" tabindex="-1" href="{{ widget_settings_link }}">{{ text_widget_settings_link }}</a></li>
+                    </ul>
+                </div>
+            {% endif %}
+
+        </div>
+
+        <div class="row" style="">
+            <div id="kit-items-container" class="row" style="margin: 0; padding-top: 0px;padding-bottom: 0px;">
+
+                {% for index1,kit_product in kit_items %}
+                    {% for index2,kit_item_product in kit_product['products'] %}
+                        {% if (not kit_item_product['is_free_product']) %}
+                            {{ kit_product['item_html'][index2] }}
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+
+                <!--Выводим заколовки групп свободных товаров и сами товары, которые по умолчанию в комплекте-->
+                {% if (kit_has_free_products) %}
+
+
+                    {% for index1,kit_product in kit_items %}
+                        {% if (kit_product['is_free_product']) %}
+
+                            <div class="free-product-container-in-kit-header  col-xs-12" style=" ">
+                                <div>{{ kit_product['item_title'] }}</div>
+                            </div>
+                            {% if (kit_product['is_free_product'] ) %}
+                                {% for index2,kit_item_product in kit_product['products'] %}
+                                    {{ kit_product['item_html'][index2] }}
+                                {% endfor %}
+                            {% endif %}
+
+                        {% endif %}
+
+
+                    {% endfor %}
+
+
+                {% endif %}
+
+            </div>
+
+
+
+        </div>
+
+
+    </div>
+
+</div>

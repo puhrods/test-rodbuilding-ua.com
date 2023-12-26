@@ -1,0 +1,277 @@
+.radio-product-image {
+  position: relative;
+  cursor: pointer;
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  top: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  margin: 5px;
+  padding: 0 !important;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: start;
+  -ms-flex-pack: start;
+  justify-content: flex-start
+}
+.radio-product-image img {
+  cursor: pointer
+}
+.radio-product-image label {
+  padding: 0;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center
+}
+.radio-product-image label::before {
+  display: none
+}
+.radio-product-image label:after {
+  display: none
+}
+.radio-product-image label span {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  margin-right: 0;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  outline: 2px solid #dedede
+}
+.radio-product-image label .color-name {
+  font-size: 10px;
+  font-weight: bold;
+  margin-top: 5px
+}
+.radio-product-image input[type="radio"] {
+  opacity: 0;
+  z-index: 100;
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 13px;
+  bottom: 0;
+  margin: auto;
+  width: 30px;
+  height: 30px
+}
+.radio-product-image input[type="radio"]:checked + span {
+  outline: 2px solid #000
+}
+#product .options-block .text-danger {
+  position: absolute;
+  padding: 8px 10px;
+  background: #f44336;
+  z-index: 5;
+  display: inline-block;
+  border: 1px solid #cd4337;
+  right: auto;
+  line-height: 1;
+  margin: 0;
+  height: auto;
+  top: -36px;
+  font-size: 15px;
+  border-radius: 6px;
+  color: #fff;
+  left: 8px;
+  -webkit-box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15)
+}
+#product .options-block .text-danger:before {
+  content: '';
+  bottom: -17px;
+  left: 7px;
+  position: absolute;
+  border: 8px solid transparent;
+  border-top: 8px solid #cd4337
+}
+#product .options-block .text-danger:after {
+  content: '';
+  bottom: -15px;
+  left: 7px;
+  position: absolute;
+  border: 8px solid transparent;
+  border-top: 8px solid #f44336
+}
+.options_pro_form .caption {
+  overflow: visible !important;
+  padding: 0;
+}
+.options_pro_form .text-danger {
+  padding: 6px 8px;
+  background: #f44336;
+  z-index: 5;
+  display: inline-block;
+  border: 1px solid #cd4337;
+  right: auto;
+  line-height: 1;
+  margin: 0;
+  height: auto;
+  top: -36px;
+  font-size: 13px;
+  border-radius: 6px;
+  color: #fff;
+  left: 8px;
+  -webkit-box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15)
+}
+
+.options_pro_form .checkbox {
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  margin: 5px 10px 5px 0
+}
+.options-container .form-group {
+  position: relative
+}
+.options-container .form-group .square label {
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex
+}
+.options-container .form-group .square label:before {
+  margin: -4px 3px 0 0
+}
+.options-container .form-group .checkbox {
+  margin: 5px 0 !important
+}
+.options-container .form-group.required {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap
+}
+.options-container .form-group.required label {
+  margin: 0 15px 0 0
+}
+
+/* reset button*/
+.options-button-reset {
+  display: inline-block;
+  padding: 5px 7px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  color: #ffffff;
+  text-shadow: 0 -1px 0 rgb(0 0 0 / 25%);
+  background-color: #229ac8;
+  background-image: linear-gradient(to bottom, #23a1d1, #1f90bb);
+  background-repeat: repeat-x;
+  border-color: #1f90bb #1f90bb #145e7a;    
+}
+.options-button-reset:hover {
+  background-color: #1f90bb;
+  background-position: 0 -15px;
+  color: #fff;
+  cursor: pointer
+}
+
+/* product option in listings */
+.options-pro-group .control-label {
+  display: block;
+}
+
+.options-pro-group > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.options-pro-group > div .checkbox, .options-pro-group > div .radio {
+    margin: 0;
+}
+
+.options-pro-group > div .checkbox label, .options-pro-group > div .radio label {
+    padding-left: 0;
+}
+
+.options-pro-group > div .checkbox label input, .options-pro-group > div .radio label input {
+    display: none;
+}
+
+.options-pro-group > div .checkbox label span, .options-pro-group > div .radio label span {
+    display: block;
+    border: 1px solid #ddd;
+    background: #eee;
+    color: #888;
+    padding: 2px 10px;
+    border-radius: 4px;
+}
+
+.options-pro-group > div .checkbox label:hover span, .options-pro-group > div .radio label:hover span {
+    background: #ddd;
+    color: #444;
+    padding: 2px 10px;
+}
+
+.options-pro-group > div .checkbox label input:checked + span, .options-pro-group > div .radio label input:checked + span {
+    background: #23a1d1;
+    color: #fff;
+}
+
+.options-pro-group > div .checkbox label input[disabled="disabled"] + span, .options-pro-group > div .radio label input[disabled="disabled"] + span {
+    background: #fff;
+    cursor: not-allowed;
+}
+
+/* product option in product card */
+.options-block .form-group > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.options-block .form-group > div .checkbox, .options-block .form-group > div .radio {
+    margin: 0;
+}
+
+.options-block .form-group > div .checkbox label, .options-block .form-group > div .radio label {
+    padding-left: 0;  
+}
+
+
+
+.options-block .form-group > div .checkbox label input, .options-block .form-group > div .radio label input {
+    display: none;
+}
+
+.options-block .form-group > div .checkbox label span, .options-block .form-group > div .radio label span {
+    display: block;
+    border: 1px solid #ddd;
+    background: #eee;
+    color: #888;
+    padding: 2px 10px;
+    border-radius: 4px;
+}
+
+.options-block .form-group > div .checkbox label input:checked + span, .options-block .form-group > div .radio label input:checked + span {
+    color: #ffffff;
+    text-shadow: 0 -1px 0 rgb(0 0 0 / 25%);
+    background-color: #229ac8;
+    background-image: linear-gradient(to bottom, #23a1d1, #1f90bb);
+    background-repeat: repeat-x;
+    border-color: #1f90bb #1f90bb #145e7a;  
+}
+
+.options-block .form-group > div .checkbox label input[disabled="disabled"] + span, .options-block .form-group > div .radio label input[disabled="disabled"] + span {
+    background: #fff;
+    cursor: not-allowed;
+}
+
+.options-block .form-group > select option[disabled="disabled"] {
+    color: #ddd;
+
+}

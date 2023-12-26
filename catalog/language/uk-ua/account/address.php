@@ -36,3 +36,10 @@ $_['error_city']           = 'Назва міста має містити від
 $_['error_country']        = 'Будь ласка, вкажіть країну';
 $_['error_zone']           = 'Будь ласка, вкажіть регіон / область';
 $_['error_custom_field']   = 'Вкажіть %s';
+/*
+Translated with
+Массовый автоматический перевод текстов, товаров, категорий, статей и тд с Google translate API
+https://translator.codeguild.com.ua/
+*/
+$_['text_address_add'] = "Додати адресу";
+$_['text_address_edit'] = "Редагувати адресу";

@@ -1,0 +1,44 @@
+{% if options %}
+<div class="well">
+{% for option in options %}
+<div class="row option-container">
+	<div class="col-lg-12 col-md-12 col-sm-12">
+		<div class="panel panel-default">
+		  <div class="panel-heading">
+		  	{{ option["name"] }}
+		  	<span class="table">&nbsp;&nbsp;&nbsp;
+		  		<a href="#" class="desc"></a>&nbsp;
+		  		<a href="#" class="asc"></a>
+		  	</span>
+		  	<span class="pull-right">
+		  		<a href="#" class="select-all">{{ _['Select All'] }}</a> | 
+		  		<a href="#" class="deselect-all">{{ _['Deselect All'] }}</a>
+		    </span>
+		  </div>
+		  <div class="panel-body">
+			  <div class="row">
+			  {% for option_value in option["values"] %}
+			  	<div class="col-lg-2 col-md-3 col-sm-6">
+				  	<label for="OV{{ option_value["option_value_id"] }}">
+			  			<input type="checkbox" name="option_values[{{ option["option_id"] }}][]" value="{{ option_value["option_value_id"] }}" {% if (option_value["option_value_id"] in selected) or (selected|length == 0) %}checked="checked"{% endif %} id="OV{{ option_value["option_value_id"] }}"/>
+			  			{{ option_value["name"] }}
+					</label>
+			  	</div>
+			  {% endfor %}
+			  </div>
+		  </div>
+		</div>
+	</div>
+</div>
+{% endfor %}
+</div>
+<div class="buttons">
+  <div class="pull-left">
+  	<div class="alert alert-warning hidden"></div>
+  </div>
+  <div class="pull-right">
+	<input type="button" value="{{ _['Back'] }}" id="button-option-values-back" data-loading-text="{{ _['Loading...'] }}" class="btn" />
+	<input type="button" value="{{ _['Next'] }}" id="button-option-values-next" data-loading-text="{{ _['Loading...'] }}" class="btn btn-primary" />
+  </div>
+</div>
+{% endif %}

@@ -1,0 +1,187 @@
+<style>
+    #autocomplete-filter{
+        margin: 16px;
+    }
+    #autocomplete-filter .form-check-inline{
+        display: inline-block;
+        margin-right: 16px;
+
+    }
+    #autocomplete-filter .form-check-inline>*{
+
+        cursor: pointer;
+
+    }
+    #autocomplete-filter input{
+        vertical-align: middle;
+        margin: 0;
+    }
+    #autocomplete-filter #input-bundle-expert-auto-filter-limit{
+        display: inline-block;
+        width: auto;
+        min-width: unset;
+        width: 60px;
+        text-align: center;
+        padding: 0;
+    }
+    #autocomplete-filter .autocomplete-filter-title{
+        padding-right: 8px;
+    }
+    #autocomplete-filter.not-saved{
+        background-color: #ffd4000a;
+    }
+    #autocomplete-filter{
+
+    }
+</style>
+<div style="margin-left: 16px;margin-bottom: 16px;">
+    <div class="hidden"><h1 style="font-size: 36px">{{ text_module_name }}</h1></div>
+    <div style="margin-bottom: 16px"><img src="{{ logo }}" alt="" title="" style="width: 300px" /></div>
+    <a href="{{ href_kits }}" class="btn {% if (active_button == 'kits') %} {{ 'btn-primary' }}{% else %} {{ 'btn-default' }}{% endif %}">{{ text_kits }}</a>
+    <a href="{{ href_widgets }}" class="btn {% if (active_button == 'widgets') %} {{ 'btn-primary' }}{% else %} {{ 'btn-default' }}{% endif %}" style="margin-left: 4px">{{ text_widgets }}</a>
+    <a href="{{ href_settings }}" class="btn {% if (active_button == 'settings') %} {{ 'btn-primary' }}{% else %} {{ 'btn-default' }}{% endif %}" style="margin-left: 4px">{{ text_settings }}</a>
+    {% if (import_enable) %}
+        <a href="{{ href_import }}" class="btn {% if (active_button == 'import') %} {{ 'btn-primary' }}{% else %} {{ 'btn-default' }}{% endif %}" style="margin-left: 4px">{{ text_import }}</a>
+    {% endif %}
+    <a href="{{ href_help }}" target="_blank" class="btn {% if (active_button == 'help') %} {{ 'btn-primary' }}{% else %} {{ 'btn-default' }}{% endif %}" style="margin-left: 4px">{{ text_help }}</a>
+
+    {% if (show_auto_filter) %}
+        <button type="button" id="filter-button" data-toggle="tooltip" title="{{ button_filter }}" class="btn btn-default" onclick="on_filter_button();"><i class="fa fa-filter"></i></button>
+    {% endif %}
+
+    {% if (show_save_settings_warning) %}
+        <div style="margin-top: 16px" >
+            <div class="alert alert-warning"><i class="fa fa-exclamation-circle"></i>
+                {{ text_show_save_settings_warning }}
+                <button type="button" class="close" data-dismiss="alert">×</button>
+            </div>
+        </div>
+    {% endif %}
+    {% if (check_footer_ocmod) %}
+
+        <div class="check-footer-ocmod-container" style="margin-top: 16px;display: none" >
+            <div class="alert alert-warning"><i class="fa fa-exclamation-circle"></i>
+                <span>{{ text_check_footer_ocmod_warning }}</span>
+                <button type="button" class="close" data-dismiss="alert">×</button>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+            check_footer_ocmod();
+
+            function check_footer_ocmod() {
+
+
+                var url = '{{ check_footer_ocmod_url }}';
+                $.ajax({
+                    url: url,
+                    //dataType: 'json',
+                    dataType: 'html',
+                    success: function (html) {
+                        var $html_element = $(html);
+
+                        var be_element = $html_element.find('div#be-footer-ocmod-checker');
+
+                        if ($(be_element).length > 0) {
+                            var url = 'index.php?route=catalog/bundle_expert_navigation/set_footer_ocmod_checked&{{ token_name }}{{ token_value }}';
+                            $.ajax({
+                                url: url,
+                                dataType: 'json',
+                                success: function (json) {
+                                    var html_element = 1;
+
+                                }
+                            });
+                        } else {
+                            $('.check-footer-ocmod-container').show();
+                        }
+                    }
+                });
+            }
+        </script>
+    {% endif %}
+
+</div>
+
+
+{% if (show_auto_filter) %}
+    <div class="well " id="autocomplete-filter" style="margin: 16px;padding: 12px 8px 8px;display: none">
+        <div class="row">
+            <div class="col-sm-12">
+                <span class="autocomplete-filter-title">{{ text_auto_filter_title }}: </span>
+                {% for key,title in auto_filter_fields %}
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="inlineCheckbox{{ key }}" name="bundle_expert_auto_filter[{{ key }}]" value="option1" {% if (bundle_expert_auto_filter[key]) %} {{ 'checked' }}{% endif %} onchange="on_change_save_autocomplete_filter();">
+                        <label class="form-check-label" for="inlineCheckbox{{ key }}">{{ title }}</label>
+                    </div>
+                {% endfor %}
+
+                <span>{{ entry_auto_filter_limit }}:</span>
+                <input type="text" name="bundle_expert_auto_filter_limit" value="{{ bundle_expert_auto_filter_limit }}" placeholder="{{ entry_auto_filter_limit }}" id="input-bundle-expert-auto-filter-limit" onchange="on_change_save_autocomplete_filter();" class="form-control" />
+
+
+                <button style="display: none;    margin-left: 8px;" type="button" id="button-save-autocomplete-filter" onclick="save_autocomplete_filter();" class="btn btn-primary" title="{{ button_save }}"><i class="fa fa-save"></i></button>
+            </div>
+
+        </div>
+    </div>
+
+    <script type="text/javascript">
+
+        function on_change_save_autocomplete_filter() {
+            $('#button-save-autocomplete-filter').show();
+
+            $('#autocomplete-filter').addClass('not-saved');
+        }
+
+        function save_autocomplete_filter() {
+
+            var data=$('#autocomplete-filter input[type=checkbox]:checked, #autocomplete-filter input[type=text]');
+
+            $.ajax({
+                url: 'index.php?route=catalog/bundle_expert_navigation/save_auto_filter&{{ token_name }}{{ token_value }}',
+                data:data,
+                type: 'post',
+                dataType: 'json',
+                beforeSend: function() {
+                    $('#button-save-autocomplete-filter').button('loading');
+                    $('.alert').replaceWith('');
+                    $('.text-danger').replaceWith('');
+                },
+                complete: function() {
+                    $('#button-save-autocomplete-filter').button('reset');
+                },
+                success: function(json) {
+                    if (json['error']) {
+                        if (json['error']['warning']) {
+                            $('.breadcrumb').after('<div class="alert alert-warning">' + json['error']['warning'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                        }
+                    }
+                    if (json['success']) {
+
+                        $('#button-save-autocomplete-filter').hide();
+
+                        $('#autocomplete-filter').removeClass('not-saved');
+
+                    }
+                },
+                error: function(xhr, ajaxOptions, thrownError) {
+                    alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                }
+            });
+        }
+
+        function on_filter_button() {
+            if ($('#filter-button').hasClass('active')) {
+                $('#filter-button').removeClass('active');
+                $('#autocomplete-filter').hide();
+            } else {
+                $('#filter-button').addClass('active');
+                $('#autocomplete-filter').show();
+            }
+        }
+    </script>
+{% endif %}
+
+
+

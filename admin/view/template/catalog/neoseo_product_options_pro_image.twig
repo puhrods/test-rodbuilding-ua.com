@@ -1,0 +1,221 @@
+ {% if product_options_status is defined and product_options_status %}
+            <style>
+              #option-image-table tbody {
+                display: none;
+              }
+            </style>
+            <div class="tab-pane" id="tab-image-option">
+              <div class="tab-content">
+					  <h3 class="text-center">{{ text_selected_displayed }}</h3>
+			  </div>
+              <div class="form-group">
+                <label class="col-sm-2 control-label" for="input-option-priority">{{ text_option_priority }}</label>
+                <div class="col-sm-10">
+                    <select name="product_option_priority" class="form-control" id="input-option-priority">
+                    {# /*Пока скрываем вывод расширенной опции на вкладке "Изображения опций"*/?>
+                     if(false && $product_options_images) {
+                    if (count($product_options_images['options']) > 0) {
+                    <option value="echo '0_'.$product_options_images['product_option_pro_id']; ?>" echo ($option_images['option_priority'] == '0_'.$product_options_images['product_option_pro_id']) ? 'selected="selected"' : ''; >{{ product_options_images.name }}</option>
+                    }
+                    } #}
+                    {% for product_option in product_options %}
+                    {% if (product_option.type == 'related' or
+                              product_option.type == 'select' or
+                              product_option.type == 'radio' or
+                              product_option.type == 'checkbox' or
+                              product_option.type == 'image' and
+                              product_option.product_option_value|length > 0) %}
+                      <option value="{{ product_option.option_id }}" {% if option_images.option_priority == product_option.option_id %} selected="selected" {% endif %} >{{ product_option.name }}</option>
+                    {% endif %}
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+              <div class="table-responsive">
+                <table class="table table-bordered table-hover" id="option-image-table">
+                  <thead>
+					  <tr>
+						  <td style="width: 15%" class="text-left">{{ text_option_value }}</td>
+						  <td class="text-left">{{ text_image }}</td>
+					  </tr>
+                  </thead>
+                  {% set image_option_row = 0 %}
+                    {% if product_options_images and product_options_images.options|length > 0 %}
+                    <tbody class="options_pro option_image_0_{{ product_options_images.product_option_pro_id }}">
+                      {% for row_id,product_options_image in product_options_images['options'] %}
+                        <tr>
+                          <td>{{ product_options_image.name }}</td>
+                          <td name="product_option_value{{ row_id }}">
+                            <button type="button" onclick="addOptionImage('options_pro', {{ row_id }});" data-toggle="tooltip" title="{{ button_image_add }}" class="btn btn-primary"><i class="fa fa-plus-circle"></i></button>
+                            {% if product_option_value['images'] is defined %}
+                            {% for image in product_option_value['images'] %}
+                              <span id="option-image-span{{ image_option_row }}">
+                                <a href="" id="thumb-image-option{{ image_option_row }}" data-toggle="image" class="img-thumbnail">
+                                    <img src="{{ image.thumb }}" alt="Image" title="Image" data-placeholder="{{ placeholder }}" />
+                                </a>
+                                <input type="hidden" name="product_option_pro_image['options_pro'][{{ product_options_images.product_option_pro_id }}][{{ row_id }}][image]" value="{{ image.image }}" id="input-image-option{{ image_option_row }}" />
+                                <button type="button" onclick="$('#option-image-span{{ image_option_row }}').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button>
+                                {% set image_option_row = image_option_row + 1 %}
+                              </span>
+                            {% endfor %}
+                            {% endif %}
+                          </td>
+                        </tr>
+                      {% endfor %}
+                    </tbody>
+                  {% endif %}
+                    {% for product_option in product_options %}
+                      <tbody class="default_options option_image_{{ product_option.option_id }}">
+                        {% if product_option['type'] == 'related' or product_option['type'] == 'select' or product_option['type'] == 'radio' or product_option['type'] == 'checkbox' or product_option['type'] == 'image' %}
+                        {% if product_option['product_option_value']|length > 0 %}
+							{% for product_option_value in product_option['product_option_value'] %}
+							  <tr>
+                                <td>{{ options[product_option['option_id']]['option_values'][product_option_value['option_value_id']]['name'] }}</td>
+                                <td name="product_option_value{{ product_option_value.product_option_value_id }}">
+                                    <button type="button" onclick="addOptionImage('default_options', {{ product_option_value.product_option_value_id }});" data-toggle="tooltip" title="{{ button_image_add }}" class="btn btn-primary"><i class="fa fa-plus-circle"></i></button>
+                                    {% if option_images.images[product_option_value.product_option_value_id] is defined %}
+                                    {% for image in option_images.images[product_option_value.product_option_value_id] %}
+                                    <span id="option-image-span{{ image_option_row }}">
+                                      <a href="" id="thumb-image-option{{ image_option_row }}" data-toggle="image" class="img-thumbnail">
+                                          <img src="{{ image.thumb }}" alt="" title="" data-placeholder="{{ placeholder }}" />
+                                      </a>
+                                      <input type="hidden" name="product_option_pro_image[default_options][{{ product_option_value.product_option_value_id }}][{{ image_option_row }}][image]" value="{{ image.image }}" id="input-image-option{{ image_option_row }}" />
+                                      <button type="button" onclick="$('#option-image-span{{ image_option_row }}').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button>
+                                      {% set image_option_row = image_option_row + 1 %}
+                                    </span>
+                                    {% endfor %}
+                                    {% endif %}
+                                </td>
+							  </tr>
+							{% endfor %}
+		                  {% endif %}
+                        {% endif %}
+                      </tbody>
+                    {% endfor %}
+                </table>
+              </div>
+            </div>
+            <script>
+              function changeOptionPriority() {
+                  let current_checked_row = $('[name="product_option_priority"]').val();
+                  $('#option-image-table tbody').hide();
+                  $('.option_image_' + current_checked_row).show();
+              }
+              $('[name="product_option_priority"]').on('change', changeOptionPriority);
+             
+                  function checkRelatedOption() {
+                    if($('#check_related_box:checked').length == 0) {
+                      $('#tab-related-options').addClass('hidden');
+		      $("#tab-related-options").next().next().removeClass('hidden');
+                    } else {
+                      $('#tab-related-options').removeClass('hidden');
+		      $("#tab-related-options").next().next().addClass('hidden');
+                    }
+                  }
+		   changeOptionPriority();
+                  checkRelatedOption();
+                </script>
+            </script>
+    {% endif %}
+
+	    	    
+	    {% if product_options_status is defined and product_options_status %}
+<script type="text/javascript">
+$('[name="related-option"]').on('change', getRelated);
+let optionArray = [];
+function getRelated() {
+    let html = '';
+    let i,j,index,current_option;
+    let product_option_pro_id = $("[name='related-option']").val();
+    {% set sort_options = [] %}
+    {% for key,option in options %}
+    {% set sort_options = sort_options|merge({key:option}) %}
+        {% if option['option_values'] is defined and option['option_values'] %}
+            {% set option_values = [] %}
+            {% for option_value in option['option_values'] %}
+                {% set option_values = option_values|merge(option_value) %}
+                {% endfor %}
+            {# set sort_options[key]['option_values'] = option_values #}
+            {% set sort_options = sort_options|merge({key:{'option_values':option_values}}) %}
+        {% endif %}
+    {% endfor %}
+        
+    let options = {{ sort_options|json_encode() }};
+    let options_pro = {{ options_pro|json_encode() }};
+
+    if((options_pro[product_option_pro_id].options).length != 0) {
+        optionArray = options_pro[product_option_pro_id].options;
+        html += '<div class="form-group">';
+        html += '<div class="col-sm-12">';
+        html += '<div class="table-responsive">';
+        html += '  <table id="option-related-value" class="table table-striped table-bordered table-hover">';
+        html += '  	 <thead>';
+        html += '      <tr>';
+        for(i = 0; i < optionArray.length; i++) {
+            index = optionArray[i];
+            if(options[index]) {
+                current_option = options[index];
+                html += '        <td class="text-left">' + current_option.name + '</td>';
+            }
+        }
+        html += '        <td class="text-right">{{ entry_option_articul }}</td>';
+        html += '        <td class="text-right">{{ entry_quantity }}</td>';
+        html += '        <td class="text-right">{{ entry_price }}</td>';
+        html += '        <td></td>';
+        html += '      </tr>';
+        html += '  	 </thead>';
+        html += '  	 <tbody>';
+        html += '    </tbody>';
+        html += '    <tfoot>';
+        html += '      <tr>';
+        html += '        <td colspan="' + (optionArray.length + 3) + '"></td>';
+        html += '        <td class="text-left"><button type="button" onclick="addOptionRelatedValue(' + product_option_pro_id + ');" data-toggle="tooltip" title="{{ button_option_value_add }}" class="btn btn-primary"><i class="fa fa-plus-circle"></i></button></td>';
+        html += '      </tr>';
+        html += '    </tfoot>';
+        html += '  </table>';
+        html += '</div>';
+        for (i=0; i < optionArray.length; i++) {
+            index = optionArray[i];
+            current_option = options[index];
+            html += '  <select name="used_options[' + current_option.option_id + ']" data-key="' + current_option.option_id + '" id="option-related-values-' + current_option.option_id + '" style="display: none;">';
+            for (j = 0; j < Object.keys(current_option.option_values).length; j++) {
+                html += '  <option value="' + current_option.option_values[Object.keys(current_option.option_values)[j]].option_value_id + '">' + current_option.option_values[Object.keys(current_option.option_values)[j]].name + '</option>';
+            }
+            html += '  </select>';
+        }
+        html += '</div>';
+        html += '</div>';
+    }
+
+    $('#tab-related-options .tab-content-related').html(html);
+
+    $('.date').datetimepicker({
+        pickTime: false
+    });
+    $('.time').datetimepicker({
+        pickDate: false
+    });
+    $('.datetime').datetimepicker({
+        pickDate: true,
+        pickTime: true
+    });
+}
+
+let image_option_row = {{ image_option_row }};
+
+function addOptionImage(option_class, product_option_value_id) {
+	html  = '<span id="option-image-span' + image_option_row + '">';
+	html += '  <a href="" id="thumb-image-option' + image_option_row + '" data-toggle="image" class="img-thumbnail">';
+	html += '      <img src="{{ placeholder }}" alt="Image" title="Image" data-placeholder="{{ placeholder }}" />';
+	html += '  </a>';
+	html += '  <input type="hidden" name="product_option_pro_image[' + option_class + '][' + product_option_value_id + '][' + image_option_row + '][image]" value="" id="input-image-option' + image_option_row + '" />';
+	html += '  <button type="button" onclick="$(\'#option-image-span' + image_option_row + '\').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button>';
+	html += '</span>';
+
+	$('.' + option_class + ' [name=\'product_option_value'+product_option_value_id+'\']').append(html);
+
+	image_option_row++;
+}
+
+</script>
+{% endif %}

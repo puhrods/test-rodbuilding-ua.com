@@ -1,0 +1,152 @@
+<div class="simplecheckout-block" id="simplecheckout_cart" {{ hide ? 'data-hide="true"' : '' }} {{ has_error
+    ? 'data-error="true"' : '' }}>
+    {% if display_header %}
+    <div class="checkout-heading panel-heading">{{ text_cart }}</div>
+    {% endif %}
+    {% if attention %}
+    <div class="alert alert-danger simplecheckout-warning-block">{{ attention }}</div>
+    {% endif %}
+    {% if error_warning %}
+    <div class="alert alert-danger simplecheckout-warning-block">{{ error_warning }}</div>
+    {% endif %}
+
+
+    {% for product in products %}
+    <div class="row d-flex flex-wrap align-items-center mb-3">
+        <div class="column-12 col-md d-flex align-items-center">
+            {% if product['thumb'] %}
+            <a href="{{ product['href'] }}">
+                <img class="img-cart" src="{{ product['thumb'] }}" alt="{{ product['name'] }}"
+                    title="{{ product['name'] }}" />
+            </a>
+            {% endif %}
+            <a class="w-100" href="{{ product['href'] }}">{{ product['name'] }}</a>
+            <div class="us-cart-item-desc">
+                <!-- <a href="{{ product.href }}" class="us-cart-item-link">{{ product.name }}</a>{% if not product.stock %}<span class="required">***</span>{% endif %} -->
+                <ul class="us-product-info-list list-unstyled">
+                    {% if product.option %}
+                    {% for option in product.option %}
+                    <li class="us-product-info-item">{{ option.name }}: <span class="us-product-info-code">{{ option.value }}</span></li>
+                    {% endfor %}
+                    {% for voucher in vouchers %}
+                    <li>{{ voucher.description }}</li>
+                    <li class="input-group btn-block" style="max-width: 200px;">
+                          <input type="text" name="" value="1" size="1" disabled="disabled" class="form-control" />
+                          <span class="input-group-btn">
+                          <button type="button" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger" onclick="voucher.remove('{{ voucher.key }}');"><i class="fa fa-times-circle"></i></button>
+                          </span>
+                      </li>
+                      <li>{{ voucher.amount }}</li>
+                      <li>{{ voucher.amount }}</li>
+                      {% endfor %}
+                      {% endif %}
+                        <li class="us-product-info-item">{{ column_model }}: <span class="us-product-info-code">{{ product.model }}</span></li>
+                        {% if product.reward %}
+                        <li class="us-product-info-item">{{ product.reward }}</li>
+                        {% endif %}
+                        {% if product.recurring %}
+                        <li class="us-product-info-item">{{ text_recurring_item }} <span class="us-product-info-code">{{ product.recurring }}</span></li>
+                        {% endif %}
+                </ul>
+            </div>
+            <button class="btn btn-danger btn-clouse-cart ml-auto d-md-none" data-onclick="removeProduct"
+                data-product-key="{{ product['cart_id'] is not empty ? product['cart_id'] : product['key'] }}"
+                data-toggle="tooltip" type="button">
+                <i class="fa fa-times-circle"></i>
+            </button>
+        </div>
+
+        <div class="column-12 mt-3 mt-md-0 col-md-auto quantity d-flex align-items-center justify-content-between">
+
+            <div class="d-flex">
+                <button class="btn btn-primary btn-minus-cart" data-onclick="decreaseProductQuantity"
+                    data-toggle="tooltip" type="submit">
+                    <i class="fa fa-minus"></i>
+                </button>
+
+                <input class="form-control btn-quantity-cart" type="text" data-onchange="changeProductQuantity" {{
+                    quantity_step_as_minimum ? 'onfocus="$(this).blur()" data-minimum="' ~ product['minimum'] ~ '"' : ''
+                    }} name="quantity[{{ product['cart_id'] is not empty ? product['cart_id'] : product['key'] }}]"
+                    value="{{ product['quantity'] }}" size="1" />
+
+                <button class="btn btn-primary btn-plus-cart" data-onclick="increaseProductQuantity"
+                    data-toggle="tooltip" type="submit">
+                    <i class="fa fa-plus"></i>
+                </button>
+            </div>
+
+            <div class="min-width-120 text-right text-md-center">
+                {{ product['total'] }}
+            </div>
+
+            <button class="btn btn-danger btn-clouse-cart d-none d-md-block" data-onclick="removeProduct"
+                data-product-key="{{ product['cart_id'] is not empty ? product['cart_id'] : product['key'] }}"
+                data-toggle="tooltip" type="button">
+                <i class="fa fa-times-circle"></i>
+            </button>
+        </div>
+    </div>
+    {% endfor %}
+
+    {% for total in totals %}
+    <div class="simplecheckout-cart-total d-flex justify-content-end" id="total_{{ total['code'] }}">
+        <span><b>{{ total['title'] }}:</b></span>
+        <span class="simplecheckout-cart-total-value">{{ total['text'] }}</span>
+        <!-- <span class="simplecheckout-cart-total-remove">
+            {% if total['code'] == 'coupon' %}
+                <i data-onclick="removeCoupon" title="{{ button_remove }}" class="fa fa-times-circle"></i>
+            {% endif %}
+            {% if total['code'] == 'voucher' %}
+                <i data-onclick="removeVoucher" title="{{ button_remove }}" class="fa fa-times-circle"></i>
+            {% endif %}
+            {% if total['code'] == 'reward' %}
+                <i data-onclick="removeReward" title="{{ button_remove }}" class="fa fa-times-circle"></i>
+            {% endif %}
+        </span> -->
+    </div>
+    {% endfor %}
+
+    <div class="d-flex align-items-center justify-content-end mt-2">
+        {% if modules['coupon'] is defined %}
+        <div class="simplecheckout-cart-total me-2">
+            <!-- <span class="inputs">{{ entry_coupon }}</span> -->
+            <input class="form-control" placeholder="{{ entry_coupon }}" type="text" data-onchange="reloadAll"
+                name="coupon" value="{{ coupon }}" />
+        </div>
+        {% endif %}
+        {% if modules['coupon'] is defined or (modules['reward'] is defined and points > 0) or modules['voucher'] is
+        defined %}
+        <div class="simplecheckout-cart-total simplecheckout-cart-buttons">
+            <span class="inputs buttons"><a id="simplecheckout_button_cart" data-onclick="reloadAll"
+                    class="button btn-primary button_oc btn"><span>{{ button_update }}</span></a></span>
+        </div>
+        {% endif %}
+    </div>
+
+    {% if modules['reward'] is defined and points > 0 %}
+    <div class="simplecheckout-cart-total">
+        <span class="inputs">{{ entry_reward }}&nbsp;<input class="form-control" type="text" name="reward"
+                data-onchange="reloadAll" value="{{ reward }}" /></span>
+    </div>
+    {% endif %}
+    {% if modules['voucher'] is defined %}
+    <div class="simplecheckout-cart-total">
+        <span class="inputs">{{ entry_voucher }}&nbsp;<input class="form-control" type="text" name="voucher"
+                data-onchange="reloadAll" value="{{ voucher }}" /></span>
+    </div>
+    {% endif %}
+    <input type="hidden" name="remove" value="" id="simplecheckout_remove">
+    <div style="display:none;" id="simplecheckout_cart_total">{{ cart_total }}</div>
+    {% if display_weight %}
+    <div style="display:none;" id="simplecheckout_cart_weight">{{ weight }}</div>
+    {% endif %}
+    {% if not display_model %}
+    <style>
+        .simplecheckout-cart col.model,
+        .simplecheckout-cart th.model,
+        .simplecheckout-cart td.model {
+            display: none;
+        }
+    </style>
+    {% endif %}
+</div>

@@ -1,0 +1,335 @@
+<modification>
+	<name>NeoSeo Exchange 1С</name>
+	<version>196</version>
+	<code>neoseo-exchange-1c</code>
+	<author>NeoSeo</author>
+	<link>http://neoseo.com.ua/exchange1c</link>
+
+	<file path="admin/controller/common/column_left.php">
+		<operation>
+			<search><![CDATA[if ($this->user->hasPermission('access', 'catalog/manufacturer')) {]]></search>
+			<add position="before"><![CDATA[			/* NeoSeo Exchange 1c - begin */
+			if( $this->user->hasPermission('access','catalog/neoseo_warehouse') && isset($this->session->data['user_token']) ) {
+				$this->language->load("catalog/neoseo_warehouse");
+				if( $this->config->get("neoseo_exchange1c_status") ) {
+					if ($this->user->hasPermission('access', 'catalog/neoseo_warehouse')) {
+						$catalog[] = array(
+							'name'	   => $this->language->get('text_neoseo_warehouse'),
+							'href'     => $this->url->link('catalog/neoseo_warehouse', 'user_token=' . $this->session->data['user_token'], true),
+							'children' => array()
+						);
+					}
+				}
+			}
+			/* NeoSeo Exchange 1c - begin */]]></add>
+		</operation>
+	</file>
+
+
+	<file path="admin/model/catalog/category.php">
+		<operation>
+			<search><![CDATA[$this->db->query("DELETE FROM " . DB_PREFIX . "category WHERE category_id = '" . (int)$category_id . "'");]]></search>
+			<add position="after"><![CDATA[		/* NeoSeo Exchange 1c - begin */
+		$this->db->query("DELETE FROM `" . DB_PREFIX . "category_to_1c` WHERE category_id = '" . (int)$category_id . "'");
+		/* NeoSeo Exchange 1c - end */]]></add>
+		</operation>
+	</file>
+
+	<file path="admin/controller/catalog/product.php">
+		<operation>
+			<search><![CDATA[$this->response->setOutput($this->load->view('catalog/product_form', $data));]]></search>
+			<add position="before"><![CDATA[		/* NeoSeo Exchange 1c - begin */
+		if( isset($this->request->get['product_id']) ) {
+			$this->load->model("catalog/neoseo_warehouse");
+        	$data['warehouses'] = $this->model_catalog_neoseo_warehouse->getProductQuantity($this->request->get['product_id']);
+        	$data['code_1c'] = $this->model_catalog_product->getProductCode1c($this->request->get['product_id']);
+			foreach( $data['product_options'] as $product_option ) {
+				foreach( $product_option['product_option_value'] as $product_option_value ) {
+					$product_option_value_id = $product_option_value['product_option_value_id'];
+					$data['option_warehouses'][$product_option_value_id] = $this->model_catalog_neoseo_warehouse->getProductOptionQuantity($product_option_value_id);
+				}
+			}
+		} else {
+			$data['warehouses'] = array();
+			$data['code_1c'] = '';
+		}
+		/* NeoSeo Exchange 1c - end */]]></add>
+		</operation>[
+	</file>
+
+	<file path="admin/model/catalog/product.php">
+		<operation>
+			<search><![CDATA[$this->db->query("DELETE FROM " . DB_PREFIX . "product WHERE product_id = '" . (int)$product_id . "'");]]></search>
+			<add position="after"><![CDATA[		/* NeoSeo Exchange 1c - begin */
+		$this->db->query("DELETE FROM `" . DB_PREFIX . "product_to_1c` WHERE product_id = '" . (int)$product_id . "'");
+		$this->db->query("DELETE FROM `" . DB_PREFIX . "product_warehouse` WHERE product_id = '" . (int)$product_id . "'");
+		/* NeoSeo Exchange 1c - end */]]></add>
+		</operation>
+		<operation>
+			<search index="0"><![CDATA[$this->db->query("DELETE FROM " . DB_PREFIX . "seo_url]]></search>
+			<add position="before" offset="1"><![CDATA[		/* NeoSeo Exchange 1c - begin */
+		$this->db->query("DELETE FROM " . DB_PREFIX . "product_to_1c WHERE product_id=" . (int)$product_id . "");
+		if (isset($data['code_1c']) && $data['code_1c']) {
+			$this->db->query("INSERT INTO " . DB_PREFIX . "product_to_1c SET product_id = '" . (int)$product_id . "', 1c_id = '" . $this->db->escape($data['code_1c']) . "', guid = '" . $this->db->escape($data['code_1c']) . "'");
+		}
+		/* NeoSeo Exchange 1c - end */
+		]]></add>
+		</operation>
+		<operation>
+			<search><![CDATA[function getProduct($product_id) {]]></search>
+			<add position="before"><![CDATA[	/* NeoSeo Exchange 1c - begin */
+	public function getProductCode1c($product_id) {
+		$query = $this->db->query('SELECT 1c_id, guid FROM ' . DB_PREFIX . 'product_to_1c WHERE `product_id` = "' . (int)$product_id . '"');
+		if( !$query->num_rows )
+			return '';
+			if(!empty($query->row['1c_id'])) {
+					return $query->row['1c_id'];
+			}
+					return $query->row['guid'];
+
+	}
+	/* NeoSeo Exchange 1c - end */]]></add>
+		</operation>
+
+	</file>
+
+	<file path="admin/view/template/catalog/product_form.twig">
+        <operation>
+            <search><![CDATA[<div class="tab-pane" id="tab-links">]]></search>
+            <add position="after"><![CDATA[		<!-- NeoSeo Exchange 1c - begin -->
+              <div class="form-group">
+                <label class="col-sm-2 control-label" for="input-code_1c">Код 1С</label>
+                <div class="col-sm-10">
+                  <input type="text" name="code_1c" value="{{code_1c}}" placeholder="Код 1С" id="input-code_1c" class="form-control" />
+                </div>
+              </div>
+		<!-- NeoSeo Exchange 1c - end -->]]></add>
+        </operation>
+		<operation>
+			<search><![CDATA[<input type="text" name="quantity" value="{{ quantity }}" placeholder="{{ entry_quantity }}" id="input-quantity" class="form-control" />]]></search>
+			<add position="after"><![CDATA[		<!-- NeoSeo Exchange 1c - begin -->
+		{% if warehouses %}
+		<p>Остатки по складам:</p>
+		<ul>
+		{% for warehouse in warehouses %}
+        <li>{{warehouse.name}}: {{warehouse.quantity}}</li>
+        {% endfor %}
+        {% endif %}
+		<!-- NeoSeo Exchange 1c - end -->]]></add>
+		</operation>
+		<operation>
+			<search><![CDATA[<td class="text-right"><input type="text" name="product_option[{{ option_row }}][product_option_value][{{ option_value_row }}][quantity]" value="{{ product_option_value.quantity }}" placeholder="{{ entry_quantity }}" class="form-control" /></td>]]></search>
+			<add position="replace"><![CDATA[<td class="text-right"><input type="text" name="product_option[{{ option_row }}][product_option_value][{{ option_value_row }}][quantity]" value="{{ product_option_value.quantity }}" placeholder="{{ entry_quantity }}" class="form-control" />
+							<!-- NeoSeo Exchange 1c - begin -->
+								{% if option_warehouses and option_warehouses|length > 0 %}
+
+									<p>Остатки по складам:</p>
+								  <ul>
+								  {% for option_warehouse in option_warehouses[product_option_value.product_option_value_id] %}
+									   <li>{{option_warehouse.name}} : {{option_warehouse.quantity}}</li>
+								  {% endfor %}
+								  </ul>
+								{% endif %}
+                              <!-- NeoSeo Exchange 1c - end -->
+							</td>
+                              ]]></add>
+		</operation>
+
+	</file>
+
+	<file path="catalog/controller/product/product.php">
+		<operation>
+			<search><![CDATA[$data['images'] = array();]]></search>
+			<add position="before"><![CDATA[		/* NeoSeo Exchange 1c - begin */
+		$this->load->model("catalog/neoseo_warehouse");
+        $data['warehouses'] = $this->model_catalog_neoseo_warehouse->getProductQuantity($this->request->get['product_id']);
+		/* NeoSeo Exchange 1c - end */]]></add>
+		</operation>
+	</file>
+
+	<file path="catalog/view/theme/*/template/product/product.twig">
+		<operation>
+			<search><![CDATA[<input type="text" name="quantity" value="{{minimum}}" size="2" id="input-quantity" class="form-control" />]]></search>
+			<add position="after"><![CDATA[		<!-- NeoSeo Exchange 1c - begin -->
+			<div class="warehouse">
+		{% if warehouses %}
+		<p>Остатки по складам:</p>
+		<ul>
+		{% for warehouse in warehouses %}
+        <li>{{warehouse.name . ": " . $warehouse.quantity}}</li>
+        {% endfor %}
+        {% endif %}
+        </div>
+		<!-- NeoSeo Exchange 1c - end -->]]></add>
+		</operation>
+	</file>
+
+
+	<file path="admin/controller/sale/order.php">
+		<operation>
+			<search><![CDATA[public function info() {]]></search>
+			<add position="after"><![CDATA[					/* NeoSeo Exchange 1c - begin */
+					$this->language->load('extension/module/neoseo_exchange1c');
+		$this->load->model('tool/neoseo_exchange1c');
+
+		$data['order_export_exchange1c_status'] = $this->model_tool_neoseo_exchange1c->checkOrderTo1C($this->request->get['order_id']);
+
+		$data['text_order_export_exchange1c'] = $this->language->get('text_order_export_exchange1c');
+		$data['text_order_export_exchange1c_status_yes'] = $this->language->get('text_order_export_exchange1c_status_yes');
+		$data['text_order_export_exchange1c_status_not'] = $this->language->get('text_order_export_exchange1c_status_not');
+		$data['neoseo_exchange1c_order_status_sync'] = $this->config->get('neoseo_exchange1c_order_status_sync');
+					/* NeoSeo Exchange 1c - end */]]></add>
+		</operation>
+	</file>
+
+	<file path="admin/view/template/sale/order_info.twig">
+		<operation>
+			<search><![CDATA[text_affiliate]]></search>
+			<add position="before" offset="2"><![CDATA[		<!-- NeoSeo Exchange 1c - begin -->
+		<tr>
+                  <td>{{text_order_export_exchange1c}}</td>
+                  <td class="text-right"  colspan="2">
+                      <input type="checkbox" id="order_export_exchange1c_status" name="order_export_exchange1c_status" {%if order_export_exchange1c_status %} {% else %} checked="checked"{% endif %} value="1" id="input-override" />
+                  </td>
+              </tr>
+		<!-- NeoSeo Exchange 1c - end -->]]></add>
+		</operation>
+		<operation>
+			<search><![CDATA[footer]]></search>
+			<add position="before"><![CDATA[		<!-- NeoSeo Exchange 1c - begin -->
+		<script type="text/javascript"><!--
+
+    $('#order_export_exchange1c_status').on("click", function() {
+        if($("#order_export_exchange1c_status").is(':checked')){
+            var order_id = $("#order_export_exchange1c_status").attr('data-order-id');
+            $.ajax({
+                url: 'index.php?route=tool/neoseo_exchange1c/changeOrderExport1C&user_token={{user_token}}',
+                type: 'post',
+                dataType: 'json',
+                data: {
+                    'order_id': {{order_id}},
+            'status': $("#order_export_exchange1c_status").val(),
+        },
+            success: function(json) {
+                $('.alert').remove();
+                if (json.success) {
+                    $('.warning,.success').remove();
+                    var error = '{{text_order_export_exchange1c_status_yes}}';
+                    $('.page-header').after('<div class="alert alert-success">' + error + '</div>');
+                }
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+            }
+        });
+        }else{
+            var order_id = $("#order_export_exchange1c_status").attr('data-order-id');
+             $.ajax({
+             url: 'index.php?route=tool/neoseo_exchange1c/changeOrderExport1C&user_token={{user_token}}',
+             type: 'post',
+             dataType: 'json',
+             data: {
+             'order_id': {{order_id}},
+             'status': '0',
+             },
+             success: function(json) {
+             $('.alert').remove();
+             if (json.success) {
+             $('.warning,.success').remove();
+             var error = '{{text_order_export_exchange1c_status_not}}';
+             $('.page-header').after('<div class="alert alert-warning">' + error + '</div>');
+             }
+             },
+             error: function(xhr, ajaxOptions, thrownError) {
+             alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+             }
+             });
+        }
+    });
+
+    //--></script>
+		<!-- NeoSeo Exchange 1c - end -->]]></add>
+		</operation>
+	</file>
+
+	<file path="catalog/model/checkout/order.php">
+		<operation>
+			<search><![CDATA[public function addOrderHistory(]]></search>
+			<add position="after"><![CDATA[		/* NeoSeo Exchange 1c - begin */
+		$set_auto_tag_order = $this->config->get('neoseo_exchange1c_set_auto_tag_order');
+		if ($set_auto_tag_order == 1) {
+			$this->load->model('tool/neoseo_exchange1c');
+			$this->model_tool_neoseo_exchange1c->setAutoTagOrder($order_id, $order_status_id);
+		}
+		/* NeoSeo Exchange 1c - end */]]></add>
+		</operation>
+	</file>
+
+	<file path="admin/controller/customer/customer.php">
+		<operation>
+			<search><![CDATA[$this->response->setOutput($this->load->view('customer/customer_form', $data));]]></search>
+			<add position="before"><![CDATA[
+		/* NeoSeo Exchange 1c - begin */
+		if($data['customer_id'] > 0) {
+			$data['code_1c'] = $this->model_customer_customer->get1cId($data['customer_id']);
+		} else {
+			$data['code_1c'] = "";
+		}
+		/* NeoSeo Exchange 1c - end */]]></add>
+		</operation>
+	</file>
+
+	<file path="catalog/model/account/customer.php">
+		<operation>
+			<search><![CDATA[public function editCustomer($customer_id, $data) {]]></search>
+			<add position="after"><![CDATA[
+		/* NeoSeo Exchange 1c - begin */
+		$this->db->query("UPDATE " . DB_PREFIX . "customer SET `updated` = 1 WHERE customer_id = '" . (int)$customer_id . "'");
+		/* NeoSeo Exchange 1c - end */]]></add>
+		</operation>
+	</file>
+
+	<file path="admin/model/customer/customer.php">
+		<operation>
+			<search><![CDATA[public function editCustomer($customer_id, $data) {]]></search>
+			<add position="after"><![CDATA[
+		/* NeoSeo Exchange 1c - begin */
+		$this->db->query("UPDATE " . DB_PREFIX . "customer SET `updated` = 1 WHERE customer_id = '" . (int)$customer_id . "'");
+		$rows = $this->db->query("SELECT * FROM " . DB_PREFIX . "customer_to_1c WHERE customer_id = '" . (int)$customer_id . "'");
+		if($rows->num_rows) {
+			$this->db->query("UPDATE " . DB_PREFIX . "customer_to_1c SET `1c_id` = '".$this->db->escape($data['code_1c'])."' WHERE customer_id = '" . (int)$customer_id . "'");
+		} else {
+			$this->db->query("INSERT INTO `" . DB_PREFIX . "customer_to_1c` (`customer_id`, `1c_id`) VALUES ('" . (int)$customer_id . "', '".$this->db->escape($data['code_1c'])."')");
+		}
+		/* NeoSeo Exchange 1c - end */]]></add>
+		</operation>
+		<operation>
+			<search><![CDATA[public function editCustomer($customer_id, $data) {]]></search>
+			<add position="before"><![CDATA[
+		/* NeoSeo Exchange 1c - begin */
+		function get1cId($customer_id)
+		{
+			$result = "";
+			$info = $this->db->query("SELECT * FROM ".DB_PREFIX."customer_to_1c where customer_id = '".(int)$customer_id."'");
+			if($info->num_rows) $result = $info->row['1c_id'];
+			return $result;
+		}
+		/* NeoSeo Exchange 1c - end */]]></add>
+		</operation>
+	</file>
+
+	<file path="admin/view/template/customer/customer_form.twig">
+		<operation>
+			<search><![CDATA[<div class="tab-pane active" id="tab-customer">]]></search>
+			<add position="after"><![CDATA[		<!-- NeoSeo Exchange 1c - begin -->
+              <div class="form-group">
+                <label class="col-sm-2 control-label" for="input-code_1c">Код 1С</label>
+                <div class="col-sm-10">
+                  <input type="text" name="code_1c" value="{{ code_1c }}" placeholder="Код 1С" id="input-code_1c" class="form-control" />
+                </div>
+              </div>
+		<!-- NeoSeo Exchange 1c - end -->]]></add>
+		</operation>
+	</file>
+
+</modification>

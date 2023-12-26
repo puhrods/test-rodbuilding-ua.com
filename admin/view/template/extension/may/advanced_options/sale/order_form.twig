@@ -1,0 +1,121 @@
+<script><!--
+var product_id = $('input[name=\'product_id\']').val();
+setInterval(function() {
+    if (product_id == $('input[name=\'product_id\']').val()) {
+        return;
+    }
+
+    product_id = $('input[name=\'product_id\']').val();
+
+    $.ajax({
+        url: 'index.php?route=extension/may/advanced_options/product/getCombinedOptions&user_token={{ user_token }}&product_id=' + product_id,
+        success: function(html) {
+            if (html == '') {
+                return;
+            }
+
+            $('#option fieldset .form-group').remove();
+            $('#option fieldset').append(html);
+
+            $('#option fieldset .form-group label.control-label').addClass('col-sm-2');
+            $('#option fieldset .form-group label.control-label + div.may-swatches').addClass('col-sm-10');
+
+            $('#option fieldset').mayAdvancedOptions({},{
+                model: function(option) {
+                    if (option.model != undefined && option.model != "") {
+                        $('input:hidden[name=\'option[model]\']').val(option.model);
+                        return true;
+                    }
+                    return false;
+                },
+                sku: function(option) {
+                    if (option.sku != undefined && option.sku != "") {
+                        $('input:hidden[name=\'option[sku]\']').val(option.sku);
+                        return true;
+                    }
+                    return false;
+                },
+                upc: function(option) {
+                    if (option.upc != undefined && option.upc != "") {
+                        $('input:hidden[name=\'option[upc]\']').val(option.upc);
+                        return true;
+                    }
+                    return false;
+                },
+                ean: function(option) {
+                    if (option.ean != undefined && option.ean != "") {
+                        $('input:hidden[name=\'option[ean]\']').val(option.ean);
+                        return true;
+                    }
+                    return false;
+                },
+                jan: function(option) {
+                    if (option.jan != undefined && option.jan != "") {
+                        $('input:hidden[name=\'option[jan]\']').val(option.jan);
+                        return true;
+                    }
+                    return false;
+                },
+                isbn: function(option) {
+                    if (option.isbn != undefined && option.isbn != "") {
+                        $('input:hidden[name=\'option[isbn]\']').val(option.isbn);
+                        return true;
+                    }
+                    return false;
+                },
+                mpn: function(option) {
+                    if (option.mpn != undefined && option.mpn != "") {
+                        $('input:hidden[name=\'option[mpn]\']').val(option.mpn);
+                        return true;
+                    }
+                    return false;
+                },
+                location: function(option) {
+                    if (option.location != undefined && option.location != "") {
+                        $('input:hidden[name=\'option[location]\']').val(option.location);
+                        return true;
+                    }
+                    return false;
+                },
+                dimension: function(option) {
+                    if (option.dimension_l != undefined && option.dimension_l != "") {
+                        $('input:hidden[name=\'option[dimension_l]\']').val(MayHelper.Number.toI18nString(option.dimension_l, 2));
+                        $('input:hidden[name=\'option[dimension_w]\']').val(MayHelper.Number.toI18nString(option.dimension_w, 2));
+                        $('input:hidden[name=\'option[dimension_h]\']').val(MayHelper.Number.toI18nString(option.dimension_h, 2));
+                        return true;
+                    }
+                    return false;
+                },
+                quantity: function(option, advancedOption) {
+                    if (option.subtract || option.quantity) {
+                        advancedOption.quantity = parseInt(option.quantity);
+                        if ((option.quantity == 0 && option.subtract != 1)) {
+                            option.quantity = '{{ may_advanced_options_language['text_instock'] }}';
+                            advancedOption.quantity = -1;
+                        }
+
+                        if (advancedOption.quantity != 0) {
+                            $('#button-product-add').prop('disabled', false);
+                        } else {
+                            $('#button-product-add').prop('disabled', true);
+                        }
+
+                        return true;
+                    }
+                    return false;
+                },
+                weight: function(weight) {
+                    $('input:hidden[name=\'option[weight]\']').val(MayHelper.Number.toI18nString(weight, 2));
+                },
+                image: function(option) {
+                    if (option.product_images != undefined) {
+                        $('input:hidden[name=\'option[image]\']').val(option.product_images[0]['origin']);
+                        return true;
+                    }
+                    return false;
+                }                
+            });
+        }
+    });
+}, 300)
+//--></script>

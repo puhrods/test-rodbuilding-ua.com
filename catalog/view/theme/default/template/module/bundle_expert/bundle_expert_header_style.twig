@@ -1,0 +1,16 @@
+<style>
+    .kit-color-handler-0 + tr, .kit-color-handler-0 + div{
+        background-color: {{ cart_color_handler_1 }} !important;
+    }
+
+    .kit-color-handler-1 + tr, .kit-color-handler-1 + div{
+        background-color: {{ cart_color_handler_2 }} !important;
+    }
+
+    {% if (hide_elements_selector != '') %}
+    {{ hide_elements_selector }}{
+        display: none!important;
+    }
+    {% endif %}
+
+</style>

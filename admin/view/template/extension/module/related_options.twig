@@ -1,0 +1,687 @@
+{#
+//  Related Options / Связанные опции
+//  Support: support@liveopencart.com / Поддержка: help@liveopencart.ru
+#}
+{{ header }}{{ column_left }}
+<div id="content">
+	
+	<div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        <button type="submit" form="form-related-options" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+        <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
+      <h1>{{ module_name }}</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+					<li><a href="{{ breadcrumb['href'] }}">{{ breadcrumb['text'] }}</a></li>
+				{% endfor %}
+      </ul>
+    </div>
+  </div>
+	<div class="container-fluid">
+    {% if (error_warning ?? false) %}
+			<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+				<button type="button" class="close" data-dismiss="alert">&times;</button>
+			</div>
+    {% endif %}
+    {% if (updated ?? false) %}
+			<div class="alert alert-success"><i class="fa fa-exclamation-circle"></i> {{ updated }}
+				<button type="button" class="close" data-dismiss="alert">&times;</button>
+			</div>
+    {% endif %}
+		{% if (success ?? false) %}
+			<div class="alert alert-success"><i class="fa fa-exclamation-circle"></i> {{ success }}
+				<button type="button" class="close" data-dismiss="alert">&times;</button>
+			</div>
+    {% endif %}
+    
+		{% macro display_setting(modules, field) %}
+			
+			
+			<div class="form-group"
+				{% if field.parent %}
+					style="display:none;" data-parent="{{ field.parent }}"
+				{% endif %}
+			>
+				<label class="col-sm-2 control-label" for="{{ field.name }}" >
+					{% if field.help %}
+						<span data-toggle="tooltip" title="" data-original-title="{{ field.help }}">{{ field.title }}</span>
+					{% else %}
+						{{ field.title }}
+					{% endif %}
+				</label>
+				
+				{% if field.values %}
+					
+					{# select #}
+					
+					{% if field.delimiters %}
+						<div class="col-sm-2" >
+					{% else %}
+						<div class="col-sm-10" >
+					{% endif %}
+					
+					<select name="related_options[{{ field.name }}]" id="{{ field.name }}" class="form-control">
+					
+						{% for val_id, val_text in field.values %}
+							<option value="{{ val_id }}" 
+								{% if modules[field.name] is defined and modules[field.name] == val_id %}
+									selected
+								{% endif %}
+							>{{ val_text }}</option>
+						{% endfor %}
+					
+					</select>
+					</div>
+					
+					{% if field.delimiters %}
+						{% set delimiters = ['_delimiter_product', '_delimiter_ro'] %}
+						{% for delimiter in field.delimiters %}
+							<label class="col-sm-2 control-label" for="{{ delimiter.name }}" style="display:none;">
+								{{ delimiter.title }}
+							</label>
+							<div class="col-sm-2" style="display:none;">
+								{% set delimiter_value = ( modules[delimiter.name] ?? '' ) %}
+								<input type="text" class="form-control" name="related_options[{{ delimiter.name }}]" id="{{ delimiter.name }}" value="{{ delimiter_value }}">
+							</div>
+						{% endfor %}
+					{% endif %}
+					
+				{% else %}
+					
+					{# checkbox #}
+				
+					<div class="col-sm-10" >
+						<div class="checkbox">
+							<label>
+								<input type="checkbox" id="{{ field.name }}" name="related_options[{{ field.name }}]" value="1"
+									{% if ( modules[field.name] ?? false ) %}
+										checked
+									{% endif %}
+								>
+							</label>
+						</div>
+					</div>
+				{% endif %}
+			</div>
+		{% endmacro display_setting %}
+		
+		{% import _self as self_macro %}
+    
+		<div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_edit }}</h3>
+      </div>
+      <div class="panel-body">
+				
+        <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-related-options" class="form-horizontal">
+        
+          <ul class="nav nav-tabs">
+            <li class="active"><a href="#tab-settings" data-toggle="tab">{{ entry_settings }}</a></li>
+            <li><a href="#tab-additional" data-toggle="tab">{{ entry_additional }}</a></li>
+            <li><a href="#tab-import" data-toggle="tab">{{ entry_import }}</a></li>
+            <li><a href="#tab-export-new" data-toggle="tab">{{ entry_export_new }}</a></li>
+            <li><a href="#tab-import-new" data-toggle="tab">{{ entry_import_new }}</a></li>
+						<li><a href="#tab-about" data-toggle="tab" id="tab-about-button">{{ entry_about }}</a></li>
+          </ul>
+          
+          <div class="tab-content">
+            <div class="tab-pane active" id="tab-settings">
+              
+							{% for field in fields %}
+								{{ self_macro.display_setting(modules, field) }}
+							{% endfor %}
+							
+              <div class="table-responsive" id="options_variants" style="display: none">
+                <table id="variants_list" class="table table-striped table-bordered table-hover">
+                  <thead>
+                    <tr>
+                      <td class="text-left" style="width: 250px">{{ entry_ro_variant_name }}</td>
+                      <td class="text-left" >{{ entry_ro_options }}</td>
+											<td class="text-left" style="width: 150px">{{ entry_ro_sort_order }}</td>
+                      <td></td>
+                    </tr>
+                  </thead>
+                  
+                  <tbody>
+                  </tbody>
+                  
+                  <tfoot>
+                    <td colspan="3"></td>
+                    <td>
+                      <button type="button" onclick="add_new_variant();" data-toggle="tooltip" title="{{ entry_ro_add_variant }}" class="btn btn-primary"><i class="fa fa-plus-circle"></i></button>
+                    </td>
+                  </tfoot>
+  
+                </table>
+              </div>
+             
+              <input type="hidden" name="related_options[related_options_version]" value="{{ modules['related_options_version'] }}">
+              
+            </div>
+            
+            <div class="tab-pane" id="tab-additional">
+              
+              <div class="form-group"><div class="col-sm-12">{{ entry_additional_fields }}</div></div>
+							
+              
+							{% for field in additional_fields %}
+								{{ self_macro.display_setting(modules, field) }}
+							{% endfor %}
+							
+            </div>
+            </form>
+            
+            <div class="tab-pane" id="tab-import">
+              <div style="margin-bottom: 30px;">{{ entry_import_description }}</div>
+              
+              {% if PHPExcelExists %}
+              
+                <div class="form-group" >
+									
+									<label class="col-sm-2 control-label"></label>
+									
+									<div class="col-sm-10" >
+									
+										<label class="radio">
+											<input type="radio" name="import_delete_before" value="0" checked>{{ entry_import_nothing_before }}
+										</label>
+										<label class="radio">
+											<input type="radio" name="import_delete_before" value="1">{{ entry_import_delete_before }}
+										</label>
+										<label class="radio">
+											<input type="radio" name="import_delete_before" value="2">{{ entry_import_product_before }}
+										</label>
+										
+									</div>	
+                 
+                </div>
+              
+                <div class="form-group">
+                  <label class="col-sm-2 control-label"></label>
+                  <div class="col-sm-10" >
+                    <button type="button" id="button-upload" data-toggle="tooltip" title="" class='btn btn-primary' data-original-title="{{ button_upload }}">{{ button_upload }}</button>
+                    <span class="help-block">{{ button_upload_help }}</span>
+                  </div>
+                </div>
+                
+                
+              {% else %}
+                <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ entry_PHPExcel_not_found ~ PHPExcelPath }}</div>
+              {% endif %}
+              
+              
+              
+              <div style="margin-top: 30px;" id="import_result"></div>
+              
+              <div style="margin-top: 30px;" id="import_result_text"></div>
+            </div>
+						
+            <div class="tab-pane" id="tab-export-new">
+              <div style="margin-bottom: 30px;">{{ entry_export_new_description }}</div>
+              
+              <form id="export_new_form" action="{{ export_new_action }}" method="post" target="export_new_frame">
+								
+								
+								<div class="form-group" >
+									<label class="col-sm-2 control-label">
+										{{ entry_export_new_fields }}
+									</label>
+									<div class="col-sm-10" >
+										{% for field in export_new_fields %}
+                      <div class="checkbox">
+                        <label>
+                          <input type="checkbox" name="export_fields[]" value="{{ field }}"
+														{% if export_new_settings.export_fields is defined and (field in export_new_settings.export_fields) %}
+															checked
+														{% endif %}
+													>
+                          {{ field }}
+                        </label>
+                      </div>
+                    {% endfor %}
+										<br>
+										<button type="button" onclick="$('#export_new_form input[type=checkbox]').prop('checked', true);" data-toggle="tooltip" title="" class='btn btn-primary' data-original-title="{{ entry_export_new_check_all }}">{{ entry_export_new_check_all }}</button>
+									</div>	
+                </div>
+								
+								<div class="form-group" >
+									<label class="col-sm-2 control-label">
+										{{ ro_entry_export_method }}
+									</label>
+									<div class="col-sm-10" >
+										<select name="export_new_method" class="form-control">
+											<option value="0">{{ ro_entry_export_method_all }}</option>
+											<option value="1">{{ ro_entry_export_method_by_product_ids }}</option>
+											<option value="2">{{ ro_entry_export_method_by_ro_variant }}</option>
+										</select>
+									</div>
+                </div>
+              
+								<div class="form-group" id="export_settings_by_product_ids" style="display: none;">
+									<label class="col-sm-2 control-label">
+										{{ ro_entry_start_product_id }} ( {{ ro_entry_min_product_id }} {{ min_product_id }} )
+									</label>
+									<div class="col-sm-2" >
+										<input name="export_new_start_product_id" class="form-control" value="">
+									</div>	
+									<label class="col-sm-2 control-label">
+										{{ ro_entry_end_product_id }} ( {{ ro_entry_max_product_id }} {{ max_product_id }} )
+									</label>
+									<div class="col-sm-2" >
+										<input name="export_new_end_product_id" class="form-control" value="">
+									</div>	
+                </div>
+								
+								<div class="form-group" id="export_settings_by_ro_variant" style="display: none;">
+									<label class="col-sm-2 control-label">
+										{{ ro_entry_export_by_variant }}
+									</label>
+									<div class="col-sm-10" >
+										<select name="export_new_variant_id" class="form-control">
+											{% for vo_id, vo_data in variants_options %}
+												<option value="{{ vo_id }}">{{ vo_data.name }}</option>
+											{% endfor %}
+										</select>
+									</div>	
+                </div>
+                
+                {% if export_new_PHPExcelExists %}
+									
+									<div class="form-group" >
+										<label class="col-sm-2 control-label">
+										</label>
+										<div class="col-sm-10" >
+											<button type="button" onclick="$('#export_new_form').submit();" data-toggle="tooltip" title="" class='btn btn-primary' data-original-title="{{ entry_export_new_get_file }}">{{ entry_export_new_get_file }}</button>
+										</div>	
+									</div>
+									
+                  
+                {% else %}
+                  <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ entry_PHPExcel_not_found ~ PHPExcelPath }}</div>
+                {% endif %}
+                
+                <iframe name="export_new_frame" src="" id="export_new_frame" style="display: none">
+                </iframe>
+                
+              </form>
+              
+            </div>
+            
+            <div class="tab-pane" id="tab-import-new">
+              <div style="margin-bottom: 30px;">{{ entry_import_new_description }}</div>
+              
+              {% if PHPExcelExists %}
+								
+                <div style="padding-left: 40px;" >
+                
+                  <label class="radio">
+                    <input type="radio" name="import_new_delete_before" value="0" checked> {{ entry_import_new_nothing_before }}
+                  </label>
+                  <label class="radio">
+                    <input type="radio" name="import_new_delete_before" value="1"> {{ entry_import_new_delete_before }}
+                  </label>
+                  <label class="radio">
+                    <input type="radio" name="import_new_delete_before" value="2"> {{ entry_import_new_product_before }}
+                  </label>
+                  
+                </div>	
+               
+                <div style="padding:20px;">
+                  <button type="button" id="import-new-button-upload" data-toggle="tooltip" title="" class='btn btn-primary' data-original-title="{{ entry_import_new_button_upload }}">{{ entry_import_new_button_upload }}</button>
+                  <span class="help-block">{{ entry_import_new_button_upload_help }}</span>
+                </div>
+                
+                <div style="margin-top: 30px;" id="import_new_result"></div>
+              
+                <div style="margin-top: 30px;" id="import_new_result_text"></div>
+                
+              {% else %}
+                <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ entry_PHPExcel_not_found ~ PHPExcelPath }}</div>
+              {% endif %}
+              
+            </div>
+            
+						<div class="tab-pane" id="tab-about">
+							
+							<div id="module_description">
+								{{ module_description }}
+							</div>
+							
+							<hr>
+							{{ text_conversation }}
+							<hr>
+							
+							<br>
+							<h4>{{ entry_we_recommend }}</h4><br>
+							<div id="we_recommend">
+								{{ text_we_recommend }}
+							</div>
+							
+						</div>
+            
+          </div>
+        
+          
+        
+				<hr>
+				<span class="help-block">{{ entry_ro_version }}: {{ module_version }} | {{ text_ro_support }} | <span id="module_page">{{ text_ro_page }}</span></span><span class="help-block" style="font-size: 80%; line-height: 130%; margin-bottom: 0px;">{{ module_copyright }}</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript"><!--
+
+var import_upload_timer;
+$('#button-upload').on('click', function() {
+	$('#form-upload').remove();
+	
+	$('body').prepend('<form enctype="multipart/form-data" id="form-upload" style="display: none;"><input type="file" name="file" /></form>');
+
+	$('#form-upload input[name="file"]').trigger('click');
+	
+
+	clearInterval(import_upload_timer);
+	import_upload_timer = setInterval(function() {
+    
+    if ( !$('#form-upload input[name="file"]').length ) {
+      clearInterval(import_upload_timer);
+      return;
+    }
+    
+		if ($('#form-upload input[name=\'file\']').val() != '') {
+			clearInterval(import_upload_timer);		
+			
+			var form_data = new FormData($('#form-upload')[0]);
+			
+			form_data.append("import_delete_before", $('input:radio[name="import_delete_before"]:checked').val() );
+			
+			$.ajax({
+				url: 'index.php?route=extension/module/related_options/import&user_token={{ user_token }}',
+				type: 'post',		
+				dataType: 'json',
+				data: form_data,
+				//data: new FormData($('#form-upload')[0]),
+				cache: false,
+				contentType: false,
+				processData: false,		
+				beforeSend: function() {
+					$('#button-upload').button('loading');
+				},
+				complete: function() {
+					$('#button-upload').button('reset');
+				},	
+				success: function(json) {
+					
+          $('#import_result_text').html("{{ entry_server_response }}: "+json);
+          			
+					if (json['success']) {
+						alert(json['success']);
+					}
+        
+          if (json['error']) {
+            $('#import_result_text').html('Error: '+json['error']);
+          } else {
+            $('#import_result_text').html('{{ entry_import_result }}: '+json['products']+'/'+json['relatedoptions']);
+						if (json['warning']) {
+							$('#import_result_text').append('<br><br>Warning: '+json['warning']);
+						}
+          }
+          
+				},			
+				error: function(xhr, ajaxOptions, thrownError) {
+					alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+				}
+			});
+      
+      $('#form-upload').remove();
+      
+		}
+	}, 500);
+});
+
+$('#import-new-button-upload').on('click', function() {
+	$('#form-upload').remove();
+	
+	$('body').prepend('<form enctype="multipart/form-data" id="form-upload" style="display: none;"><input type="file" name="file" /></form>');
+
+	$('#form-upload input[name="file"]').trigger('click');
+
+	clearInterval(import_upload_timer);
+	import_upload_timer = setInterval(function() {
+    
+    if ( !$('#form-upload input[name="file"]').length ) {
+      clearInterval(import_upload_timer);
+      return;
+    }
+    
+		if ($('#form-upload input[name=\'file\']').val() != '') {
+			clearInterval(import_upload_timer);		
+			
+			var form_data = new FormData($('#form-upload')[0]);
+			
+			form_data.append("import_delete_before", $('input:radio[name="import_new_delete_before"]:checked').val() );
+			
+			$.ajax({
+				url: 'index.php?route=extension/module/related_options/import_new&user_token={{ user_token }}',
+				type: 'post',		
+				dataType: 'json',
+				data: form_data,
+				//data: new FormData($('#form-upload')[0]),
+				cache: false,
+				contentType: false,
+				processData: false,		
+				beforeSend: function() {
+					$('#import-new-button-upload').button('loading');
+					$('#import_new_result_text').html('<i id="loading-animation" class="fa fa-cog fa-spin fa-2x fa-fw"></i>');
+					//$('#import-new-button-upload').after('<i id="loading-animation" class="fa fa-cog fa-spin fa-2x fa-fw"></i>');
+				},
+				complete: function() {
+					$('#import-new-button-upload').button('reset');
+					$('#loading-animation').remove();
+				},	
+				success: function(json) {
+					
+          //$('#import_new_result_text').html("{{ entry_server_response }}: "+json);
+					// in case of wrong server response
+					html = "{{ entry_server_response }}: "+json;
+          			
+					if (json['success']) {
+						alert(json['success']);
+					}
+        
+          if (json['error'] && json['error'].length) {
+            var html = '';
+            for (var i in json['error']) {
+              html+= '<br>'+json['error'][i]+'';
+            }
+            html = '{{ entry_import_new_error }}'+html;
+          } else {
+						var html = '{{ entry_import_new_result }}: '+json['products']+'/'+json['relatedoptions'];
+          }
+          $('#import_new_result_text').html(html);
+				},			
+				error: function(xhr, ajaxOptions, thrownError) {
+					alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+				}
+			});
+      
+      $('#form-upload').remove();
+      
+		}
+	}, 500);
+});
+
+  
+var variant_cnt = 0;
+var options_cnt = 0;
+var all_options = {{ options|json_encode }};
+
+$('#spec_model').change(function(){
+	
+	var show_delimiter_product = ( $(this).val() == 3);
+	var delimiter_product = 'spec_model_delimiter_product';
+	$('#'+delimiter_product).parent().toggle(show_delimiter_product);
+	$('label[for="'+delimiter_product+'"]').toggle(show_delimiter_product);
+	
+	{% if version_pro %}
+		var show_delimiter_ro = ( $(this).val() == 2 || $(this).val() == 3);
+		var delimiter_ro = 'spec_model_delimiter_ro';
+		$('#'+delimiter_ro).parent().toggle(show_delimiter_ro);
+		$('label[for="'+delimiter_ro+'"]').toggle(show_delimiter_ro);
+	{% endif %}
+});
+$('#spec_model').change();
+
+function add_option(elem_num, option_id) {
+	
+	var str_add = "";
+	
+	str_add += '<div class="input-group" id="variant_option'+options_cnt+'">';
+	
+	
+	//str_add += "<div style='float:left;display:inline;margin-right:10px;'>";
+	str_add += "<select name='variants["+elem_num+"][options]["+options_cnt+"]' style=\"\" class=\"form-control\" >";
+	
+	for (var i in all_options) {
+		if ( !all_options.hasOwnProperty(i) ) continue;
+		var current_option = all_options[i];
+		str_add += '<option value="'+current_option['option_id']+'" '+((option_id==current_option['option_id'])?("selected"):(""))+' >'+current_option['name']+'&nbsp;&nbsp;&nbsp;[ID '+current_option['option_id']+']</option>';  
+	}
+	str_add += "</select>";
+	//str_add += "</div>";
+	str_add += '<span class="input-group-btn">';
+	str_add += '<button type="button" onclick="$(\'#variant_option'+options_cnt+'\').remove();" data-toggle="tooltip" title="{{ entry_ro_delete_option }}" class="btn btn-danger" data-original-title="{{ entry_ro_delete_option }}"><i class="fa fa-minus-circle"></i></button>';
+	str_add += '</span>';
+	str_add += '</div>';
+	
+	//str_add += "<div id='variant_option"+options_cnt+"'>";
+	//
+	//
+	//str_add += "<div style='float:left;display:inline;margin-right:10px;'>";
+	//str_add += "<select name='variants["+elem_num+"][options]["+options_cnt+"]' style=\"\" class=\"form-control\" >";
+	//
+	//for (var i in all_options) {
+	//	var current_option = all_options[i];
+	//	str_add += '<option value="'+current_option['option_id']+'" '+((option_id==current_option['option_id'])?("selected"):(""))+' >'+current_option['name']+' [ID '+current_option['option_id']+']</option>';  
+	//}
+	//str_add += "</select>";
+	//str_add += "</div>";
+	//str_add += "<button type=\"button\" onclick=\"$('#variant_option"+options_cnt+"').remove();\" data-toggle=\"tooltip\" title=\"{{ entry_ro_delete_option }}\" class=\"btn btn-danger\" data-original-title=\"{{ entry_ro_delete_option }}\"><i class=\"fa fa-minus-circle\"></i></button>";
+	//str_add += "</div>";
+	
+	options_cnt++;
+	
+	$('#variant_options'+elem_num).append("<tr><td>"+str_add+"</td></tr>");
+}
+
+function add_new_variant() {
+	add_variant('', '', '', '');
+}
+
+function add_variant(variant_id, variant_name, variant_options, variant_sort_order) {
+	
+	var str_add = "";
+	str_add += "<tr id='variant"+variant_cnt+"'>";
+	str_add += "<td class='text-right' style='vertical-align: top;'>";
+	str_add += '<input name="variants['+variant_cnt+'][name]" size=\'40\' value="'+variant_name+'" class="form-control">';
+	str_add += "<input type='hidden' name='variants["+variant_cnt+"][id]' value='"+variant_id+"'>";
+	
+	str_add += "<button type='button' onclick='add_option("+variant_cnt+",0);' data-toggle='tooltip' title='{{ entry_ro_add_option }}' class='btn btn-primary' data-original-title='{{ entry_ro_add_option }}'><i class='fa fa-plus-circle'></i></button>";
+	
+	str_add += "</td>";
+	str_add += "<td id='variant_options"+variant_cnt+"'>";
+	str_add += "";
+	str_add += "</td>";
+	
+	str_add += "</td>";
+	str_add += "<td>";
+	str_add += "<input type='text' class='form-control'  name='variants["+variant_cnt+"][sort_order]' value='"+variant_sort_order+"'>";
+	str_add += "</td>";
+	
+	str_add += "<td><button type='button' onclick=\"$('#variant"+variant_cnt+"').remove();\" data-toggle='tooltip' title='{{ entry_ro_delete_variant }}' class='btn btn-danger' data-original-title='{{ entry_ro_delete_variant }}'><i class='fa fa-minus-circle'></i></button></td>";
+	str_add += "";
+	str_add += "</tr>";
+	
+	$('#variants_list').append(str_add);
+	
+	if (variant_options) {
+		for (var i = 0, length = variant_options.length; i < length; i++) {
+			if (i in variant_options) {
+				add_option(variant_cnt, variant_options[i]);  
+			}
+		}
+	}
+	
+	variant_cnt++;
+}
+
+function show_options_variants() {
+	$('#options_variants').toggle($('#ro_use_variants').is(':checked'));
+}
+$('#ro_use_variants').change(function(){
+	show_options_variants();
+});
+
+$().ready(  function () {
+	show_options_variants();
+	
+	{% for vo_id, vo_data in variants_options %}
+			
+		{% set str_arr = '' %}
+		{% for current_option in vo_data.options %}
+			{% set str_arr = str_arr ~ (str_arr ? ',' : '') ~ current_option['option_id'] %}
+		{% endfor %}
+		add_variant({{ vo_id }}, '{{ vo_data.name }}', [{{ str_arr }}], '{{ vo_data.sort_order }}');
+		
+	{% endfor %}
+	
+} );
+
+$('select[name="export_new_method"]').change(function(){
+	$('#export_settings_by_product_ids').toggle( $(this).val()==1 );
+	$('#export_settings_by_ro_variant').toggle( $(this).val()==2 );
+})
+.change();
+
+$('div[data-parent]').each(function(){
+	
+	var $element = $(this);
+	var parent_selector = '#'+$element.attr('data-parent');
+	$(parent_selector).change(function(){
+		var $parent = $(this);
+		if ( $parent.is(':checkbox') ) {
+			selected = $parent.is(':checked');
+		} else { // select
+			selected = $parent.val() && $parent.val() != '0';
+		}
+		$element.toggle(selected);
+	})
+	.change();
+});
+
+
+
+{% if (export_new_settings ?? false)  %}
+	
+	var export_new_settings = {{ export_new_settings|json_encode }};
+	if ( export_new_settings['export_new_method'] ) {
+		$('select[name="export_new_method"]').val(export_new_settings['export_new_method'])
+		.change();
+	}
+	if ( export_new_settings['export_new_variant_id'] ) {
+		$('select[name="export_new_variant_id"]').val(export_new_settings['export_new_variant_id']);
+	}
+	if ( export_new_settings['export_new_start_product_id'] ) {
+		$('input[name="export_new_start_product_id"]').val(export_new_settings['export_new_start_product_id']);
+	}
+	if ( export_new_settings['export_new_end_product_id'] ) {
+		$('input[name="export_new_end_product_id"]').val(export_new_settings['export_new_end_product_id']);
+	}
+{% endif %}
+  
+//--></script>
+
+
+{{ footer }}

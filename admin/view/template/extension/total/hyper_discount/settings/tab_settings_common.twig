@@ -1,0 +1,225 @@
+<div class="row">
+    <div class="panel-body">
+        <legend>
+            <i class="fa fa-cog" aria-hidden="true"></i> {{ name_settings_common }} 
+            <button form="help_modals" class="pull-right hm-help btn btn-primary btn-sm" data-toggle="modal" data-target="#Common_Modal_One">
+                <i class="fa fa-info" aria-hidden="true"></i> - {{ help_name }} 
+            </button>
+        </legend>
+        <div class="table-responsive">
+            
+            <table class="table table-striped table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <td class="text-center mini-style">
+                            <label class="control-label">
+                                <span data-toggle="tooltip" title="" data-original-title="{{ common_status }}">
+                                    <i class="fa fa-power-off" aria-hidden="true"></i>
+                                </span>
+                            </label>
+                        </td>
+                        <td class="text-center data-style">
+                            <label class="control-label">
+                                <span data-toggle="tooltip" title="" data-original-title="{{ discount_variants_titles }}">
+                                    {{ discount_variants }} 
+                                </span>
+                            </label>
+                        </td>
+                        <td class="text-center mini-style" style="display:none;">
+                            <label class="control-label">
+                                <span data-toggle="tooltip" title="" data-original-title="{{ back_mode }}">
+                                    <i class="fa fa-user-secret" aria-hidden="true"></i>
+                                </span>
+                            </label>
+                        </td>
+                        <td class="text-center">
+                            <label class="control-label">
+                                <span data-toggle="tooltip" title="" data-original-title="{{ entry_discount_all_titles }}">
+                                    {{ entry_discount_all }} 
+                                </span>
+                            </label>
+                        </td>
+                        <td class="text-center">
+                            <label class="control-label">
+                                <span data-toggle="tooltip" title="" data-original-title="{{ entry_stock_all_titles }}">
+                                    {{ entry_stock_all }} 
+                                </span>
+                            </label>
+                        </td>
+                        <td class="text-center"></td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="text-center">
+                        <td class="text-center mini-style">
+                            <div class="text-center">
+                                <input class="bootstrap-switcher form-control" type="checkbox" value="1" name="discount_variant[status]" data-size="small" data-on-color="success" {% if (discount_variant['status'] is defined and discount_variant['status'] == '1') %} {{ 'checked' }}{% endif %} >
+                            </div>
+                        </td>
+                        <td class="text-center data-style">
+                            <select name="discount_variant[setting_variants]" class="form-control hd-md" >
+                                {% for variants_key,variants_value in array_setting_variants %}
+                                {% if (discount_variant['setting_variants'] == variants_key) %}
+                                <option value="{{ variants_key }}" selected="selected">{{ variants_value }}</option>
+                                {% else %} 
+                                <option value="{{ variants_key }}" >{{ variants_value }}</option>
+                                {% endif %} 
+                                {% endfor %} 
+                            </select>
+                        </td>
+                        <td class="text-center mini-style" style="display:none;">
+                            <div class="text-center">
+                                <input class="bootstrap-switcher form-control" type="checkbox" value="1" name="discount_variant[debugmode]" data-size="small" data-on-color="success" {% if (discount_variant['debugmode'] is defined and discount_variant['debugmode'] == '1') %} {{ 'checked' }}{% endif %} >
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <select name="discount_variant[discount_variant_discount]" class="form-control">
+                                {% for discount_key,discount_value in array_discounts %}
+                                {% if (discount_variant['discount_variant_discount'] is defined and discount_key == discount_variant['discount_variant_discount']) %}
+                                <option value="{{ discount_key }}" selected="selected">{{ discount_value }}</option>
+                                {% else %} 
+                                <option value="{{ discount_key }}" >{{ discount_value }}</option>
+                                {% endif %} 
+                                {% endfor %} 
+                            </select>
+                        </td>
+                        <td class="text-center">
+                            <select name="discount_variant[discount_variant_specials]" class="form-control">
+                                {% for specials_key,specials_value in array_specials %}
+                                {% if (discount_variant['discount_variant_specials'] is defined and specials_key == discount_variant['discount_variant_specials']) %}
+                                <option value="{{ specials_key }}" selected="selected">{{ specials_value }}</option>
+                                {% else %} 
+                                <option value="{{ specials_key }}" >{{ specials_value }}</option>
+                                {% endif %} 
+                                {% endfor %} 
+                            </select>
+                        </td>
+                        <td class="text-center"></td>
+              
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="hidden">
+
+            </div>
+
+            
+        </div>
+
+        <legend><i class="fa fa-puzzle-piece" aria-hidden="true"></i> {{ title_additional }}</button></legend>
+        <div class="table-responsive">
+          <table class="table table-striped table-bordered table-hover">
+            <thead>
+              <tr>
+                <td class="text-center mini-style">
+                  <label class="control-label">
+                    <span data-toggle="tooltip" title="{{ col_add_status }}"><i class="fa fa-power-off" aria-hidden="true"></i></span>
+                  </label>
+                </td>
+                <td class="text-left">
+                  <label class="control-label">{{ col_add_name }}</label>
+                </td>
+            </thead>
+            <tbody>
+              <tr class="text-center">
+                <td class="text-center mini-style">
+                  <input class="bootstrap-switcher form-control" type="checkbox" value="1" name="discount_variant[special_counter_one_day]" data-size="small" data-on-color="success" {% if discount_variant['special_counter_one_day'] %}checked{% endif %}>
+                </td>
+                <td class="text-left">{{ entry_special_counter_one_day }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        
+        <legend><i class="fa fa-refresh" aria-hidden="true"></i> {{ title_cron }}</button></legend>
+        <div class="row">
+          <div class="panel-body">
+            <div class="form-group">
+              <label class="col-sm-2 control-label">{{ entry_cron_cmd }}</label>
+              <div class="col-sm-10">
+                <input type="text" value="{{ cron_cmd }}" class="form-control" readonly />
+                <div class="alert alert-info" style="margin-top:10px;"><i class="fa fa-info-circle"></i> {{ help_cron_cmd }}</div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">{{ entry_cron_log }}</label>
+              <div class="col-sm-10">
+                <textarea class="form-control" rows="10" readonly>{{ cron_log }}</textarea>
+              </div>
+            </div>              
+          </div>              
+        </div>              
+    </div>
+</div>
+
+<!-- Start Modal Help Common One -->
+<div class="modal fade" id="Common_Modal_One" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times" aria-hidden="true"></i></button>
+                <h4 class="modal-title" id="myModalLabel"><i class="fa fa-cog" aria-hidden="true"></i> {{ help_name_common }}</h4>
+            </div>
+            <div class="modal-body">
+                <div class="text-center">{{ help_text }}</div>
+                <div class="helper-info">{{ help_description_common }}</div>
+                <div class="text-center">{{ help_first_common }}</div>
+                <div class="helper-info">{{ help_second_common }}</div>
+                <div class="text-center">{{ help_third_common }}</div>
+                <div class="helper-info">{{ help_fourth_common }}</div>
+
+                <div class="text-center">{{ help_fifth_common }}</div>
+                <div class="helper-info">{{ help_sixth_common }}</div>
+                <div class="text-center">{{ help_seventh_common }}</div>
+                <div class="helper-info">{{ help_eighth_common }}</div>
+                <div class="text-center">{{ help_ninth_common }}</div>
+                <div class="helper-info">{{ help_tenth_common }}</div>
+                <div class="text-center">{{ help_eleventh_common }}</div>
+                <div class="helper-info">{{ help_twelfth_common }}</div>
+                <div class="text-center">{{ help_thirteenth_common }}</div>
+                <div class="helper-info">{{ help_fourteenth_common }}</div>
+                <div class="text-center">{{ help_fifteenth_common }}</div>
+                <div class="helper-info">{{ help_sixteenth_common }}</div>
+
+                <div class="text-center">{{ help_warning }}</div>
+                <div class="helper-info">{{ help_end }}</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal"> {{ help_ok }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Start Modal Help Common Two -->
+<div class="modal fade" id="Common_Modal_Two" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times" aria-hidden="true"></i></button>
+                <h4 class="modal-title" id="myModalLabel"><i class="fa fa-cogs"></i> {{ help_name_statuses_common }}</h4>
+            </div>
+            <div class="modal-body">
+                <div class="text-center">{{ help_text }}</div>
+                <div class="helper-info">{{ help_description_statuses_common }}</div>
+                <div class="text-center">{{ help_first_statuses_common }}</div>
+                <div class="helper-info">{{ help_second_statuses_common }}</div>
+                <div class="text-center">{{ help_third_statuses_common }}</div>
+                <div class="helper-info">{{ help_fourth_statuses_common }}</div>
+                <div class="text-center">{{ help_fifth_statuses_common }}</div>
+                <div class="helper-info">{{ help_sixth_statuses_common }}</div>
+                <div class="text-center">{{ help_seventh_statuses_common }}</div>
+                <div class="helper-info">{{ help_ninth_statuses_common }}</div>
+                <div class="text-center">{{ help_warning }}</div>
+                <div class="helper-info">{{ help_end }}</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal"> {{ help_ok }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $('.bootstrap-switcher').bootstrapSwitch();
+</script>

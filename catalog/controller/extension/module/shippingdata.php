@@ -3,30 +3,6 @@ class ControllerModuleShippingData extends Controller {
 	public function getShippingData() {
 		$json = array();
 
-		if (isset($this->request->post['shipping'])) {
-			$shipping = $this->request->post['shipping'];
-		} else {
-			$shipping = '';
-		}
-		
-		if (isset($this->request->post['action'])) {
-			$action = $this->request->post['action'];
-		} else {
-			$action = '';
-		}
-		
-		if (isset($this->request->post['filter'])) {
-			$filter = $this->request->post['filter'];
-		} else {
-			$filter = '';
-		}
-		
-		if (isset($this->request->post['search'])) {
-			$search = $this->request->post['search'];
-		} else {
-			$search = '';
-		}
-
         if (version_compare(VERSION, '2.3', '>=')) {
             $this->load->model('extension/module/shippingdata');
 
@@ -37,25 +13,55 @@ class ControllerModuleShippingData extends Controller {
             $model_name = 'model_module_shippingdata';
         }
 
-		if (strpos($shipping, 'novaposhta.') !== false) {
-            require_once(DIR_SYSTEM . 'helper/novaposhta.php');
+		$shipping = $this->$model_name->getShippingMethod();
 
-            $novaposhta = new NovaPoshta($this->registry);
+		if (isset($this->request->post['action'])) {
+			$action = $this->request->post['action'];
+		} else {
+			$action = '';
+		}
+		
+		if (isset($this->request->post['filter'])) {
+			$filter = trim($this->request->post['filter']);
+		} else {
+			$filter = '';
+		}
+		
+		if (isset($this->request->post['search'])) {
+			$search = trim($this->request->post['search']);
+		} else {
+			$search = '';
+		}
 
+		if ($shipping['method'] == 'novaposhta') {
             if ($action == 'getCities') {
-                if ($filter) {
-                    $this->load->model('localisation/zone');
-
-                    $zone_info = $this->model_localisation_zone->getZone($filter);
-
-                    if ($zone_info) {
-                        $filter = $novaposhta->getAreaRef($zone_info['name']);
-                    }
+                if ($shipping['sub_method'] == 'department' || $shipping['sub_method'] == 'poshtomat') {
+                    $json = $this->$model_name->getNovaPoshtaCities($filter, $search);
+                } elseif ($shipping['sub_method'] == 'doors') {
+                    $json = $this->$model_name->getNovaPoshtaSettlements($filter, $search);
                 }
-
-                $json = $this->$model_name->getNovaPoshtaCities($filter, $search);
-            } elseif ($action == 'getWarehouses') {
-                $json = $this->$model_name->getNovaPoshtaWarehouses($filter, $search);
+            } elseif ($action == 'getDepartments') {
+                if ($shipping['sub_method'] == 'department') {
+                    $json = $this->$model_name->getNovaPoshtaDepartments($filter, $search);
+                } elseif ($shipping['sub_method'] == 'poshtomat') {
+                    $json = $this->$model_name->getNovaPoshtaPoshtomats($filter, $search);
+                }
+            } elseif ($action == 'getStreets') {
+                $json = $this->$model_name->getNovaPoshtaStreets($filter, $search);
+            }
+        } elseif ($shipping['method'] == 'ukrposhta') {
+            if ($action == 'getCities') {
+                $json = $this->$model_name->getUkrPoshtaCities($filter, $search);
+            } elseif ($action == 'getDepartments') {
+                $json = $this->$model_name->getUkrPoshtaDepartments($filter, $search, $shipping['sub_method']);
+            } elseif ($action == 'getPostCodes') {
+                $json = $this->$model_name->getUkrPoshtaPostCodes($search, $shipping['sub_method']);
+            }
+        } elseif ($shipping['method'] == 'justin') {
+            if ($action == 'getCities') {
+                $json = $this->$model_name->getJustinCities($filter, $search);
+            } elseif ($action == 'getDepartments') {
+                $json = $this->$model_name->getJustinDepartments($filter, $search);
             }
         }
 				

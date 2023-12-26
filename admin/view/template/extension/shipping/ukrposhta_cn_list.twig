@@ -103,8 +103,8 @@
 									{% if 'seats_amount' in displayed_information %}
 									<td>{{ column_seats_amount }}</td>
 									{% endif %}
-									{% if 'announced_price' in displayed_information %}
-									<td>{{ column_announced_price }}</td>
+									{% if 'declared_cost' in displayed_information %}
+									<td>{{ column_declared_cost }}</td>
 									{% endif %}
 									{% if 'shipping_cost' in displayed_information %}
 									<td>{{ column_shipping_cost }}</td>
@@ -121,8 +121,8 @@
 									{% if 'description' in displayed_information %}
 									<td>{{ column_description }}</td>
 									{% endif %}
-									{% if 'payer' in displayed_information %}
-									<td>{{ column_payer }}</td>
+									{% if 'delivery_payer' in displayed_information %}
+									<td>{{ column_delivery_payer }}</td>
 									{% endif %}
 									{% if 'status' in displayed_information %}
 									<td>{{ column_status }}</td>
@@ -134,7 +134,7 @@
 							{% for cn in cns %}
 								<tr>
 									<td class="text-center">
-										<input type="checkbox" name="selected[]" value="{{ cn.cn_identifier }}" />
+										<input type="checkbox" name="selected[]" value="{{ cn.cn_identifier }}" data-status="{{ cn.status }}" />
 									</td>
 									<td{{ 'cn_identifier' not in displayed_information ? ' style="display: none"' }}>
 									{{ cn.cn_identifier }}
@@ -151,64 +151,64 @@
 									</td>
 									{% endif %}
 									{% if 'shipment_group' in displayed_information %}
-									<td>{{ cn.shipment_group }}</td>
+									<td data-td="shipment_group">{{ cn.shipment_group }}</td>
 									{% endif %}
 									{% if 'estimated_shipping_date' in displayed_information %}
-									<td>{{ cn.estimated_shipping_date }}</td>
+									<td data-td="estimated_shipping_date">{{ cn.estimated_shipping_date }}</td>
 									{% endif %}
 									{% if 'last_updated_status_date' in displayed_information %}
-									<td>{{ cn.last_updated_status_date }}</td>
+									<td data-td="last_updated_status_date">{{ cn.last_updated_status_date }}</td>
 									{% endif %}
 									{% if 'last_modified_date' in displayed_information %}
-									<td>{{ cn.last_modified_date }}</td>
+									<td data-td="last_modified_date">{{ cn.last_modified_date }}</td>
 									{% endif %}
 									{% if 'sender' in displayed_information %}
-									<td>{{ cn.sender }}</td>
+									<td data-td="sender">{{ cn.sender }}</td>
 									{% endif %}
 									{% if 'sender_phone' in displayed_information %}
-									<td>{{ cn.sender_phone }}</td>
+									<td data-td="sender_phone">{{ cn.sender_phone }}</td>
 									{% endif %}
 									{% if 'sender_address' in displayed_information %}
-									<td>{{ cn.sender_address }}</td>
+									<td data-td="sender_address">{{ cn.sender_address }}</td>
 									{% endif %}
 									{% if 'recipient' in displayed_information %}
-									<td>{{ cn.recipient }}</td>
+									<td data-td="recipient">{{ cn.recipient }}</td>
 									{% endif %}
 									{% if 'recipient_phone' in displayed_information %}
-									<td>{{ cn.recipient_phone }}</td>
+									<td data-td="recipient_phone">{{ cn.recipient_phone }}</td>
 									{% endif %}
 									{% if 'recipient_address' in displayed_information %}
-									<td>{{ cn.recipient_address }}</td>
+									<td data-td="recipient_address">{{ cn.recipient_address }}</td>
 									{% endif %}
 									{% if 'weight' in displayed_information %}
-									<td>{{ cn.weight }}</td>
+									<td data-td="weight">{{ cn.weight }}</td>
 									{% endif %}
 									{% if 'seats_amount' in displayed_information %}
-									<td>{{ cn.seats_amount }}</td>
+									<td data-td="seats_amount">{{ cn.seats_amount }}</td>
 									{% endif %}
-									{% if 'announced_price' in displayed_information %}
-									<td>{{ cn.announced_price }}</td>
+									{% if 'declared_cost' in displayed_information %}
+									<td data-td="declared_cost">{{ cn.declared_cost }}</td>
 									{% endif %}
 									{% if 'shipping_cost' in displayed_information %}
-									<td>{{ cn.shipping_cost }}</td>
+									<td data-td="shipping_cost">{{ cn.shipping_cost }}</td>
 									{% endif %}
 									{% if 'backward_delivery' in displayed_information %}
-									<td>{{ cn.backward_delivery }}</td>
+									<td data-td="backward_delivery">{{ cn.backward_delivery }}</td>
 									{% endif %}
 									{% if 'delivery_type' in displayed_information %}
-									<td>{{ cn.delivery_type }}</td>
+									<td data-td="delivery_type">{{ cn.delivery_type }}</td>
 									{% endif %}
 									{% if 'delivery_technology' in displayed_information %}
-									<td>{{ cn.delivery_technology }}</td>
+									<td data-td="delivery_technology">{{ cn.delivery_technology }}</td>
 									{% endif %}
 									{% if 'description' in displayed_information %}
-									<td>{{ cn.description }}</td>
+									<td data-td="description">{{ cn.description }}</td>
 									{% endif %}
-									{% if 'payer' in displayed_information %}
-									<td>{{ cn.payer }}</td>
+									{% if 'delivery_payer' in displayed_information %}
+									<td data-td="delivery_payer"{{ cn.delivery_payer }}</td>
 									{% endif %}
 									{% if 'status' in displayed_information %}
-									<td>{{ cn.status }}</td>
+									<td data-td="status">{{ cn.status }}</td>
 									{% endif %}
 									<td class="text-center">
 										<div class="btn-group">
@@ -354,8 +354,9 @@
 	</div>
 	<!-- END Print settings -->
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/i18n/defaults-{{ translations_code }}.min.js"></script>
 <script type="text/javascript"><!--
 	function formHandler(element) {
 		switch(element.id) {
@@ -379,14 +380,13 @@
 			$('#modal-print-settings').modal('show');
 		} else {
 			var
-				cn_number = $('#input-print_button_id').val().replace(/\D/g,''),
-				print_type = $('#input-print_type').val(),
-				print_format = $('#input-print_format').val(),
-                print_sender_name = $('#input-print_sender_name:checked').val(),
-                print_delivery_price = $('#input-print_delivery_price:checked').val(),
-				print_declared_price = $('#input-print_declared_price:checked').val();
-
-			new_href = 'index.php?route=extension/shipping/ukrposhta/printDocument&user_token={{ user_token }}&cn_number=' + cn_number + '&cn_uuid=' + $('tr:contains("' + cn_number + '")').find('input[name="uuids[]"]').val();
+					cn_number = $('#input-print_button_id').val().replace(/\D/g,''),
+					print_type = $('#input-print_type').val(),
+					print_format = $('#input-print_format').val(),
+					print_sender_name = $('#input-print_sender_name:checked').val(),
+					print_delivery_price = $('#input-print_delivery_price:checked').val(),
+					print_declared_price = $('#input-print_declared_price:checked').val(),
+					new_href = 'index.php?route=extension/shipping/ukrposhta/printDocument&user_token={{ user_token }}&cn_number=' + cn_number + '&cn_uuid=' + $('tr:contains("' + cn_number + '")').find('input[name="uuids[]"]').val();
 
 			if (print_type) {
 				new_href += '&type=' + print_type;
@@ -394,15 +394,15 @@
 
 			if (print_format) {
 				new_href += '&format=' + print_format;
-            }
+			}
 
-            if (print_sender_name) {
-                new_href += '&print_sender_name=1';
-            }
+			if (print_sender_name) {
+				new_href += '&print_sender_name=1';
+			}
 
-            if (!print_delivery_price) {
-                new_href += '&hide_delivery_price=1';
-            }
+			if (!print_delivery_price) {
+				new_href += '&hide_delivery_price=1';
+			}
 
 			if (!print_declared_price) {
 				new_href += '&hide_declared_price=1';
@@ -424,8 +424,8 @@
 			$('#modal-add-to-group').modal('show');
 		} else {
 			var
-				cn_uuid = $('#input-cn_uuid_group').val(),
-				post_data = '&action=addShipmentToGroup';
+					cn_uuid = $('#input-cn_uuid_group').val(),
+					post_data = '&action=addShipmentToGroup';
 
 			post_data += '&cn=' + cn_uuid;
 			post_data += '&group_uuid=' + $('#input-shipment_group').val();
@@ -438,13 +438,13 @@
 				dataType: 'json',
 				success: function(json) {
 					if (json['success']) {
-						$('.container-fluid:eq(1)').prepend('<div class="alert alert-success"><i class="fa fa-check-circle"></i> ' + json['success'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+						$('.container-fluid:eq(2)').prepend('<div class="alert alert-success"><i class="fa fa-check-circle"></i> ' + json['success'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
 
 						$('tr:contains("' + cn_uuid + '")').addClass('info');
 					}
 
 					if (json['error']) {
-						$('.container-fluid:eq(1)').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+						$('.container-fluid:eq(2)').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
 					}
 				}
 			} );
@@ -455,7 +455,7 @@
 
 	function deleteFromGroup(self) {
 		var cn_uuid = $(self).parents('tr').find('input[name="selected[]"]').val(),
-			post_data = '&action=deleteShipmentFromGroup';
+				post_data = '&action=deleteShipmentFromGroup';
 
 		post_data += '&cn=' + cn_uuid;
 
@@ -466,22 +466,22 @@
 			dataType: 'json',
 			success: function(json) {
 				if (json['success']) {
-					$('.container-fluid:eq(1)').prepend('<div class="alert alert-success"><i class="fa fa-check-circle"></i> ' + json['success'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+					$('.container-fluid:eq(2)').prepend('<div class="alert alert-success"><i class="fa fa-check-circle"></i> ' + json['success'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
 
 					$('tr:contains("' + cn_uuid + '")').addClass('warning');
 				}
 
 				if (json['error']) {
-					$('.container-fluid:eq(1)').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+					$('.container-fluid:eq(2)').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
 				}
 			}
 		} );
 	}
 
 	function deleteCN(self) {
-	    if (!confirm('{{ text_confirm }}')) {
-	        return false;
-        }
+		if (!confirm('{{ text_confirm }}')) {
+			return false;
+		}
 
 		var post_data;
 
@@ -516,26 +516,79 @@
 						$('input[value ="' + json['success']['uuids'][i] + '"]').parents('tr').fadeOut('slow');
 					}
 
-					$('.container-fluid:eq(1)').prepend('<div class="alert alert-success"><i class="fa fa-check-circle"></i> ' + json['success']['text'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+					$('.container-fluid:eq(2)').prepend('<div class="alert alert-success"><i class="fa fa-check-circle"></i> ' + json['success']['text'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
 				}
 
 				if (json['warning']) {
 					for(var w in json['warning']) {
-						$('.container-fluid:eq(1)').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['warning'][w] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+						$('.container-fluid:eq(2)').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['warning'][w] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
 					}
 				}
 			}
 		} );
 	}
 
+	function getDocument(uuid) {
+		var post_data = '&action=getDocument&cn=' + uuid;
+
+		$.ajax({
+			type: 'POST',
+			url: 'index.php?route=extension/shipping/ukrposhta/ukrposhtaData&user_token={{ user_token }}',
+			data: post_data,
+			dataType: 'json',
+			beforeSend: function () {
+			},
+			complete: function () {
+			},
+			success: function(json) {
+				if (json['cn']) {
+					var $tr = $('input[value="' + uuid + '"]').parents('tr');
+
+					[
+						'shipment_group',
+						'estimated_shipping_date',
+						'last_updated_status_date',
+						'last_modified_date',
+						'sender',
+						'sender_phone',
+						'sender_address',
+						'recipient',
+						'recipient_phone',
+						'recipient_address',
+						'weight',
+						'seats_amount',
+						'declared_cost',
+						'shipping_cost',
+						'backward_delivery',
+						'delivery_type',
+						'delivery_technology',
+						'description',
+						'delivery_payer',
+						'status'
+					].forEach( function(v) {
+						$tr.find('td[data-td="' + v + '"]').html('<p style="display: none;">' + json['cn'][v] + '</p>');
+					});
+
+					$tr.find('p:hidden').fadeIn();
+
+					if (json['cn']['shipment_group']) {
+						$tr.find('a[onclick="addToGroup(this);"]').parent().replaceWith('<li><a onclick="deleteFromGroup(this);" style="cursor: pointer;"><i class="fa fa-outdent text-warning fa-fw" aria-hidden="true"></i> {{ text_delete_from_group }}</a></li>');
+					}
+				}
+			}
+		});
+	}
+
 	$(function() {
 		$('.date').datetimepicker({
 			pickTime: false
-		} );
+		});
 
-		$.ajaxSetup( {
-			beforeSend: function () {
-				$('body').fadeTo('fast', 0.7).prepend('<div id="ocmax-loader" style="position: fixed; top: 50%;	left: 50%; z-index: 9999;"><i class="fa fa-spinner fa-spin fa-3x fa-fw"></i></div>');
+		$.ajaxSetup({
+			beforeSend: function (jqXHR, settings) {
+				if (settings.url.match(/ukrposhta/i)) {
+					$('body').fadeTo('fast', 0.7).prepend('<div id="ocmax-loader" style="position: fixed; top: 50%;	left: 50%; z-index: 9999;"><i class="fa fa-spinner fa-spin fa-3x fa-fw"></i></div>');
+				}
 			},
 			complete: function () {
 				var $alerts = $('.alert-danger, .alert-success');
@@ -550,7 +603,7 @@
 			error: function (jqXHR, textStatus, errorThrown) {
 				console.log(textStatus);
 			}
-		} );
+		});
 
 		if ('{{ cn_uuid }}') {
 			$('tr:contains("{{ cn_uuid }}")').addClass('success');
@@ -564,21 +617,36 @@
 			} else {
 				$('#button-delete').attr('disabled', true);
 			}
-		} );
+		});
 
 		$('#content').on('change', 'input, select, textarea', function() {
 			setTimeout(formHandler, 100, this);
-		} );
+		});
 
 		$('#input-shipment_group').each(function() {
 			formHandler(this);
-		} );
+		});
+
+		/* START getDocuments */
+		var inputs = $('input[data-status=""]');
+
+		function processInput(index) {
+			if (index < inputs.length) {
+				getDocument(inputs[index].value);
+				setTimeout(function() {
+					processInput(index + 1);
+				}, 500);
+			}
+		}
+
+		processInput(0);
+		/* END getDocuments */
 
 		$('#button-filter').on('click', function() {
 			var
-				url = 'index.php?route=extension/shipping/ukrposhta/getCNList&user_token={{ user_token }}',
-				filter_cn_number = $('#input-filter_cn_number').val(),
-				filter_order_id = $('#input-filter_order_id').val();
+					url = 'index.php?route=extension/shipping/ukrposhta/getCNList&user_token={{ user_token }}',
+					filter_cn_number = $('#input-filter_cn_number').val(),
+					filter_order_id = $('#input-filter_order_id').val();
 
 
 			if (filter_cn_number) {
@@ -590,8 +658,7 @@
 			}
 
 			location = url;
-		} );
-
-	} );
+		});
+	});
 //--></script>
 {{ footer }}

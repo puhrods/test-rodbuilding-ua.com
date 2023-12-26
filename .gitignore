@@ -1,21 +1,60 @@
-.htaccess
-config.php
-admin/config.php
+# Config and Htaccess Files
+/.htaccess
+/config.php
+/admin/config.php
+/robots.txt
 
-!index.html
+!system/library/config.php
 
-download/
-image/data/
-image/cache/
-image/catalog/
-system/cache/
-system/logs/
+# Image File
+!/image/no_image.jpg
 
-system/storage/
+# Image Cache Files
+/image/cache/*
+!/image/cache/index.html
 
-# vQmod log files
-vqmod/logs/*
-# vQmod cache files
-vqmod/vqcache/*
-vqmod/checked.cache
-vqmod/mods.cache
+/image/catalog/*
+!/image/catalog/index.html
+
+# Backup Files
+/system/storage/backup/*
+!/system/storage/backup/index.html
+
+# System Cache Files
+/system/storage/cache/*
+!/system/storage/cache/index.html
+
+# Download Files
+/system/storage/download/*
+!/system/storage/download/index.html
+
+# Log Files
+/system/storage/logs/*
+!/system/storage/logs/index.html
+
+# Marketing Files
+/system/storage/marketing/*
+!/system/storage/marketing/index.html
+
+# Modification Files
+/system/storage/modification/*
+!/system/storage/modification/index.html
+
+# Session Files
+/system/storage/session/*
+!/system/storage/session/index.html
+
+# Upload Files
+/system/storage/upload/*
+!/system/storage/upload/index.html
+
+# If you want to ignore install file use following lines [on development mode]
+# /backup.install/*
+ /install/*
+
+# IDE Project files
+/.idea
+/ns-cache/*
+/storage_site_not_delete
+/image/elfinder_tmb/*
+/sd23fddf.php

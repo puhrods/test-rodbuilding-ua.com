@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html dir="{{ direction }}" lang="{{ lang }}">
+<head>
+    <meta charset="UTF-8" />
+    <title>{{ title }}</title>
+    <base href="{{ base }}" />
+    <link href="view/javascript/bootstrap/css/bootstrap.css" rel="stylesheet" media="all" />
+    <script type="text/javascript" src="view/javascript/jquery/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="view/javascript/bootstrap/js/bootstrap.min.js"></script>
+    <link href="view/javascript/font-awesome/css/font-awesome.min.css" type="text/css" rel="stylesheet" />
+    <link type="text/css" href="view/stylesheet/stylesheet.css" rel="stylesheet" media="all" />
+</head>
+<body>
+<div class="container">
+
+    <div style="page-break-after: always; margin-top: 16px">
+
+        <h1>{{ text_invoice }}</h1>
+
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <td class="text-right">{{ column_order_id }}</td>
+                <td class="text-left">{{ column_date_added }}</td>
+
+                <td class="text-left">{{ column_order_product }}</td>
+                <td class="text-left">{{ column_status }}</td>
+                <td class="text-right">{{ column_total }}</td>
+
+            </tr>
+            </thead>
+            <tbody>
+            {% for order in orders %}
+                <tr>
+                    <td class="text-right">{{ order['order_id'] }}</td>
+                    <td class="text-left">{{ order['date_added'] }}</td>
+
+                    <td class="text-left">
+                        {% for product in order['products'] %}
+                            <div style="margin-bottom: 8px;">
+                                <span >{{ product['name_2'] }}</span>
+                                {% for option in product['option'] %}
+                                    <br />
+                                    {% if (option['type'] != 'file') %}
+                                        &nbsp;<small> - {{ option['name'] }}: {{ option['value'] }}</small>
+                                    {% else %}
+                                        &nbsp;<small> - {{ option['name'] }}: <a href="{{ option['href'] }}">{{ option['value'] }}</a></small>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+                    </td>
+                    <td class="text-left">{{ order['order_status'] }}</td>
+                    <td class="text-right">{{ order['total'] }}</td>
+
+                </tr>
+            {% endfor %}
+
+            <tr>
+                <td class="text-right" colspan="4"><b>{{ text_total }}</b></td>
+                <td class="text-right">{{ total_all }}</td>
+            </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+</div>
+</body>
+</html>

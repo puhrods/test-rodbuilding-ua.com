@@ -1,0 +1,288 @@
+<div class="kit-item {% if (item_product['product_info']['quantity']<=0) %}{{ 'be-stock-out' }}{% endif %} {{ selectable? 'selectable':'' }} {% if (item_product['item_empty_mode']['enable']) %} {{ 'be-can-be-empty' }}{% endif %}  {% if (item_product['is_free_product']) %} {{ 'free-product' }}{% endif %}" data-empty-item="{% if (show_empty) %} {{ '1' }}{% else %} {{ '0' }}{% endif %}" data-checkbox-in-kit-show="{% if (checkbox_in_kit_show) %} {{ '1' }}{% else %} {{ '0' }}{% endif %}" data-item-position="{{ item_position }}"  data-item-position-free="{{ item_position_free }}" data-is-main-product-position="{{ item_product['main'] }}"  data-item-mode="{{ item_product['item_mode'] }}">
+    {% set product = item_product['product_info'] %}
+    <!--    -->{# if($item_product['is_free_product']) $input_name = 'kit_items_free'; else $input_name = 'kit_items'; #}
+    <div class="kit-item-product {% if (product['selected']) %} {{ 'product-selected' }}{% endif %} {% if (show_empty) %} {{ 'hidden' }}{% endif %}" style="padding: 0;position:relative;" data-item-position="{{ item_position }}" data-item-position-free="{{ item_position_free }}" data-item-product-position="{{ item_product_position }}" data-product-id="{{ item_product['product_id'] }}" >
+        <input type="hidden" name="{{ input_name_prefix }}[product_id]" data-id="input-product-id" value="{{ item_product['product_id'] }}">
+        <input type="hidden" name="{{ input_name_prefix }}[item_position]" data-id="input-item-position" value="{{ item_position }}">
+        <input type="hidden" name="{{ input_name_prefix }}[item_position_free]" data-id="input-item-position-free" value="{{ item_position_free }}">
+        <input type="hidden" name="{{ input_name_prefix }}[quantity]" data-id="input-quantity" value="{{ item_product['quantity'] }}">
+        <input type="hidden" name="{{ input_name_prefix }}[quantity_edit]" data-id="input-for-quantity-edit" value="{{ item_product['quantity_edit'] }}">
+        <input type="hidden" name="{{ input_name_prefix }}[empty_mode_item_is_empty]" data-id="input-is-item-is-empty" value="{{ empty_mode_item_is_empty }}">
+        <input type="hidden" name="{{ input_name_prefix }}[is_free_product]" data-id="input-is-free-product" value="{{ item_product['is_free_product'] }}">
+        <input type="hidden" name="{{ input_name_prefix }}[free_product_in_kit]" data-id="input-free-product-in-kit" value="{{ free_product_in_kit }}">
+
+        <div class="be-product-thumb transition" style="border: none; margin-bottom: 0; overflow: visible;"
+                {% if (product_click_mode == 'default') %}
+                    onclick="bundle_expert_form.set_active_product(this);"
+                {% endif %}
+        >
+
+            <div class="be-product-thumb-overlay">
+            </div>
+
+            <i class="fa fa-exclamation-circle alert-danger alert-icon"></i>
+
+
+            <div class="be-image" style="text-align: center">
+                <a {% if (product_click_mode == 'url' or product_click_mode == 'url_new_tab') %} href="{{ product['href'] }}" {% endif %}  {% if (product_click_mode == 'url_new_tab') %} target="_blank" {% endif %}>
+                    <div style="display: inline-block; position: relative;">
+                        <img src="{{ product['thumb'] }}" alt="{{ product['name'] }}" title="{{ product['name'] }}" class="img-responsive" />
+                        <div class="active-item-underline"></div>
+
+                        <div class="item-quantity {% if (item_product['quantity']<=1) %} {{ 'hidden' }}{% endif %}" style="">{{ item_product['quantity'] }}x</div>
+
+                        <div class="item-price-discount {% if (product['price_discount_text'] is empty) %} {{ 'hidden' }}{% endif %}" style="">{{ product['price_discount_text'] }}</div>
+
+                        <div class="be-remove-from-kit-button " style="display: none">
+                                <span onclick="bundle_expert_form.on_click_delete_item_from_kit(this);event.stopPropagation();">
+                                    <i class="fa fa-close" title="Удалить"></i>
+                                </span>
+                        </div>
+
+                        <div class="hidden-products-data hidden">
+                            <li class="be-reward">{{ product['points'] }}</li>
+                        </div>
+                    </div>
+                </a>
+
+
+            </div>
+            <div class="be-caption" style="min-height: auto; padding: 0 8px; text-align: center;">
+                <h4 class="be-product-title"><a data-href="{{ product['href'] }}" {% if (product_click_mode == 'url' or product_click_mode == 'url_new_tab') %} href="{{ product['href'] }}" {% endif %}  {% if (product_click_mode == 'url_new_tab') %} target="_blank" {% endif %} style="text-overflow: ellipsis;">{{ product['name'] }}</a></h4>
+                {% if (product['price']) %}
+                    <p class="be-price" style="margin: 0">
+                        {% if (not product['special']) %}
+                            {{ product['price'] }}
+                        {% else %}
+                            <span class="be-price-new">{{ product['special'] }}</span> <span class="be-price-old">{{ product['price'] }}</span>
+                        {% endif %}
+                    </p>
+                {% endif %}
+
+
+
+
+            </div>
+
+
+            <div class="selectable-item-container {% if (not selectable) %} {{ 'hidden' }}{% endif %}" style="text-align: center;">
+                    <span class="selectable-item select-product-button" style="{% if (item_product['is_free_product']) %} {{ 'display:none' }}{% endif %};padding: 4px 8px; background-color: #ececec; text-transform: uppercase" onclick="bundle_expert_form.on_click_select_item_product_button(this);event.stopPropagation()" >
+                        {{ text_product_for_select }}
+                    </span>
+                <span class="selectable-item add-to-kit-free-product-button" style="{% if (not (item_product['is_free_product'] and not item_product['free_product_in_kit'])) %} {{ 'display:none' }}{% endif %}" onclick="bundle_expert_form.on_click_add_free_product_button(this);event.stopPropagation()" >
+                        {{ text_product_for_select }}
+                    </span>
+            </div>
+
+            <div class="product-options-values" style="display: none">
+                <!--Опции нужны, т.к. если есть фиксированные опции то без них не совсем корректно будет работать-->
+                {% if (product['options']) %}
+                    {% for option in product['options'] %}
+                        {% if (option['type'] == 'select') %}
+                            <div class="form-group{{ option['required'] ? ' required' : '' }}">
+                                <div id="input-option{{ option['product_option_id'] }}">
+                                    <label class="control-label" >{{ option['name'] }}</label>
+                                    <select data-id="{{ option['unique_id'] }}" name="{{ option['unique_id'] }}_{{ input_name_prefix }}[option][{{ option['product_option_id'] }}]" onclick="event.stopPropagation();" onchange="bundle_expert_form.on_change_product_option(this)" class="form-control" {% if (option['option_has_fixed_value']) %} {{ 'disabled' }}{% endif %} >
+                                        <option value="">{{ text_select }}</option>
+                                        {% for option_value in option['product_option_value'] %}
+                                            <option value="{{ option_value['product_option_value_id'] }}" {% if (option_value['fixed_option_value'] or option_value['preset_option_value'] ) %} {{ 'selected' }}{% endif %}>{{ option_value['name'] }}
+                                                {% if (option_value['price']) %}
+                                                    ({{ option_value['price_text'] }})
+                                                {% endif %}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if (option['type'] == 'radio') %}
+                            <div class="form-group{{ option['required'] ? ' required' : '' }}">
+                                <label class="control-label">{{ option['name'] }}</label>
+                                <div id="input-option{{ option['product_option_id'] }}">
+                                    {% for option_value in option['product_option_value'] %}
+                                        <div class="radio {% if (option_value['image']) %}{{ 'radio-image' }}{% endif %}">
+                                            <label onclick="event.stopPropagation();">
+                                                <input data-id="{{ option['unique_id'] }}" type="radio" name="{{ option['unique_id'] }}_{{ input_name_prefix }}[option][{{ option['product_option_id'] }}]" value="{{ option_value['product_option_value_id'] }}" {% if (option['option_has_fixed_value']) %} {{ 'disabled' }}{% endif %} {% if (option_value['fixed_option_value'] or option_value['preset_option_value']) %} {{ 'checked' }}{% endif %}  onclick="event.stopPropagation();" onchange="bundle_expert_form.on_change_product_option(this)"/>
+                                                {% if (option_value['image']) %}
+                                                    <img src="{{ option_value['image'] }}" alt="{{ option_value['name'] ~ option_value['price'] ? ' ' ~ option_value['price_prefix'] ~ option_value['price'] : '' }}" class="be-img-thumbnail" />
+                                                {% endif %}
+                                                <span class="option-name">
+                                                        {{ option_value['name'] }}
+                                                    </span>
+                                                <span class="option-price">
+                                                        {% if (option_value['price']) %}
+                                                            ({{ option_value['price_text'] }})
+                                                        {% endif %}
+                                                    </span>
+                                            </label>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if (option['type'] == 'checkbox') %}
+                            <div class="form-group{{ option['required'] ? ' required' : '' }}">
+                                <label class="control-label">{{ option['name'] }}</label>
+                                <div id="input-option{{ option['product_option_id'] }}">
+                                    {% for index,option_value in option['product_option_value'] %}
+                                        <div class="checkbox {% if (option_value['image']) %} {{ 'checkbox-image' }}{% endif %}">
+                                            <label onclick="event.stopPropagation();">
+                                                <input data-id="{{ option['unique_id'] }}" type="checkbox" name="{{ option['unique_id'] }}_{{ input_name_prefix }}[option][{{ option['product_option_id'] }}][{{ index }}]" value="{{ option_value['product_option_value_id'] }}" {% if (option['option_has_fixed_value']) %} {{ 'disabled' }}{% endif %} {% if (option_value['fixed_option_value'] or option_value['preset_option_value']) %} {{ 'checked' }}{% endif %}  onclick="event.stopPropagation();" onchange="bundle_expert_form.on_change_product_option(this)"/>
+                                                {% if (option_value['image']) %}
+                                                    <img src="{{ option_value['image'] }}" alt="{{ option_value['name'] ~ option_value['price'] ? ' ' ~ option_value['price_prefix'] ~ option_value['price'] : '' }}" class="be-img-thumbnail" />
+                                                {% endif %}
+                                                <span class="option-name">
+                                                        {{ option_value['name'] }}
+                                                    </span>
+                                                <span class="option-price">
+                                                        {% if (option_value['price']) %}
+                                                            ({{ option_value['price_text'] }})
+                                                        {% endif %}
+                                                    </span>
+                                            </label>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if (option['type'] == 'image') %}
+                            <div class="form-group{{ option['required'] ? ' required' : '' }}">
+                                <label class="control-label">{{ option['name'] }}</label>
+                                <div id="input-option{{ option['product_option_id'] }}">
+                                    {% for option_value in option['product_option_value'] %}
+                                        <div class="radio image">
+                                            <label>
+                                                <input type="radio" data-id="{{ option['unique_id'] }}" name="{{ option['unique_id'] }}_{{ input_name_prefix }}[option][{{ option['product_option_id'] }}]" value="{{ option_value['product_option_value_id'] }}" {% if (option['option_has_fixed_value']) %} {{ 'disabled' }}{% endif %} {% if (option_value['fixed_option_value'] or option_value['preset_option_value']) %} {{ 'checked' }}{% endif %}  onclick="event.stopPropagation();" onchange="bundle_expert_form.on_change_product_option(this)"/>
+                                                <img src="{{ option_value['image'] }}" alt="{{ option_value['name'] ~ option_value['price'] ? ' ' ~ option_value['price_prefix'] ~ option_value['price'] : '' }}" class="be-img-thumbnail" /> {{ option_value['name'] }}
+                                                <span class="option-price">
+                                                        {% if (option_value['price']) %}
+                                                            ({{ option_value['price_prefix'] }}{{ option_value['price'] }})
+                                                        {% endif %}
+                                                    </span>
+                                            </label>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if (option['type'] == 'text') %}
+                            <div class="form-group{{ option['required'] ? ' required' : '' }}">
+                                <label class="control-label" for="input-option{{ option['product_option_id'] }}">{{ option['name'] }}</label>
+                                <input type="text" data-id="{{ option['unique_id'] }}" name="{{ option['unique_id'] }}_{{ input_name_prefix }}[option][{{ option['product_option_id'] }}]" id="input-option{{ option['product_option_id'] }}"  value="{{ option['value'] }}" placeholder="{{ option['name'] }}" class="form-control" {% if (option['option_has_fixed_value']) %} {{ 'disabled' }}{% endif %}  onclick="event.stopPropagation();" onchange="bundle_expert_form.on_change_product_option(this)"/>
+                            </div>
+                        {% endif %}
+                        {% if (option['type'] == 'textarea') %}
+                            <div class="form-group{{ option['required'] ? ' required' : '' }}">
+                                <label class="control-label" for="input-option{{ option['product_option_id'] }}">{{ option['name'] }}</label>
+                                <textarea data-id="{{ option['unique_id'] }}" name="{{ option['unique_id'] }}_{{ input_name_prefix }}[option][{{ option['product_option_id'] }}]" rows="5" id="input-option{{ option['product_option_id'] }}"  placeholder="{{ option['name'] }}"  class="form-control" {% if (option['option_has_fixed_value']) %} {{ 'disabled' }}{% endif %}  onclick="event.stopPropagation();" onchange="bundle_expert_form.update_widget_kit_total($(this).closest('.kit-widget'))">{{ option['value'] }}</textarea>
+                            </div>
+                        {% endif %}
+                        {% if (option['type'] == 'file') %}
+                            <div class="form-group{{ option['required'] ? ' required' : '' }}">
+                                <label class="control-label">{{ option['name'] }}</label>
+                                <button type="button" id="button-upload{{ option['product_option_id'] }}" data-loading-text="{{ text_loading }}" class="btn btn-default btn-block" ><i class="fa fa-upload"></i> {{ button_upload }}</button>
+                                <input type="hidden" data-id="{{ option['unique_id'] }}" name="{{ option['unique_id'] }}_{{ input_name_prefix }}[option][{{ option['product_option_id'] }}]" id="input-option{{ option['product_option_id'] }}" value="{{ option['value'] }}" onclick="event.stopPropagation();" onchange="bundle_expert.update_widget_kit_total($(this).closest('.kit-widget'))"/>
+                            </div>
+                        {% endif %}
+                        {% if (option['type'] == 'date') %}
+                            <div class="form-group{{ option['required'] ? ' required' : '' }}">
+                                <label class="control-label" for="input-option{{ option['product_option_id'] }}">{{ option['name'] }}</label>
+                                <div class="input-group date">
+                                    <input type="text" data-id="{{ option['unique_id'] }}" name="{{ option['unique_id'] }}_{{ input_name_prefix }}[option][{{ option['product_option_id'] }}]" id="input-option{{ option['product_option_id'] }}"  value="{{ option['value'] }}" data-date-format="YYYY-MM-DD" class="form-control" {% if (option['option_has_fixed_value']) %} {{ 'disabled' }}{% endif %}  onclick="event.stopPropagation();" onchange="bundle_expert_form.on_change_product_option(this)"/>
+                                    <span class="input-group-btn">
+                                                                    <button class="btn btn-default" type="button"><i class="fa fa-calendar"></i></button>
+                                                                    </span></div>
+                            </div>
+                        {% endif %}
+                        {% if (option['type'] == 'datetime') %}
+                            <div class="form-group{{ option['required'] ? ' required' : '' }}">
+                                <label class="control-label" for="input-option{{ option['product_option_id'] }}">{{ option['name'] }}</label>
+                                <div class="input-group datetime">
+                                    <input type="text" data-id="{{ option['unique_id'] }}" name="{{ option['unique_id'] }}_{{ input_name_prefix }}[option][{{ option['product_option_id'] }}]" id="input-option{{ option['product_option_id'] }}" value="{{ option['value'] }}" data-date-format="YYYY-MM-DD HH:mm" class="form-control" {% if (option['option_has_fixed_value']) %} {{ 'disabled' }}{% endif %}  onclick="event.stopPropagation();" onchange="bundle_expert_form.on_change_product_option(this)"/>
+                                    <span class="input-group-btn">
+                                                                    <button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
+                                                                    </span></div>
+                            </div>
+                        {% endif %}
+                        {% if (option['type'] == 'time') %}
+                            <div class="form-group{{ option['required'] ? ' required' : '' }}">
+                                <label class="control-label" for="input-option{{ option['product_option_id'] }}">{{ option['name'] }}</label>
+                                <div class="input-group time">
+                                    <input type="text" data-id="{{ option['unique_id'] }}" name="{{ option['unique_id'] }}_{{ input_name_prefix }}[option][{{ option['product_option_id'] }}]" id="input-option{{ option['product_option_id'] }}" value="{{ option['value'] }}" data-date-format="HH:mm" class="form-control" {% if (option['option_has_fixed_value']) %} {{ 'disabled' }}{% endif %}  onclick="event.stopPropagation();" onchange="bundle_expert_form.on_change_product_option(this)"/>
+                                    <span class="input-group-btn">
+                                                                    <button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
+                                                                    </span></div>
+                            </div>
+                        {% endif %}
+
+                    {% endfor %}
+                {% endif %}
+
+            </div>
+
+            <div class="col-xs-12 col-sm-2 text-left hidden" style="padding: 0 8px;">
+                <div class="attribute-table-container" style="margin-top: 6px;">
+                </div>
+            </div>
+
+            <div class="checkbox-in-kit-container hidden" style="position: absolute; bottom: 4px;right: 4px;">
+                <input type="checkbox" name = "{{ input_name_prefix }}[checkbox_in_kit]" data-id="input-checkbox-in-kit-field" {% if (not checkbox_in_kit_enable) %} {{ 'disabled' }}{% endif %} {% if (checkbox_in_kit_checked) %} {{ 'checked' }}{% endif %} onchange="" style="vertical-align: bottom;    width: 18px;    height: 18px;" onclick="bundle_expert.on_checkbox_in_kit_changed(this);event.stopPropagation()">
+            </div>
+
+        </div>
+
+
+    </div>
+
+    {% if (item_product['item_empty_mode']['enable']) %}
+        <div class="empty-kit-item-product {% if (product['selected']) %} {{ 'product-selected' }}{% endif %} {% if (not show_empty) %} {{ 'hidden' }}{% endif %}" style="padding: 0;position:relative;" data-item-position="{{ item_position }}" data-item-product-position="{{ item_product_position }}" data-product-id="{{ item_product['product_id'] }}" >
+            <div class="be-product-thumb transition" style="border: none; margin-bottom: 0; overflow: visible;"
+                    {% if (product_click_mode == 'default') %}
+                        onclick="bundle_expert_form.set_active_product($(this).closest('.kit-item').find('.kit-item-product .be-product-thumb'));"
+                    {% endif %}
+                    {% if (product_click_mode == 'none') %}
+                        onclick=""
+                    {% endif %}
+
+            >
+                <div class="be-product-thumb-overlay">
+                </div>
+                <div class="be-image" style="text-align: center">
+                    <a>
+                        <div style="display: inline-block; position: relative;">
+                            <img class="bundle-expert-transparent img-responsive" src="{{ empty_image_name }}" alt="{{ '' }}" title="{{ '' }}"  />
+                            <div class="active-item-underline"></div>
+                        </div>
+                    </a>
+
+
+                </div>
+
+                <div class="be-caption" style="min-height: auto; padding: 0 8px; text-align: center;">
+                    <h4 class="be-product-title"><a style="text-overflow: ellipsis;">{{ item_product['item_empty_mode']['title'] }}</a></h4>
+                    <p class="price empty-item-text" style="margin: 0">
+                        {{ text_item_not_selected }}
+                    </p>
+                </div>
+
+                <div class="selectable-item-container text-xs-center" style="margin-top: 4px;margin-bottom: 1px">
+                        <span class="selectable-item " style="padding: 4px 8px; background-color: #ececec; text-transform: uppercase"
+                              onclick="bundle_expert_form.on_click_select_item_product_button(this);event.stopPropagation()">
+                            {{ text_add_product }}
+                        </span>
+                </div>
+
+
+
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="plus-symbol {% if (last_item == constant('true')) %} {{ 'hidden' }}{% endif %}" style="">
+        <i class="fa fa-plus" style="    font-size: 20px;"></i>
+    </div>
+
+    <div class="plus-symbol hidden" style="">
+        <i class="fa fa-equal"></i>
+    </div>
+</div>

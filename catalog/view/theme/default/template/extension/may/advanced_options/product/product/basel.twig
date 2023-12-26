@@ -1,0 +1,360 @@
+{% if may_advanced_options %}
+<div id="may-advanced-options" class="hidden">
+{{ may_advanced_options_template.hidden }}
+{% if not options or options|length == 0 %}
+<hr>
+<h3>{{ text_option }}</h3>
+{% endif %}
+{{ may_advanced_options_template.options }}
+</div>
+<div id="may-advanced-options-style-and-script">
+{{ may_advanced_options_template.style }}
+{{ may_advanced_options_template.js_helper }}
+{{ may_advanced_options_template.js_plugin }}
+<script type="text/javascript"><!--
+$('#product .form-group').eq(0).before($('#may-advanced-options').html());
+$('#may-advanced-options').remove();
+
+$('#product').mayAdvancedOptions({
+	prices: {
+		price: MayHelper.Price.toNumber("{{ price }}"),
+		special: MayHelper.Price.toNumber("{{ special }}"),
+		base: MayHelper.Price.toNumber("{{ tax }}")
+	},
+	point: parseInt("{{ points ? points : 0 }}"),
+	weight: parseFloat("{{ weight_value ? weight_value : 0 }}"),
+
+	actionButtonSelector: ['#button-cart'],
+	quantityErrorBefore: $('input[name="quantity"]'),
+	quantityErrorMessage: "{{ may_advanced_options_language['error_option_stock'] }}",
+
+	preselect: {
+		id: {{ preselected_option_value_id ?: 0 }},
+		wait: 0
+	},
+
+	currentProductId: {{ product_id }},
+	selectFirstOption: {{ may_advanced_options_config['select_first_option'] }}
+},{
+	model: function(option) {
+		if (option.model != undefined && option.model != "") {
+            var elemIndex = 1;
+            {% if price and tax %} elemIndex ++; {% endif %}
+            {% if price and points %} elemIndex ++; {% endif %}
+            {% if manufacturer %} elemIndex ++; {% endif %}
+			var $elem = $('.info-holder p.info').eq(elemIndex);
+			if ($elem.length) {
+				$elem.html('<b>{{ text_model }}</b> ' + option.model);
+			}
+			$('input:hidden[name=\'option[model]\']').val(option.model);
+
+			return true;
+		}
+
+		return false;
+	},
+	sku: function(option) {
+		if (option.sku != undefined && option.sku != "") {
+			{% if not may_advanced_options_config['hide_pp_sku'] %}
+			var $elem = $('.info-holder p.info.product-sku span');
+			if ($elem.length) {
+				$elem.html(option.sku);
+			} else {
+				$('.info-holder').append('<p class="info product-sku"><b>{{ may_advanced_options_language['text_sku'] }}:</b> <span>' + option.sku + '</span></p>');
+			}
+			{% endif %}
+			$('input:hidden[name=\'option[sku]\']').val(option.sku);
+
+			return true;
+		}
+
+		return false;
+	},
+	upc: function(option) {
+		if (option.upc != undefined && option.upc != "") {
+			{% if not may_advanced_options_config['hide_pp_upc'] %}
+			var $elem = $('.info-holder p.info.product-upc span');
+			if ($elem.length) {
+				$elem.html(option.upc);
+			} else {
+				$('.info-holder').append('<p class="info product-upc"><b>{{ may_advanced_options_language['text_upc'] }}:</b> <span>' + option.upc + '</span></p>');
+			}
+			{% endif %}
+			$('input:hidden[name=\'option[upc]\']').val(option.upc);
+
+			return true;
+		}
+
+		return false;
+	},
+	ean: function(option) {
+		if (option.ean != undefined && option.ean != "") {
+			{% if not may_advanced_options_config['hide_pp_ean'] %}
+			var $elem = $('.info-holder p.info.product-ean span');
+			if ($elem.length) {
+				$elem.html(option.ean);
+			} else {
+				$('.info-holder').append('<p class="info product-ean"><b>{{ may_advanced_options_language['text_ean'] }}:</b> <span>' + option.ean + '</span></p>');
+			}
+			{% endif %}
+
+			$('input:hidden[name=\'option[ean]\']').val(option.ean);
+
+			return true;
+		}
+
+		return false;
+	},
+	jan: function(option) {
+		if (option.jan != undefined && option.jan != "") {
+			{% if not may_advanced_options_config['hide_pp_jan'] %}
+			var $elem = $('.info-holder p.info.product-jan span');
+			if ($elem.length) {
+				$elem.html(option.jan);
+			} else {
+				$('.info-holder').append('<p class="info product-jan"><b>{{ may_advanced_options_language['text_jan'] }}:</b> <span>' + option.jan + '</span></p>');
+			}
+			{% endif %}
+			$('input:hidden[name=\'option[jan]\']').val(option.jan);
+
+			return true;
+		}
+
+		return false;
+	},
+	isbn: function(option) {
+		if (option.isbn != undefined && option.isbn != "") {
+			{% if not may_advanced_options_config['hide_pp_isbn'] %}
+			var $elem = $('.info-holder p.info.product-isbn span');
+			if ($elem.length) {
+				$elem.html(option.isbn);
+			} else {
+				$('.info-holder').append('<p class="info product-isbn"><b>{{ may_advanced_options_language['text_isbn'] }}:</b> <span>' + option.isbn + '</span></p>');
+			}
+			{% endif %}
+			$('input:hidden[name=\'option[isbn]\']').val(option.isbn);
+
+			return true;
+		}
+
+		return false;
+	},
+	mpn: function(option) {
+		if (option.mpn != undefined && option.mpn != "") {
+			{% if not may_advanced_options_config['hide_pp_mpn'] %}
+			var $elem = $('.info-holder p.info.product-mpn span');
+			if ($elem.length) {
+				$elem.html(option.mpn);
+			} else {
+				$('.info-holder').append('<p class="info product-mpn"><b>{{ may_advanced_options_language['text_mpn'] }}:</b> <span>' + option.mpn + '</span></p>');
+			}
+			{% endif %}
+			$('input:hidden[name=\'option[mpn]\']').val(option.mpn);
+
+			return true;
+		}
+
+		return false;
+	},
+	location: function(option) {
+		if (option.location != undefined && option.location != "") {
+			{% if not may_advanced_options_config['hide_pp_location'] %}
+			var $elem = $('.info-holder p.info.product-location span');
+			if ($elem.length) {
+				$elem.html(option.location);
+			} else {
+				$('.info-holder').append('<p class="info product-location"><b>{{ may_advanced_options_language['text_location'] }}:</b> <span>' + option.location + '</span></p>');
+			}
+			{% endif %}
+			$('input:hidden[name=\'option[location]\']').val(option.location);
+
+			return true;
+		}
+
+		return false;
+	},
+	dimension: function(option) {
+		if (option.dimension_l != undefined && option.dimension_l != "") {
+			var dimension = MayHelper.Number.toI18nString(option.dimension_l, 2) + '{{ length_unit }}';
+			if (option.dimension_w) {
+				dimension += ' x ' + MayHelper.Number.toI18nString(option.dimension_w, 2) + '{{ length_unit }}';
+			}
+			if (option.dimension_h) {
+				dimension += ' x ' + MayHelper.Number.toI18nString(option.dimension_h, 2) + '{{ length_unit }}';
+			}
+			{% if not may_advanced_options_config['hide_pp_dimension'] %}
+			var $elem = $('.info-holder p.info.product-dimension span');
+			if ($elem.length) {
+				$elem.html(dimension);
+			} else {
+				$('.info-holder').append('<p class="info product-dimension"><b>{{ may_advanced_options_language['text_dimension'] }}:</b> <span>' + dimension + '</span></p>');
+			}
+			{% endif %}
+			$('input:hidden[name=\'option[dimension_l]\']').val(MayHelper.Number.toI18nString(option.dimension_l, 2));
+			$('input:hidden[name=\'option[dimension_w]\']').val(MayHelper.Number.toI18nString(option.dimension_w, 2));
+			$('input:hidden[name=\'option[dimension_h]\']').val(MayHelper.Number.toI18nString(option.dimension_h, 2));
+
+			return true;
+		}
+
+		return false;
+	},
+	quantity: function(option, advancedOption) {
+		if (option.subtract || option.quantity) {
+			advancedOption.quantity = parseInt(option.quantity);
+			if (option.quantity == 0 && option.subtract != 1) {
+				option.quantity = '{{ stock }}';
+				advancedOption.quantity = -1;
+			}
+			{% if not config_stock_display %}
+			if (option.quantity > 0) option.quantity = '{{ may_advanced_options_language['text_instock'] }}';
+			{% endif %}
+			var elemIndex = 0;
+			{% if price and tax %} elemIndex ++; {% endif %}
+			{% if price and points %} elemIndex ++; {% endif %}
+
+			var $elem = $('.info-holder p.info').eq(elemIndex);
+			if ($elem.length) {
+				$elem.html('<b>{{ text_stock }}</b> ' + (advancedOption.quantity != 0 ? option.quantity : '<del>{{ may_advanced_options_language['text_instock'] }}</del>'));
+			}
+
+            if (advancedOption.quantity != 0) {
+                $elem.addClass('in_stock');
+				$('#button-cart').prop('disabled', false);
+            } else {
+                $elem.removeClass('in_stock');
+				$('#button-cart').prop('disabled', true);
+            }
+
+			return true;
+		}
+
+		return false;
+	},
+	stockStatus: function(option, advancedOption) {
+		if (option.subtract == 1 && advancedOption.quantity == 0 && parseInt(option.stock_status_id)) {
+			var elemIndex = 0;
+			{% if price and tax %} elemIndex ++; {% endif %}
+			{% if price and points %} elemIndex ++; {% endif %}
+
+			var $elem = $('.info-holder p.info').eq(elemIndex);
+			if ($elem.length) {
+				$elem.html('<b>{{ text_stock }}</b> ' + option.stock_status);
+			}
+
+			return true;
+		}
+
+		return false;
+	},
+	price: function(prices) {
+		var price = MayHelper.Price.toString(prices.price);
+		var special = MayHelper.Price.toString(prices.special);
+		var base = MayHelper.Price.toString(prices.base);
+		
+		{% if not special %}
+		$('span.live-price').html(price);
+		{% else %}
+		$('span.price-old').html(price);
+		$('span.live-price-new').html(special);
+		{% endif %} // not special
+		{% if tax %}
+		$('span.live-price-tax').html(base);
+		{% endif %} // tax
+	},
+	point: function(point) {
+        {% if price and text_points and point %}
+		var elemIndex = {{ (price and tax) ? 1 : 0 }};
+		var $elem = $('.info-holder p.info').eq(elemIndex);
+		if ($elem.length) {
+			$elem.html("<b>{{ text_points }}</b> " + point);
+		}
+		{% else %}
+		var $elem = $('.info-holder p.info.product-points span');
+		if ($elem.length) {
+			$elem.html(point);
+		} else if (point) {
+			$('.info-holder').append('<p class="info product-points"><b>{{ text_points }}</b> <span>' + point + '</span></p>');
+		}
+		{% endif %}
+
+	},
+	weight: function(weight) {
+		var $elem = $('.info-holder p.info.product-weight span');
+		if ($elem.length) {
+			$elem.html(MayHelper.Number.toI18nString(weight, 2) + '{{ weight_unit }}');
+		} else if (weight) {
+			$('.info-holder').append('<p class="info product-weight"><b>{{ text_weight }}:</b> <span>' + MayHelper.Number.toI18nString(weight, 2) + '{{ weight_unit }}</span></p>');
+		}
+		$('input:hidden[name=\'option[weight]\']').val(MayHelper.Number.toI18nString(weight, 2));
+	},
+	image: function(option) {
+		if (option.product_images != undefined) {
+			var newMainImage = "";
+			var newAdditionalImages = [];
+			option.product_images.forEach(function(item, index) {
+				if (item['origin'] == "") {
+					return;
+				}
+
+                if (newMainImage == "") {
+                    newMainImage = item['popup'];
+                }
+
+                newAdditionalImages.push(item['popup']);
+			});
+
+            {% if not is_quick_view %}
+            var oldImagesToRemoveCount = Math.min(newAdditionalImages.length, $('.image-additional .slick-slide').length);
+            for (var slickSlideIndex = 0; slickSlideIndex < oldImagesToRemoveCount; slickSlideIndex++) {
+                var $imageAnchor = $('.image-additional li').eq(slickSlideIndex).find('a');
+                $imageAnchor.attr('href', newAdditionalImages[slickSlideIndex]);
+                $imageAnchor.attr('rel', "useZoom: 'main-image', smallImage: '" + newAdditionalImages[slickSlideIndex] + "'");
+                $imageAnchor.find('img').attr('src', newAdditionalImages[slickSlideIndex]);
+                if ($imageAnchor.data('relOpts') !== undefined) {
+                    $imageAnchor.data('relOpts').smallImage = newAdditionalImages[slickSlideIndex];
+                }
+            }
+
+            for (var slickSlideIndex = oldImagesToRemoveCount; slickSlideIndex < newAdditionalImages.length; slickSlideIndex++) {
+                var $newImage = $('<li><a class="link {% if product_layout != 'full-width' %}cloud-zoom-gallery locked{% endif %}" href="' + newAdditionalImages[slickSlideIndex] + '" rel="useZoom: \'main-image\', smallImage: \'' + newAdditionalImages[slickSlideIndex] + '\'"><img src="' + newAdditionalImages[slickSlideIndex] + '" title="{{ heading_title }}" alt="{{ heading_title }}" /></a></li>');
+                $('.image-additional').slick('slickAdd', $newImage);
+                var $imageAnchor = $('.image-additional li').eq(slickSlideIndex).find('a');
+                $imageAnchor.CloudZoom();
+                $imageAnchor.on('click', function() {
+                    if ($(this).hasClass("locked")) {
+                        e.stopImmediatePropagation();
+                    }
+                    $('.image-additional a.link.active').removeClass('active');
+                    $(this).addClass('active');
+                });
+            }
+
+            $('#main-image').attr('href', newMainImage);
+            $('#main-image img').attr('src', newMainImage);
+            if ($('#main-image').data('zoom') !== undefined) {
+                $('#main-image').data('zoom').destroy();
+                $('#main-image').CloudZoom();
+            }
+            {% else %} // Quick View
+            var oldImagesToRemoveCount = Math.min(newAdditionalImages.length, $('#gallery img:not(.slick-cloned)').length);
+            for (var slickSlideIndex = 0; slickSlideIndex < oldImagesToRemoveCount; slickSlideIndex++) {
+                $('#gallery img[data-slick-index="' + slickSlideIndex + '"]').attr('src', newAdditionalImages[slickSlideIndex]);
+            }
+
+            for (var slickSlideIndex = oldImagesToRemoveCount; slickSlideIndex < newAdditionalImages.length; slickSlideIndex++) {
+                $('#gallery .main-image').slick('slickAdd', '<img src="' + newAdditionalImages[slickSlideIndex] + '" title="{{ heading_title }}" alt="{{ heading_title }}" />');
+            }
+            {% endif %} // Quick View End
+
+			$('input:hidden[name=\'option[image]\']').val(option.product_images[0]['origin']);
+
+			return true;
+		}
+
+		return false;
+	}
+});
+--></script>
+</div>
+{% endif %}

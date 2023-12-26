@@ -1,0 +1,535 @@
+{{ header }}{{ column_left }}
+<div id="content">
+    <div class="container-fluid h-editor">
+      <div id="panel_top" class="affix col-sm-12">
+        <div class="text-title text-center"><i class="fa fa-opencart" aria-hidden="true"></i>
+            <span class="win-title">{{ hyper_discount_name }}</span>
+            <hr class="ht-min">
+            <span class="ht-title">{{ hyper_discount_title }}</span>
+        </div>
+        <h1>{{ heading_title }}</h1>
+        <div id="panel_tops" class="pull-right">
+            <button type="button" onclick="Apply();" data-toggle="tooltip" data-placement="bottom" class="btn btn-primary memory-button" title="{{ button_apply }}"><i class="fa fa-check-circle-o"></i></button>
+            <button type="button" onclick='Save();' data-toggle="tooltip" data-placement="bottom" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+            <a href="{{ cancel }}" data-toggle="tooltip" data-placement="bottom" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a>
+        </div>
+      </div>
+        {% if (error_warning) %} 
+        <div class="alert alert-danger col-sm-12"><i class="fa fa-exclamation-circle"></i> {{ error_warning }} 
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+        </div>
+        {% endif %} 
+        {% if (success) %} 
+        <div class="alert alert-success col-sm-12"><i class="fa fa-check-circle"></i> {{ success }} 
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+        </div>
+        {% endif %} 
+        <div class="panel panel-default col-sm-12">
+            <div class="panel-heading">
+                <h3 class="panel-title"><i class="fa fa-cogs"></i> {{ text_list }}</h3>
+                <button class="pull-right hm-help btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal">
+                    <i class="fa fa-info" aria-hidden="true"></i> - {{ help_name }} 
+                </button>
+            </div>
+            <div class="panel-body top-pad">
+              <div class="col-sm-12">
+                <div class="well">
+                    <form action="{{ save_all_filtered_products }}" method="post" id="save_all_filtered_products" enctype="multipart/form-data">
+                        <input type="hidden" value="{{ discount_action }}" name="discount_action" >
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label class="control-label" for="input-name">{{ entry_name }}</label>
+                                    <input type="text" name="filter_name" value="{{ filter_name }}" placeholder="{{ entry_name }}" id="input-name" class="form-control" />
+                                </div>
+
+
+                                <!-- СЛАЙДЕР ЦЕНА -->
+                                <div class="form-group nopadding">
+                                    <div class="col-xs-3">min</div>
+                                    <label class="control-label col-xs-6 text-center">{{ entry_price }}</label>
+                                    <div class="col-xs-3 text-right">max</div>
+                                    <div class="col-xs-6">
+                                        <input type="text" id="slider_price_min_val" name="slider_price_min_val" class="form-control" value="{{ slider_price_min_val }}">
+                                    </div>
+                                    <div class="col-xs-6">
+                                        <input type="text" id="slider_price_max_val" name="slider_price_max_val" class="form-control text-right"  value="{{ slider_price_max_val }}">
+                                    </div>
+                                    <div class="col-xs-12">
+                                      <div class="slider-wrapper">
+                                        <div id="slider_price"></div>
+                                      </div>
+                                      <script>
+                                        $('#slider_price').slider({
+                                            min: {{ slider_price_min }},
+                                            max: {{ slider_price_max }},
+                                            value: [{{ slider_price_min_val }},{{ slider_price_max_val }}],
+                                            range: true
+                                        }).on('slide', function(e){
+                                            $('#slider_price_min_val').val(e.value[0]);
+                                            $('#slider_price_max_val').val(e.value[1]);
+                                        });
+                                      </script>
+                                    </div>
+                                </div>
+
+                                <!-- старый блок с ценой скрыл пока -->
+                                <div class="form-group hidden">
+                                    <div class="control-input">
+                                        <label class="control-label" for="input-price">{{ entry_price }}</label>
+                                        <input type="text" name="filter_price" value="{{ filter_price }}" placeholder="{{ entry_price }}" id="input-price" class="form-control" />
+                                    </div>
+                                 </div>
+                            </div>
+
+
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label class="control-label" for="input-model">{{ entry_model }}</label>
+                                    <input type="text" name="filter_model" value="{{ filter_model }}" placeholder="{{ entry_model }}" id="input-model" class="form-control" />
+                                </div>
+
+
+                                <!-- СЛАЙДЕР КОЛ-ВО -->
+                                <div class="form-group nopadding">
+                                    <div class="col-xs-3">min</div>
+                                    <label class="control-label col-xs-6 text-center">{{ entry_quantity }}</label>
+                                    <div class="col-xs-3 text-right">max</div>
+                                    <div class="col-xs-6">
+                                        <input type="text" id="slider_qty_min_val" name="slider_qty_min_val" class="form-control" value="{{ slider_qty_min_val }}">
+                                    </div>
+                                    <div class="col-xs-6">
+                                        <input type="text" id="slider_qty_max_val" name="slider_qty_max_val" class="form-control text-right"  value="{{ slider_qty_max_val }}">
+                                    </div>
+                                    <div class="col-xs-12">
+                                      <div class="slider-wrapper">
+                                        <div id="slider_quantity"></div>
+                                      </div>
+                                      <script>
+                                        $('#slider_quantity').slider({
+                                            min: {{ slider_qty_min }},
+                                            max: {{ slider_qty_max }},
+                                            value: [{{ slider_qty_min_val }},{{ slider_qty_max_val }}],
+                                            range: true
+                                        }).on('slide', function(e){
+                                            $('#slider_qty_min_val').val(e.value[0]);
+                                            $('#slider_qty_max_val').val(e.value[1]);
+                                        });
+                                      </script>
+                                    </div>
+                                </div>
+                                
+                                <!-- старый блок с кол-вом скрыл пока -->
+                                <div class="form-group hidden">
+                                    <div class="control-input">
+                                        <label class="control-label" for="input-quantity">{{ entry_quantity }}</label>
+                                        <input type="text" name="filter_quantity" value="{{ filter_quantity }}" placeholder="{{ entry_quantity }}" id="input-quantity" class="form-control" />
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label class="control-label">{{ entry_manufacturer }}</label>
+                                    <span class="multiselect-native-select">
+                                        <select id="multiple_selected_manufacturers" multiple="multiple" name="filter_manufacturer[]" class="filter-manufacturers">
+                                            {% for manufacturer in manufacturers %} 
+                                                {% if manufacturer['manufacturer_id'] in filter_manufacturer %}
+                                                    <option  value="{{ manufacturer['manufacturer_id'] }}" selected="selected">{{ manufacturer['name'] }}</option>
+                                                {% else %} 
+                                                    <option value="{{ manufacturer['manufacturer_id'] }}" >{{ manufacturer['name'] }}</option>
+                                                {% endif %} 
+                                            {% endfor %} 
+                                        </select>
+                                    </span>
+                                </div>
+                                <div class="form-group">
+                                    <div class="status-cols control-input">
+                                        <input type="hidden" value="{{ discount_action }}" name="discount_action" >
+                                        <label class="control-label" for="input-status">{{ entry_status }}</label>
+                                        <select name="filter_status" id="input-status" class="form-control input-status">
+                                            <option value="*"></option>
+                                            {% if filter_status == '1' %} 
+                                                <option value="1" selected="selected">{{ text_enabled }}</option>
+                                            {% else %} 
+                                                <option value="1">{{ text_enabled }}</option>
+                                            {% endif %} 
+                                            {% if filter_status == '0' %} 
+                                                <option value="0" selected="selected">{{ text_disabled }}</option>
+                                            {% else %} 
+                                                <option value="0">{{ text_disabled }}</option>
+                                            {% endif %} 
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label class="control-label">{{ column_category }}</label>
+                                    <span class="multiselect-native-select">
+                                        <select id="multiple_selected_categories" multiple="multiple" name="filter_category[]" class="filter-categories">
+                                            {% for category in categories %}
+                                                {% if category['category_id'] in filter_category %}
+                                                    <option  value="{{ category['category_id'] }}" selected="selected">{{ category['name'] }}</option>
+                                                {% else %} 
+                                                    <option value="{{ category['category_id'] }}" >{{ category['name'] }}</option>
+                                                {% endif %} 
+                                            {% endfor %} 
+                                        </select>
+                                    </span>
+                                </div>
+                                <div class="form-group btn-filter">
+                                    <label class="control-label col-xs-12 text-right">{{ filters_action }}</label>
+                                    <div class="pull-right">
+                                      <button type="button" form="none" onclick="$('#save_all_filtered_products').submit();" data-toggle="tooltip" title="{{ filtered_products_titles }}" class="btn btn-primary"><i class="fa fa-check-square-o" aria-hidden="true"></i></button>
+                                      <button type="button" id="button-filter" data-toggle="tooltip" title="{{ filtered_products }}" class="btn btn-warning"><i class="fa fa-filter"  aria-hidden="true"></i></button>
+                                      <button type="button" id="button-clear" data-toggle="tooltip" title="{{ button_clears }}" class="btn btn-danger"><i class="fa fa-trash" aria-hidden="true"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6 text-left">{{ pagination }}</div>
+                    <div class="col-sm-6 text-right">{{ results }}</div>
+                </div>
+                <form action="{{ action_save }}" method="post" id="edit_product_groups" enctype="multipart/form-data">
+                    <input type="hidden" name="current_ids" value="{{ current_ids }}" />
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <td class="text-center" style="width:30px;"><input type="checkbox" onclick="$('input[name*=\'selected\']').prop('checked', this.checked);" /></td>
+                                    <td class="text-center">{{ column_image }}</td>
+                                    <td class="text-left">{% if (sort == 'pd.name') %} 
+                                        <a href="{{ sort_name }}" class="{{ order|lower }}">{{ column_name }}</a>
+                                        {% else %} 
+                                        <a href="{{ sort_name }}">{{ column_name }}</a>
+                                        {% endif %}</td>
+                                    <td class="text-left">{% if (sort == 'p.model') %} 
+                                        <a href="{{ sort_model }}" class="{{ order|lower }}">{{ column_model }}</a>
+                                        {% else %} 
+                                        <a href="{{ sort_model }}">{{ column_model }}</a>
+                                        {% endif %} 
+                                    </td>
+                                    <td class="text-left">
+                                        {{ column_manufacturer }} 
+                                    </td>
+                                    <td class="text-left">{{ column_category }}</td>
+                                    <td class="text-right">{% if (sort == 'p.price') %} 
+                                        <a href="{{ sort_price }}" class="{{ order|lower }}">{{ column_price }}</a>
+                                        {% else %} 
+                                        <a href="{{ sort_price }}">{{ column_price }}</a>
+                                        {% endif %}</td>
+                                    <td class="text-center">{% if (sort == 'p.quantity') %} 
+                                        <a href="{{ sort_quantity }}" class="{{ order|lower }}">{{ column_quantity }}</a>
+                                        {% else %} 
+                                        <a href="{{ sort_quantity }}">{{ column_quantity }}</a>
+                                        {% endif %}</td>
+                                    <td class="text-center">{% if (sort == 'p.status') %} 
+                                        <a href="{{ sort_status }}" class="{{ order|lower }}">{{ column_status }}</a>
+                                        {% else %} 
+                                        <a href="{{ sort_status }}">{{ column_status }}</a>
+                                        {% endif %}</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            <input type="hidden" value="{{ discount_action }}" name="discount_action" >
+                            {% if (products) %} 
+                            {% for product in products %} 
+                              <tr>
+                                <td class="text-center">{% if product['product_id'] in selected %} 
+                                    <input type="checkbox" name="selected[]" value="{{ product['product_id'] }}" checked="checked" />
+                                    {% else %} 
+                                    <input type="checkbox" name="selected[]" value="{{ product['product_id'] }}" />
+                                    {% endif %} 
+                                </td>
+                                <td class="text-center">{% if (product['image']) %} 
+                                    <img src="{{ product['image'] }}" alt="{{ product['name'] }}" class="img-thumbnail" />
+                                    {% else %} 
+                                    <span class="img-thumbnail list"><i class="fa fa-camera fa-2x"></i></span>
+                                    {% endif %}</td>
+                                <td class="text-left">{{ product['name'] }}</td>
+                                <td class="text-left">{{ product['model'] }}</td>
+                                <td class="text-left">{{ product['manufacturer'] }}</td>
+                                <td class="text-left">
+                                    {% for category in categories %} 
+                                    {% if category['category_id'] in product['category'] %} 
+                                    {{ category['name'] }}<br>
+                                    {% endif %} 
+                                    {% endfor %}</td>
+                                <td class="text-right">{% if (product['special']) %} 
+                                    <span style="text-decoration: line-through;">{{ product['price'] }}</span><br/>
+                                    <div class="text-danger">{{ product['special'] }}</div>
+                                    {% else %} 
+                                    {{ product['price'] }} 
+                                    {% endif %}</td>
+                                <td class="text-center">{% if (product['quantity'] <= 0) %} 
+                                    <span class="label label-warning">{{ product['quantity'] }}</span>
+                                    {% elseif (product['quantity'] <= 5) %} 
+                                    <span class="label label-danger">{{ product['quantity'] }}</span>
+                                    {% else %} 
+                                    <span class="label label-success">{{ product['quantity'] }}</span>
+                                    {% endif %}</td>
+                                <td class="text-center">{{ product['status'] }}</td>
+                              </tr>
+                            {% endfor %} 
+                            {% else %} 
+                              <tr>
+                                <td class="text-center" colspan="9">{{ text_no_results }}</td>
+                              </tr>
+                            {% endif %} 
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+                <div class="row">
+                    <div class="col-sm-6 text-left">{{ pagination }}</div>
+                    <div class="col-sm-6 text-right">{{ results }}</div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <hr>
+                    <div class="panel-heading text-center ">
+                        <h3 class="text-center panel-title"><i class="fa fa-copyright" aria-hidden="true"></i> {{ description_author }}</h3>
+                    </div>
+                    <br>
+                    <div class="text-center">
+                        <button form="help_modals" class="hm-info btn btn-primary btn-sm" data-toggle="modal" data-target="#Authors_Modal">
+                            {{ description_author_start }} 
+                        </button>
+                    </div>
+                    <hr>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times" aria-hidden="true"></i></button>
+                <h4 class="modal-title" id="myModalLabel"><i class="fa fa-cogs"></i> {{ text_list }}</h4>
+            </div>
+            <div class="modal-body">
+                <legend>{{ help_text }}</legend>
+                <div class="helper-info">{{ help_first_text }}</div>
+                <div class="helper-info">{{ help_second_text }}</div>
+                <div class="helper-info">{{ help_third_text }}</div>
+                <div class="helper-info">{{ help_fourth_text }}</div>
+                <div class="helper-info">{{ help_fifth_text }}</div>
+                <div class="helper-info">{{ help_end_text }}</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal"> {{ help_ok }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Start Modal HELPER Authors -->
+<div class="modal fade" id="Authors_Modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times" aria-hidden="true"></i></button>
+                <h4 class="modal-title" id="myModalLabel"><i class="fa fa-cogs"></i> {{ description_author }}</h4>
+            </div>
+            <div class="modal-body">
+                <legend>{{ description_copyright }}</legend>
+                <div class="text-center">{{ description_author_copyright }}</div>
+                <div class="text-center">{{ thank_you }}</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal"> {{ help_ok }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $('#button-clear').on('click', function () {
+        var url = 'index.php?route=extension/total/hyper_discount/editor_product&user_token={{ user_token }}&clear=1{{ url_params }}';
+        location = url;
+    });
+    
+    $(document).keypress(function (e) {
+        if (e.which == 13) {
+            $('#button-filter').click();
+        }
+    });
+
+    $('#button-filter').on('click', function () {
+        var url = 'index.php?route=extension/total/hyper_discount/editor_product&user_token={{ user_token }}{{ url_params }}';
+        
+        url = url + getParametrs();
+
+        location = url;
+    });
+
+    function getParametrs()
+    {
+        var url = '';
+
+        var filter_name = $('input[name=\'filter_name\']').val();
+
+        if (filter_name) {
+            url += '&filter_name=' + encodeURIComponent(filter_name);
+        }
+
+        //
+
+        var slider_price_min_val = $('input[name=\'slider_price_min_val\']').val();
+
+        if (slider_price_min_val) {
+            url += '&slider_price_min_val=' + slider_price_min_val;
+        }
+
+        var slider_price_max_val = $('input[name=\'slider_price_max_val\']').val();
+
+        if (slider_price_max_val) {
+            url += '&slider_price_max_val=' + slider_price_max_val;
+        }
+
+        var slider_qty_min_val = $('input[name=\'slider_qty_min_val\']').val();
+
+        if (slider_qty_min_val) {
+            url += '&slider_qty_min_val=' + slider_qty_min_val;
+        }
+
+        var slider_qty_max_val = $('input[name=\'slider_qty_max_val\']').val();
+
+        if (slider_qty_max_val) {
+            url += '&slider_qty_max_val=' + slider_qty_max_val;
+        }
+
+        ///
+
+        var filter_model = $('input[name=\'filter_model\']').val();
+
+        if (filter_model) {
+            url += '&filter_model=' + encodeURIComponent(filter_model);
+        }
+
+
+
+        var filter_manufacturer = [];
+        $(".filter-manufacturers > option").filter(":selected").each(function (i) {
+            filter_manufacturer[i] = $(this).val();
+        });
+
+
+        if (filter_manufacturer.length != 0) {
+            url += '&filter_manufacturer=' + encodeURIComponent(filter_manufacturer.toString());
+        }
+
+        var filter_price = $('input[name=\'filter_price\']').val();
+
+        if (filter_price) {
+            url += '&filter_price=' + encodeURIComponent(filter_price);
+        }
+
+
+        var filter_category = [];
+        $(".filter-categories > option").filter(":selected").each(function (i) {
+            filter_category[i] = $(this).val();
+        });
+
+        if (filter_category.length != 0) {
+            url += '&filter_category=' + encodeURIComponent(filter_category.toString());
+        }
+
+        var filter_quantity = $('input[name=\'filter_quantity\']').val();
+
+        if (filter_quantity) {
+            url += '&filter_quantity=' + encodeURIComponent(filter_quantity);
+        }
+
+        var filter_status = $('select[name=\'filter_status\']').val();
+
+        if (filter_status != '*') {
+            url += '&filter_status=' + encodeURIComponent(filter_status);
+        }
+
+        return url;
+    }
+</script>
+<script type="text/javascript">
+    $('input[name=\'filter_name\']').autocomplete({
+        'source': function (request, response) {
+            $.ajax({
+                url: 'index.php?route=extension/total/hyper_discount/discount/edit_product_groups/autocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request),
+                dataType: 'json',
+                success: function (json) {
+                    response($.map(json, function (item) {
+                        return {
+                            label: item['name'],
+                            value: item['product_id']
+                        }
+                    }));
+                }
+            });
+        },
+        'select': function (item) {
+            $('input[name=\'filter_name\']').val(item['label']);
+        }
+    });
+
+    $('input[name=\'filter_model\']').autocomplete({
+        'source': function (request, response) {
+            $.ajax({
+                url: 'index.php?route=extension/total/hyper_discount/discount/edit_product_groups/autocomplete&user_token={{ user_token }}&filter_model=' + encodeURIComponent(request),
+                dataType: 'json',
+                success: function (json) {
+                    response($.map(json, function (item) {
+                        return {
+                            label: item['model'],
+                            value: item['product_id']
+                        }
+                    }));
+                }
+            });
+        },
+        'select': function (item) {
+            $('input[name=\'filter_model\']').val(item['label']);
+        }
+    });
+    </script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('body').addClass('hyper-page hm-edit-page hd-switch');
+
+        $('#multiple_selected_manufacturers').multiselect({
+            buttonWidth: '150px',
+            maxHeight: 300
+        });
+
+        $('#multiple_selected_categories').multiselect({
+            buttonWidth: '150px',
+            maxHeight: 300
+        });
+
+
+    });
+
+
+    function Apply() {
+        $('#edit_product_groups').attr('action', '{{ update_stay }}');
+        $('#edit_product_groups').submit();
+    }
+    
+    function Save() {
+        $('#edit_product_groups').attr('action', '{{ action_save }}');
+        $('#edit_product_groups').submit();
+    }
+
+
+</script>
+{{ footer }}
