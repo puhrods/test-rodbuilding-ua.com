@@ -177,8 +177,8 @@ class ControllerOCTemplatesModuleOctPopupCart extends Controller {
                 $full_price = false;
                 if($product['full_price'] > $product['price']) {
 
-                    $full_total = $this->currency->format($this->tax->calculate($product['full_price'], $product['tax_class_id'], $this->config->get('config_tax')) * $product['quantity']);
-                    $full_price = $this->currency->format($this->tax->calculate($product['full_price'], $product['tax_class_id'], $this->config->get('config_tax')));
+                    $full_total = $this->currency->format($this->tax->calculate($product['full_price'] * $product['quantity'], $product['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+                    $full_price = $this->currency->format($this->tax->calculate($product['full_price'], $product['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
                 }
 
 				$data['products'][] = [
