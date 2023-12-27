@@ -59,6 +59,9 @@
 								</div>
 							</div>
 							<div class="us-cart-price-all">
+								{% if product['full_total'] %}
+									<div style="text-decoration: line-through;">{{ product['full_total'] }}</div>
+								{% endif %}
 								{{ product.total }}
 							</div>
 						</div>

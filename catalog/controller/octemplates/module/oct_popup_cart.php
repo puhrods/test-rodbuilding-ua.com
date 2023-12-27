@@ -173,6 +173,14 @@ class ControllerOCTemplatesModuleOctPopupCart extends Controller {
 
 				$product_info = $this->model_catalog_product->getProduct($product['product_id']);
 
+                $full_total = false;
+                $full_price = false;
+                if($product['full_price'] > $product['price']) {
+
+                    $full_total = $this->currency->format($this->tax->calculate($product['full_price'], $product['tax_class_id'], $this->config->get('config_tax')) * $product['quantity']);
+                    $full_price = $this->currency->format($this->tax->calculate($product['full_price'], $product['tax_class_id'], $this->config->get('config_tax')));
+                }
+
 				$data['products'][] = [
 					'key' => $product['cart_id'],
 					'product_id' => $product['product_id'],
@@ -187,6 +195,8 @@ class ControllerOCTemplatesModuleOctPopupCart extends Controller {
 					'reward' => ($product['reward'] ? sprintf($this->language->get('text_points'), $product['reward']) : ''),
 					'price' => $p_price,
 					'total' => $p_total,
+                    'full_total' => $full_total,
+                    'full_price' => $full_price,
 					'minimum' => $product['minimum'],
 					'href' => $this->url->link('product/product', 'product_id=' . $product['product_id'], true)
 				];
