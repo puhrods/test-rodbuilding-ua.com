@@ -59,10 +59,11 @@
 								</div>
 							</div>
 							<div class="us-cart-price-all">
-								{% if product['full_total'] %}
-									<div style="text-decoration: line-through;">{{ product['full_total'] }}</div>
+								{% if not  product['full_total'] %}
+									{{ product.total }}
+								{% else %}
+									<span class="us-module-price-old">{{ product['full_total'] }}</span><span class="us-module-price-new">{{ product.total }}</span>
 								{% endif %}
-								{{ product.total }}
 							</div>
 						</div>
 					</div>
