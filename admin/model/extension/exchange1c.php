@@ -6888,6 +6888,11 @@ class ModelExtensionExchange1c extends Model {
         $root_xml = new SimpleXMLElement($root);
         $xml = $this->array_to_xml($document, $root_xml);
 
+        $dom = new DOMDocument('1.0');
+        $dom->preserveWhiteSpace = false;
+        $dom->formatOutput = true;
+        $dom->loadXML($xml->asXML());
+
         // Проверка на запись файлов в кэш
         $cache = DIR_CACHE . 'exchange1c/';
         if (@is_writable($cache)) {
@@ -6896,14 +6901,14 @@ class ModelExtensionExchange1c extends Model {
             if (!$f_order) {
                 $this->log("Нет доступа для записи в папку: " . $cache);
             } else {
-                fwrite($f_order, $xml->asXML());
+                fwrite($f_order, $dom->saveXML());
                 fclose($f_order);
             }
         } else {
             $this->log("Папка " . $cache . " не доступна для записи, файл заказов не может быть сохранен!",1);
         }
 
-        return $xml->asXML();
+        return $dom->saveXML();
 
     } // queryOrders()
 
