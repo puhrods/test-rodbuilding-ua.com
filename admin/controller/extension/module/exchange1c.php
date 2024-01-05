@@ -2810,7 +2810,7 @@ class ControllerExtensionModuleExchange1c extends Controller {
         $this->response->addheader('Pragma: public');
         $this->response->addheader('Connection: Keep-Alive');
         $this->response->addheader('Expires: 0');
-        $this->response->addheader('Content-Description: File Transfer');
+//        $this->response->addheader('Content-Description: File Transfer');
         $this->response->addheader('Content-Type: application/octet-stream');
 //        $this->response->addheader('Content-Disposition: attachment; filename="orders.xml"');
 //        $this->response->addheader('Content-Transfer-Encoding: binary');
