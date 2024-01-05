@@ -2807,6 +2807,7 @@ class ControllerExtensionModuleExchange1c extends Controller {
             ,'currency'			=> $this->config->get('exchange1c_order_currency') ? $this->config->get('exchange1c_order_currency') : 'руб.'
             )
         );
+        echo header('Content-Type: text/xml; charset=utf-8', true);
         $this->response->addheader('Pragma: public');
         $this->response->addheader('Connection: Keep-Alive');
         $this->response->addheader('Expires: 0');
