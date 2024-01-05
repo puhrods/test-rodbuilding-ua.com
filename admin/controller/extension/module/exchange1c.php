@@ -2811,7 +2811,7 @@ class ControllerExtensionModuleExchange1c extends Controller {
         $this->response->addheader('Connection: Keep-Alive');
         $this->response->addheader('Expires: 0');
 //        $this->response->addheader('Content-Description: File Transfer');
-        $this->response->addheader('Content-Type: application/octet-stream');
+        $this->response->addheader('Content-Type: text/xml');
 //        $this->response->addheader('Content-Disposition: attachment; filename="orders.xml"');
 //        $this->response->addheader('Content-Transfer-Encoding: binary');
 //        $this->response->addheader('Content-Length: ' . strlen($orders));
@@ -2828,7 +2828,7 @@ class ControllerExtensionModuleExchange1c extends Controller {
             $this->response->addheader('Content-Type: text/html; charset=Windows-1251');
             //$orders = mb_convert_encoding($orders, 'cp1251', 'utf-8');
         }
-        return $this->response->setOutput($orders);
+        echo $orders;
 
 	} // modeQueryOrders()
 
