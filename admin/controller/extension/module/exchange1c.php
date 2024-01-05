@@ -2774,62 +2774,34 @@ class ControllerExtensionModuleExchange1c extends Controller {
 
 		//if (!$this->checkAuthKey(true)) exit;
 
-//		$this->load->model('extension/exchange1c');
-//
-//		$orders = $this->model_extension_exchange1c->queryOrders(
-//			array(
-//				 'from_date' 		=> $this->config->get('exchange1c_order_date')
-//				,'new_status'		=> $this->config->get('exchange1c_order_status')
-//				,'notify'			=> $this->config->get('exchange1c_order_notify')
-//				,'currency'			=> $this->config->get('exchange1c_order_currency') ? $this->config->get('exchange1c_order_currency') : 'руб.'
-//			)
-//		);
-//		if ($this->config->get('exchange1c_convert_orders_cp1251') == 1) {
-//			//echo header('Content-Type: text/html; charset=windows-1251', true);
-//			// посоветовал yuriygr с GitHub
-//			//echo iconv('utf-8', 'cp1251', $orders);
-//			//echo iconv('utf-8', 'cp1251//TRANSLIT', $orders);
-//			//echo mb_convert_encoding($orders, 'UTF-8', mb_detect_encoding($orders, "UTF-8, Windows-1251, Windows-1252", true));
-//			$orders = str_replace('utf-8', 'windows-1251', $orders);
-//			$orders = mb_convert_encoding($orders, 'cp1251', 'utf-8');
-//			$this->response->addheader('Content-Type: text/html; charset=Windows-1251');
-//			echo $orders;
-//		} else {
-//			echo $orders;
-//		}
+		$this->load->model('extension/exchange1c');
 
-        $this->load->model('extension/exchange1c');
-        $orders = $this->model_extension_exchange1c->queryOrders(
-            array(
-                'from_date' 		=> $this->config->get('exchange1c_order_date')
-            ,'new_status'		=> $this->config->get('exchange1c_order_status')
-            ,'notify'			=> $this->config->get('exchange1c_order_notify')
-            ,'currency'			=> $this->config->get('exchange1c_order_currency') ? $this->config->get('exchange1c_order_currency') : 'руб.'
-            )
-        );
-        echo header('Content-Type: text/xml; charset=utf-8', true);
-        $this->response->addheader('Pragma: public');
-        $this->response->addheader('Connection: Keep-Alive');
-        $this->response->addheader('Expires: 0');
-//        $this->response->addheader('Content-Description: File Transfer');
-        $this->response->addheader('Content-Type: text/xml');
-//        $this->response->addheader('Content-Disposition: attachment; filename="orders.xml"');
-//        $this->response->addheader('Content-Transfer-Encoding: binary');
-//        $this->response->addheader('Content-Length: ' . strlen($orders));
-
-        //$this->response->setOutput(file_get_contents(DIR_CACHE . 'exchange1c/orders.xml', FILE_USE_INCLUDE_PATH, null));
-        if ($this->config->get('exchange1c_convert_orders_cp1251') == 1) {
-            //echo header('Content-Type: text/html; charset=windows-1251', true);
-            // посоветовал yuriygr с GitHub
-            //echo iconv('utf-8', 'cp1251', $orders);
-            //$orders = iconv('utf-8', 'cp1251//TRANSLIT', $orders);
-            //echo mb_convert_encoding($orders, 'UTF-8', mb_detect_encoding($orders, "UTF-8, Windows-1251, Windows-1252", true));
-            $orders = str_replace('utf-8', 'windows-1251', $orders);
-            $orders = iconv('utf-8', 'cp1251', $orders);
-            $this->response->addheader('Content-Type: text/html; charset=Windows-1251');
-            //$orders = mb_convert_encoding($orders, 'cp1251', 'utf-8');
-        }
-        echo $orders;
+		$orders = $this->model_extension_exchange1c->queryOrders(
+			array(
+				 'from_date' 		=> $this->config->get('exchange1c_order_date')
+				,'new_status'		=> $this->config->get('exchange1c_order_status')
+				,'notify'			=> $this->config->get('exchange1c_order_notify')
+				,'currency'			=> $this->config->get('exchange1c_order_currency') ? $this->config->get('exchange1c_order_currency') : 'грн'
+			)
+		);
+		if ($this->config->get('exchange1c_convert_orders_cp1251') == 1) {
+			echo header('Content-Type: text/xml; charset=windows-1251', true);
+			// посоветовал yuriygr с GitHub
+			//echo iconv('utf-8', 'cp1251', $orders);
+			//echo iconv('utf-8', 'cp1251//TRANSLIT', $orders);
+			//echo mb_convert_encoding($orders, 'UTF-8', mb_detect_encoding($orders, "UTF-8, Windows-1251, Windows-1252", true));
+			$orders = str_replace('utf-8', 'windows-1251', $orders);
+			$orders = mb_convert_encoding($orders, 'cp1251', 'utf-8');
+			$this->response->addheader('Content-Type: text/html; charset=Windows-1251');
+			echo $orders;
+		} else {
+            echo header('Content-Type: text/xml; charset=utf-8', true);
+            $this->response->addheader('Pragma: public');
+            $this->response->addheader('Connection: Keep-Alive');
+            $this->response->addheader('Expires: 0');
+            $this->response->addheader('Content-Type: text/xml');
+			echo $orders;
+		}
 
 	} // modeQueryOrders()
 
