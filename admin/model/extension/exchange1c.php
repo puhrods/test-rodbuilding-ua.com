@@ -6363,8 +6363,9 @@ class ModelExtensionExchange1c extends Model {
             if ($query->num_rows) {
                 if ($product_feature_id) {
                     if ($product_feature_id != $query->row['product_feature_id']) {
-                        $this->errorLog(2006);
-                        return false;
+                        $product_feature_id = $query->row['product_feature_id'];
+//                        $this->errorLog(2006);
+//                        return false;
                     }
                 } else {
                     $product_feature_id = $query->row['product_feature_id'];
