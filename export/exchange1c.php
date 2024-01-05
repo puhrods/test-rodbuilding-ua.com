@@ -328,6 +328,7 @@ if (isset($request->get['mode']) && $request->get['type'] == 'catalog') {
 // Dispatch
 if (isset($action)) {
 	$controller->dispatch($action, new Action('error/not_found'));
+	echo $action;
 }
 
 // Output
