@@ -2772,7 +2772,7 @@ class ControllerExtensionModuleExchange1c extends Controller {
 	 */
 	public function modeQueryOrders() {
 
-		if (!$this->checkAuthKey(true)) exit;
+		//if (!$this->checkAuthKey(true)) exit;
 
 		$this->load->model('extension/exchange1c');
 
