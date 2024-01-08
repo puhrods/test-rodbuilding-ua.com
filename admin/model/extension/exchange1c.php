@@ -5625,8 +5625,8 @@ class ModelExtensionExchange1c extends Model {
             $feature_name = '';
             foreach ($xml->ХарактеристикаТовара as $product_option) {
                 $name = trim(htmlspecialchars((string)$product_option->Наименование));
-                $value = trim(htmlspecialchars(str_ireplace('.', ',', (string)$product_option->Значение)));
-
+          //     $value = trim(htmlspecialchars(str_ireplace('.', ',', (string)$product_option->Значение)));
+                $value = trim(htmlspecialchars((string)$product_option->Значение));
                 $feature_name .= ($feature_name) ? ' ' . $name : $name;
                 $options[$name] = array(
                     'guid'			=> (string)$product_option->Ид,
