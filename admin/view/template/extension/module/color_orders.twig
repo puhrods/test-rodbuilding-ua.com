@@ -1,0 +1,129 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        <button type="submit" form="form-account" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+        <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
+      <h1>{{ heading_title }}</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+        <li><a href="{{ breadcrumb['href'] }}">{{ breadcrumb['text'] }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="container-fluid">
+    {% if (error_warning) %}
+    <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    {% endif %}
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_edit }}</h3>
+      </div>
+      <div class="panel-body">
+        <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-account" class="form-horizontal">
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-status">{{ entry_status }}</label>
+            <div class="col-sm-10">
+              <select name="color_orders_status" id="input-status" class="form-control">
+                {% if (color_orders_status) %}
+                <option value="1" selected="selected">{{ text_enabled }}</option>
+                <option value="0">{{ text_disabled }}</option>
+                {% else %}
+                <option value="1">{{ text_enabled }}</option>
+                <option value="0" selected="selected">{{ text_disabled }}</option>
+                {% endif %}
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+                    <label class="col-sm-6 control-label" for="input-container">{{ text_dashboard }}</label>
+                    <div class="col-sm-6">
+                    <div class="radio-group-lite">
+                    <input id="all_off" class="hide-radio radio-off" type="radio" name="color_orders_show_home" value="0" {{ color_orders_show_home ? '' : 'checked' }}>
+                    <label for="all_off" id = "off">Да</label>
+                    <input id="all_on" class="hide-radio radio-on" type="radio" name="color_orders_show_home" value="1" {{ color_orders_show_home ? 'checked' : '' }}>
+                    <label for="all_on" id = "on">Нет<span class="onoffswitch-inner"></span><span class="onoffswitch-switch"></span></label>
+                    </div>
+                    </div>
+                    </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<style>
+.radio-group-lite {
+    display: inline-block;
+    position: relative;
+    width: 70px;
+    background: #eceeef none repeat scroll 0 0;
+    border-radius: 18px;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.35) inset, 0 1px 2px rgba(0, 0, 0, 0.2) inset, 0 0 0 2px #efefef;
+    padding: 2px;
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select: none;
+}
+.hide-radio {
+    display: none;
+}
+.hide-radio + label {
+    background: transparent;
+    display: block;
+    font-weight: 600;
+    letter-spacing: -.5px;
+    float: left;
+    padding: 5px 0;
+    text-align: center;
+    -webkit-transition: 0.15s ease-in-out;
+    -moz-transition: 0.15s ease-in-out;
+    -o-transition: 0.15s ease-in-out;
+    transition: 0.15s ease-in-out;
+    width: 50%;
+    margin-bottom: 0px;
+    position: relative;
+    color: #969696;
+    cursor: pointer;
+}
+.hide-radio:checked + label{
+  color: transparent !important;
+}
+.onoffswitch-switch {
+    display: block;
+    width: 28px;
+    height: 28px;
+    box-shadow:-1px 1px 5px rgba(0, 0, 0, 0.2), 0 1px rgba(0, 0, 0, 0.02) inset;
+    background: #f9f9f9 linear-gradient(to bottom, #eeeeee, white) repeat scroll 0 0;
+    position: absolute;
+    top: 0px;
+    right: 38px;
+    border: 4px solid #FFFFFF;
+    border-radius: 15px;
+    transition: all 0.2s ease-in 0s;
+}
+.radio-on.hide-radio:checked + label .onoffswitch-switch{
+  right: -1px;
+}
+.onoffswitch-inner{
+  transition: all 0s;
+}
+.radio-on.hide-radio:checked + label .onoffswitch-inner{
+  position: absolute;
+  left: -35px;
+  top: -2px;
+  width: 70px;
+  height: 32px;
+  border-radius: 18px;
+  background: linear-gradient(45deg, #13bc4f, #02ce4d);
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.33) inset, 0 1px 2px rgba(0, 0, 0, 0.2) inset, 0 0 0 2px #7cdb9c;
+}
+.radio-off.hide-radio + label{
+  color: #fff;
+  z-index: 1;
+}
+</style>
+{{ footer }}
