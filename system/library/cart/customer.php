@@ -43,22 +43,27 @@ class Customer {
 	}
 
 	public function login($email, $password, $override = false) {
-		// Запрос к базе данных для получения данных пользователя по имени пользователя
-		$user_data_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "customer WHERE LOWER(email) = '" . $this->db->escape(utf8_strtolower($email)) . "' AND status = '1'");
-		// Если пользователь найден
-		if ($user_data_query->num_rows) {
-			// Получаем хеш пароля из базы данных
-			$stored_password = $user_data_query->row['password'];
-			// Извлекаем соль из сохраненного пароля
-			$salt = utf8_substr($stored_password, 0, 8);
-			//как формирует битрикс $new_password = $salt.md5($salt.$arParams["PASSWORD"]);
-			// Теперь, когда у вас есть соль, вы можете использовать ее в алгоритме проверки пароля:
-			$customer_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "customer WHERE LOWER(email) = '" . $this->db->escape(utf8_strtolower($email)) . "' AND ((password = SHA1(CONCAT(salt, SHA1(CONCAT(salt, SHA1('" . $this->db->escape($password) . "'))))) OR password = '" . $this->db->escape(md5($password)) . "') OR password = '" . $this->db->escape($salt . md5($salt . $password)) . "') AND status = '1'");
-		}
+
+        if ($override) {
+            $customer_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "customer WHERE LOWER(email) = '" . $this->db->escape(utf8_strtolower($email)) . "' AND status = '1'");
+        } else {
+            // Запрос к базе данных для получения данных пользователя по имени пользователя
+            $user_data_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "customer WHERE LOWER(email) = '" . $this->db->escape(utf8_strtolower($email)) . "' AND status = '1'");
+            // Если пользователь найден
+            if ($user_data_query->num_rows) {
+                // Получаем хеш пароля из базы данных
+                $stored_password = $user_data_query->row['password'];
+                // Извлекаем соль из сохраненного пароля
+                $salt = utf8_substr($stored_password, 0, 8);
+                //как формирует битрикс $new_password = $salt.md5($salt.$arParams["PASSWORD"]);
+                // Теперь, когда у вас есть соль, вы можете использовать ее в алгоритме проверки пароля:
+                $customer_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "customer WHERE LOWER(email) = '" . $this->db->escape(utf8_strtolower($email)) . "' AND ((password = SHA1(CONCAT(salt, SHA1(CONCAT(salt, SHA1('" . $this->db->escape($password) . "'))))) OR password = '" . $this->db->escape(md5($password)) . "') OR password = '" . $this->db->escape($salt . md5($salt . $password)) . "') AND status = '1'");
+            }
+        }
+
 
 		if ($customer_query->num_rows) {
 			$this->session->data['customer_id'] = $customer_query->row['customer_id'];
-
 			$this->customer_id = $customer_query->row['customer_id'];
 			$this->firstname = $customer_query->row['firstname'];
 			$this->lastname = $customer_query->row['lastname'];
