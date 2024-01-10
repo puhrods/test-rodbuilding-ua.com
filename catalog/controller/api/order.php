@@ -203,6 +203,14 @@ class ControllerApiOrder extends Controller {
 						);
 					}
 
+                    $discount_amount = 0.0000;
+                    $discount_type = '';
+
+                    if($product['full_price'] > $product['price']) {
+                        $discount_amount = ($product['full_price'] - $product['price']);
+                        $discount_type = 'S';
+                    }
+
 					$order_data['products'][] = array(
 						'product_id' => $product['product_id'],
 						'name'       => $product['name'],
@@ -213,6 +221,8 @@ class ControllerApiOrder extends Controller {
 						'subtract'   => $product['subtract'],
 						'price'      => $product['price'],
 						'total'      => $product['total'],
+                        'discount_amount' => $discount_amount,
+                        'discount_type' => $discount_type,
 						'tax'        => $this->tax->getTax($product['price'], $product['tax_class_id']),
 						'reward'     => $product['reward']
 					);
@@ -573,6 +583,14 @@ class ControllerApiOrder extends Controller {
 							);
 						}
 
+                        $discount_amount = 0.0000;
+                        $discount_type = '';
+
+                        if($product['full_price'] > $product['price']) {
+                            $discount_amount = ($product['full_price'] - $product['price']);
+                            $discount_type = 'S';
+                        }
+
 						$order_data['products'][] = array(
 							'product_id' => $product['product_id'],
 							'name'       => $product['name'],
@@ -583,6 +601,8 @@ class ControllerApiOrder extends Controller {
 							'subtract'   => $product['subtract'],
 							'price'      => $product['price'],
 							'total'      => $product['total'],
+                            'discount_amount' => $discount_amount,
+                            'discount_type' => $discount_type,
 							'tax'        => $this->tax->getTax($product['price'], $product['tax_class_id']),
 							'reward'     => $product['reward']
 						);
