@@ -2369,11 +2369,24 @@ $('#button-refresh').on('click', function() {
 						}
 					}
 
+                  {% if product['full_total'] is not empty %}
+
+                  {% endif %}
+
 					html += '</td>';
 					html += '  <td class="text-left">' + product['model'] + '</td>';
 					html += '  <td class="text-right"><div class="input-group btn-block" style="max-width: 200px;"><input type="text" name="product[' + i + '][quantity]" value="' + product['quantity'] + '" class="form-control" /><span class="input-group-btn"><button type="button" data-toggle="tooltip" title="{{ button_refresh }}" data-loading-text="{{ text_loading }}" class="btn btn-primary"><i class="fa fa-refresh"></i></button></span></div></td>';
-                    html += '  <td class="text-right">' + product['price'] + '</td>';
-					html += '  <td class="text-right">' + product['total'] + '</td>';
+
+                    let full_price = '';
+                    let full_total = '';
+
+                    if (product['full_price']) {
+                       full_price = '<div style="text-decoration: line-through;">' + product['full_price'] + '</div>'
+                       full_total = '<div style="text-decoration: line-through;">' + product['full_total'] + '</div>'
+                    }
+
+                    html += '  <td class="text-right">' + full_price + product['price'] + '</td>';
+					html += '  <td class="text-right">' + full_total + product['total'] + '</td>';
 					html += '  <td class="text-center" style="width: 3px;"><button type="button" value="' + product['cart_id'] + '" data-toggle="tooltip" title="{{ button_remove }}" data-loading-text="{{ text_loading }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>';
 					html += '</tr>';
 

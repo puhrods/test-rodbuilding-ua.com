@@ -167,6 +167,15 @@ class ControllerApiCart extends Controller {
 					);
 				}
 
+                $full_total = false;
+                $full_price = false;
+
+                if($product['full_price'] > $product['price']) {
+
+                    $full_total = $this->currency->format($this->tax->calculate($product['full_price'], $product['tax_class_id'], $this->config->get('config_tax')) * $product['quantity'], $this->session->data['currency']);
+                    $full_price = $this->currency->format($this->tax->calculate($product['full_price'], $product['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+                }
+
 				$json['products'][] = array(
 					'cart_id'    => $product['cart_id'],
 					'product_id' => $product['product_id'],
@@ -178,7 +187,9 @@ class ControllerApiCart extends Controller {
 					'shipping'   => $product['shipping'],
 					'price'      => $this->currency->format($this->tax->calculate($product['price'], $product['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']),
 					'total'      => $this->currency->format($this->tax->calculate($product['price'], $product['tax_class_id'], $this->config->get('config_tax')) * $product['quantity'], $this->session->data['currency']),
-					'reward'     => $product['reward']
+                    'full_total' => $full_total,
+                    'full_price' => $full_price,
+                    'reward'     => $product['reward']
 				);
 			}
 
