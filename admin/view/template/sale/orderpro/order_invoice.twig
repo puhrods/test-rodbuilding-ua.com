@@ -121,8 +121,16 @@
 				<td {{ hide_location }}>{{ product['location'] }}</td>
 				<td align="right" style="white-space:nowrap;"{{ hide_weight }}>{{ product['weight'] }}</td>
 				<td align="center">{{ product['quantity'] }}</td>
-				<td align="right" style="white-space:nowrap;">{{ product['price'] }}</td>
-				<td align="right" style="white-space:nowrap;">{{ product['total'] }}</td>
+				<td align="right" style="white-space:nowrap;">
+					{% if product['full_price'] %}
+						<div style="text-decoration: line-through;">{{ product['full_price'] }}</div>
+					{% endif %}
+					{{ product['price'] }}</td>
+				<td align="right" style="white-space:nowrap;">
+					{% if product['full_total'] %}
+						<div style="text-decoration: line-through;">{{ product['full_total'] }}</div>
+					{% endif %}
+					{{ product['total'] }}</td>
 			</tr>
 		{% endfor %}
 		{% for voucher in order['voucher'] %}

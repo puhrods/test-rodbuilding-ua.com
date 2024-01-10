@@ -2451,6 +2451,14 @@ class ControllerSaleOrderpro extends Controller {
 					} else {
 						$img = $this->model_tool_image->resize('placeholder.png', 60, 60);
 					}
+
+                    $full_price = false;
+                    $full_total = false;
+
+                    if($product['discount_amount'] > 0) {
+                        $full_price = $this->currency->format(($product['price'] + $product['discount_amount']) + ($this->config->get('config_tax') ? $product['tax'] : 0), $order_info['currency_code'], $order_info['currency_value']);
+                        $full_total = $this->currency->format((($product['price'] + $product['discount_amount']) *  $product['quantity']) + ($this->config->get('config_tax') ? ($product['tax'] * $product['quantity']) : 0), $order_info['currency_code'], $order_info['currency_value']);
+                    }
 	
 					$product_data[] = array(
 						'product_id' => $product['product_id'],
@@ -2467,6 +2475,8 @@ class ControllerSaleOrderpro extends Controller {
 						'weight'   => $product['weight'],
 						'option'   => $option_data,
 						'quantity' => $product['quantity'],
+                        'full_price' => $full_price,
+                        'full_total' => $full_total,
 						'price'    => $this->currency->format($product['price'], $order_info['currency_code'], $order_info['currency_value']),
 						'total'    => $this->currency->format($product['total'], $order_info['currency_code'], $order_info['currency_value'])
 					);
