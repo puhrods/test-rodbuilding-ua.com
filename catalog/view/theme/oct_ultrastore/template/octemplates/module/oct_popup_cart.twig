@@ -31,9 +31,15 @@
 						{% endif %}
 						<div class="us-cart-item-desc">
 							<div class="mb-3">
-							<a href="{{ product.href }}" class="us-cart-item-link">
-								{{ product.name }}
-							</a>
+							{% if not product.disabled %}
+								<a href="{{ product.href }}" class="us-cart-item-link">
+									{{ product.name }}
+								</a>
+							{% else %}
+								<a class="us-cart-item-link">
+									{{ product.name }}
+								</a>
+							{% endif %}
 							{% if not product.stock %}
 							<span class="required">***</span>
 							{% endif %}
@@ -49,14 +55,16 @@
 							{% endif %}
 							</div>
 							<div class="us-product-quantity">
-								<div class="btn-group" role="group" aria-label="us-product-quantity">
-									<input name="product_id_q" value="{{ product.product_id }}" type="hidden" />
-									<input name="product_id" value="{{ product.key }}" type="hidden" />
-									<input name="product_stock_{{ product.key }}" id="product_stock_{{ product.key }}" value="{{ product.quantity_product }}" type="hidden" />
-									<button type="button" class="us-product-quantity-btn" onclick="update_manual('#main-quantity-val-{{ product.key }}', 'minus', '{{ product.key }}'); return validate('#main-quantity-val-{{ product.key }}');">-</button>
-									<input type="text" name="quantity" class="form-control" id="main-quantity-val-{{ product.key }}" value="{{ product.quantity }}" onchange="update_manual('#main-quantity-val-{{ product.key }}', 'manual', '{{ product.key }}'); return validate('#main-quantity-val-{{ product.key }}');" keypress="update_manual('#main-quantity-val-{{ product.key }}', '', '{{ product.key }}'); return validate('#main-quantity-val-{{ product.key }}');" aria-label="Quantity"></input>
-									<button type="button" class="us-product-quantity-btn" onclick="update_manual('#main-quantity-val-{{ product.key }}', 'plus', '{{ product.key }}'); return validate('#main-quantity-val-{{ product.key }}');">+</button>
-								</div>
+								{% if not product.disabled %}
+									<div class="btn-group" role="group" aria-label="us-product-quantity">
+										<input name="product_id_q" value="{{ product.product_id }}" type="hidden" />
+										<input name="product_id" value="{{ product.key }}" type="hidden" />
+										<input name="product_stock_{{ product.key }}" id="product_stock_{{ product.key }}" value="{{ product.quantity_product }}" type="hidden" />
+										<button type="button" class="us-product-quantity-btn" onclick="update_manual('#main-quantity-val-{{ product.key }}', 'minus', '{{ product.key }}'); return validate('#main-quantity-val-{{ product.key }}');">-</button>
+										<input type="text" name="quantity" class="form-control" id="main-quantity-val-{{ product.key }}" value="{{ product.quantity }}" onchange="update_manual('#main-quantity-val-{{ product.key }}', 'manual', '{{ product.key }}'); return validate('#main-quantity-val-{{ product.key }}');" keypress="update_manual('#main-quantity-val-{{ product.key }}', '', '{{ product.key }}'); return validate('#main-quantity-val-{{ product.key }}');" aria-label="Quantity"></input>
+										<button type="button" class="us-product-quantity-btn" onclick="update_manual('#main-quantity-val-{{ product.key }}', 'plus', '{{ product.key }}'); return validate('#main-quantity-val-{{ product.key }}');">+</button>
+									</div>
+								{% endif %}
 							</div>
 							<div class="us-cart-price-all">
 								{% if not  product['full_total'] %}
@@ -67,7 +75,9 @@
 							</div>
 						</div>
 					</div>
+					{% if not product.disabled %}
 					<a href="javascript:;" onclick="remove(this, 'remove'); return false;" class="us-cart-del"><i class="fas fa-trash-alt"></i></a>
+					{% endif %}
 					<input name="product_key" value="{{ product.key }}" style="display: none;" hidden />
                     <input name="product_id_q" value="{{ product.product_id }}" style="display: none;" hidden />
 				</div>

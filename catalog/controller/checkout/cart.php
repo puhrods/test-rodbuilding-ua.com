@@ -134,6 +134,20 @@ class ControllerCheckoutCart extends Controller {
 					}
 				}
 
+                $full_total = false;
+                $full_price = false;
+                if($product['full_price'] > $product['price']) {
+
+                    $full_total = $this->currency->format($this->tax->calculate($product['full_price'] * $product['quantity'], $product['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+                    $full_price = $this->currency->format($this->tax->calculate($product['full_price'], $product['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+                }
+
+                $disabled = false;
+
+                if($this->config->get('config_package_id') && $product['product_id'] == $this->config->get('config_package_id')) {
+                    $disabled = true;
+                }
+
 				$data['products'][] = array(
 					'cart_id'   => $product['cart_id'],
 					'thumb'     => $image,
@@ -146,6 +160,9 @@ class ControllerCheckoutCart extends Controller {
 					'reward'    => ($product['reward'] ? sprintf($this->language->get('text_points'), $product['reward']) : ''),
 					'price'     => $price,
 					'total'     => $total,
+                    'full_total' => $full_total,
+                    'full_price' => $full_price,
+                    'disabled'   => $disabled,
 					'href'      => $this->url->link('product/product', 'product_id=' . $product['product_id'])
 				);
 			}
@@ -322,6 +339,8 @@ class ControllerCheckoutCart extends Controller {
 			if (!$json) {
 				$this->cart->add($this->request->post['product_id'], $quantity, $option, $recurring_id);
 
+                $this->addPackage();
+
 				$json['success'] = sprintf($this->language->get('text_success'), $this->url->link('product/product', 'product_id=' . $this->request->post['product_id']), $product_info['name'], $this->url->link('checkout/cart'));
 
 				// Unset all shipping and payment methods
@@ -395,6 +414,8 @@ class ControllerCheckoutCart extends Controller {
 				$this->cart->update($key, $value);
 			}
 
+            $this->addPackage();
+
 			$this->session->data['success'] = $this->language->get('text_remove');
 
 			unset($this->session->data['shipping_method']);
@@ -418,6 +439,8 @@ class ControllerCheckoutCart extends Controller {
 		// Remove
 		if (isset($this->request->post['key'])) {
 			$this->cart->remove($this->request->post['key']);
+
+            $this->addPackage();
 
 			unset($this->session->data['vouchers'][$this->request->post['key']]);
 
@@ -479,4 +502,54 @@ class ControllerCheckoutCart extends Controller {
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
 	}
+
+    public function addPackage() {
+
+        $this->cart->removeProduct($this->config->get('config_package_id'));
+
+        if ($this->cart->hasProducts()) {
+
+            $products = $this->cart->getProducts();
+
+            $length = 0;
+
+            foreach ($products as $product) {
+
+                if ($product['length'] > $length) {
+                    $length = $product['length'];
+                }
+
+            }
+
+            $this->load->model('catalog/product');
+
+            $product_info = $this->model_catalog_product->getProduct($this->config->get('config_package_id'));
+
+            if ($product_info) {
+                $option = [];
+
+                $product_options = $this->model_catalog_product->getProductOptions($this->config->get('config_package_id'));
+
+                foreach ($product_options as $product_option) {
+
+                    foreach ($product_option['product_option_value'] as $product_option_value) {
+
+                        if ($length < $product_option_value['name']) {
+                            $option[$product_option['product_option_id']] = $product_option_value['product_option_value_id'];
+
+                        }
+
+                    }
+
+                }
+
+                $this->cart->add($this->config->get('config_package_id'), 1, $option, 0);
+
+
+            }
+
+        }
+
+
+    }
 }

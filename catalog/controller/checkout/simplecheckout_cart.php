@@ -188,6 +188,12 @@ class ControllerCheckoutSimpleCheckoutCart extends SimpleController {
                 $full_price = $this->simplecheckout->formatCurrency($this->tax->calculate($product['full_price'], $product['tax_class_id'], $this->config->get('config_tax')));
             }
 
+            $disabled = false;
+
+            if($this->config->get('config_package_id') && $product['product_id'] == $this->config->get('config_package_id')) {
+                $disabled = true;
+            }
+
             if ($version >= 200) {
                 $recurring = '';
 
@@ -228,6 +234,7 @@ class ControllerCheckoutSimpleCheckoutCart extends SimpleController {
                     'full_total' => $full_total,
                     'full_price' => $full_price,
                     'total'     => $total,
+                    'disabled'  => $disabled,
                     'href'      => $this->url->link('product/product', 'product_id=' . $product['product_id'])
                 );
             } elseif ($version >= 156) {
@@ -275,6 +282,7 @@ class ControllerCheckoutSimpleCheckoutCart extends SimpleController {
                     'recurring'           => $product['recurring'],
                     'profile_name'        => isset($product['profile_name']) ? $product['profile_name'] : '',
                     'profile_description' => $profile_description,
+                    'disabled'            => $disabled,
                 );
             } else {
                 $this->_templateData['products'][] = array(
@@ -292,6 +300,7 @@ class ControllerCheckoutSimpleCheckoutCart extends SimpleController {
                     'total'     => $total,
                     'full_total' => $full_total,
                     'full_price' => $full_price,
+                    'disabled'   => $disabled,
                     'href'      => $this->url->link('product/product', 'product_id=' . $product['product_id'])
                 );
             }
@@ -506,6 +515,7 @@ class ControllerCheckoutSimpleCheckoutCart extends SimpleController {
 
                 if(!$error_warning) {
                     $this->cart->update($key, $value);
+                    $this->load->controller('checkout/cart/addPackage');
                 }
 
                 //}
@@ -516,6 +526,7 @@ class ControllerCheckoutSimpleCheckoutCart extends SimpleController {
         if (!empty($this->request->post['remove'])) {
             $this->cart->remove($this->request->post['remove']);
             unset($this->session->data['vouchers'][$this->request->post['remove']]);
+            $this->load->controller('checkout/cart/addPackage');
         }
 
         // Coupon
@@ -542,6 +553,8 @@ class ControllerCheckoutSimpleCheckoutCart extends SimpleController {
         if (isset($this->request->post['reward']) && $this->validateReward()) {
             $this->session->data['reward'] = $this->request->post['reward'];
         }
+
+
     }
 
     public function clear() {

@@ -33,10 +33,14 @@
 					{% for product in products %}
 				    <div class="us-cart-item d-flex align-items-center justify-content-between">
 						<div class="us-cart-item-left d-flex align-items-center">
+							{% if not product.disabled %}
 							<a href="javascript:;" class="us-cart-del" onclick="cart.remove('{{ product.cart_id }}');"><i class="fas fa-trash-alt"></i></a>
 							{% if product.thumb %}<a href="{{ product.href }}" class="us-cart-item-img-link"><img src="{{ product.thumb }}" class="us-cart-item-img"  alt="{{ product.name }}" title="{{ product.name }}" /></a>{% endif %}
+							{% else %}
+								{% if product.thumb %}<span class="us-cart-item-img-link"><img src="{{ product.thumb }}" class="us-cart-item-img"  alt="{{ product.name }}" title="{{ product.name }}" /></span>{% endif %}
+							{% endif %}
 							<div class="us-cart-item-desc">
-								<a href="{{ product.href }}" class="us-cart-item-link">{{ product.name }}</a>{% if not product.stock %}<span class="required">***</span>{% endif %}
+								<a {% if not product.disabled %}href="{{ product.href }}"{% endif %} class="us-cart-item-link">{{ product.name }}</a>{% if not product.stock %}<span class="required">***</span>{% endif %}
 								<ul class="us-product-info-list list-unstyled">
 									{% if product.option %}
 									{% for option in product.option %}
@@ -67,10 +71,14 @@
 						<div class="us-cart-item-right d-flex align-items-center">
 							<div class="us-product-quantity">
 								<div class="btn-group" role="group" aria-label="us-product-quantity">
+									{% if not product.disabled %}
 									<button type="button" class="us-product-quantity-btn" onclick="$('#input-quantity-{{ product.cart_id }}').val(~~$('#input-quantity-{{ product.cart_id }}').val()-1);">-</button>
 									<input type="text" id="input-quantity-{{ product.cart_id }}" class="form-control"  name="quantity[{{ product.cart_id }}]" value="{{ product.quantity }}" size="1">
 									<button type="button" class="us-product-quantity-btn" onclick="$('#input-quantity-{{ product.cart_id }}').val(~~$('#input-quantity-{{ product.cart_id }}').val()+1);">+</button>
 									<button type="submit" class="us-product-quantity-btn" title="{{ button_update }}"><i class="fas fa-sync-alt"></i></button>
+									{% else %}
+										<input type="hidden" id="input-quantity-{{ product.cart_id }}" class="form-control"  name="quantity[{{ product.cart_id }}]" value="{{ product.quantity }}" size="1">
+									{% endif %}
 								</div>
 							</div>
 							<div class="us-cart-item-right-desc">

@@ -56,6 +56,8 @@ class ControllerApiCart extends Controller {
 					if (!isset($json['error']['option'])) {
 						$this->cart->add($this->request->post['product_id'], $quantity, $option);
 
+                        $this->load->controller('checkout/cart/addPackage');
+
 						$json['success'] = $this->language->get('text_success');
 
 						unset($this->session->data['shipping_method']);
@@ -83,6 +85,8 @@ class ControllerApiCart extends Controller {
 		} else {
 			$this->cart->update($this->request->post['key'], $this->request->post['quantity']);
 
+            $this->load->controller('checkout/cart/addPackage');
+
 			$json['success'] = $this->language->get('text_success');
 
 			unset($this->session->data['shipping_method']);
@@ -109,6 +113,8 @@ class ControllerApiCart extends Controller {
 				$this->cart->remove($this->request->post['key']);
 
 				unset($this->session->data['vouchers'][$this->request->post['key']]);
+
+                $this->load->controller('checkout/cart/addPackage');
 
 				$json['success'] = $this->language->get('text_success');
 

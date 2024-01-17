@@ -54,6 +54,8 @@ class ControllerOCTemplatesModuleOctPopupCart extends Controller {
 				$this->cart->add($this->request->request['add'], $this->request->request['quantity']);
 			}
 
+            $this->load->controller('checkout/cart/addPackage');
+
 			if (!$this->cart->hasStock() && (!$this->config->get('config_stock_checkout') || $this->config->get('config_stock_warning'))) {
 				$data['error_warning'] = $this->language->get('error_stock');
 			} elseif (isset($this->session->data['error'])) {
@@ -181,7 +183,13 @@ class ControllerOCTemplatesModuleOctPopupCart extends Controller {
                     $full_price = $this->currency->format($this->tax->calculate($product['full_price'], $product['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
                 }
 
-				$data['products'][] = [
+                $disabled = false;
+
+                if($this->config->get('config_package_id') && $product['product_id'] == $this->config->get('config_package_id')) {
+                    $disabled = true;
+                }
+
+                    $data['products'][] = [
 					'key' => $product['cart_id'],
 					'product_id' => $product['product_id'],
 					'thumb' => $image,
@@ -198,6 +206,7 @@ class ControllerOCTemplatesModuleOctPopupCart extends Controller {
                     'full_total' => $full_total,
                     'full_price' => $full_price,
 					'minimum' => $product['minimum'],
+                    'disabled'  => $disabled,
 					'href' => $this->url->link('product/product', 'product_id=' . $product['product_id'], true)
 				];
 			}
