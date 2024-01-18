@@ -536,7 +536,7 @@ class ControllerCheckoutCart extends Controller {
 
                         if ($length < $product_option_value['name']) {
                             $option[$product_option['product_option_id']] = $product_option_value['product_option_value_id'];
-
+                            break;
                         }
 
                     }
