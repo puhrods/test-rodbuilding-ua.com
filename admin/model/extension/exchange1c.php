@@ -5715,15 +5715,14 @@ class ModelExtensionExchange1c extends Model {
                     $model .= $option_value_data['value'];
                 }
 
-//                $prefix = "INSERT INTO";
-//                if ($combination_id == '0') {
-                    $prefix = "INSERT IGNORE INTO";
-          //      }
+                $query = $this->query("SELECT * FROM `" . DB_PREFIX . "may_advanced_option_product_value` WHERE product_option_id = '" . (int)$product_option_id . "' AND product_id = '" . (int)$product_id . "' AND option_id = '" . (int)$option_id . "' AND combination_id = '" . $combination_id . "' AND option_value_id = '" . (int)$option_value_id . "' AND model = '" . $this->db->escape($model) . "'");
 
-               // $this->query($prefix . " " . DB_PREFIX . "may_advanced_option_product_value SET product_option_id = '" . (int)$product_option_id . "', product_id = '" . (int)$product_id . "', option_id = '" . (int)$option_id . "', combination_id = '" . $combination_id . "', option_value_id = '" . (int)$option_value_id . "', model = '" . $this->db->escape($model) . "', sku = '', upc = '', ean = '', jan = '', isbn = '', mpn = '', location = '', image = '[]', point = '0', point_prefix = '+', weight = '" . (isset($dimensions['weight']) ? (float)$dimensions['weight'] : '0.00000000') . "', weight_prefix = 'as', dimension_l = '" . (isset($dimensions['length']) ? (float)$dimensions['length'] : '0.00000000') . "', dimension_w = '" . (isset($dimensions['width']) ? (float)$dimensions['width'] : '0.00000000') . "', dimension_h = '" . (isset($dimensions['height']) ? (float)$dimensions['height'] : '0.00000000') . "', hide = '" .($status == 1 ? '0' : '1') . "', quantity = '" . $data['quantity'] . "', stock_status_id = '0'");
+                if ($query->num_rows) {
+                    $this->query("UPDATE `" . DB_PREFIX . "may_advanced_option_product_value` SET hide = '" .($status == 1 ? '0' : '1') . "', quantity = '" . $data['quantity'] . "', stock_status_id = '0' WHERE product_option_id = '" . (int)$product_option_id . "' AND product_id = '" . (int)$product_id . "' AND option_id = '" . (int)$option_id . "' AND combination_id = '" . $combination_id . "' AND option_value_id = '" . (int)$option_value_id . "' AND model = '" . $this->db->escape($model) . "'");
 
-
-                $this->query($prefix . " " . DB_PREFIX . "may_advanced_option_product_value SET product_option_id = '" . (int)$product_option_id . "', product_id = '" . (int)$product_id . "', option_id = '" . (int)$option_id . "', combination_id = '" . $combination_id . "', option_value_id = '" . (int)$option_value_id . "', model = '" . $this->db->escape($model) . "', sku = '', upc = '', ean = '', jan = '', isbn = '', mpn = '', location = '', image = '[]', point = '0', point_prefix = '+', hide = '" .($status == 1 ? '0' : '1') . "', quantity = '" . $data['quantity'] . "', stock_status_id = '0'");
+                } else {
+                    $this->query("INSERT IGNORE INTO " . DB_PREFIX . "may_advanced_option_product_value SET product_option_id = '" . (int)$product_option_id . "', product_id = '" . (int)$product_id . "', option_id = '" . (int)$option_id . "', combination_id = '" . $combination_id . "', option_value_id = '" . (int)$option_value_id . "', model = '" . $this->db->escape($model) . "', sku = '', upc = '', ean = '', jan = '', isbn = '', mpn = '', location = '', image = '[]', point = '0', point_prefix = '+', hide = '" .($status == 1 ? '0' : '1') . "', quantity = '" . $data['quantity'] . "', stock_status_id = '0'");
+                }
 
                 $combination_id .= '-' . $option_value_id;
 
