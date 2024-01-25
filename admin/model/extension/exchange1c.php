@@ -6786,8 +6786,8 @@ class ModelExtensionExchange1c extends Model {
                 ,'Номер'       => $order['order_id']
                 ,'Дата'        => $order['date']
                 ,'Время'       => $order['time']
-                ,'Валюта'      => $currency
-                ,'Курс'        => 1
+                ,'Валюта'      => $order['currency_code']
+                ,'Курс'        => $order['currency_value']
                 ,'ХозОперация' => 'Заказ товара'
                 ,'Роль'        => 'Продавец'
                 ,'Сумма'       => $order['total']
