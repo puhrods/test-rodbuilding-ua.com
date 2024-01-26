@@ -8121,6 +8121,10 @@ class ModelExtensionExchange1c extends Model {
         // Классификатор содержит только изменения или полная выгрузка
         $data['update'] = (string)$xml['СодержитТолькоИзменения'] == 'true' ? true : false;
 
+        if($xml->Валюты) {
+           $this->changeCurrency($xml->Валюты);
+        }
+
         // Группы из файла -> категории opencart
         if ($xml->Группы && $this->config->get('exchange1c_categories_no_import') != 1) {
 
@@ -8235,6 +8239,15 @@ class ModelExtensionExchange1c extends Model {
 
     } // parseClassifier()
 
+
+    private function changeCurrency($xml) {
+          foreach ($xml->Валюта as $xml_currency) {
+              if ($xml_currency->Наименование) {
+                  $this->db->query("UPDATE " . DB_PREFIX . "currency SET value = '" . $this->db->escape((float)$xml_currency->Значение) . "', date_modified = NOW() WHERE code = '" . $this->db->escape((string)$xml_currency->Наименование) . "'");
+              }
+          }
+        $this->cache->delete('currency');
+    }
 
     /**
      * ver 3
