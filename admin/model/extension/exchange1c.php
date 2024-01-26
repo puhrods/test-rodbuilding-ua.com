@@ -8243,7 +8243,7 @@ class ModelExtensionExchange1c extends Model {
     private function changeCurrency($xml) {
           foreach ($xml->Валюта as $xml_currency) {
               if ($xml_currency->Наименование) {
-                  $this->db->query("UPDATE " . DB_PREFIX . "currency SET value = '" . $this->db->escape((float)$xml_currency->Значение) . "', date_modified = NOW() WHERE code = '" . $this->db->escape((string)$xml_currency->Наименование) . "'");
+                  $this->db->query("UPDATE " . DB_PREFIX . "currency SET value = '" . $this->db->escape((float)str_ireplace(',', '.', $xml_currency->Значение)) . "', date_modified = NOW() WHERE code = '" . $this->db->escape((string)$xml_currency->Наименование) . "'");
               }
           }
         $this->cache->delete('currency');
