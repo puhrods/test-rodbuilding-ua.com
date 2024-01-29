@@ -6708,7 +6708,7 @@ class ModelExtensionExchange1c extends Model {
 
             $query = $this->query("SELECT `order_id`,`order_status_id` FROM `" . DB_PREFIX . "order_history` WHERE `date_added` BETWEEN STR_TO_DATE('" . $from_date . "', '%Y-%m-%d %H:%i:%s') AND STR_TO_DATE('" . $to_date . "', '%Y-%m-%d %H:%i:%s') AND `order_status_id` != 0 ORDER BY order_history_id DESC");
 
-            $this->log("SELECT `order_id`,`order_status_id` FROM `" . DB_PREFIX . "order_history` WHERE `date_added` BETWEEN STR_TO_DATE('" . $from_date . "', '%Y-%m-%d %H:%i:%s') AND STR_TO_DATE('" . $to_date . "', '%Y-%m-%d %H:%i:%s') AND `order_status_id` != 0 ORDER BY order_history_id DESC" , 1);
+            $this->log->write("SELECT `order_id`,`order_status_id` FROM `" . DB_PREFIX . "order_history` WHERE `date_added` BETWEEN STR_TO_DATE('" . $from_date . "', '%Y-%m-%d %H:%i:%s') AND STR_TO_DATE('" . $to_date . "', '%Y-%m-%d %H:%i:%s') AND `order_status_id` != 0 ORDER BY order_history_id DESC");
 
 
             if ($query->num_rows) {
