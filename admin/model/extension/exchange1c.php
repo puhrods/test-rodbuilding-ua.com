@@ -6702,13 +6702,11 @@ class ModelExtensionExchange1c extends Model {
                 $from_date = '2001-01-01 00:00:00';
             }
             $this->log($from_date , 2);
-            $from_date = 'Y-m-d 00:00:00';
+            $from_date = date('Y-m-d 00:00:00');
             // По текущую дату и время
             $to_date = date('Y-m-d H:i:s');
 
             $query = $this->query("SELECT `order_id`,`order_status_id` FROM `" . DB_PREFIX . "order_history` WHERE `date_added` BETWEEN STR_TO_DATE('" . $from_date . "', '%Y-%m-%d %H:%i:%s') AND STR_TO_DATE('" . $to_date . "', '%Y-%m-%d %H:%i:%s') AND `order_status_id` != 0 ORDER BY order_history_id DESC");
-
-            $this->log->write("SELECT `order_id`,`order_status_id` FROM `" . DB_PREFIX . "order_history` WHERE `date_added` BETWEEN STR_TO_DATE('" . $from_date . "', '%Y-%m-%d %H:%i:%s') AND STR_TO_DATE('" . $to_date . "', '%Y-%m-%d %H:%i:%s') AND `order_status_id` != 0 ORDER BY order_history_id DESC");
 
 
             if ($query->num_rows) {
