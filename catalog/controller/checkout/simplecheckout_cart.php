@@ -34,6 +34,8 @@ class ControllerCheckoutSimpleCheckoutCart extends SimpleController {
 
         $this->init();
 
+        $this->load->controller('checkout/cart/addPackage');
+
         $version = $this->simplecheckout->getOpencartVersion();
 
         $this->_templateData['attention'] = '';
