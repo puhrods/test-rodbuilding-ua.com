@@ -6708,8 +6708,14 @@ class ModelExtensionExchange1c extends Model {
 
             $query = $this->query("SELECT `order_id`,`order_status_id` FROM `" . DB_PREFIX . "order_history` WHERE `date_added` BETWEEN STR_TO_DATE('" . $from_date . "', '%Y-%m-%d %H:%i:%s') AND STR_TO_DATE('" . $to_date . "', '%Y-%m-%d %H:%i:%s') AND `order_status_id` != 0 ORDER BY order_history_id DESC");
 
+            $this->log("SELECT `order_id`,`order_status_id` FROM `" . DB_PREFIX . "order_history` WHERE `date_added` BETWEEN STR_TO_DATE('" . $from_date . "', '%Y-%m-%d %H:%i:%s') AND STR_TO_DATE('" . $to_date . "', '%Y-%m-%d %H:%i:%s') AND `order_status_id` != 0 ORDER BY order_history_id DESC" , 1);
+
+
             if ($query->num_rows) {
                 foreach ($query->rows as $row) {
+                    if (isset($orders_export[$row['order_id']])) {
+                        continue;
+                    }
                     $orders_export[$row['order_id']] = $row['order_status_id'];
                 }
             }
@@ -6719,6 +6725,7 @@ class ModelExtensionExchange1c extends Model {
 
             if ($query->num_rows) {
                 foreach ($query->rows as $row) {
+
                     $orders_export[$row['order_id']] = $row['order_status_id'];
                 }
             }
