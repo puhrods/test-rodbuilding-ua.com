@@ -767,7 +767,7 @@ class ModelExtensionExchange1c extends Model {
      */
     private function setSeoURL($url_type, $element_id, $element_name, $old_element) {
 
-        $language_id = $this->getLanguageId($this->config->get('config_language'));
+        $language_id = $this->getLanguageId('ru-ru');
         $store_id = $this->config->get('config_store_id');
 
         if (empty($old_element['keyword']) && empty($element_name)) {
@@ -1305,7 +1305,7 @@ class ModelExtensionExchange1c extends Model {
             'manufacturer'	=> 0
         );
 
-        $language_id = $this->getLanguageId($this->config->get('config_language'));
+        $language_id = $this->getLanguageId('ru-ru');
 
         if ($this->config->get('exchange1c_seo_product_mode') != 'disable') {
             // Выбрать все товары, нужны поля:
@@ -6310,11 +6310,11 @@ class ModelExtensionExchange1c extends Model {
      * Получает название статуса документа на текущем языке
      *
      */
-    private function getOrderStatusName($order_staus_id) {
+    private function getOrderStatusName($order_status_id) {
         if (!$this->LANG_ID) {
-            $this->LANG_ID = $this->getLanguageId($this->config->get('config_language'));
+            $this->LANG_ID = $this->getLanguageId('ru-ru');
         }
-        $query = $this->query("SELECT `name` FROM `" . DB_PREFIX . "order_status` WHERE `order_status_id` = " . (int)$order_staus_id . " AND `language_id` = " . $this->LANG_ID);
+        $query = $this->query("SELECT `name` FROM `" . DB_PREFIX . "order_status` WHERE `order_status_id` = " . (int)$order_status_id . " AND `language_id` = " . $this->LANG_ID);
         if ($query->num_rows) {
             return $query->row['name'];
         }
@@ -8387,7 +8387,7 @@ class ModelExtensionExchange1c extends Model {
         //$this->log("Доступно памяти: " . sprintf("%.3f", memory_get_peak_usage() / 1024 / 1024) . " Mb", 2);
 
         // Определим язык
-        $this->getLanguageId($this->config->get('config_language'));
+        $this->getLanguageId('ru-ru');
         $this->log("Язык загрузки, id: " . $this->LANG_ID, 2);
 
         // Записываем единое текущее время обновления для запросов в базе данных
