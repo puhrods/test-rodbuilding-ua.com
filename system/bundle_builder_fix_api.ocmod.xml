@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+    <name><![CDATA[BundleExpert Fix Api Server]]></name>
+    <version><![CDATA[1.0.1]]></version>
+    <code><![CDATA[BundleExpert  Fix Api Server]]></code>
+    <author><![CDATA[opencart-expert.com]]></author>
+    <link><![CDATA[http://opencart-expert.com]]></link>
+
+   
+	<file path="system/library/bundle_expert/bundle_expert.php">
+        <operation error="skip">
+            <search><![CDATA[$url = 'http://api.opencart-expert.com/';]]></search>
+            <add position="after"><![CDATA[
+                //BundleExpert Custom
+                $url = 'http://api.opencart-expert.site/';
+                //BundleExpert Custom
+              ]]></add>
+        </operation>
+    </file>
+
+</modification>

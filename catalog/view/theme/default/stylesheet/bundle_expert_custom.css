@@ -1,9 +1,21 @@
 .product-price-container span {
 
+display: inline-block;
+
+padding-bottom: 0;
 }
 
 .product-price-container .product-as-kit-old-price {
 
+color: #AFAFAF;
+
+font-size: 14px;
+
+text-decoration: line-through;
+
+margin-right: 20px;
+
+padding-bottom: 0;
 }
 
 .product-price-container .product-as-kit-price {
@@ -25,8 +37,15 @@ letter-spacing: .3px;
 
 .product-price-container .product-as-kit-price.be-product-as-kit-price-new {
 
+color: #FFF;
 
+font-size: 18px;
 
+font-weight: bold;
+
+padding: 4px 12px;
+
+background-color: #EB5757;
 }
 
 

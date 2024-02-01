@@ -1,0 +1,740 @@
+{{ header }}{{ column_left }} 
+<div id="content">
+	<div class="page-header">
+		<div class="container-fluid">
+		<h1>{{ heading_title }}</h1>
+		<ul class="breadcrumb">
+			{% for breadcrumb in breadcrumbs %} 
+			<li><a href="{{ breadcrumb['href'] }}">{{ breadcrumb['text'] }}</a></li>
+			{% endfor %} 
+		</ul>
+		</div>
+	</div>
+	<nav class="navbar navbar-default">
+		<div class="container-fluid">
+			<div class="nav navbar-nav navbar-left">
+			{% for nav in navs %} 
+			<a href="{{ nav['href'] }}" class="btn btn-default navbar-btn {{ nav['active'] }}">{{ nav['text'] }}</a>
+			{% endfor %} 
+			</div>
+		</div>
+	</nav>  
+	<div class="container-fluid">
+		{% if (error_warning) %} 
+		<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ error_warning }} 
+			<button type="button" class="close" data-dismiss="alert">&times;</button>
+		</div>
+		{% endif %} 
+		{% if (success) %} 
+		<div class="alert alert-success"><i class="fa fa-check-circle"></i> {{ success }} 
+			<button type="button" class="close" data-dismiss="alert">&times;</button>
+		</div>
+		{% endif %} 
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title"><i class="fa fa-puzzle-piece"></i>{{ heading_generator }}</h3>
+			</div>
+			<div class="panel-body">
+				<div class="progress" id="progress_bar">
+					<div style="width:100%" aria-valuemax="100" aria-valuemin="0" aria-valuenow="100" role="progressbar" class="progress-bar progress-bar-striped active" id="progress-bar"><span>0%</span></div>
+				</div>
+				<ul class="nav nav-tabs">
+					<li class="active"><a data-toggle="tab" href="#tab-category" aria-expanded="true">{{ tab_category }}</a></li>
+					<li><a data-toggle="tab" href="#tab-product" aria-expanded="false">{{ tab_product }}</a></li>
+					<li><a data-toggle="tab" href="#tab-manufacturer" aria-expanded="false">{{ tab_manufacturer }}</a></li>
+					<li><a data-toggle="tab" href="#tab-information" aria-expanded="false">{{ tab_information }}</a></li>
+					{% if blog_exist %}
+					<li><a data-toggle="tab" href="#tab-blog" aria-expanded="false">{{ tab_blog }}</a></li>
+					{% endif %}
+				</ul>
+				<div class="tab-content">
+					<div id="tab-category" class="tab-pane active">
+	{% if stores|length %} 
+      <div class="panel-body">
+      <div class="pull-right form-inline">
+	  <span class="control-label"> {{ text_bulk_store }} </span>
+        <label class="control-label" for="from_store">From:&nbsp;</label><select class="form-control" name="from_store">
+          <option value="*">{{ text_select }}</option>
+        {% for store in stores %} 
+          <option value="{{ store.store_id }}">{{ store.name }}</option>
+        {% endfor %}</select>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <label class="control-label" for="to_store">To:&nbsp;</label><select class="form-control" name="to_store">
+          <option value="*">{{ text_select }}</option>
+        {% for store in stores %} 
+          <option value="{{ store.store_id }}">{{ store.name }}</option>
+        {% endfor %}</select>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <button type="button" data-toggle="tooltip" title="{{ button_bulk_copy }}" class="btn btn-warning" onclick="bulkCopy('product');"><i class="fa fa-copy"></i> {{ button_bulk_copy }}</button>
+      </div>
+      </div>
+     {% endif %}
+	 <hr>
+	{% if languages|length %} 
+      <div class="panel-body">
+      <div class="pull-right form-inline">
+	  <span class="control-label"> {{ text_bulk_language }} </span>
+        <label class="control-label" for="from_language">From:&nbsp;</label><select class="form-control" name="from_language">
+          <option value="*">{{ text_select }}</option>
+        {% for language in languages %} 
+          <option value="{{ language.language_id }}">{{ language.name }}</option>
+        {% endfor %}</select>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <label class="control-label" for="to_language">To:&nbsp;</label><select class="form-control" name="to_language">
+          <option value="*">{{ text_select }}</option>
+        {% for language in languages %} 
+          <option value="{{ language.language_id }}">{{ language.name }}</option>
+        {% endfor %}</select>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <button type="button" data-toggle="tooltip" title="{{ button_bulk_copy }}" class="btn btn-warning" onclick="bulkLange('product');"><i class="fa fa-copy"></i> {{ button_bulk_copy }}</button>
+      </div>
+      </div>
+     {% endif %}
+						<form class="form-horizontal" id="form-category">
+							<div class="form-group">
+								<label class="col-sm-3 control-label">{{ text_store }}</label>
+								<div class="col-sm-9">
+									<select class="form-control" name="store_id_category">
+									{% for store in stores %} 
+										{% if pattern_category.store_id is defined and pattern_category.store_id == store.store_id %}
+											{% set selected = 'selected="selected"' %}
+										{% else %}
+											{% set selected = '' %}
+										{% endif %}
+										<option {{ selected }} value="{{ store.store_id }}">{{ store.name }}</option>
+									{% endfor %} 
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label">{{ text_language_source }}</label>
+								<div class="col-sm-9">
+									<select class="form-control" name="language_id_category">
+									{% for language in languages %} 
+										{% if pattern_category.language_id is defined and pattern_category.language_id == language.language_id %}
+											{% set selected = 'selected="selected"' %}
+										{% else %}
+											{% set selected = '' %}
+										{% endif %}
+										<option {{ selected }} value="{{ language.language_id }}">{{ language.name }}</option>
+									{% endfor %} 
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label">{{ text_language_url }}</label>
+								<div class="col-sm-9">
+									<select class="form-control" name="language_id_url_category">
+									{% for language in languages %} 
+										{% if pattern_category.language_id_url is defined and pattern_category.language_id_url == language.language_id %}
+											{% set selected = 'selected="selected"' %}
+										{% else %}
+											{% set selected = '' %}
+										{% endif %}
+										<option {{ selected }} value="{{ language.language_id }}">{{ language.name }}</option>
+									{% endfor %} 
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label">{{ text_pattern }}</label>
+								<div class="col-sm-9">
+									<input type="text" class="form-control" value="{{ pattern_category['pattern'] is defined?pattern_category['pattern']:'[name]' }}" name="pattern_category">
+									<p><small>{{ text_allowed_patern }} {{ allowed_category_patterns }}</small></p>
+									<div class="checkbox">
+										<label><input type="checkbox" name="alias_category_update" value="1"> {{ text_allow_rewrite }}</label>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-sm-offset-3 col-sm-9">
+									<button class="pull-left btn btn-primary btn-generate" title="{{ button_generate }}" data-toggle="tooltip" data-form="category" type="button"> {{ text_generate }} </button>
+								</div>
+							</div>
+						</form>
+					</div>
+					<div id="tab-product" class="tab-pane">
+	{% if stores|length %} 
+      <div class="panel-body">
+      <div class="pull-right form-inline">
+	  <span class="control-label"> {{ text_bulk_store }} </span>
+        <label class="control-label" for="from_store">From:&nbsp;</label><select class="form-control" name="from_store">
+          <option value="*">{{ text_select }}</option>
+        {% for store in stores %} 
+          <option value="{{ store.store_id }}">{{ store.name }}</option>
+        {% endfor %}</select>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <label class="control-label" for="to_store">To:&nbsp;</label><select class="form-control" name="to_store">
+          <option value="*">{{ text_select }}</option>
+        {% for store in stores %} 
+          <option value="{{ store.store_id }}">{{ store.name }}</option>
+        {% endfor %}</select>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <button type="button" data-toggle="tooltip" title="{{ button_bulk_copy }}" class="btn btn-warning" onclick="bulkCopy('product');"><i class="fa fa-copy"></i> {{ button_bulk_copy }}</button>
+      </div>
+      </div>
+     {% endif %}
+	 <hr>
+	{% if languages|length %} 
+      <div class="panel-body">
+      <div class="pull-right form-inline">
+	  <span class="control-label"> {{ text_bulk_language }} </span>
+        <label class="control-label" for="from_language">From:&nbsp;</label><select class="form-control" name="from_language">
+          <option value="*">{{ text_select }}</option>
+        {% for language in languages %} 
+          <option value="{{ language.language_id }}">{{ language.name }}</option>
+        {% endfor %}</select>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <label class="control-label" for="to_language">To:&nbsp;</label><select class="form-control" name="to_language">
+          <option value="*">{{ text_select }}</option>
+        {% for language in languages %} 
+          <option value="{{ language.language_id }}">{{ language.name }}</option>
+        {% endfor %}</select>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <button type="button" data-toggle="tooltip" title="{{ button_bulk_copy }}" class="btn btn-warning" onclick="bulkLange('product');"><i class="fa fa-copy"></i> {{ button_bulk_copy }}</button>
+      </div>
+      </div>
+     {% endif %}
+						<form class="form-horizontal" id="form-product">
+							<div class="form-group">
+								<label class="col-sm-3 control-label">{{ text_store }}</label>
+								<div class="col-sm-9">
+									<select class="form-control" name="store_id_product">
+									{% for store in stores %} 
+										{% if pattern_product.store_id is defined and pattern_product.store_id == store.store_id %}
+											{% set selected = 'selected="selected"' %}
+										{% else %}
+											{% set selected = '' %}
+										{% endif %}
+										<option {{ selected }} value="{{ store.store_id }}">{{ store.name }}</option>
+									{% endfor %} 
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label">{{ text_language_source }}</label>
+								<div class="col-sm-9">
+									<select class="form-control" name="language_id_product">
+									{% for language in languages %} 
+										{% if pattern_product.language_id is defined and pattern_product.language_id == language.language_id %}
+											{% set selected = 'selected="selected"' %}
+										{% else %}
+											{% set selected = '' %}
+										{% endif %}
+										<option {{ selected }} value="{{ language.language_id }}">{{ language.name }}</option>
+									{% endfor %} 
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label">{{ text_language_url }}</label>
+								<div class="col-sm-9">
+									<select class="form-control" name="language_id_url_product">
+									{% for language in languages %} 
+										{% if pattern_product.language_id_url is defined and pattern_product.language_id_url == language.language_id %}
+											{% set selected = 'selected="selected"' %}
+										{% else %}
+											{% set selected = '' %}
+										{% endif %}
+										<option {{ selected }} value="{{ language.language_id }}">{{ language.name }}</option>
+									{% endfor %} 
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label">{{ text_pattern }}</label>
+								<div class="col-sm-9">
+									<input type="text" class="form-control" value="{{ pattern_product['pattern'] is defined?pattern_product['pattern']:'[name]' }}" name="pattern_product">
+									<p><small>{{ text_allowed_patern }} {{ allowed_product_patterns }}</small></p>
+									<div class="checkbox">
+										<label><input type="checkbox" name="alias_product_update" value="1"> {{ text_allow_rewrite }}</label>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-sm-offset-3 col-sm-9">
+									<button class="pull-left btn btn-primary btn-generate" title="{{ button_generate }}" data-toggle="tooltip" data-form="product" type="button"> {{ text_generate }} </button>
+								</div>
+							</div>
+						</form>
+					</div>
+					<div id="tab-manufacturer" class="tab-pane">
+	{% if stores|length %} 
+      <div class="panel-body">
+      <div class="pull-right form-inline">
+	  <span class="control-label"> {{ text_bulk_store }} </span>
+        <label class="control-label" for="from_store">From:&nbsp;</label><select class="form-control" name="from_store">
+          <option value="*">{{ text_select }}</option>
+        {% for store in stores %} 
+          <option value="{{ store.store_id }}">{{ store.name }}</option>
+        {% endfor %}</select>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <label class="control-label" for="to_store">To:&nbsp;</label><select class="form-control" name="to_store">
+          <option value="*">{{ text_select }}</option>
+        {% for store in stores %} 
+          <option value="{{ store.store_id }}">{{ store.name }}</option>
+        {% endfor %}</select>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <button type="button" data-toggle="tooltip" title="{{ button_bulk_copy }}" class="btn btn-warning" onclick="bulkCopy('product');"><i class="fa fa-copy"></i> {{ button_bulk_copy }}</button>
+      </div>
+      </div>
+     {% endif %}
+	 <hr>
+	{% if languages|length %} 
+      <div class="panel-body">
+      <div class="pull-right form-inline">
+	  <span class="control-label"> {{ text_bulk_language }} </span>
+        <label class="control-label" for="from_language">From:&nbsp;</label><select class="form-control" name="from_language">
+          <option value="*">{{ text_select }}</option>
+        {% for language in languages %} 
+          <option value="{{ language.language_id }}">{{ language.name }}</option>
+        {% endfor %}</select>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <label class="control-label" for="to_language">To:&nbsp;</label><select class="form-control" name="to_language">
+          <option value="*">{{ text_select }}</option>
+        {% for language in languages %} 
+          <option value="{{ language.language_id }}">{{ language.name }}</option>
+        {% endfor %}</select>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <button type="button" data-toggle="tooltip" title="{{ button_bulk_copy }}" class="btn btn-warning" onclick="bulkLange('product');"><i class="fa fa-copy"></i> {{ button_bulk_copy }}</button>
+      </div>
+      </div>
+     {% endif %}
+						<form class="form-horizontal" id="form-manufacturer">
+							<div class="form-group">
+								<label class="col-sm-3 control-label">{{ text_store }}</label>
+								<div class="col-sm-9">
+									<select class="form-control" name="store_id_manufacturer">
+									{% for store in stores %} 
+										{% if pattern_manufacturer.store_id is defined and pattern_manufacturer.store_id == store.store_id %}
+											{% set selected = 'selected="selected"' %}
+										{% else %}
+											{% set selected = '' %}
+										{% endif %}
+										<option {{ selected }} value="{{ store.store_id }}">{{ store.name }}</option>
+									{% endfor %} 
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label">{{ text_language_source }}</label>
+								<div class="col-sm-9">
+									<select class="form-control" name="language_id_manufacturer">
+									{% for language in languages %} 
+										{% if pattern_manufacturer.language_id is defined and pattern_manufacturer.language_id == language.language_id %}
+											{% set selected = 'selected="selected"' %}
+										{% else %}
+											{% set selected = '' %}
+										{% endif %}
+										<option {{ selected }} value="{{ language.language_id }}">{{ language.name }}</option>
+									{% endfor %} 
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label">{{ text_language_url }}</label>
+								<div class="col-sm-9">
+									<select class="form-control" name="language_id_url_manufacturer">
+									{% for language in languages %} 
+										{% if pattern_manufacturer.language_id_url is defined and pattern_manufacturer.language_id_url == language.language_id %}
+											{% set selected = 'selected="selected"' %}
+										{% else %}
+											{% set selected = '' %}
+										{% endif %}
+										<option {{ selected }} value="{{ language.language_id }}">{{ language.name }}</option>
+									{% endfor %} 
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label">{{ text_pattern }}</label>
+								<div class="col-sm-9">
+									<input type="text" class="form-control" value="{{ pattern_manufacturer['pattern'] is defined?pattern_manufacturer['pattern']:'[name]' }}" name="pattern_manufacturer">
+									<p><small>{{ text_allowed_patern }} {{ allowed_manufacturer_patterns }}</small></p>
+									<div class="checkbox">
+										<label><input type="checkbox" name="alias_manufacturer_update" value="1"> {{ text_allow_rewrite }}</label>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-sm-offset-3 col-sm-9">
+									<button class="pull-left btn btn-primary btn-generate" title="{{ button_generate }}" data-toggle="tooltip" data-form="manufacturer" type="button"> {{ text_generate }} </button>
+								</div>
+							</div>
+						</form>
+					</div>
+					<div id="tab-information" class="tab-pane">
+	{% if stores|length %} 
+      <div class="panel-body">
+      <div class="pull-right form-inline">
+	  <span class="control-label"> {{ text_bulk_store }} </span>
+        <label class="control-label" for="from_store">From:&nbsp;</label><select class="form-control" name="from_store">
+          <option value="*">{{ text_select }}</option>
+        {% for store in stores %} 
+          <option value="{{ store.store_id }}">{{ store.name }}</option>
+        {% endfor %}</select>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <label class="control-label" for="to_store">To:&nbsp;</label><select class="form-control" name="to_store">
+          <option value="*">{{ text_select }}</option>
+        {% for store in stores %} 
+          <option value="{{ store.store_id }}">{{ store.name }}</option>
+        {% endfor %}</select>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <button type="button" data-toggle="tooltip" title="{{ button_bulk_copy }}" class="btn btn-warning" onclick="bulkCopy('product');"><i class="fa fa-copy"></i> {{ button_bulk_copy }}</button>
+      </div>
+      </div>
+     {% endif %}
+	 <hr>
+	{% if languages|length %} 
+      <div class="panel-body">
+      <div class="pull-right form-inline">
+	  <span class="control-label"> {{ text_bulk_language }} </span>
+        <label class="control-label" for="from_language">From:&nbsp;</label><select class="form-control" name="from_language">
+          <option value="*">{{ text_select }}</option>
+        {% for language in languages %} 
+          <option value="{{ language.language_id }}">{{ language.name }}</option>
+        {% endfor %}</select>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <label class="control-label" for="to_language">To:&nbsp;</label><select class="form-control" name="to_language">
+          <option value="*">{{ text_select }}</option>
+        {% for language in languages %} 
+          <option value="{{ language.language_id }}">{{ language.name }}</option>
+        {% endfor %}</select>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <button type="button" data-toggle="tooltip" title="{{ button_bulk_copy }}" class="btn btn-warning" onclick="bulkLange('product');"><i class="fa fa-copy"></i> {{ button_bulk_copy }}</button>
+      </div>
+      </div>
+     {% endif %}
+						<form class="form-horizontal" id="form-information">
+							<div class="form-group">
+								<label class="col-sm-3 control-label">{{ text_store }}</label>
+								<div class="col-sm-9">
+									<select class="form-control" name="store_id_information">
+									{% for store in stores %} 
+										{% if pattern_information.store_id is defined and pattern_information.store_id == store.store_id %}
+											{% set selected = 'selected="selected"' %}
+										{% else %}
+											{% set selected = '' %}
+										{% endif %}
+										<option {{ selected }} value="{{ store.store_id }}">{{ store.name }}</option>
+									{% endfor %} 
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label">{{ text_language_source }}</label>
+								<div class="col-sm-9">
+									<select class="form-control" name="language_id_information">
+									{% for language in languages %} 
+										{% if pattern_information.language_id is defined and pattern_information.language_id == language.language_id %}
+											{% set selected = 'selected="selected"' %}
+										{% else %}
+											{% set selected = '' %}
+										{% endif %}
+										<option {{ selected }} value="{{ language.language_id }}">{{ language.name }}</option>
+									{% endfor %} 
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label">{{ text_language_url }}</label>
+								<div class="col-sm-9">
+									<select class="form-control" name="language_id_url_information">
+									{% for language in languages %} 
+										{% if pattern_information.language_id_url is defined and pattern_information.language_id_url == language.language_id %}
+											{% set selected = 'selected="selected"' %}
+										{% else %}
+											{% set selected = '' %}
+										{% endif %}
+										<option {{ selected }} value="{{ language.language_id }}">{{ language.name }}</option>
+									{% endfor %} 
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label">{{ text_pattern }}</label>
+								<div class="col-sm-9">
+									<input type="text" class="form-control" value="{{ pattern_information['pattern'] is defined?pattern_information['pattern']:'[name]' }}" name="pattern_information">
+									<p><small>{{ text_allowed_patern }} {{ allowed_information_patterns }}</small></p>
+									<div class="checkbox">
+										<label><input type="checkbox" name="alias_information_update" value="1"> {{ text_allow_rewrite }}</label>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-sm-offset-3 col-sm-9">
+									<button class="pull-left btn btn-primary btn-generate" title="{{ button_generate }}" data-toggle="tooltip" data-form="information" type="button"> {{ text_generate }} </button>
+								</div>
+							</div>
+						</form>
+					</div>
+					{% if blog_exist %}
+					<div id="tab-blog" class="tab-pane">
+	 <hr>
+	{% if stores|length %} 
+      <div class="panel-body">
+      <div class="pull-right form-inline">
+	  <span class="control-label"> {{ text_bulk_store }} </span>
+        <label class="control-label" for="from_store">From:&nbsp;</label><select class="form-control" name="from_store">
+          <option value="*">{{ text_select }}</option>
+        {% for store in stores %} 
+          <option value="{{ store.store_id }}">{{ store.name }}</option>
+        {% endfor %}</select>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <label class="control-label" for="to_store">To:&nbsp;</label><select class="form-control" name="to_store">
+          <option value="*">{{ text_select }}</option>
+        {% for store in stores %} 
+          <option value="{{ store.store_id }}">{{ store.name }}</option>
+        {% endfor %}</select>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <button type="button" data-toggle="tooltip" title="{{ button_bulk_copy }}" class="btn btn-warning" onclick="bulkCopy('product');"><i class="fa fa-copy"></i> {{ button_bulk_copy }}</button>
+      </div>
+      </div>
+     {% endif %}
+	 <hr>
+	{% if languages|length %} 
+      <div class="panel-body">
+      <div class="pull-right form-inline">
+	  <span class="control-label"> {{ text_bulk_language }} </span>
+        <label class="control-label" for="from_language">From:&nbsp;</label><select class="form-control" name="from_language">
+          <option value="*">{{ text_select }}</option>
+        {% for language in languages %} 
+          <option value="{{ language.language_id }}">{{ language.name }}</option>
+        {% endfor %}</select>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <label class="control-label" for="to_language">To:&nbsp;</label><select class="form-control" name="to_language">
+          <option value="*">{{ text_select }}</option>
+        {% for language in languages %} 
+          <option value="{{ language.language_id }}">{{ language.name }}</option>
+        {% endfor %}</select>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <button type="button" data-toggle="tooltip" title="{{ button_bulk_copy }}" class="btn btn-warning" onclick="bulkLange('product');"><i class="fa fa-copy"></i> {{ button_bulk_copy }}</button>
+      </div>
+      </div>
+     {% endif %}
+						<form class="form-horizontal" id="form-blog">
+							<div class="form-group">
+								<label class="col-sm-3 control-label">{{ text_store }}</label>
+								<div class="col-sm-9">
+									<select class="form-control" name="store_id_blog">
+									{% for store in stores %} 
+										{% if pattern_blog.store_id is defined and pattern_blog.store_id == store.store_id %}
+											{% set selected = 'selected="selected"' %}
+										{% else %}
+											{% set selected = '' %}
+										{% endif %}
+										<option {{ selected }} value="{{ store.store_id }}">{{ store.name }}</option>
+									{% endfor %} 
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label">{{ text_language_source }}</label>
+								<div class="col-sm-9">
+									<select class="form-control" name="language_id_blog">
+									{% for language in languages %} 
+										{% if pattern_blog.language_id is defined and pattern_blog.language_id == language.language_id %}
+											{% set selected = 'selected="selected"' %}
+										{% else %}
+											{% set selected = '' %}
+										{% endif %}
+										<option {{ selected }} value="{{ language.language_id }}">{{ language.name }}</option>
+									{% endfor %} 
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label">{{ text_language_url }}</label>
+								<div class="col-sm-9">
+									<select class="form-control" name="language_id_url_blog">
+									{% for language in languages %} 
+										{% if pattern_blog.language_id_url is defined and pattern_blog.language_id_url == language.language_id %}
+											{% set selected = 'selected="selected"' %}
+										{% else %}
+											{% set selected = '' %}
+										{% endif %}
+										<option {{ selected }} value="{{ language.language_id }}">{{ language.name }}</option>
+									{% endfor %} 
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label">{{ text_pattern }}</label>
+								<div class="col-sm-9">
+									<input type="text" class="form-control" value="{{ pattern_blog['pattern'] is defined?pattern_blog['pattern']:'[name]' }}" name="pattern_blog">
+									<p><small>{{ text_allowed_patern }} {{ allowed_blog_patterns }}</small></p>
+									<div class="checkbox">
+										<label><input type="checkbox" name="alias_blog_update" value="1"> {{ text_allow_rewrite }}</label>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-sm-offset-3 col-sm-9">
+									<button class="pull-left btn btn-primary btn-generate" title="{{ button_generate }}" data-toggle="tooltip" data-form="blog" type="button"> {{ text_generate }} </button>
+								</div>
+							</div>
+						</form>
+					</div>
+					{% endif %}
+				</div>
+				<div id="error_slug"></div>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">//<!--
+$('.btn-save-setting').on('click', function() {
+	$('.alert').remove();
+	var form_name = 'form-' + $(this).attr('data-form'),
+		url = 'index.php?route={{ path_module }}/save&user_token={{ user_token }}',
+		data = $('#' + form_name).serialize() + '&form_id=' + $(this).attr('data-form');
+	$.ajax({
+		type: "POST",
+		url: url,
+		data: data,
+		dataType: 'json',
+		success: function(json){
+			if (json['status'])
+				$('#progress_bar').after('<div class="alert alert-success"><i class="fa fa-exclamation-circle"></i> ' + json['message'] + ' <button type="button" class="close" data-dismiss="alert">&amp;times;</button></div>');
+			else
+				$('#progress_bar').after('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['message'] + ' <button type="button" class="close" data-dismiss="alert">&amp;times;</button></div>');
+		}
+	});
+	return false;
+});
+var last_id = 0;
+
+$('.btn-generate').click(function() {
+	$('.alert').remove();
+	$('#error_slug').html('');
+	$('#progress-bar').parent().hide();
+	$('#progress-bar').css('width', '1%').attr('aria-valuenow', 1);
+	$('#progress-bar span').text('1%');
+	$('#progress-bar').parent().show();
+
+	var form_name = '' + $(this).attr('data-form'),
+		progress = 0,
+		language_from = $('select[name=language_id_' + form_name + ']').val(),
+		language_id   = $('select[name=language_id_url_' + form_name + ']').val(),
+		store_id      = $('select[name=store_id_' + form_name + ']').val(),
+		pattern       = $('input[name=pattern_'  + form_name + ']').val(),
+		update = 0;
+	if ($('input[name=alias_' + form_name + '_update]').prop('checked')) { update = 1;}
+	var data = {
+			'progress': progress,
+			'alias_type': form_name,
+			'language_from': language_from,
+			'language_id': language_id,
+			'store_id': store_id,
+			'last_id': last_id,
+			'pattern': pattern,
+			'update': update
+	};
+	_processing(data);
+});
+
+function _processing(data_form){
+	var url = 'index.php?route={{ path_module }}/generate&user_token={{ user_token }}';
+	$.ajax({
+		type:'POST',
+		url: url,
+       	data: data_form,
+		dataType:'json',
+		success: function(data) {
+		
+		if (data['error_slug']) {
+			for (var k in data['error_slug']) {
+				var str = data['error_slug'][k]['entity'] + '=&gt;' + data['error_slug'][k]['keyword'] + ' : ' + data['error_slug'][k]['action'];
+				$('#error_slug').append('<div>' + str + '</div>');
+			}
+		}
+			if (data['progress'] < 0 ) {
+				$('.alert').remove();
+				$('#progress-bar').parent().hide();
+				$('#progress_bar').after('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + data['message'] + ' <button type="button" class="close" data-dismiss="alert">&amp;times;</button></div>');
+				return false;
+			}
+			if (data['progress'] >= 100) {
+				$('.alert').remove();
+				$('#progress-bar').css('width', '100%').attr('aria-valuenow', 100);
+//				$('#progress_bar').after('<div class="alert alert-info">' + data['message'] + '</div>');
+				$('#progress-bar span').text('100%');
+				last_id = 0;
+			} else {
+				data_form.progress = data['progress'],
+				data_form.last_id = data['last_id'],
+				_processing(data_form);
+				$('#progress-bar').css('width', Math.round(parseFloat(data['progress'])) + '%').attr('aria-valuenow', Math.round(parseFloat(data['progress'])));
+				$('.alert').remove();
+				$('#progress_bar').after('<div class="alert alert-info">' + data['message'] + '</div>');
+				$('#progress-bar span').text(Math.round(parseFloat(data['progress'])) +'%');
+			}
+        }
+	});
+}
+
+$('#progress-bar').parent().hide();
+
+//--></script>
+<script>
+function bulkCopy(entity){
+	var select_from = $('#tab-' + entity + ' [name=from_store]').val();
+	var select_to = $('#tab-' + entity + ' [name=to_store]').val();
+	if (select_from == '*' || select_to == '*' ) return;
+	if (select_from == select_to) return;
+	$.ajax({
+		url : '{{ bulkCopy }}',
+		method : 'POST',
+		dataType : 'json',
+		data : 'from_store=' + select_from + '&to_store=' + select_to + '&entity=' + entity,
+		beforeSend : function(){},
+		success : function(json){
+			if (json.redirect) {
+				location=json.redirect;
+			}
+			if (json.error) {
+				var html = ' <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json.error + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>';
+				$('#start').prepend(html);
+			}
+		}
+	});
+}
+function bulkLange(entity){
+	var select_from = $('#tab-' + entity + ' [name=from_language]').val();
+	var select_to = $('#tab-' + entity + ' [name=to_language]').val();
+	if (select_from == '*' || select_to == '*' ) return;
+	if (select_from == select_to) return;
+	$.ajax({
+		url : '{{ bulkLange }}',
+		method : 'POST',
+		dataType : 'json',
+		data : 'from_language=' + select_from + '&to_language=' + select_to + '&entity=' + entity,
+		beforeSend : function(){},
+		success : function(json){
+			if (json.redirect) {
+				location=json.redirect;
+			}
+			if (json.error) {
+				var html = ' <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json.error + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>';
+				$('#start').prepend(html);
+			}
+		}
+	});
+}
+</script>
+<script>
+$(function() {
+$('a[data-toggle="tab"]').on('click', function(e) {
+  var state = $(e.target).attr('href');
+  localStorage.setItem('tab_state', state);
+});
+
+var state = localStorage.getItem('tab_state');
+if (state) {
+  var st = $('.nav.nav-tabs a[href="' + state + '"]');
+  if (st.length) st.tab('show');
+}
+});
+</script>
+
+{{ footer }}

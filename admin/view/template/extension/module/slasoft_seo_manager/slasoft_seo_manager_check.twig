@@ -1,0 +1,186 @@
+{{ header }}{{ column_left }} 
+<div id="content">
+	<div class="page-header">
+		<div class="container-fluid">
+		<h1>{{ heading_title }}</h1>
+		<ul class="breadcrumb">
+			{% for breadcrumb in breadcrumbs %} 
+			<li><a href="{{ breadcrumb['href'] }}">{{ breadcrumb['text'] }}</a></li>
+			{% endfor %} 
+		</ul>
+		</div>
+	</div>
+	<nav class="navbar navbar-default">
+		<div class="container-fluid">
+			<div class="nav navbar-nav navbar-left">
+			{% for nav in navs %} 
+			<a href="{{ nav['href'] }}" class="btn btn-default navbar-btn {{ nav['active'] }}">{{ nav['text'] }}</a>
+			{% endfor %} 
+			</div>
+		</div>
+	</nav>  
+	<div class="container-fluid">
+		{% if (error_warning) %} 
+		<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ error_warning }} 
+			<button type="button" class="close" data-dismiss="alert">&times;</button>
+		</div>
+		{% endif %} 
+		{% if (success) %} 
+		<div class="alert alert-success"><i class="fa fa-check-circle"></i> {{ success }} 
+			<button type="button" class="close" data-dismiss="alert">&times;</button>
+		</div>
+		{% endif %} 
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title"><i class="fa fa-puzzle-piece"></i>{{ heading_title }}</h3>
+			</div>
+			{% if (heading_title_check) %} 
+			<div class="panel-heading">
+				<h4 class="panel-title">{{ heading_title_check }}</h4>
+			</div>
+			{% endif %} 
+			<div class="panel-body">
+				<nav class="navbar navbar-default">
+					<div class="container-fluid">
+						<div class="nav navbar-nav navbar-left">
+						{% for nav in nav_checks %} 
+						<a href="{{ nav['href'] }}" class="btn btn-default navbar-btn {{ nav['active'] }}">{{ nav['text'] }}</a>
+						{% endfor %} 
+						{% for nav in nav_checksUrl %} 
+						<a href="{{ nav['href'] }}" class="btn btn-default navbar-btn {{ nav['active'] }}">{{ nav['text'] }}</a>
+						{% endfor %} 
+
+						</div>
+					</div>
+				</nav>  
+				<div class="table-responsive">
+					{% if (url_aliases is defined) %} 
+					<div id="add-url" class="panel-body" style="display:none">
+					<form action="{{ save }}" method="post" enctype="multipart/form-data" id="form-add">
+						<div class="well">
+						<div class="row">
+							<div class="col-sm-6">
+							<div class="form-group">
+								<input type="hidden" name="seo_url_id" value="">
+								<label class="control-label" for="input-query">{{ column_query }}</label>
+								<input type="text" name="query" value="" placeholder="{{ column_query }}" id="input-query" class="form-control" />
+							</div>
+							</div>
+							<div class="col-sm-6">
+							<div class="form-group">
+								<label class="control-label" for="input-keyword">{{ column_keyword }}</label>
+								<input type="text" name="keyword" value="" placeholder="{{ column_keyword }}" id="input-keyword" class="form-control" />
+							</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-4">
+							<div class="form-group">
+								<label class="control-label">{{ column_store }}</label><br />
+								<select class="form-control" name="store_id">
+									{% for store in stores %} 
+										<option value="{{ store.store_id }}">{{ store.name }}</option>
+									{% endfor %} 
+								</select>
+							</div>
+							</div>
+							<div class="col-sm-4">
+							<div class="form-group">
+								<label class="control-label">{{ column_language }}</label><br />
+								<select class="form-control" name="language_id">
+									{% for language in languages %} 
+										<option value="{{ language.language_id }}">{{ language.name }}</option>
+									{% endfor %} 
+								</select>
+								
+								</select>
+							</div>
+							</div>
+						
+							<div class="col-sm-4">
+							<div class="form-group">
+								<label class="control-label">{{ column_action }}</label><br />
+								<button type="button" id="button-save" class="btn btn-primary"><i class="fa fa-save"></i></button>&nbsp;
+								<button type="button" id="button-cancel" class="btn btn-danger"><i class="fa fa-reply"></i></button>
+							</div>
+							</div>
+						</div>
+						</div>
+					</form>
+					</div>
+{#
+					<form action="{{ delete }}" method="post" enctype="multipart/form-data" id="form-url">
+#}
+					<table class="table table-bordered table-hover">
+						<thead>
+							<tr>
+								<td style="width: 1px;" class="text-center"></td>
+								<td class="text-left">{{ column_query }}</td>
+								<td class="text-right">{{ column_keyword }}</a>
+								<td class="text-right">{{ column_language }}</a>
+								<td class="text-right">{{ column_store }}</a>
+								<td class="text-right">{{ column_action }}</td>
+							</tr>
+						</thead>
+						<tbody>
+						{% if (url_aliases) %} 
+							{% for url_alias in url_aliases %} 
+							<tr>
+								<td class="text-center"><input type="checkbox" name="selected[]" value="{{ url_alias.seo_url_id }}" /></td>
+								<td class="text-left  query-{{ url_alias.seo_url_id }}" data-value="{{ url_alias.query }}">{{ url_alias.query }}</td>
+								<td class="text-right keyword-{{ url_alias.seo_url_id }}" data-value="{{ url_alias.keyword }}">{{ url_alias.keyword }}</td>
+								<td class="text-right language_id-{{ url_alias.seo_url_id }}" data-value="{{ url_alias.language_id }}">{{ languages[url_alias.language_id].name }}</td>
+								<td class="text-right store_id-{{ url_alias.seo_url_id }}" data-value="{{ url_alias.store_id }}">{{ stores[url_alias.store_id].name }}</td>
+								<td class="text-right">
+								{% if url_alias.href_filter %}
+									<a class="btn btn-warning" href="{{ url_alias.href_filter }}"><i class="fa fa-filter"></i></a>
+								{% endif %}
+								</td>
+							</tr>
+							{% endfor %} 
+		                {% else %} 
+							<tr>
+								<td class="text-center" colspan="6">{{ text_no_results }}</td>
+							</tr>
+						{% endif %} 
+						</tbody>
+					</table>
+{#
+					</form>
+#}
+					{% endif %} 
+				</div>
+				{% if (pagination is defined) %} 
+			        <div class="row">
+						<div class="col-sm-6 text-left">{{ pagination }}</div>
+						<div class="col-sm-6 text-right">{{ results }}</div>
+					</div>
+				{% endif %} 
+		</div>
+	</div>
+</div>
+<script type="text/javascript"><!--
+$('#add-url').hide();
+$('#button-save').on('click', function(){
+	$('#form-add').submit();
+});
+$('#button-cancel').on('click', function(){
+	$('#add-url').hide();
+	$('input[name="query"]').val('');
+	$('input[name="keyword"]').val('');
+});
+function edit(seo_url_id) {
+	$('#add-url').show();
+	 $('html, body').animate({
+        scrollTop: $("#add-url").offset().top
+    }, 2000);
+	$('input[name="query"]').val($('.query-'+ seo_url_id).attr('data-value'));
+	$('input[name="keyword"]').val($('.keyword-'+ seo_url_id).attr('data-value'));
+	$('input[name="language_id"]').val($('.language_id-'+ seo_url_id).attr('data-value'));
+	$('input[name="store_id"]').val($('.store_id-'+ seo_url_id).attr('data-value'));
+	$('input[name="seo_url_id"]').val(seo_url_id);
+	$('input[name="query"]').focus();
+}
+//--></script>
+
+{{ footer }}

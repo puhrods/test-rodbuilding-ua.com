@@ -1,0 +1,394 @@
+{{ header }}{{ column_left }} 
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        <button type="button" class="btn btn-info" onclick="location = '{{ clear }}'" data-toggle="tooltip" title="{{ button_clear_cache }}"><i class="fa fa-eraser"></i>&nbsp;{{ button_clear_cache }}</button>
+		<a href="{{ export }}" class="btn btn-warning" title="export"><i class="fa fa-download"></i></a>
+
+        <button type="button" id="insert" class="btn btn-success" data-toggle="tooltip" title="{{ button_add }}"><i class="fa fa-plus-circle"></i>&nbsp;{{ button_add }}</button>
+        <button type="button" id="delete" class="btn btn-danger" data-toggle="tooltip" title="{{ button_delete }}"><i class="fa fa-trash"></i>&nbsp;{{ button_delete }}</button>
+        <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a>
+      </div>
+      <h1>{{ heading_title }}</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %} 
+        <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %} 
+      </ul>
+    </div>
+  </div>
+  <nav class="navbar navbar-default">
+	<div class="container-fluid">
+		<div class="nav navbar-nav navbar-left">
+			{% for nav in navs %} 
+			<a href="{{ nav['href'] }}" class="btn btn-default navbar-btn {{ nav['active'] }}">{{ nav['text'] }}</a>
+			{% endfor %} 
+		</div>
+	</div>
+  </nav>  
+  <div class="container-fluid id="start">
+    {% if (error_warning) %} 
+    <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ error_warning }} 
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    {% endif %} 
+    {% if (success) %} 
+    <div class="alert alert-success"><i class="fa fa-check-circle"></i> {{ success }} 
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    {% endif %} 
+	{% if stores|length %} 
+      <div class="panel-body">
+      <div class="pull-right form-inline">
+	  <span class="control-label"> {{ text_bulk_store }} </span>
+        <label class="control-label" for="from_store">From:&nbsp;</label><select class="form-control" name="from_store">
+          <option value="*">{{ text_select }}</option>
+        {% for store in stores %} 
+          <option value="{{ store.store_id }}">{{ store.name }}</option>
+        {% endfor %}</select>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <label class="control-label" for="to_store">To:&nbsp;</label><select class="form-control" name="to_store">
+          <option value="*">{{ text_select }}</option>
+        {% for store in stores %} 
+          <option value="{{ store.store_id }}">{{ store.name }}</option>
+        {% endfor %}</select>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <button type="button" data-toggle="tooltip" title="{{ button_bulk_copy }}" class="btn btn-warning" onclick="bulkCopy('product');"><i class="fa fa-copy"></i> {{ button_bulk_copy }}</button>
+      </div>
+      </div>
+     {% endif %}
+	 <hr>
+	{% if languages|length %} 
+      <div class="panel-body">
+      <div class="pull-right form-inline">
+	  <span class="control-label"> {{ text_bulk_language }} </span>
+        <label class="control-label" for="from_language">From:&nbsp;</label><select class="form-control" name="from_language">
+          <option value="*">{{ text_select }}</option>
+        {% for language in languages %} 
+          <option value="{{ language.language_id }}">{{ language.name }}</option>
+        {% endfor %}</select>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <label class="control-label" for="to_language">To:&nbsp;</label><select class="form-control" name="to_language">
+          <option value="*">{{ text_select }}</option>
+        {% for language in languages %} 
+          <option value="{{ language.language_id }}">{{ language.name }}</option>
+        {% endfor %}</select>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+		<label><span class="checkbox"><input name="rewrite_language" type="checkbox" value="1" />rewrite</label>
+        <button type="button" data-toggle="tooltip" title="{{ button_bulk_copy }}" class="btn btn-warning" onclick="bulkLange('product');"><i class="fa fa-copy"></i> {{ button_bulk_copy }}</button>
+      </div>
+      </div>
+     {% endif %}
+    <div id="add-url" class="panel-body">
+      <form action="{{ save }}" method="post" enctype="multipart/form-data" id="form-add">
+        <div class="well">
+          <div class="row">
+            <div class="col-sm-12">
+              <div class="form-group">
+                <input type="hidden" name="seo_url_id" value="">
+                <label class="control-label" for="input-query">{{ column_query }}</label>
+                <input type="text" name="query" value="" placeholder="{{ column_query }}" id="input-query" class="form-control" />
+              </div>
+            </div>
+            <div class="col-sm-12">
+              <div class="form-group">
+                <label class="control-label" for="input-keyword">{{ column_keyword }}</label>
+                <input type="text" name="keyword" value="" placeholder="{{ column_keyword }}" id="input-keyword" class="form-control" />
+              </div>
+            </div>
+            <div class="col-sm-12">
+              <div class="form-group">
+                <label class="control-label" for="input-store">{{ column_store }}</label>
+                <select type="text" name="store_id" id="input-store" class="form-control" >
+				{% for store in stores %}
+				<option value="{{ store.store_id }}">{{ store.name }}</option>
+				{% endfor %}
+				</select>
+              </div>
+            </div>
+            <div class="col-sm-12">
+              <div class="form-group">
+                <label class="control-label" for="input-language">{{ column_language }}</label>
+                <select name="language_id" value="" id="input-language" class="form-control">
+				{% for language in languages %}
+				<option value="{{ language.language_id }}">{{ language.name }}</option>
+				{% endfor %}
+				</select>
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <div class="form-group">
+                <label class="control-label">{{ column_action }}</label><br />
+                <button type="button" id="button-save" class="btn btn-primary"><i class="fa fa-save"></i></button>&nbsp;
+                <button type="button" id="button-cancel" class="btn btn-danger"><i class="fa fa-reply"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <form action="{{ delete }}" method="post" enctype="multipart/form-data" id="form-url-alias">
+          <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+              <thead>
+                <tr>
+                  <td style="width: 1px;" class="text-center"><input type="checkbox" onclick="$('input[name*=\'selected\']').prop('checked', this.checked);" /></td>
+                  <td class="text-left">{% if sort == 'ua.query' %} 
+                    <a href="{{ sort_query }}" class="{{ order|lower }}">{{ column_query }}</a>
+                    {% else %} 
+                    <a href="{{ sort_query }}">{{ column_query }}</a>
+					{% endif %}</td>
+                  <td class="text-right">{% if sort == 'ua.keyword' %} 
+                    <a href="{{ sort_keyword }}" class="{{ order|lower }}">{{ column_keyword }}</a>
+                    {% else %} 
+                    <a href="{{ sort_keyword }}">{{ column_keyword }}</a>
+					{% endif %}</td>
+                  <td class="text-left">{% if sort == 'store' %}
+					<a href="{{ sort_store }}" class="{{ order|lower }}">{{ column_store }}</a>
+					{% else %}
+					<a href="{{ sort_store }}">{{ column_store }}</a>
+					{% endif %}</td>
+				  <td class="text-left">{% if sort == 'language' %}
+					<a href="{{ sort_language }}" class="{{ order|lower }}">{{ column_language }}</a>
+					{% else %}
+					<a href="{{ sort_language }}">{{ column_language }}</a>
+					{% endif %}</td>
+                  <td class="text-right">{{ column_action }}</td>
+                </tr>
+				<tr class="info filter form-inline">
+					<td></td>
+					<td>
+					<input value="{% if filter.filter_query is defined %}{{ filter.filter_query }}{% endif %}" class="form-control" name="filter_query">
+					<select name="filter_type" class="form-control">
+						{% if filter.filter_type is defined %}
+							{% set filter_type = filter.filter_type %}
+						{% else %}
+							{% set filter_type = '' %}
+						{% endif %}
+						<option value="">{{ text_selected }}</option>
+						{%  for filter_t,text in filter_typies %}
+						{% if filter_type == filter_t %}
+						<option selected="selected" value="{{filter_t }}">{{ text }}</option>
+						{% else %}
+						<option value="{{filter_t }}">{{ text }}</option>
+						{% endif %}
+						{% endfor %}
+					</select>
+					</td>
+					<td><input value="{% if filter.filter_keyword is defined %}{{ filter.filter_keyword }}{% endif %}" class="form-control" name="filter_keyword"></td>
+					<td><select name="filter_store_id" id="input-store" class="form-control">
+						<option value=""></option>
+						{% if filter.filter_store_id is defined %}
+							{% set filter_store_id = filter.filter_store_id %}
+						{% else %}
+							{% set filter_store_id = '' %}
+						{% endif %}
+						{% for store in stores %}
+						{% if store.store_id is same as (filter_store_id) %}
+						<option value="{{ store.store_id }}" selected="selected">{{ store.store_id }} {{ store.name }}</option>
+						{% else %}
+						<option value="{{ store.store_id }}">{{ store.store_id }} {{ store.name }}</option>
+						{% endif %}
+						{% endfor %}
+					</select></td>
+					<td><select name="filter_language_id" id="input-language" class="form-control">
+						<option value=""></option>
+						{% if filter.filter_language_id is defined %}
+							{% set filter_language_id = filter.filter_language_id %}
+						{% else %}
+							{% set filter_language_id = '' %}
+						{% endif %}
+							
+						{% for language in languages %}
+						{% if language.language_id == filter_language_id %}
+						<option value="{{ language.language_id }}" selected="selected">{{ language.name }}</option>
+						{% else %}
+						<option value="{{ language.language_id }}">{{ language.name }}</option>
+						{% endif %}
+						{% endfor %}
+					</select></td>					
+					<td><button onclick="filter_check()" class="btn btn-info" type="button"><i class="fa fa-filter"></i> {{ button_filter }}</button>
+					<a class="btn btn-warning" href="{{ self }}"><i class="fa fa-eraser"></i></a></td>
+				</tr>				
+              </thead>
+                {% if (url_aliases) %} 
+                {% for url_alias in url_aliases %} 
+                <tr>
+                  <td class="text-center">
+				    {% if url_alias.product_id in selected %}
+                    <input type="checkbox" name="selected[]" value="{{ url_alias.seo_url_id }}" checked="checked" />
+                    {% else %} 
+                    <input type="checkbox" name="selected[]" value="{{ url_alias.seo_url_id }}" />
+                    {% endif %}</td>
+                  <td class="text-left query_{{ url_alias.seo_url_id }}" data-query="{{ url_alias.query }}">{{ url_alias.query }}
+				  {% if url_alias.name %}
+						<br />
+				      <a href="{{ url_alias.action_edit }}" class="btn btn-link" title="{{ url_alias.name }}" target="_blank">{{ url_alias.name }}</a>
+				  {% endif %}
+				  </td>
+                  <td class="text-right keyword_{{ url_alias.seo_url_id }}" data-keyword="{{ url_alias.keyword }}">{{ url_alias.keyword }}</td>
+                  <td class="text-right store_{{ url_alias.seo_url_id }}" data-store="{{ url_alias.store_id }}">{{ url_alias.store_name }}</td>
+                  <td class="text-right language_{{ url_alias.seo_url_id }}" data-language="{{ url_alias.language_id }}">{{ url_alias.language_name }}</td>
+                  <td class="text-right">
+				    {% if url_alias.action_edit %}
+				      <a href="{{ url_alias.action_edit }}" class="btn btn-success" title="Edit/View" target="_blank"><i class="fa fa-eye"></i></a>
+                    {% endif %} 
+                    <button type="button" onclick="edit({{ url_alias.seo_url_id }})" data-toggle="tooltip" title="{{ button_edit }}" class="btn btn-primary"><i class="fa fa-pencil"></i></button>
+                  </td>
+                </tr>
+                {% endfor %} 
+                {% else %} 
+                <tr>
+                    <td class="text-center" colspan="6">{{ text_no_results }}</td>
+                </tr>
+                {% endif %} 
+              </tbody>
+            </table>
+          </div>
+        </form>
+        <div class="row">
+          <div class="col-sm-6 text-left">{{ pagination }}</div>
+          <div class="col-sm-6 text-right">{{ results }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript"><!--
+$('#add-url').hide();
+$('#button-save').on('click', function(){
+	$('#form-add').submit();
+});
+function myTrim(string){
+string = string.replace(/^[\s\r\n\t\uFEFF\xA0]+|[\t\s\r\n\uFEFF\xA0]+$/g,'');
+return string;
+}
+function edit(seo_url_id) {
+	$('#add-url').show();
+	$('input[name="query"]').val(myTrim($('.query_'+seo_url_id).attr('data-query')));
+	$('input[name="keyword"]').val(myTrim($('.keyword_'+seo_url_id).attr('data-keyword')));
+	$('input[name="seo_url_id"]').val(seo_url_id);
+	$('select[name="store_id"]').val($('.store_' + seo_url_id).attr('data-store'));
+	$('select[name="language_id"]').val($('.language_' + seo_url_id).attr('data-language'));
+	$('input[name="query"]').focus();
+}
+$('#button-cancel').on('click', function(){
+	$('#add-url').hide();
+	$('input[name="query"]').val('');
+	$('input[name="keyword"]').val('');
+});
+$('#insert').on('click', function(){
+	$('#add-url').show();
+	$('input[name="query"]').val('');
+	$('input[name="keyword"]').val('');
+	$('input[name="store_id"]').val('');
+	$('input[name="language_id"]').val('');
+});
+$('#delete').on('click', function() {
+	if (!confirm('{{ text_confirm }}')) {
+		return false;
+	} else {
+		$('#form-url-alias').submit();
+	}
+});
+//--></script>
+<script>
+function bulkCopy(){
+	var select_from = $('#from-store').val();
+	var select_to = $('#to-store').val();
+	if (select_from == '*' || select_to == '*' ) return;
+	if (select_from == select_to) return;
+	$.ajax({
+		url : '{{ bulkCopy }}',
+		method : 'POST',
+		dataType : 'json',
+		data : 'from_store=' + select_from + '&to_store=' + select_to,
+		beforeSend : function(){},
+		success : function(json){
+			if (json.redirect) {
+				location=json.redirect;
+			}
+			if (json.error) {
+				var html = ' <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json.error + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>';
+				$('#start').prepend(html);
+			}
+		}
+	});
+}
+function bulkLange(){
+	var select_from = $('[name=from_language]').val();
+	var select_to = $('[name=to_language]').val();
+	if (select_from == '*' || select_to == '*' ) return;
+	if (select_from == select_to) return;
+	var rewrite = $('[name=rewrite_language]:checked').val();
+	
+	$.ajax({
+		url : '{{ bulkLange }}',
+		method : 'POST',
+		dataType : 'json',
+		data : 'from_language=' + select_from + '&to_language=' + select_to + '&rewrite=' + rewrite,
+		beforeSend : function(){},
+		success : function(json){
+			if (json.redirect) {
+				location=json.redirect;
+			}
+			if (json.error) {
+				var html = ' <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json.error + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>';
+				$('#start').prepend(html);
+			}
+		}
+	});
+}
+</script>
+<script>
+function filter_check(){
+	var filter_query = $('[name=filter_query').val();
+	var filter_keyword = $('[name=filter_keyword]').val();
+	var filter_type = $('[name=filter_type]').val();
+	var filter_language_id = $('[name=filter_language_id]').val();
+	var filter_store_id = $('[name=filter_store_id]').val();
+	var result = [];
+	if ( filter_query != "") {
+		result.push("filter_query=" + filter_query);
+	}
+	if ( filter_keyword != "") {
+		result.push("filter_keyword=" + filter_keyword);
+	}
+	if ( filter_type != "") {
+		result.push("filter_type=" + filter_type);
+	}
+	if ( filter_language_id != "") {
+		result.push("filter_language_id=" + filter_language_id);
+	}
+	if ( filter_store_id != "") {
+		result.push("filter_store_id=" + filter_store_id);
+	}
+	var filter_result=  result.length ? '&' + result.join('&') : '';
+	var href = 'index.php?route={{ path_module }}&user_token={{ user_token }}' + filter_result;
+	location = href;
+
+}
+$('#input-keyword').autocomplete({
+	'source': function(request, response) {
+		$.ajax({
+			url: 'index.php?route={{ path_module }}/autocomplete&user_token={{ user_token }}&filter_name=' +  encodeURIComponent(request),
+			dataType: 'json',
+			success: function(json) {
+				response($.map(json, function(item) {
+					return {
+						label: item['keyword'],
+					}
+				}));
+			}
+		});
+	},
+	'select': function(item) {
+		$('#input-keyword').val(item['label']);
+	}
+});
+
+</script>
+{{ footer }}

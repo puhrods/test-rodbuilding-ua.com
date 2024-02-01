@@ -1,0 +1,118 @@
+{{ header }}{{ column_left }} 
+<div id="content">
+	<div class="page-header">
+		<div class="container-fluid">
+		<h1>{{ heading_title }}</h1>
+		<ul class="breadcrumb">
+			{% for breadcrumb in breadcrumbs %} 
+			<li><a href="{{ breadcrumb['href'] }}">{{ breadcrumb['text'] }}</a></li>
+			{% endfor %} 
+		</ul>
+		</div>
+	</div>
+	<nav class="navbar navbar-default">
+		<div class="container-fluid">
+			<div class="nav navbar-nav navbar-left">
+			{% for nav in navs %} 
+			<a href="{{ nav['href'] }}" class="btn btn-default navbar-btn {{ nav['active'] }}">{{ nav['text'] }}</a>
+			{% endfor %} 
+			</div>
+		</div>
+	</nav>  
+	<div class="container-fluid">
+		{% if (error_warning) %} 
+		<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ error_warning }} 
+			<button type="button" class="close" data-dismiss="alert">&times;</button>
+		</div>
+		{% endif %} 
+		{% if (success) %} 
+		<div class="alert alert-success"><i class="fa fa-check-circle"></i> {{ success }} 
+			<button type="button" class="close" data-dismiss="alert">&times;</button>
+		</div>
+		{% endif %} 
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title"><i class="fa fa-puzzle-piece"></i>{{ heading_title }}</h3>
+			</div>
+			{% if (heading_title_check) %} 
+			<div class="panel-heading">
+				<h4 class="panel-title">{{ heading_title_check }}</h4>
+			</div>
+			{% endif %} 
+			<div class="panel-body">
+				<form class="form-horizontal" id="form-check_seo">
+				<nav class="navbar navbar-default">
+					<div class="container-fluid">
+						<div class="nav navbar-nav navbar-left seo-check">
+						{% for nav in nav_checks_seo %} 
+<!--						<button type="button"  form="form-check_seo" formaction="{{ nav['href'] }}" class="btn btn-default navbar-btn {{ nav['active'] }}">{{ nav['text'] }}</button>
+-->
+
+<button data-href="{{ str_replace('&amp;', '&', nav['href']) }}" class="btn btn-default navbar-btn {{ nav['active'] }}" form="form-check_seo" type="button">{{ nav['text'] }}</button>
+
+<!--
+							<a href="{{ nav['href'] }}" class="btn btn-default navbar-btn {{ nav['active'] }}">{{ nav['text'] }}</a>
+-->
+						{% endfor %} 
+						</div>
+					</div>
+				</nav> 
+					<div class="form-group">
+						<label class="col-sm-3 control-label">{{ text_limit_meta_data }}</label>
+						<div class="col-sm-9">
+							<input class="form-control" name="length" value="{{ length }}"/>
+						</div>
+					</div>
+				</form>
+				<div class="table-responsive">
+					{% if (url_aliases is defined) %} 
+					<table class="table table-bordered table-hover">
+						<thead>
+							<tr>
+								<td style="width: 1px;" class="text-center">{{ column_id }}</td>
+								<td class="text-left">{{ column_name }}</td>
+								<td class="text-right">{{ column_meta_data }}</a>
+								<td class="text-right">{{ column_language }}</td>
+							</tr>
+						</thead>
+						<tbody>
+						{% if (url_aliases) %} 
+							{% for url_alias in url_aliases %} 
+							<tr>
+								<td class="text-center">{{ url_alias['id'] }}</td>
+								<td class="text-left"> <a  target="_blank" class="btn btn-info" href="{{ url_alias['url_store'] }}"><i class="fa fa-eye"></i></a> <a target="_blank" class="btn btn-warning" href="{{ url_alias['url_admin'] }}"><i class="fa fa-pencil"></i></a> {{ url_alias['name'] }}</td>
+								<td class="text-right">{{ url_alias['meta_data'] }}</td>
+								<td class="text-right">{{ url_alias['language'] }}</td>
+							</tr>
+							{% endfor %} 
+		                {% else %} 
+							<tr>
+								<td class="text-center" colspan="4">{{ text_no_results }}</td>
+							</tr>
+						{% endif %} 
+						</tbody>
+					</table>
+			        <div class="">
+						<div class="col-sm-6 text-left">{{ pagination }}</div>
+						<div class="col-sm-6 text-right">{{ results }}</div>
+					</div>
+					{% endif %} 
+
+				</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript"><!--
+$('.seo-check button').click(function(e){
+	e.stopPropagation();
+	e.preventDefault();
+	var url = $(this).attr('data-href') + '&length='+ $('[name=length]').val();
+	location = url;
+	$('#form-check_seo').attr('action', url);
+//	alert($('#form-check_seo').attr('action'));
+//	$('#form-check_seo').submit();
+	return false;
+})
+//--></script>
+
+{{ footer }}

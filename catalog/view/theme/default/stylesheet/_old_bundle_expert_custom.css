@@ -1,0 +1,172 @@
+.product-price-container span {
+
+}
+
+.product-price-container .product-as-kit-old-price {
+
+}
+
+.product-price-container .product-as-kit-price {
+
+color: #333;
+
+font-size: 18px;
+
+font-weight: 700;
+
+padding: 5px 12px;
+
+background-color: #F6F6F6;
+
+margin-right: 20px;
+
+letter-spacing: .3px;
+}
+
+.product-price-container .product-as-kit-price.be-product-as-kit-price-new {
+
+
+
+}
+
+
+.kit-widget.be-css .btn-default, .kit-form.be-css .btn-default, .be-css-popup .modal-dialog .btn-default {
+
+}
+
+.kit-widget.be-css .btn-default:hover, .kit-form.be-css .btn-default:hover, .be-css-popup .modal-dialog .btn-default:hover {
+
+}
+
+
+
+.kit-widget.be-css .btn-primary, .kit-form.be-css .btn-primary, .be-css-popup .modal-dialog .btn-primary {
+    color: #fff;
+    font-size: 14px;
+    font-weight: 300;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 9px;
+    background: #999;
+    border: 0;
+    border-radius: 1px;
+    /* margin-top: 20px; */
+    cursor: pointer;
+    transition: all .15s ease .05s;
+    background: rgb(241, 113, 36);
+}
+
+.kit-widget.be-css .btn-primary:hover, .kit-form.be-css .btn-primary:hover, .be-css-popup .modal-dialog .btn-primary:hover {
+    background: rgb(241, 113, 36);
+    opacity: .9;
+    color: #fff;
+}
+.kit-widget.be-css .btn-primary:active, .kit-form.be-css .btn-primary:active, .be-css-popup .modal-dialog .btn-primary:active {
+    background: rgb(241, 113, 36);
+    opacity: .9;
+    color: #fff;
+}
+.kit-widget.be-css .btn-primary:active, .kit-form.be-css .btn-primary:active, .be-css-popup .modal-dialog .btn-primary:focus {
+    background: rgb(241, 113, 36);
+    opacity: .9;
+    color: #fff;
+}
+.kit-form.be-css .btn#button-set-item-product-cancel:hover {
+
+}
+
+
+.select-product-button, .empty-item-add-button, .add-to-kit-free-product-button {
+
+
+}
+
+.select-product-button:hover, .empty-item-add-button:hover, .add-to-kit-free-product-button:hover {
+
+
+}
+
+.be-css .row1{
+    display:block !important;
+}
+
+.be-css {
+
+}
+
+.be-css {
+
+}
+
+.be-css {
+
+}
+
+.kit-form .nav>li>a {
+    position: relative;
+    display: block;
+    padding: 10px 10px;
+}
+
+.be-css .radio {display: inline-block !important;}
+.be-css .radio label{padding: 4px 12px !important;border: 2px solid #dedede;}
+
+.be-css .radio label.be-selected-option{
+
+    border: 2px solid #333333;
+
+    color: #333333;
+}
+
+.be-css .radio input{
+    display:none;
+}
+.be-css .radio .option-name{
+    /*display:none;*/
+}
+.be-css .radio .be-option-price{
+    /*display:none;*/
+}
+
+
+
+.be-css .radio.radio-image {
+
+}
+.be-css .radio.radio-image label{
+    padding-left: 0;
+    padding-right: 4px;
+    padding: 0 !important;
+}
+.be-css .radio.radio-image img{
+
+    border: unset;
+}
+.be-css .radio.radio-image label.be-selected-option img{
+
+}
+
+.be-css .radio.radio-image input{
+    display:none;
+}
+.be-css .radio.radio-image .option-name{
+    display:none;
+}
+.be-css .radio.radio-image .be-option-price{
+    display:none;
+}
+
+.be-main-widgets-container{
+    margin:16px
+}
+
+.kit-widget .be-stock-out .be-image,
+.kit-widget .be-stock-out .be-product-title,
+.kit-widget .be-stock-out .quantity-buttons,
+.kit-widget .be-stock-out .be-row-price,
+.kit-widget .be-stock-out .be-row-price-total,
+.kit-form #bundle-expert-form-widget-carousel .be-stock-out,
+.kit-form #carousel-kit-form-item-products .be-stock-out
+{
+    opacity: 1 !important;
+}

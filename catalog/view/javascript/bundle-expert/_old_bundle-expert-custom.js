@@ -22,10 +22,10 @@ var BundleExpertCustom = {}
 				}, 100);
     }
 	
-	BundleExpertCustom.update_product_page_price_html = function(pointer){
+	BundleExpertCustom._update_product_page_price_html = function(pointer){
 		var widget = pointer.widget
         var json = pointer.json
-        var price = pointer.price
+        var price = pointer.be-price
         var price_value = pointer.price_value;
         var special = pointer.special;
         var special_value = pointer.special_value;
@@ -52,18 +52,18 @@ var BundleExpertCustom = {}
 			var html = '<span class="product-as-kit-price">' + price + '</span>'
 		} else {
 			var html = '';
-					html += '<span class="product-as-kit-price be-product-as-kit-price-new">' + special + '</span>';
+			
 			if (price_value !== '') {
 				html += '<span class="product-as-kit-old-price">' + price + '</span>';
 			}
 			
-	
+			html += '<span class="product-as-kit-price be-product-as-kit-price-new">' + special + '</span>';
 		}
 
 		if (bundle_expert.first_change_price) {
 			html = '<span class="product-price-container">' + html + '</span>';
-			if(bundle_expert.selectors.product_page.price_parent!==''){
-				$(price_selector).closest(bundle_expert.selectors.product_page.price_parent).html(html);
+			if(bundle_expert.selectors.product_page.be-price_parent!==''){
+				$(price_selector).closest(bundle_expert.selectors.product_page.be-price_parent).html(html);
 			}else{
 				$(price_selector).parent().replaceWith(html);
 			}
