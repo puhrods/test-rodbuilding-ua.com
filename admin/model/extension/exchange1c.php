@@ -5828,6 +5828,9 @@ class ModelExtensionExchange1c extends Model {
 
         $num_offer = 0;
 
+        $this->query("DELETE FROM `" . DB_PREFIX . "may_advanced_option_product_value` WHERE NOT EXISTS (SELECT null FROM " . DB_PREFIX . "product_option_value pov WHERE pov.product_id = " . DB_PREFIX . "may_advanced_option_product_value.product_id AND pov.option_value_id = " . DB_PREFIX . "may_advanced_option_product_value.option_value_id)");
+
+
         // Перебираем все предложения
         foreach ($xml->Предложение as $offer) {
 
