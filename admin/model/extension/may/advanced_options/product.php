@@ -2,6 +2,7 @@
 class ModelExtensionMayAdvancedOptionsProduct extends Model {
 	public function setProductAdvancedOptions($product_id, $data) {
 		if (!isset($data['may_advanced_option_values'])) {
+            $this->deleteProductAdvancedOptions($product_id);
 			return;
 		}
 
