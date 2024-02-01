@@ -5708,6 +5708,7 @@ class ModelExtensionExchange1c extends Model {
                 $product_option_value_id = $this->db->getLastId();
                	} else {
                     $product_option_value_id = $query->row['product_option_value_id'];
+                    $this->query("UPDATE " . DB_PREFIX . "product_option_value SET quantity = '" . (int)$quantity . "', subtract = '1' WHERE product_option_value_id = " . $product_option_value_id);
                 }
                 if (!empty($model)) {
                     $model .= '-' . $option_value_data['value'];
